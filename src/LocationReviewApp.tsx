@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Star, ChevronRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import locationData from "./locations.json";
 
 type LocationType = "country" | "cultural-region" | "state" | "city" | "neighborhood" | "district" | "place";
 type Perspective = "general" | "family" | "business" | "adventure" | "cultural";
@@ -36,39 +37,13 @@ const LOCATION_TYPES: { value: LocationType; label: string }[] = [
   { value: "place", label: "Place" },
 ];
 
-const LocationReviewApp = () => {
-  const [locations, setLocations] = useState<Location[]>([
-    {
-      id: "1",
-      name: "France",
-      type: "country",
-      reviews: [
-        { id: "1", perspective: "cultural", rating: 5, comment: "Rich cultural heritage", timestamp: new Date().toISOString() },
-        { id: "2", perspective: "family", rating: 4, comment: "Great for families", timestamp: new Date().toISOString() },
-      ],
-    },
-    {
-      id: "2",
-      name: "Paris",
-      type: "city",
-      parentId: "1",
-      reviews: [
-        { id: "3", perspective: "adventure", rating: 4, comment: "Amazing city to explore", timestamp: new Date().toISOString() },
-        { id: "4", perspective: "business", rating: 5, comment: "Business hub", timestamp: new Date().toISOString() },
-      ],
-    },
-    {
-      id: "3",
-      name: "Eiffel Tower",
-      type: "place",
-      parentId: "2",
-      reviews: [
-        { id: "5", perspective: "general", rating: 5, comment: "Iconic landmark", timestamp: new Date().toISOString() },
-        { id: "6", perspective: "family", rating: 4, comment: "Kids love it", timestamp: new Date().toISOString() },
-      ],
-    },
-  ]);
+interface LocationData {
+  locations: Location[];
+}
 
+const LocationReviewApp = () => {
+  const typedLocationData = locationData as LocationData;
+  const [locations, setLocations] = useState<Location[]>(typedLocationData.locations);
   const [selectedPerspectives, setSelectedPerspectives] = useState<Set<Perspective>>(new Set(["general"]));
   const [isAddingLocation, setIsAddingLocation] = useState(false);
   const [newLocation, setNewLocation] = useState({
@@ -77,6 +52,7 @@ const LocationReviewApp = () => {
     parentId: undefined as string | undefined,
   });
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [currentLocationId, setCurrentLocationId] = useState<string | undefined>(undefined);
 
   const togglePerspective = (perspective: Perspective) => {
     const updated = new Set(selectedPerspectives);
@@ -107,7 +83,7 @@ const LocationReviewApp = () => {
   };
 
   const getAverageRating = (location: Location, perspectives: Set<Perspective>) => {
-    const relevantReviews = location.reviews.filter((review) => perspectives.has(review.perspective));
+    const relevantReviews = location.reviews.filter((review) => perspectives.has(review.perspective as Perspective));
     if (relevantReviews.length === 0) return null;
     const sum = relevantReviews.reduce((acc, review) => acc + review.rating, 0);
     return (sum / relevantReviews.length).toFixed(1);
@@ -147,14 +123,52 @@ const LocationReviewApp = () => {
     setNewReview({ rating: 5, comment: "" });
   };
 
+  const getCurrentLocations = () => {
+    if (!currentLocationId) {
+      return locations.filter((loc) => !loc.parentId);
+    }
+    return locations.filter((loc) => loc.parentId === currentLocationId);
+  };
+
+  const getCurrentBreadcrumbs = (): Location[] => {
+    if (!currentLocationId) return [];
+    const currentLocation = locations.find((loc) => loc.id === currentLocationId);
+    if (!currentLocation) return [];
+    return getBreadcrumbs(currentLocation);
+  };
+
+  const handleBreadcrumbClick = (locationId: string) => {
+    setCurrentLocationId(locationId);
+  };
+
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span>Location Explorer</span>
+            <div className="flex items-center gap-2">
+              <span>Location Explorer</span>
+              {currentLocationId && (
+                <Button variant="outline" size="sm" onClick={() => setCurrentLocationId(undefined)}>
+                  Back to Top
+                </Button>
+              )}
+            </div>
             <Button onClick={() => setIsAddingLocation(true)}>Add Location</Button>
           </CardTitle>
+          {/* Breadcrumbs */}
+          {getCurrentBreadcrumbs().length > 0 && (
+            <div className="flex items-center text-sm text-gray-500">
+              {getCurrentBreadcrumbs().map((loc, index, array) => (
+                <React.Fragment key={loc.id}>
+                  <button className="hover:text-gray-700 cursor-pointer" onClick={() => handleBreadcrumbClick(loc.id)}>
+                    {loc.name}
+                  </button>
+                  {index < array.length - 1 && <ChevronRight className="w-4 h-4 mx-1" />}
+                </React.Fragment>
+              ))}
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {/* Perspective Filters */}
@@ -213,19 +227,9 @@ const LocationReviewApp = () => {
 
           {/* Location List */}
           <div className="grid gap-4">
-            {locations.map((location) => (
-              <Card key={location.id} className="p-4">
+            {getCurrentLocations().map((location) => (
+              <Card key={location.id} className="p-4 cursor-pointer hover:bg-gray-50" onClick={() => setCurrentLocationId(location.id)}>
                 <div className="flex flex-col gap-2">
-                  {/* Breadcrumbs */}
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    {getBreadcrumbs(location).map((loc, index, array) => (
-                      <React.Fragment key={loc.id}>
-                        <span className="hover:text-gray-700 cursor-pointer">{loc.name}</span>
-                        {index < array.length - 1 && <ChevronRight className="w-4 h-4 mx-1" />}
-                      </React.Fragment>
-                    ))}
-                  </div>
-
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-semibold">{location.name}</h3>
@@ -239,7 +243,7 @@ const LocationReviewApp = () => {
                     </div>
 
                     {/* Review Actions */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                       {Array.from(selectedPerspectives).map((perspective) => (
                         <Dialog key={perspective}>
                           <DialogTrigger asChild>
@@ -279,7 +283,7 @@ const LocationReviewApp = () => {
                   </div>
 
                   {/* Reviews */}
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-4 space-y-2" onClick={(e) => e.stopPropagation()}>
                     {location.reviews
                       .filter((review) => selectedPerspectives.has(review.perspective))
                       .map((review) => (
