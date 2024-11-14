@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Cloud, Users, Building2, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Cloud, Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 
 const cityData = {
   Paris: {
@@ -108,7 +108,7 @@ const DestinationFinder = () => {
     <div className="min-h-screen bg-background p-4 space-y-6">
       {/* Branding */}
       <div className="flex items-center justify-center gap-2 mb-8">
-        <Building2 className="w-8 h-8 text-primary" />
+        <img src="/favicon.svg" alt="CitiesRank Logo" className="w-8 h-8" />
         <h1 className="text-3xl font-bold text-primary">CitiesRank</h1>
       </div>
 
