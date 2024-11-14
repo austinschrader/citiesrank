@@ -1,10 +1,10 @@
-import LocationReviewApp from "./LocationReviewApp";
 import "./App.css";
+import DestinationFinder from "./DestinationFinder";
 
 function App() {
   return (
     <>
-      <LocationReviewApp />
+      <DestinationFinder />
     </>
   );
 }
