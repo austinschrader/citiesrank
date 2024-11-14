@@ -1,0 +1,42 @@
+{
+    "Paris": {
+        "country": "France",
+        "weather": 60,
+        "populationDensity": 95,
+        "description": "Cultural capital with historic architecture",
+        "population": "2.2M",
+        "region": "Europe"
+    },
+    "Tokyo": {
+        "country": "Japan",
+        "weather": 65,
+        "populationDensity": 98,
+        "description": "Modern metropolis with traditional roots",
+        "population": "37M",
+        "region": "Asia"
+    },
+    "New York": {
+        "country": "United States",
+        "weather": 55,
+        "populationDensity": 95,
+        "description": "Global financial and cultural hub",
+        "population": "8.4M",
+        "region": "North America"
+    },
+    "London": {
+        "country": "United Kingdom",
+        "weather": 50,
+        "populationDensity": 93,
+        "description": "Historic metropolis with modern charm",
+        "population": "9M",
+        "region": "Europe"
+    },
+    "Dubai": {
+        "country": "UAE",
+        "weather": 95,
+        "populationDensity": 85,
+        "description": "Ultramodern architecture and luxury shopping",
+        "population": "3.3M",
+        "region": "Middle East"
+    }
+}

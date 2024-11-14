@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Cloud, Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 
-const cityData = {
+// Fallback city data
+const fallbackCityData = {
   Paris: {
     country: "France",
     weather: 60,
@@ -71,6 +72,28 @@ const DestinationFinder = () => {
     density: 50,
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const [cityData, setCityData] = useState(fallbackCityData);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadCityData = async () => {
+      try {
+        const response = await fetch("/cityData.json");
+        if (!response.ok) {
+          throw new Error("Failed to load city data");
+        }
+        const data = await response.json();
+        setCityData(data);
+      } catch (error) {
+        console.log("Using fallback city data:", error);
+        setCityData(fallbackCityData);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCityData();
+  }, []);
 
   // Calculate city rankings based on preference weights
   const rankedCities = useMemo(() => {
@@ -91,7 +114,7 @@ const DestinationFinder = () => {
         };
       })
       .sort((a, b) => b.matchScore - a.matchScore);
-  }, [preferences]);
+  }, [preferences, cityData]);
 
   // Pagination calculations
   const totalPages = Math.ceil(rankedCities.length / ITEMS_PER_PAGE);
@@ -104,8 +127,20 @@ const DestinationFinder = () => {
     return "text-gray-500 bg-gray-50";
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+          <p className="text-muted-foreground">Loading destinations...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background p-4 space-y-6">
+      {/* Rest of the component remains the same */}
       {/* Branding */}
       <div className="flex items-center justify-center gap-2 mb-8">
         <img src="/favicon.svg" alt="CitiesRank Logo" className="w-8 h-8" />
