@@ -1,26 +1,63 @@
-// types.ts
-export interface CityData {
-  country: string;
-  cost: number; // 0-100 (low to high)
-  interesting: number; // 0-100 (based on combined factors)
-  transit: number; // 0-100 (poor to excellent)
-  description: string;
-  population: string;
-  highlights: string[];
-}
-
-export interface RankedCity extends CityData {
-  name: string;
-  matchScore: number;
-  attributeMatches: {
-    cost: number;
-    interesting: number;
-    transit: number;
+export interface CityMetrics {
+  valueScore: {
+    localFoodCost: number;
+    accommodationValue: number;
+    activityCosts: number;
+  };
+  authenticityScore: {
+    localRatio: number;
+    localPreservation: number;
+    traditionalScene: number;
+  };
+  practicalScore: {
+    walkability: number;
+    transitAccess: number;
+    digitalFriendly: number;
+  };
+  culturalScore: {
+    archDensity: number;
+    culturalEvents: number;
+    universityCulture: number;
+  };
+  specialScore: {
+    foodScene: number;
+    cafeLife: number;
+    eveningAtmosphere: number;
+    baseLocation: number;
   };
 }
 
+export interface CityData extends CityMetrics {
+  name: string;
+  country: string;
+  description: string;
+  population: string;
+  highlights: string[];
+  imageUrl?: string;
+  knownFor: string[];
+  regionalAccess: string[];
+}
+
 export interface UserPreferences {
-  cost: number;
-  interesting: number;
-  transit: number;
+  valueImportance: number;
+  authenticityImportance: number;
+  practicalityImportance: number;
+  culturalImportance: number;
+  specialFeatures: {
+    foodFocus: boolean;
+    cafeCulture: boolean;
+    nightlife: boolean;
+    baseLocation: boolean;
+  };
+}
+
+export interface RankedCity extends CityData {
+  matchScore: number;
+  categoryScores: {
+    value: number;
+    authenticity: number;
+    practical: number;
+    cultural: number;
+    special: number;
+  };
 }
