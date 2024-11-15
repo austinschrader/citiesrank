@@ -17,25 +17,38 @@ export const CityCard = ({ city }: CityCardProps) => {
   return (
     <Card className="hover:ring-1 hover:ring-primary/20 transition-all">
       <CardContent className="p-4">
-        <div className="flex justify-between items-start">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-primary" />
-              <h3 className="font-semibold text-lg">{city.name}</h3>
-              <span className="text-sm text-muted-foreground">{city.country}</span>
+        <div className="space-y-4">
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-primary" />
+                <h3 className="font-semibold text-lg">{city.name}</h3>
+                <span className="text-sm text-muted-foreground">{city.country}</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{city.description}</p>
             </div>
-            <p className="text-sm text-muted-foreground">{city.description}</p>
-            <div className="flex gap-4">
-              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">
-                Weather: {Math.round(city.attributeMatches.weather)}% match
-              </span>
-              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">
-                Density: {Math.round(city.attributeMatches.density)}% match
-              </span>
+            <div className={`px-3 py-2 rounded-full text-sm font-medium ${getMatchColor(city.matchScore)}`}>
+              {Math.round(city.matchScore)}% match
             </div>
           </div>
-          <div className={`px-3 py-2 rounded-full text-sm font-medium ${getMatchColor(city.matchScore)}`}>
-            {Math.round(city.matchScore)}% match
+
+          <div className="space-y-2">
+            <div className="flex gap-4">
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">Cost: {Math.round(city.attributeMatches.cost)}% match</span>
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">
+                Interest: {Math.round(city.attributeMatches.interesting)}% match
+              </span>
+              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">
+                Transit: {Math.round(city.attributeMatches.transit)}% match
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {city?.highlights?.map((highlight, index) => (
+                <span key={index} className="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded-full">
+                  {highlight}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>

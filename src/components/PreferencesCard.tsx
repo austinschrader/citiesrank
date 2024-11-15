@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Cloud, Users } from "lucide-react";
+import { Euro, Compass, Train } from "lucide-react";
 import { UserPreferences } from "../types";
 import { PreferenceSlider } from "@/components/PreferenceSlider";
 
@@ -9,32 +9,40 @@ interface PreferencesCardProps {
 }
 
 export const PreferencesCard = ({ preferences, onPreferencesChange }: PreferencesCardProps) => {
-  const getWeatherLabel = (value: number) => (value < 33 ? "Cold" : value < 66 ? "Moderate" : "Hot");
-
-  const getDensityLabel = (value: number) => (value < 33 ? "Rural" : value < 66 ? "Suburban" : "Urban");
+  const getCostLabel = (value: number) => (value < 33 ? "Budget" : value < 66 ? "Moderate" : "Luxury");
+  const getInterestLabel = (value: number) => (value < 33 ? "Basic" : value < 66 ? "Interesting" : "Fascinating");
+  const getTransitLabel = (value: number) => (value < 33 ? "Basic" : value < 66 ? "Good" : "Excellent");
 
   return (
     <Card className="w-full max-w-lg mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Find your next destination</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center">Find your European hidden gem</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         <div className="space-y-6">
           <PreferenceSlider
-            icon={Cloud}
-            label="Preferred Weather"
-            value={preferences.weather}
-            onChange={(weather) => onPreferencesChange({ ...preferences, weather })}
-            labels={["Cold", "Moderate", "Hot"]}
-            getCurrentLabel={getWeatherLabel}
+            icon={Euro}
+            label="Budget Level"
+            value={preferences.cost}
+            onChange={(cost) => onPreferencesChange({ ...preferences, cost })}
+            labels={["Budget", "Moderate", "Luxury"]}
+            getCurrentLabel={getCostLabel}
           />
           <PreferenceSlider
-            icon={Users}
-            label="Preferred Population Density"
-            value={preferences.density}
-            onChange={(density) => onPreferencesChange({ ...preferences, density })}
-            labels={["Rural", "Suburban", "Urban"]}
-            getCurrentLabel={getDensityLabel}
+            icon={Compass}
+            label="Points of Interest"
+            value={preferences.interesting}
+            onChange={(interesting) => onPreferencesChange({ ...preferences, interesting })}
+            labels={["Basic", "Interesting", "Fascinating"]}
+            getCurrentLabel={getInterestLabel}
+          />
+          <PreferenceSlider
+            icon={Train}
+            label="Public Transit"
+            value={preferences.transit}
+            onChange={(transit) => onPreferencesChange({ ...preferences, transit })}
+            labels={["Basic", "Good", "Excellent"]}
+            getCurrentLabel={getTransitLabel}
           />
         </div>
       </CardContent>

@@ -2,75 +2,46 @@ import React, { useState, useEffect } from "react";
 import { PreferencesCard } from "./components/PreferencesCard";
 import { CityCard } from "./components/CityCard";
 import { Pagination } from "./components/Pagination";
-import { useCityRanking } from "./hooks/useCityRanking";
 import { CityData, UserPreferences } from "./types";
 
 const ITEMS_PER_PAGE = 3;
 
-// Fallback city data kept in main file for easy development/testing
 const fallbackCityData: Record<string, CityData> = {
-  Paris: {
-    country: "France",
-    weather: 60,
-    populationDensity: 95,
-    description: "Cultural capital with historic architecture",
-    population: "2.2M",
+  Porto: {
+    country: "Portugal",
+    cost: 40,
+    interesting: 85,
+    transit: 75,
+    description: "Historic riverside city known for port wine and stunning bridges",
+    population: "215K",
+    highlights: ["Port wine cellars", "Ribeira district", "Dom Luís I Bridge"],
   },
-  Tokyo: {
-    country: "Japan",
-    weather: 65,
-    populationDensity: 98,
-    description: "Modern metropolis with traditional roots",
-    population: "37M",
+  Ljubljana: {
+    country: "Slovenia",
+    cost: 45,
+    interesting: 80,
+    transit: 85,
+    description: "Charming capital with medieval castle and vibrant arts scene",
+    population: "300K",
+    highlights: ["Ljubljana Castle", "Triple Bridge", "Central Market"],
   },
-  Barcelona: {
-    country: "Spain",
-    weather: 75,
-    populationDensity: 85,
-    description: "Coastal city with stunning architecture",
-    population: "1.6M",
+  Bologna: {
+    country: "Italy",
+    cost: 55,
+    interesting: 90,
+    transit: 80,
+    description: "Medieval university town with exceptional cuisine",
+    population: "390K",
+    highlights: ["Two Towers", "Food markets", "Porticoed streets"],
   },
-  Queenstown: {
-    country: "New Zealand",
-    weather: 45,
-    populationDensity: 30,
-    description: "Adventure tourism capital",
-    population: "15.5K",
-  },
-  Kyoto: {
-    country: "Japan",
-    weather: 60,
-    populationDensity: 70,
-    description: "Traditional Japanese culture and temples",
-    population: "1.5M",
-  },
-  Reykjavik: {
-    country: "Iceland",
-    weather: 20,
-    populationDensity: 40,
-    description: "Northern lights and dramatic landscapes",
-    population: "122K",
-  },
-  Singapore: {
-    country: "Singapore",
-    weather: 85,
-    populationDensity: 100,
-    description: "Modern city-state with tropical climate",
-    population: "5.7M",
-  },
-  Bali: {
-    country: "Indonesia",
-    weather: 80,
-    populationDensity: 45,
-    description: "Tropical paradise with rich culture",
-    population: "4.3M",
-  },
+  // Add more cities as needed
 };
 
 const DestinationFinder = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
-    weather: 50,
-    density: 50,
+    cost: 50,
+    interesting: 50,
+    transit: 50,
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [cityData, setCityData] = useState<Record<string, CityData>>(fallbackCityData);
@@ -94,7 +65,29 @@ const DestinationFinder = () => {
     loadCityData();
   }, []);
 
-  const rankedCities = useCityRanking(cityData, preferences);
+  const calculateMatch = (cityAttributes: CityData, userPreferences: UserPreferences) => {
+    const matches = {
+      cost: 100 - Math.abs(cityAttributes.cost - userPreferences.cost),
+      interesting: 100 - Math.abs(cityAttributes.interesting - userPreferences.interesting),
+      transit: 100 - Math.abs(cityAttributes.transit - userPreferences.transit),
+    };
+
+    const overallMatch = (matches.cost + matches.interesting + matches.transit) / 3;
+
+    return {
+      matchScore: overallMatch,
+      attributeMatches: matches,
+    };
+  };
+
+  const rankedCities = Object.entries(cityData)
+    .map(([name, data]) => ({
+      name,
+      ...data,
+      ...calculateMatch(data, preferences),
+    }))
+    .sort((a, b) => b.matchScore - a.matchScore);
+
   const totalPages = Math.ceil(rankedCities.length / ITEMS_PER_PAGE);
   const paginatedCities = rankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
@@ -112,8 +105,8 @@ const DestinationFinder = () => {
   return (
     <div className="min-h-screen bg-background p-4 space-y-6">
       <div className="flex items-center justify-center gap-2 mb-8">
-        <img src="/favicon.svg" alt="CitiesRank Logo" className="w-8 h-8" />
-        <h1 className="text-3xl font-bold text-primary">CitiesRank</h1>
+        <img src="/favicon.svg" alt="European Gems Logo" className="w-8 h-8" />
+        <h1 className="text-3xl font-bold text-primary">European Gems</h1>
       </div>
 
       <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
