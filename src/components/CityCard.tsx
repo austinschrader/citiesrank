@@ -1,6 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
+import React from "react";
+import { Card } from "@/components/ui/card";
+import { MapPin, Star } from "lucide-react";
 import { RankedCity } from "../types";
+import { cn } from "@/lib/utils";
 
 interface CityCardProps {
   city: RankedCity;
@@ -8,50 +10,66 @@ interface CityCardProps {
 
 export const CityCard = ({ city }: CityCardProps) => {
   const getMatchColor = (score: number) => {
-    if (score >= 90) return "text-green-500 bg-green-50";
-    if (score >= 70) return "text-blue-500 bg-blue-50";
-    if (score >= 50) return "text-yellow-500 bg-yellow-50";
-    return "text-gray-500 bg-gray-50";
+    if (score >= 90) return "bg-green-50 text-green-700";
+    if (score >= 75) return "bg-blue-50 text-blue-700";
+    if (score >= 60) return "bg-yellow-50 text-yellow-700";
+    return "bg-gray-50 text-gray-700";
   };
 
-  return (
-    <Card className="hover:ring-1 hover:ring-primary/20 transition-all">
-      <CardContent className="p-4">
-        <div className="space-y-4">
-          <div className="flex justify-between items-start">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-primary" />
-                <h3 className="font-semibold text-lg">{city.name}</h3>
-                <span className="text-sm text-muted-foreground">{city.country}</span>
-              </div>
-              <p className="text-sm text-muted-foreground">{city.description}</p>
-            </div>
-            <div className={`px-3 py-2 rounded-full text-sm font-medium ${getMatchColor(city.matchScore)}`}>
-              {Math.round(city.matchScore)}% match
-            </div>
-          </div>
+  const citySlug = city.name.toLowerCase().replace(/\s+/g, "-");
 
-          <div className="space-y-2">
-            <div className="flex gap-4">
-              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">Cost: {Math.round(city.attributeMatches.cost)}% match</span>
-              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">
-                Interest: {Math.round(city.attributeMatches.interesting)}% match
-              </span>
-              <span className="text-xs px-2 py-1 rounded-full bg-primary/5">
-                Transit: {Math.round(city.attributeMatches.transit)}% match
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {city?.highlights?.map((highlight, index) => (
-                <span key={index} className="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded-full">
-                  {highlight}
-                </span>
-              ))}
-            </div>
-          </div>
+  return (
+    <Card className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300">
+      <div className="aspect-[16/10] relative overflow-hidden rounded-xl bg-neutral-100">
+        <picture>
+          {/* Mobile viewport */}
+          <source media="(max-width: 640px)" srcSet={`/images/${citySlug}-400.jpg 1x, /images/${citySlug}-800.jpg 2x`} />
+          {/* Tablet viewport */}
+          <source media="(max-width: 1024px)" srcSet={`/images/${citySlug}-600.jpg 1x, /images/${citySlug}-1200.jpg 2x`} />
+          {/* Desktop viewport */}
+          <source media="(min-width: 1025px)" srcSet={`/images/${citySlug}-800.jpg 1x, /images/${citySlug}-1600.jpg 2x`} />
+          {/* Fallback image */}
+          <img
+            src={`/images/${citySlug}-800.jpg`}
+            alt={`${city.name}, ${city.country}`}
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 transform-gpu"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent" aria-hidden="true" />
+        <button
+          className="absolute top-4 right-4 p-2.5 rounded-full bg-white/90 hover:bg-white transition-colors hover:scale-110 active:scale-95"
+          aria-label="Save to favorites">
+          <Star className="w-6 h-6" />
+        </button>
+        <div className={cn("absolute top-4 left-4 px-4 py-2 rounded-full text-base font-medium shadow-sm", getMatchColor(city.matchScore))}>
+          {Math.round(city.matchScore)}% match
         </div>
-      </CardContent>
+      </div>
+
+      <div className="pt-5 pb-2 px-1">
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="font-semibold text-xl">
+            {city.name}, {city.country}
+          </h3>
+        </div>
+
+        <div className="flex items-center gap-1.5 text-base text-muted-foreground mb-3">
+          <MapPin className="w-5 h-5 shrink-0" />
+          <span>{city.population} residents</span>
+        </div>
+
+        <p className="text-base text-muted-foreground mb-4 line-clamp-2">{city.description}</p>
+
+        <div className="flex flex-wrap gap-2">
+          {city.highlights.map((highlight, index) => (
+            <span key={index} className="text-sm px-3 py-1.5 bg-secondary rounded-full">
+              {highlight}
+            </span>
+          ))}
+        </div>
+      </div>
     </Card>
   );
 };

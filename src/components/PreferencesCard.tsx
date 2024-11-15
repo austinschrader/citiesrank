@@ -22,7 +22,7 @@ export const PreferencesCard = ({ preferences, onPreferencesChange }: Preference
         <div className="space-y-6">
           <PreferenceSlider
             icon={Euro}
-            label="Budget Level"
+            label="Cost"
             value={preferences.cost}
             onChange={(cost) => onPreferencesChange({ ...preferences, cost })}
             labels={["Budget", "Moderate", "Luxury"]}
@@ -30,7 +30,7 @@ export const PreferencesCard = ({ preferences, onPreferencesChange }: Preference
           />
           <PreferenceSlider
             icon={Compass}
-            label="Points of Interest"
+            label="Things to Do"
             value={preferences.interesting}
             onChange={(interesting) => onPreferencesChange({ ...preferences, interesting })}
             labels={["Basic", "Interesting", "Fascinating"]}
