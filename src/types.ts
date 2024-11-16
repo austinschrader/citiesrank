@@ -1,37 +1,33 @@
-// types.ts
-export interface UserPreferences {
-  cost: number;
-  interesting: number;
-  transit: number;
-}
-
-export interface HighlightLinkProps {
-  highlight: string;
-  cityName: string;
-  country: string;
-  onClick?: (e: React.MouseEvent) => void;
-}
-
 import type { ReactNode } from "react";
+import { LucideIcon } from "lucide-react";
 
-export interface HighlightCategory {
-  type: HighlightCategoryType;
-  icon: ReactNode;
-  className: string;
-  label: string;
-  description: string;
+// Image-related types
+export interface ImageSource {
+  mobile: string;
+  tablet: string;
+  desktop: string;
 }
 
-export interface HighlightLinkProps {
-  highlight: string;
+export interface GalleryImage {
+  type: "city" | "attraction";
+  title: string;
+  sources: ImageSource;
+}
+
+export interface ImageGalleryProps {
   cityName: string;
   country: string;
-  onClick?: (e: React.MouseEvent) => void;
+  highlights: string[];
+  currentHighlight: string | null;
+  onHighlightChange?: (highlight: string | null) => void;
 }
-
-// types.ts
 
 // City-related types
+export interface ReviewSummary {
+  averageRating: number;
+  totalReviews: number;
+}
+
 export interface CityData {
   country: string;
   cost: number; // 0-100 (low to high)
@@ -40,6 +36,7 @@ export interface CityData {
   description: string;
   population: string;
   highlights: string[];
+  reviews?: ReviewSummary;
 }
 
 export interface RankedCity extends CityData {
@@ -52,6 +49,7 @@ export interface RankedCity extends CityData {
   };
 }
 
+// User preference types
 export interface UserPreferences {
   cost: number;
   interesting: number;
@@ -83,28 +81,45 @@ export interface HighlightLinkSectionProps {
   onHighlightClick?: (e: React.MouseEvent) => void;
 }
 
-export interface ReviewSummary {
-  averageRating: number;
-  totalReviews: number;
+// Component Props
+export interface CityCardProps {
+  city: RankedCity;
 }
 
-export interface CityData {
-  country: string;
-  cost: number;
-  interesting: number;
-  transit: number;
-  description: string;
-  population: string;
-  highlights: string[];
-  reviews: ReviewSummary; // Add this field
+export interface PreferencesCardProps {
+  preferences: UserPreferences;
+  onPreferencesChange: (preferences: UserPreferences) => void;
 }
 
-export interface RankedCity extends CityData {
-  name: string;
-  matchScore: number;
-  attributeMatches: {
-    cost: number;
-    interesting: number;
-    transit: number;
-  };
+export interface PreferenceSliderProps {
+  icon: LucideIcon;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  labels: string[];
+  getCurrentLabel: (value: number) => string;
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+// Review types
+export interface ReviewData {
+  author: string;
+  rating: number;
+  content: string;
+  date: string;
+  helpful: number;
+  isVerified?: boolean;
+}
+
+export interface ReviewProps {
+  review: ReviewData;
+}
+
+export interface ReviewSectionProps {
+  reviews: ReviewData[];
 }

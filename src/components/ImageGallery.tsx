@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ImageGalleryProps, GalleryImage } from "@/types";
 
@@ -13,11 +12,19 @@ const createSlug = (text: string): string => {
     .trim();
 };
 
+const checkImageExists = (url: string): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+};
+
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadedImages, setLoadedImages] = useState<GalleryImage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const citySlug = createSlug(cityName);
 
@@ -48,26 +55,22 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
     [cityName, country, highlights, citySlug]
   );
 
-  // Check which images actually exist
   useEffect(() => {
     const checkImages = async () => {
-      setIsLoading(true);
       const validImages = [];
 
       for (const image of potentialImages) {
         try {
-          const response = await fetch(image.sources.tablet, { method: "HEAD" });
-          if (response.ok) {
+          const exists = await checkImageExists(image.sources.tablet);
+          if (exists) {
             validImages.push(image);
           }
         } catch {
-          // Skip failed images
           continue;
         }
       }
 
       setLoadedImages(validImages);
-      setIsLoading(false);
     };
 
     checkImages();
@@ -112,23 +115,15 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
     }
   };
 
-  if (isLoading) {
-    return <div className="aspect-[16/10] rounded-xl bg-neutral-100 animate-pulse" />;
-  }
-
   if (loadedImages.length === 0) {
-    return (
-      <div className="aspect-[16/10] rounded-xl bg-neutral-100 flex items-center justify-center">
-        <p className="text-muted-foreground">No images available</p>
-      </div>
-    );
+    return null;
   }
 
   return (
     <div className="relative">
       <div
         className={cn(
-          "relative overflow-hidden rounded-xl bg-neutral-100 transition-all duration-300",
+          "relative overflow-hidden rounded-xl bg-neutral-100 transition-all duration-300 group",
           isFullscreen ? "fixed inset-0 z-50 bg-black/90" : "aspect-[16/10] cursor-pointer"
         )}
         onClick={toggleFullscreen}>
@@ -148,53 +143,67 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
           />
         </picture>
 
-        {loadedImages.length > 1 && (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full"
-              onClick={(e) => navigate(-1, e)}>
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
+        {/* Navigation Controls */}
+        <div
+          className={cn(
+            "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+            isFullscreen && "opacity-100"
+          )}>
+          {loadedImages.length > 1 && (
+            <>
+              {/* Left Navigation */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(-1, e);
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]">
+                <ChevronLeft size={24} />
+              </button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white rounded-full"
-              onClick={(e) => navigate(1, e)}>
-              <ChevronRight className="h-6 w-6" />
-            </Button>
-          </>
-        )}
+              {/* Right Navigation */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(1, e);
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]">
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-2 right-2 bg-black/20 hover:bg-black/40 text-white rounded-full"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleFullscreen();
-          }}>
-          {isFullscreen ? <Minimize2 className="h-6 w-6" /> : <Maximize2 className="h-6 w-6" />}
-        </Button>
+          {/* Fullscreen Toggle */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFullscreen();
+            }}
+            className="absolute right-4 top-4 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]">
+            {isFullscreen ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
+          </button>
+        </div>
 
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-          <p className="text-white text-sm font-medium">{loadedImages[currentIndex].title}</p>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6">
+          <p className="text-white text-base font-medium">{loadedImages[currentIndex].title}</p>
         </div>
       </div>
 
       {loadedImages.length > 1 && (
-        <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+        <div className="flex gap-1 mt-1">
           {loadedImages.map((image, index) => (
             <button
               key={index}
               onClick={() => handleHighlightClick(index)}
               className={cn(
-                "relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden",
-                currentIndex === index && "ring-2 ring-primary ring-offset-2"
+                "relative aspect-[16/10] w-[180px] flex-shrink-0",
+                "transition-all duration-200",
+                currentIndex === index ? "ring-2 ring-primary" : "opacity-70 hover:opacity-100"
               )}>
-              <img src={image.sources.mobile} alt={image.title} className="w-full h-full object-cover" />
+              <img src={image.sources.mobile} alt={image.title} className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent">
+                <span className="block px-2 py-1 text-white text-xs truncate">{image.title}</span>
+              </div>
             </button>
           ))}
         </div>
