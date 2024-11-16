@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetHeader } from "@/co
 import { Legend } from "@/components/Legend";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
+import { DestinationFilter } from "@/components/DestinationFilter";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
 
@@ -33,6 +34,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 3842,
     },
+    destinationTypes: ["coastal", "historic", "culinary", "wineries", "cultural"],
   },
   Ljubljana: {
     country: "Slovenia",
@@ -54,6 +56,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.6,
       totalReviews: 2156,
     },
+    destinationTypes: ["cultural", "historic", "arts", "digital-nomad"],
   },
   Bologna: {
     country: "Italy",
@@ -75,6 +78,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 2987,
     },
+    destinationTypes: ["historic", "cultural", "culinary", "gastronomy", "arts"],
   },
   Valencia: {
     country: "Spain",
@@ -96,6 +100,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 4521,
     },
+    destinationTypes: ["coastal", "metropolis", "cultural", "arts", "gastronomy"],
   },
   Ghent: {
     country: "Belgium",
@@ -117,6 +122,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.6,
       totalReviews: 1876,
     },
+    destinationTypes: ["historic", "cultural", "arts"],
   },
   Heidelberg: {
     country: "Germany",
@@ -138,6 +144,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.5,
       totalReviews: 2245,
     },
+    destinationTypes: ["historic", "cultural", "village", "arts"],
   },
   Bruges: {
     country: "Belgium",
@@ -158,6 +165,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 3000,
     },
+    destinationTypes: ["historic", "cultural", "arts", "village"],
   },
   "Cesky Krumlov": {
     country: "Czech Republic",
@@ -178,6 +186,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 2100,
     },
+    destinationTypes: ["historic", "cultural", "village", "arts"],
   },
   Tallinn: {
     country: "Estonia",
@@ -198,6 +207,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 1800,
     },
+    destinationTypes: ["coastal", "historic", "cultural", "digital-nomad", "emerging"],
   },
   Innsbruck: {
     country: "Austria",
@@ -211,6 +221,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.6,
       totalReviews: 1900,
     },
+    destinationTypes: ["mountain", "historic", "winter", "adventure"],
   },
   Bergen: {
     country: "Norway",
@@ -224,6 +235,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 2500,
     },
+    destinationTypes: ["coastal", "ports", "cultural", "adventure"],
   },
   Colmar: {
     country: "France",
@@ -237,6 +249,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 2100,
     },
+    destinationTypes: ["village", "historic", "cultural", "wineries"],
   },
   Sorrento: {
     country: "Italy",
@@ -257,6 +270,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 1800,
     },
+    destinationTypes: ["coastal", "culinary", "cultural"],
   },
   "Rothenburg ob der Tauber": {
     country: "Germany",
@@ -270,6 +284,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 2300,
     },
+    destinationTypes: ["village", "historic", "cultural"],
   },
   Annecy: {
     country: "France",
@@ -283,6 +298,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 2600,
     },
+    destinationTypes: ["mountain", "village", "historic", "cultural"],
   },
   Sintra: {
     country: "Portugal",
@@ -296,6 +312,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 3200,
     },
+    destinationTypes: ["historic", "cultural", "forest"],
   },
   Kotor: {
     country: "Montenegro",
@@ -316,6 +333,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 1800,
     },
+    destinationTypes: ["coastal", "historic", "cultural", "ports"],
   },
   Zermatt: {
     country: "Switzerland",
@@ -329,6 +347,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 2100,
     },
+    destinationTypes: ["mountain", "winter", "adventure", "village"],
   },
   Hallstatt: {
     country: "Austria",
@@ -342,6 +361,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 2400,
     },
+    destinationTypes: ["mountain", "village", "historic", "cultural"],
   },
   Ronda: {
     country: "Spain",
@@ -355,6 +375,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 2000,
     },
+    destinationTypes: ["historic", "cultural", "adventure"],
   },
   Reine: {
     country: "Norway",
@@ -368,6 +389,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 1500,
     },
+    destinationTypes: ["coastal", "village", "adventure", "ports"],
   },
   Alberobello: {
     country: "Italy",
@@ -388,6 +410,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.6,
       totalReviews: 1700,
     },
+    destinationTypes: ["village", "historic", "cultural", "wineries"],
   },
   Carcassonne: {
     country: "France",
@@ -408,6 +431,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 2200,
     },
+    destinationTypes: ["historic", "cultural", "ancient"],
   },
   Piran: {
     country: "Slovenia",
@@ -421,6 +445,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.6,
       totalReviews: 1600,
     },
+    destinationTypes: ["coastal", "historic", "cultural", "ports"],
   },
   Gjirokaster: {
     country: "Albania",
@@ -441,6 +466,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.5,
       totalReviews: 1300,
     },
+    destinationTypes: ["historic", "cultural", "ancient", "emerging"],
   },
   Chamonix: {
     country: "France",
@@ -454,6 +480,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 2500,
     },
+    destinationTypes: ["mountain", "winter", "adventure", "wellness"],
   },
   Bled: {
     country: "Slovenia",
@@ -467,6 +494,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 3800,
     },
+    destinationTypes: ["mountain", "cultural", "adventure", "wellness"],
   },
   Mostar: {
     country: "Bosnia and Herzegovina",
@@ -487,6 +515,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 2300,
     },
+    destinationTypes: ["historic", "cultural", "ancient", "emerging"],
   },
   Sighisoara: {
     country: "Romania",
@@ -500,6 +529,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.6,
       totalReviews: 1400,
     },
+    destinationTypes: ["historic", "cultural", "ancient", "village"],
   },
   Nafplio: {
     country: "Greece",
@@ -513,6 +543,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 2000,
     },
+    destinationTypes: ["coastal", "historic", "cultural", "ports"],
   },
   Paris: {
     country: "France",
@@ -534,6 +565,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 25_000,
     },
+    destinationTypes: ["metropolis", "cultural", "arts", "gastronomy"],
   },
   Rome: {
     country: "Italy",
@@ -547,6 +579,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 21_000,
     },
+    destinationTypes: ["metropolis", "historic", "cultural", "ancient", "gastronomy"],
   },
   London: {
     country: "United Kingdom",
@@ -568,6 +601,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 23_000,
     },
+    destinationTypes: ["metropolis", "cultural", "arts", "digital-nomad"],
   },
   Barcelona: {
     country: "Spain",
@@ -581,6 +615,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 20_000,
     },
+    destinationTypes: ["coastal", "metropolis", "cultural", "arts", "gastronomy"],
   },
   Amsterdam: {
     country: "Netherlands",
@@ -594,6 +629,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 18_000,
     },
+    destinationTypes: ["cultural", "arts", "digital-nomad"],
   },
   Venice: {
     country: "Italy",
@@ -615,6 +651,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 15_000,
     },
+    destinationTypes: ["coastal", "historic", "cultural", "arts", "ports"],
   },
   Prague: {
     country: "Czech Republic",
@@ -636,6 +673,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.9,
       totalReviews: 19_000,
     },
+    destinationTypes: ["historic", "cultural", "arts", "digital-nomad"],
   },
   Florence: {
     country: "Italy",
@@ -657,6 +695,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 17_000,
     },
+    destinationTypes: ["historic", "cultural", "arts", "gastronomy"],
   },
   Athens: {
     country: "Greece",
@@ -678,6 +717,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.7,
       totalReviews: 14_000,
     },
+    destinationTypes: ["historic", "cultural", "ancient", "coastal"],
   },
   Dubrovnik: {
     country: "Croatia",
@@ -699,6 +739,7 @@ const fallbackCityData: Record<string, CityData> = {
       averageRating: 4.8,
       totalReviews: 12_000,
     },
+    destinationTypes: ["coastal", "historic", "cultural", "ports"],
   },
 };
 
@@ -713,6 +754,7 @@ const DestinationFinder = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [tempPreferences, setTempPreferences] = useState(preferences);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
   useEffect(() => {
     // Update temp preferences when main preferences change
@@ -752,7 +794,8 @@ const DestinationFinder = () => {
     };
   };
 
-  const rankedCities = Object.entries(cityData)
+  const filteredAndRankedCities = Object.entries(cityData)
+    .filter(([, data]) => !selectedFilter || data.destinationTypes.includes(selectedFilter))
     .map(([name, data]) => ({
       name,
       ...data,
@@ -760,8 +803,13 @@ const DestinationFinder = () => {
     }))
     .sort((a, b) => b.matchScore - a.matchScore);
 
-  const totalPages = Math.ceil(rankedCities.length / ITEMS_PER_PAGE);
-  const paginatedCities = rankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
+  const paginatedCities = filteredAndRankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  const handleFilterSelect = (filter: string) => {
+    setSelectedFilter(selectedFilter === filter ? null : filter);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
 
   const handleApplyFilters = () => {
     setPreferences(tempPreferences);
@@ -845,6 +893,12 @@ const DestinationFinder = () => {
         </div>
       </header>
 
+      <div className="border-b">
+        <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
+          <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
+        </div>
+      </div>
+
       <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4 md:py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Desktop Filters */}
@@ -860,7 +914,7 @@ const DestinationFinder = () => {
               {/* Results Header */}
               <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold">{rankedCities.length}</span>
+                  <span className="text-2xl font-semibold">{filteredAndRankedCities.length}</span>
                   <span className="text-muted-foreground">hidden gems found</span>
                 </div>
 

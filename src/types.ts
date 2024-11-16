@@ -29,6 +29,7 @@ export interface CityData {
   population: string;
   highlights: string[];
   reviews?: ReviewSummary;
+  destinationTypes: string[];
 }
 
 export interface RankedCity extends CityData {
