@@ -50,7 +50,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
           onHighlightChange={setActiveHighlight}
         />
 
-        <div className="absolute top-4 left-4 z-20">
+        {/* <div className="absolute top-4 left-4 z-20">
           <div
             className={cn(
               "px-4 py-2 rounded-full text-base font-medium",
@@ -59,7 +59,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
             )}>
             {Math.round(city.matchScore)}% match
           </div>
-        </div>
+        </div> */}
 
         <button
           onClick={() => setIsFavorite(!isFavorite)}
