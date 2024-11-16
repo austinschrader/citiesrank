@@ -1,30 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { MapPin, Star } from "lucide-react";
-import { RankedCity } from "../types";
+import { CityCardProps } from "@/types";
 import { cn } from "@/lib/utils";
 import { HighlightLinkSection } from "@/components/HighlightsLinkSection";
+import { ImageGallery } from "@/components/ImageGallery";
 
-interface CityCardProps {
-  city: RankedCity;
-}
+export const CityCard: React.FC<CityCardProps> = ({ city }) => {
+  const [activeHighlight, setActiveHighlight] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
-export const CityCard = ({ city }: CityCardProps) => {
   const getMatchColor = (score: number) => {
     if (score >= 90) return "bg-green-50 text-green-700";
     if (score >= 75) return "bg-blue-50 text-blue-700";
     if (score >= 60) return "bg-yellow-50 text-yellow-700";
     return "bg-gray-50 text-gray-700";
-  };
-
-  const citySlug = city.name.toLowerCase().replace(/\s+/g, "-");
-  const countrySlug = city.country.toLowerCase().replace(/\s+/g, "-");
-
-  const handleHighlightClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const url = (e.currentTarget as HTMLAnchorElement).href;
-    // TODO: Replace with your routing implementation
-    console.log("Would navigate to:", url);
   };
 
   const handleCityClick = (e: React.MouseEvent) => {
@@ -40,31 +30,50 @@ export const CityCard = ({ city }: CityCardProps) => {
     console.log("Would navigate to:", `/${countrySlug}`);
   };
 
+  const handleHighlightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const highlightName = (e.currentTarget as HTMLAnchorElement).textContent;
+    setActiveHighlight(highlightName);
+  };
+
+  const citySlug = city.name.toLowerCase().replace(/\s+/g, "-");
+  const countrySlug = city.country.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <Card className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300">
-      <div className="aspect-[16/10] relative overflow-hidden rounded-xl bg-neutral-100">
-        <picture>
-          <source media="(max-width: 640px)" srcSet={`/images/${citySlug}-400.jpg 1x, /images/${citySlug}-800.jpg 2x`} />
-          <source media="(max-width: 1024px)" srcSet={`/images/${citySlug}-600.jpg 1x, /images/${citySlug}-1200.jpg 2x`} />
-          <source media="(min-width: 1025px)" srcSet={`/images/${citySlug}-800.jpg 1x, /images/${citySlug}-1600.jpg 2x`} />
-          <img
-            src={`/images/${citySlug}-800.jpg`}
-            alt={`${city.name}, ${city.country}`}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 transform-gpu"
-            loading="lazy"
-            decoding="async"
-          />
-        </picture>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent" aria-hidden="true" />
+      <div className="relative">
+        <ImageGallery
+          cityName={city.name}
+          country={city.country}
+          highlights={city.highlights}
+          currentHighlight={activeHighlight}
+          onHighlightChange={setActiveHighlight}
+        />
+
+        {/* <div className="absolute top-4 left-4 z-20">
+          <div
+            className={cn(
+              "px-4 py-2 rounded-full text-base font-medium",
+              "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
+              getMatchColor(city.matchScore)
+            )}>
+            {Math.round(city.matchScore)}% match
+          </div>
+        </div> */}
+
         <button
-          className="absolute top-4 right-4 p-2.5 rounded-full bg-white/90 hover:bg-white transition-colors hover:scale-110 active:scale-95"
-          aria-label="Save to favorites">
-          <Star className="w-6 h-6" />
+          onClick={() => setIsFavorite(!isFavorite)}
+          className="absolute top-4 right-4 p-2.5 rounded-full bg-white/90 hover:bg-white transition-all hover:scale-110 active:scale-95 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
+          aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}>
+          <Star className={cn("w-6 h-6", isFavorite && "fill-primary text-primary")} />
         </button>
-        <div className={cn("absolute top-4 left-4 px-4 py-2 rounded-full text-base font-medium shadow-sm", getMatchColor(city.matchScore))}>
-          {Math.round(city.matchScore)}% match
-        </div>
       </div>
+
+      <button
+        className="absolute top-4 right-4 p-2.5 rounded-full bg-white/90 hover:bg-white transition-colors hover:scale-110 active:scale-95 z-10"
+        aria-label="Save to favorites">
+        <Star className="w-6 h-6" />
+      </button>
 
       <div className="pt-5 pb-2 px-1">
         <div className="flex items-start justify-between mb-3">
@@ -87,7 +96,6 @@ export const CityCard = ({ city }: CityCardProps) => {
             <div className="flex items-center gap-1.5">
               <Star className="w-4 h-4 fill-primary text-primary" />
               <span className="font-medium">{city.reviews.averageRating.toFixed(1)}</span>
-              {/* <span className="text-muted-foreground text-sm">({city.reviews.totalReviews})</span> */}
             </div>
           )}
         </div>
