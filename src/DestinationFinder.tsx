@@ -5,8 +5,9 @@ import { Pagination } from "./components/Pagination";
 import { CityData, UserPreferences } from "./types";
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetHeader } from "@/components/ui/sheet";
 import { Legend } from "@/components/Legend";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
 
@@ -710,6 +711,12 @@ const DestinationFinder = () => {
   const [cityData, setCityData] = useState<Record<string, CityData>>(fallbackCityData);
   const [isLoading, setIsLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [tempPreferences, setTempPreferences] = useState(preferences);
+
+  useEffect(() => {
+    // Update temp preferences when main preferences change
+    setTempPreferences(preferences);
+  }, [preferences]);
 
   useEffect(() => {
     const loadCityData = async () => {
@@ -755,6 +762,11 @@ const DestinationFinder = () => {
   const totalPages = Math.ceil(rankedCities.length / ITEMS_PER_PAGE);
   const paginatedCities = rankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  const handleApplyFilters = () => {
+    setPreferences(tempPreferences);
+    setIsFilterOpen(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -771,33 +783,41 @@ const DestinationFinder = () => {
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b">
         <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-          <div className="h-20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img src="/favicon.svg" alt="European Gems Logo" className="w-8 h-8" />
-              <h1 className="text-2xl font-bold text-primary hidden md:block">European Gems</h1>
-              <h1 className="text-xl font-bold text-primary md:hidden">Gems</h1>
+          <div className="h-16 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <img src="/favicon.svg" alt="European Gems Logo" className="w-6 h-6" />
+              <h1 className="text-lg font-semibold text-primary hidden md:block">European Gems</h1>
+              <h1 className="text-lg font-semibold text-primary md:hidden">Gems</h1>
             </div>
 
             {/* Mobile Filter Button */}
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" className="md:hidden gap-2">
+                <Button variant="outline" size="sm" className="md:hidden gap-1.5">
                   <Filter className="w-4 h-4" />
                   Filters
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="h-[80vh]">
-                <SheetHeader>
-                  <SheetTitle>Customize Your Search</SheetTitle>
+              <SheetContent side="bottom" className="h-[85vh] p-0 overflow-hidden flex flex-col">
+                <SheetHeader className="px-6 py-4 border-b flex-shrink-0">
+                  <div className="flex items-center justify-between">
+                    <SheetTitle className="text-lg font-semibold">Customize Search</SheetTitle>
+                  </div>
                 </SheetHeader>
-                <div className="mt-4">
-                  <PreferencesCard
-                    preferences={preferences}
-                    onPreferencesChange={(newPrefs) => {
-                      setPreferences(newPrefs);
-                      setIsFilterOpen(false);
-                    }}
-                  />
+
+                <ScrollArea className="flex-1 px-6 py-4">
+                  <PreferencesCard preferences={tempPreferences} onPreferencesChange={setTempPreferences} />
+                </ScrollArea>
+
+                <div className="flex-shrink-0 border-t p-4">
+                  <div className="flex gap-3">
+                    <Button variant="outline" className="flex-1" onClick={() => setIsFilterOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button className="flex-1" onClick={handleApplyFilters}>
+                      Apply Filters
+                    </Button>
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
@@ -805,30 +825,33 @@ const DestinationFinder = () => {
         </div>
       </header>
 
-      <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-8">
+      <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4 md:py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Desktop Filters */}
           <aside className="hidden md:block w-full md:w-80 shrink-0">
-            <div className="sticky top-24">
+            <div className="sticky top-20">
               <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
             </div>
           </aside>
 
           {/* Results Section */}
-          <div className="flex-1 space-y-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Discover Hidden Gems</h2>
-              <Legend />
-              <div className="text-sm text-muted-foreground">{rankedCities.length} destinations</div>
-            </div>
+          <div className="flex-1">
+            <div className="flex flex-col space-y-4 md:space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-base font-medium text-muted-foreground">{rankedCities.length} hidden gems</h2>
+                  <Legend />
+                </div>
+              </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
-              {paginatedCities.map((city) => (
-                <CityCard key={city.name} city={city} />
-              ))}
-            </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6">
+                {paginatedCities.map((city) => (
+                  <CityCard key={city.name} city={city} />
+                ))}
+              </div>
 
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </div>
           </div>
         </div>
       </main>
