@@ -71,7 +71,7 @@ export const CityCard = ({ city }: CityCardProps) => {
           <div className="flex items-baseline gap-1">
             <a
               href={`/${countrySlug}/${citySlug}`}
-              className="font-semibold text-xl hover:text-primary transition-colors"
+              className="font-semibold text-xl text-foreground hover:opacity-70 active:opacity-50 transition-opacity"
               onClick={handleCityClick}>
               {city.name}
             </a>
