@@ -59,12 +59,13 @@ export interface HighlightCategory {
   description: string;
 }
 
-export interface HighlightLinkProps {
+export type HighlightLinkProps = {
   highlight: string;
   cityName: string;
   country: string;
   onClick?: (e: React.MouseEvent) => void;
-}
+  hasImages: boolean;
+};
 
 // Component Props
 export interface CityCardProps {
