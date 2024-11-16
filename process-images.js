@@ -1,4 +1,3 @@
-// process-images.js
 import sharp from "sharp";
 import fs from "fs";
 import path from "path";
@@ -17,21 +16,34 @@ const sizes = [
   { width: 1600, height: 1000, suffix: "1600" },
 ];
 
-const inputDir = path.join(__dirname, "public");
+const inputDir = path.join(__dirname, "public", "images-raw");
 const outputDir = path.join(__dirname, "public", "images");
 
-// Create output directory if it doesn't exist
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, { recursive: true });
-}
+// Create the necessary directories if they don't exist
+const createDirectories = () => {
+  const dirs = [outputDir, path.join(outputDir, "cities"), path.join(outputDir, "attractions")];
 
-const processImage = async (inputPath) => {
-  const filename = path.parse(inputPath).name;
+  dirs.forEach((dir) => {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  });
+};
 
-  console.log(`Processing ${filename}...`);
+const createSlug = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/--+/g, "-") // Replace multiple hyphens with single hyphen
+    .trim();
+};
+
+const processImage = async (inputPath, outputBasePath, slug) => {
+  console.log(`Processing ${slug}...`);
 
   for (const size of sizes) {
-    const outputPath = path.join(outputDir, `${filename}-${size.suffix}.jpg`);
+    const outputPath = path.join(outputBasePath, `${slug}-${size.suffix}.jpg`);
 
     try {
       await sharp(inputPath)
@@ -48,26 +60,76 @@ const processImage = async (inputPath) => {
         })
         .toFile(outputPath);
 
-      console.log(`Generated ${filename}-${size.suffix}.jpg`);
+      console.log(`Generated ${slug}-${size.suffix}.jpg`);
     } catch (error) {
-      console.error(`Error processing ${filename} at size ${size.suffix}:`, error);
+      console.error(`Error processing ${slug} at size ${size.suffix}:`, error);
+    }
+  }
+};
+
+const processCityImages = async () => {
+  const cityInputDir = path.join(inputDir, "cities");
+  const cityOutputDir = path.join(outputDir, "cities");
+
+  if (!fs.existsSync(cityInputDir)) {
+    console.log("No cities directory found in images-raw");
+    return;
+  }
+
+  const files = fs.readdirSync(cityInputDir).filter((file) => file.toLowerCase().endsWith(".jpg") || file.toLowerCase().endsWith(".jpeg"));
+
+  console.log(`Found ${files.length} city images to process`);
+
+  for (const file of files) {
+    const cityName = path.parse(file).name;
+    const citySlug = createSlug(cityName);
+    await processImage(path.join(cityInputDir, file), cityOutputDir, citySlug);
+  }
+};
+
+const processAttractionImages = async () => {
+  const attractionsInputDir = path.join(inputDir, "attractions");
+  const attractionsOutputDir = path.join(outputDir, "attractions");
+
+  if (!fs.existsSync(attractionsInputDir)) {
+    console.log("No attractions directory found in images-raw");
+    return;
+  }
+
+  // Process each city's attractions
+  const cities = fs.readdirSync(attractionsInputDir).filter((file) => fs.statSync(path.join(attractionsInputDir, file)).isDirectory());
+
+  for (const city of cities) {
+    const citySlug = createSlug(city);
+    const cityAttractionsDir = path.join(attractionsInputDir, city);
+    const cityOutputDir = path.join(attractionsOutputDir, citySlug);
+
+    // Create output directory for this city's attractions
+    if (!fs.existsSync(cityOutputDir)) {
+      fs.mkdirSync(cityOutputDir, { recursive: true });
+    }
+
+    const attractions = fs
+      .readdirSync(cityAttractionsDir)
+      .filter((file) => file.toLowerCase().endsWith(".jpg") || file.toLowerCase().endsWith(".jpeg"));
+
+    console.log(`Found ${attractions.length} attractions for ${city}`);
+
+    for (const attraction of attractions) {
+      const attractionName = path.parse(attraction).name;
+      const attractionSlug = createSlug(attractionName);
+      await processImage(path.join(cityAttractionsDir, attraction), cityOutputDir, attractionSlug);
     }
   }
 };
 
 const processAllImages = async () => {
-  const files = fs.readdirSync(inputDir).filter((file) => file.toLowerCase().endsWith(".jpg") || file.toLowerCase().endsWith(".jpeg"));
+  // Create necessary directories
+  createDirectories();
 
-  if (files.length === 0) {
-    console.log("No JPG images found in public directory");
-    return;
-  }
-
-  console.log(`Found ${files.length} images to process`);
-
-  for (const file of files) {
-    await processImage(path.join(inputDir, file));
-  }
+  // Process both city and attraction images
+  await processCityImages();
+  await processAttractionImages();
 
   console.log("All images processed successfully!");
 };
