@@ -83,6 +83,13 @@ export const CityCard = ({ city }: CityCardProps) => {
               {city.country}
             </a>
           </div>
+          {city.reviews && (
+            <div className="flex items-center gap-1.5">
+              <Star className="w-4 h-4 fill-primary text-primary" />
+              <span className="font-medium">{city.reviews.averageRating.toFixed(1)}</span>
+              {/* <span className="text-muted-foreground text-sm">({city.reviews.totalReviews})</span> */}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5 text-base text-muted-foreground mb-3">
