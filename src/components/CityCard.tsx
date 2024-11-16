@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { MapPin, Star } from "lucide-react";
 import { RankedCity } from "../types";
 import { cn } from "@/lib/utils";
+import { HighlightLinkSection } from "@/components/HighlightsLinkSection";
 
 interface CityCardProps {
   city: RankedCity;
@@ -17,18 +18,35 @@ export const CityCard = ({ city }: CityCardProps) => {
   };
 
   const citySlug = city.name.toLowerCase().replace(/\s+/g, "-");
+  const countrySlug = city.country.toLowerCase().replace(/\s+/g, "-");
+
+  const handleHighlightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const url = (e.currentTarget as HTMLAnchorElement).href;
+    // TODO: Replace with your routing implementation
+    console.log("Would navigate to:", url);
+  };
+
+  const handleCityClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // TODO: Replace with your routing implementation
+    console.log("Would navigate to:", `/${countrySlug}/${citySlug}`);
+  };
+
+  const handleCountryClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent triggering the city click
+    // TODO: Replace with your routing implementation
+    console.log("Would navigate to:", `/${countrySlug}`);
+  };
 
   return (
     <Card className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300">
       <div className="aspect-[16/10] relative overflow-hidden rounded-xl bg-neutral-100">
         <picture>
-          {/* Mobile viewport */}
           <source media="(max-width: 640px)" srcSet={`/images/${citySlug}-400.jpg 1x, /images/${citySlug}-800.jpg 2x`} />
-          {/* Tablet viewport */}
           <source media="(max-width: 1024px)" srcSet={`/images/${citySlug}-600.jpg 1x, /images/${citySlug}-1200.jpg 2x`} />
-          {/* Desktop viewport */}
           <source media="(min-width: 1025px)" srcSet={`/images/${citySlug}-800.jpg 1x, /images/${citySlug}-1600.jpg 2x`} />
-          {/* Fallback image */}
           <img
             src={`/images/${citySlug}-800.jpg`}
             alt={`${city.name}, ${city.country}`}
@@ -50,19 +68,21 @@ export const CityCard = ({ city }: CityCardProps) => {
 
       <div className="pt-5 pb-2 px-1">
         <div className="flex items-start justify-between mb-3">
-          <span
-            className="font-semibold text-xl cursor-pointer"
-            // TODO: make these links work
-            onClick={() => window.open(`/cities/${city.name.toLowerCase()}`, "_blank")}>
-            {city.name},
-            <span
-              className="text-lg text-muted-foreground cursor-pointer"
-              // TODO: make these links work
-              onClick={() => window.open(`/countries/${city.country.toLowerCase()}`, "_blank")}>
-              &nbsp;
+          <div className="flex items-baseline gap-1">
+            <a
+              href={`/${countrySlug}/${citySlug}`}
+              className="font-semibold text-xl text-foreground hover:opacity-70 active:opacity-50 transition-opacity"
+              onClick={handleCityClick}>
+              {city.name}
+            </a>
+            <span className="text-muted-foreground">,</span>
+            <a
+              href={`/${countrySlug}`}
+              className="text-lg text-muted-foreground hover:text-primary/80 transition-colors"
+              onClick={handleCountryClick}>
               {city.country}
-            </span>
-          </span>
+            </a>
+          </div>
         </div>
 
         <div className="flex items-center gap-1.5 text-base text-muted-foreground mb-3">
@@ -72,13 +92,12 @@ export const CityCard = ({ city }: CityCardProps) => {
 
         <p className="text-base text-muted-foreground mb-4 line-clamp-2">{city.description}</p>
 
-        <div className="flex flex-wrap gap-2">
-          {city.highlights.map((highlight, index) => (
-            <span key={index} className="text-sm px-3 py-1.5 bg-secondary rounded-full">
-              {highlight}
-            </span>
-          ))}
-        </div>
+        <HighlightLinkSection
+          highlights={city.highlights}
+          cityName={city.name}
+          country={city.country}
+          onHighlightClick={handleHighlightClick}
+        />
       </div>
     </Card>
   );
