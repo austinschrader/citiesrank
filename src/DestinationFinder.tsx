@@ -420,7 +420,7 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1600,
     },
   },
-  Gjirokastër: {
+  Gjirokaster: {
     country: "Albania",
     cost: 30,
     interesting: 80,
