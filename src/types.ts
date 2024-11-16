@@ -24,3 +24,29 @@ export interface UserPreferences {
   interesting: number;
   transit: number;
 }
+
+export interface HighlightLinkProps {
+  highlight: string;
+  cityName: string;
+  country: string;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
+import type { ReactNode } from "react";
+
+export type HighlightCategoryType = "historic" | "architecture" | "nature" | "dining" | "cultural";
+
+export interface HighlightCategory {
+  type: HighlightCategoryType;
+  icon: ReactNode;
+  className: string;
+  label: string;
+  description: string;
+}
+
+export interface HighlightLinkProps {
+  highlight: string;
+  cityName: string;
+  country: string;
+  onClick?: (e: React.MouseEvent) => void;
+}
