@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageGalleryProps, GalleryImage } from "@/types";
 
@@ -85,48 +85,85 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
     }
   }, [currentHighlight, loadedImages]);
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
 
-  const navigate = (direction: number, event?: React.MouseEvent) => {
-    if (event) {
-      event.stopPropagation();
+  const navigate = useCallback(
+    (direction: number, event?: React.MouseEvent) => {
+      if (event) {
+        event.stopPropagation();
+      }
+
+      setCurrentIndex((current) => {
+        const newIndex = current + direction;
+        if (newIndex >= loadedImages.length) return 0;
+        if (newIndex < 0) return loadedImages.length - 1;
+        return newIndex;
+      });
+
+      if (onHighlightChange) {
+        const newImage = loadedImages[(currentIndex + direction + loadedImages.length) % loadedImages.length];
+        onHighlightChange(newImage.type === "attraction" ? newImage.title : null);
+      }
+    },
+    [currentIndex, loadedImages, onHighlightChange]
+  );
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFullscreen) {
+        switch (e.key) {
+          case "Escape":
+            toggleFullscreen();
+            break;
+          case "ArrowLeft":
+            navigate(-1);
+            break;
+          case "ArrowRight":
+            navigate(1);
+            break;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isFullscreen, navigate, toggleFullscreen]);
+
+  // Lock body scroll when fullscreen
+  useEffect(() => {
+    if (isFullscreen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
-
-    setCurrentIndex((current) => {
-      const newIndex = current + direction;
-      if (newIndex >= loadedImages.length) return 0;
-      if (newIndex < 0) return loadedImages.length - 1;
-      return newIndex;
-    });
-
-    if (onHighlightChange) {
-      const newImage = loadedImages[(currentIndex + direction + loadedImages.length) % loadedImages.length];
-      onHighlightChange(newImage.type === "attraction" ? newImage.title : null);
-    }
-  };
-
-  const handleHighlightClick = (index: number) => {
-    setCurrentIndex(index);
-    if (onHighlightChange) {
-      const selectedImage = loadedImages[index];
-      onHighlightChange(selectedImage.type === "attraction" ? selectedImage.title : null);
-    }
-  };
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isFullscreen]);
 
   if (loadedImages.length === 0) {
     return null;
   }
 
   return (
-    <div className="relative">
+    <div className="relative" role="region" aria-label="Image gallery">
       <div
         className={cn(
           "relative overflow-hidden rounded-xl bg-neutral-100 transition-all duration-300 group",
-          isFullscreen ? "fixed inset-0 z-50 bg-black/90" : "aspect-[16/10] cursor-pointer"
+          isFullscreen ? "fixed inset-0 z-50 bg-black/90" : "aspect-[16/10] cursor-zoom-in"
         )}
-        onClick={toggleFullscreen}>
+        onClick={toggleFullscreen}
+        role={isFullscreen ? "dialog" : undefined}
+        aria-modal={isFullscreen}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !isFullscreen) {
+            toggleFullscreen();
+          }
+        }}>
         <picture>
           <source media="(max-width: 640px)" srcSet={loadedImages[currentIndex].sources.mobile} />
           <source media="(max-width: 1024px)" srcSet={loadedImages[currentIndex].sources.tablet} />
@@ -151,63 +188,47 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
           )}>
           {loadedImages.length > 1 && (
             <>
-              {/* Left Navigation */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(-1, e);
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]">
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
+                aria-label="Previous image"
+                title="Previous image (Left arrow key)">
                 <ChevronLeft size={24} />
               </button>
 
-              {/* Right Navigation */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(1, e);
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]">
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
+                aria-label="Next image"
+                title="Next image (Right arrow key)">
                 <ChevronRight size={24} />
               </button>
             </>
           )}
 
-          {/* Fullscreen Toggle */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleFullscreen();
-            }}
-            className="absolute right-4 top-4 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]">
-            {isFullscreen ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
-          </button>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6">
-          <p className="text-white text-base font-medium">{loadedImages[currentIndex].title}</p>
+          {isFullscreen && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFullscreen();
+              }}
+              className="absolute right-4 top-4 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
+              aria-label="Close gallery"
+              title="Close gallery (Esc key)">
+              <Minimize2 size={24} />
+            </button>
+          )}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6">
+            <p className="text-white text-base font-medium">{loadedImages[currentIndex].title}</p>
+          </div>
         </div>
       </div>
-
-      {loadedImages.length > 1 && (
-        <div className="flex gap-1 mt-1">
-          {loadedImages.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => handleHighlightClick(index)}
-              className={cn(
-                "relative aspect-[16/10] w-[180px] flex-shrink-0",
-                "transition-all duration-200",
-                currentIndex === index ? "ring-2 ring-primary" : "opacity-70 hover:opacity-100"
-              )}>
-              <img src={image.sources.mobile} alt={image.title} className="absolute inset-0 h-full w-full object-cover" />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent">
-                <span className="block px-2 py-1 text-white text-xs truncate">{image.title}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

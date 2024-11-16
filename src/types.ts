@@ -14,14 +14,6 @@ export interface GalleryImage {
   sources: ImageSource;
 }
 
-export interface ImageGalleryProps {
-  cityName: string;
-  country: string;
-  highlights: string[];
-  currentHighlight: string | null;
-  onHighlightChange?: (highlight: string | null) => void;
-}
-
 // City-related types
 export interface ReviewSummary {
   averageRating: number;
@@ -74,13 +66,6 @@ export interface HighlightLinkProps {
   onClick?: (e: React.MouseEvent) => void;
 }
 
-export interface HighlightLinkSectionProps {
-  highlights: string[];
-  cityName: string;
-  country: string;
-  onHighlightClick?: (e: React.MouseEvent) => void;
-}
-
 // Component Props
 export interface CityCardProps {
   city: RankedCity;
@@ -122,4 +107,21 @@ export interface ReviewProps {
 
 export interface ReviewSectionProps {
   reviews: ReviewData[];
+}
+
+export interface ImageGalleryProps {
+  cityName: string;
+  country: string;
+  highlights: string[];
+  currentHighlight: string | null;
+  onHighlightChange?: (highlight: string | null) => void;
+  onImagesLoaded?: (images: Set<string>) => void;
+}
+
+export interface HighlightLinkSectionProps {
+  highlights: string[];
+  cityName: string;
+  country: string;
+  onHighlightClick?: (e: React.MouseEvent) => void;
+  availableImages?: Set<string>;
 }
