@@ -82,9 +82,8 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
               href={`/${countrySlug}/${citySlug}`}
               className="font-semibold text-xl text-foreground hover:opacity-70 active:opacity-50 transition-opacity"
               onClick={handleCityClick}>
-              {city.name}
+              {city.name},
             </a>
-            <span className="text-muted-foreground">,</span>
             <a
               href={`/${countrySlug}`}
               className="text-lg text-muted-foreground hover:text-primary/80 transition-colors"
