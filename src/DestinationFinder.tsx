@@ -784,11 +784,15 @@ const DestinationFinder = () => {
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b">
         <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-          <div className="h-16 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <img src="/favicon.svg" alt="European Gems Logo" className="w-6 h-6" />
-              <h1 className="text-lg font-semibold text-primary hidden md:block">European Gems</h1>
-              <h1 className="text-lg font-semibold text-primary md:hidden">Gems</h1>
+          <div className="h-20 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <a href="/" className="hover:opacity-80 transition-opacity">
+                <img src="/favicon.svg" alt="European Gems Logo" className="w-8 h-8" />
+              </a>
+              <a href="/" className="hover:opacity-80 transition-opacity">
+                <h1 className="text-2xl font-bold text-primary hidden md:block">European Gems</h1>
+                <h1 className="text-xl font-bold text-primary md:hidden">Gems</h1>
+              </a>
             </div>
 
             <div className="flex items-center gap-3">
