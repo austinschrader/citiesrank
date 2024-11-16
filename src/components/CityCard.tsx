@@ -50,9 +50,19 @@ export const CityCard = ({ city }: CityCardProps) => {
 
       <div className="pt-5 pb-2 px-1">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="font-semibold text-xl">
-            {city.name}, {city.country}
-          </h3>
+          <span
+            className="font-semibold text-xl cursor-pointer"
+            // TODO: make these links work
+            onClick={() => window.open(`/cities/${city.name.toLowerCase()}`, "_blank")}>
+            {city.name},
+            <span
+              className="text-lg text-muted-foreground cursor-pointer"
+              // TODO: make these links work
+              onClick={() => window.open(`/countries/${city.country.toLowerCase()}`, "_blank")}>
+              &nbsp;
+              {city.country}
+            </span>
+          </span>
         </div>
 
         <div className="flex items-center gap-1.5 text-base text-muted-foreground mb-3">
