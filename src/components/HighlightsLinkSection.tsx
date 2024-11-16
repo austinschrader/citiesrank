@@ -54,13 +54,19 @@ const HighlightLink: React.FC<HighlightLinkProps> = ({ highlight, cityName, coun
         "flex items-center gap-1 px-2 py-1 rounded-full transition-all text-sm group",
         "hover:scale-105 active:scale-100",
         highlightInfo.className,
-        hasImages ? "cursor-pointer" : "cursor-default"
+        hasImages ? "cursor-pointer relative" : "cursor-default"
       )}
       aria-label={`Learn more about ${highlight} in ${cityName}, ${country}`}>
       {highlightInfo.icon}
       <span>{highlight}</span>
-      {/* {hasImages && <span className="w-2 h-2 bg-current opacity-50 group-hover:opacity-100 transition-opacity rounded-full ml-1" />} */}
-      {hasImages && <CameraIcon className="w-4 h-4 text-current opacity-50 group-hover:opacity-100 transition-opacity ml-1" />}
+      {hasImages && (
+        <div>
+          <CameraIcon className="w-4 h-4 text-current opacity-50 group-hover:opacity-100 transition-opacity ml-1" />
+          <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out animate-pulse">
+            <span className="absolute inset-0 rounded-full opacity-75 bg-white animate-ping"></span>
+          </span>
+        </div>
+      )}
     </a>
   );
 };
