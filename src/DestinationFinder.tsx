@@ -35,6 +35,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 3842,
     },
     destinationTypes: ["coastal", "historic", "culinary", "wineries", "cultural"],
+    crowdLevel: 65, // Popular but not overwhelming
+    recommendedStay: 70, // 4-5 days ideal
+    bestSeason: 85, // Late spring through summer
+    accessibility: 80, // International airport, good connections
   },
   Ljubljana: {
     country: "Slovenia",
@@ -57,6 +61,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2156,
     },
     destinationTypes: ["cultural", "historic", "arts", "digital-nomad"],
+    crowdLevel: 45, // Less touristy than major capitals
+    recommendedStay: 55, // 3 days ideal
+    bestSeason: 70, // Late spring through early fall
+    accessibility: 65, // Small international airport
   },
   Bologna: {
     country: "Italy",
@@ -79,6 +87,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2987,
     },
     destinationTypes: ["historic", "cultural", "culinary", "gastronomy", "arts"],
+    crowdLevel: 50, // Authentic city, moderate tourism
+    recommendedStay: 60, // 3-4 days ideal
+    bestSeason: 65, // Spring/fall best, summer quite hot
+    accessibility: 85, // Good airport, major rail hub
   },
   Valencia: {
     country: "Spain",
@@ -101,6 +113,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 4521,
     },
     destinationTypes: ["coastal", "metropolis", "cultural", "arts", "gastronomy"],
+    crowdLevel: 70, // Popular but less than Barcelona
+    recommendedStay: 75, // 4-5 days ideal
+    bestSeason: 80, // Late spring through early fall
+    accessibility: 85, // International airport, good connections
   },
   Ghent: {
     country: "Belgium",
@@ -123,6 +139,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1876,
     },
     destinationTypes: ["historic", "cultural", "arts"],
+    crowdLevel: 55, // Less touristy than Bruges
+    recommendedStay: 50, // 2-3 days ideal
+    bestSeason: 65, // Spring through fall
+    accessibility: 80, // Close to Brussels, great rail
   },
   Heidelberg: {
     country: "Germany",
@@ -145,6 +165,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2245,
     },
     destinationTypes: ["historic", "cultural", "village", "arts"],
+    crowdLevel: 65, // Popular university town
+    recommendedStay: 45, // 2-3 days sufficient
+    bestSeason: 70, // Late spring through early fall
+    accessibility: 75, // Good rail connections, Frankfurt nearby
   },
   Bruges: {
     country: "Belgium",
@@ -166,6 +190,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 3000,
     },
     destinationTypes: ["historic", "cultural", "arts", "village"],
+    crowdLevel: 85, // Very touristy
+    recommendedStay: 45, // 2-3 days sufficient
+    bestSeason: 65, // Year-round, summer peak
+    accessibility: 75, // Easy train from Brussels
   },
   "Cesky Krumlov": {
     country: "Czech Republic",
@@ -187,6 +215,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2100,
     },
     destinationTypes: ["historic", "cultural", "village", "arts"],
+    crowdLevel: 75, // Very touristy in peak season
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 70, // Late spring through early fall
+    accessibility: 45, // Requires bus/car from larger cities
   },
   Tallinn: {
     country: "Estonia",
@@ -208,6 +240,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1800,
     },
     destinationTypes: ["coastal", "historic", "cultural", "digital-nomad", "emerging"],
+    crowdLevel: 60, // Growing in popularity
+    recommendedStay: 55, // 3 days ideal
+    bestSeason: 75, // Summer best, winter very cold
+    accessibility: 70, // Good airport, ferry connections
   },
   Innsbruck: {
     country: "Austria",
@@ -222,6 +258,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1900,
     },
     destinationTypes: ["mountain", "historic", "winter", "adventure"],
+    crowdLevel: 70, // Popular year-round
+    recommendedStay: 55, // 3 days ideal
+    bestSeason: 40, // Winter for skiing, summer hiking
+    accessibility: 80, // Good airport, major rail route
   },
   Bergen: {
     country: "Norway",
@@ -236,6 +276,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2500,
     },
     destinationTypes: ["coastal", "ports", "cultural", "adventure"],
+    crowdLevel: 65, // Gateway to fjords
+    recommendedStay: 60, // 3-4 days
+    bestSeason: 75, // Summer best, winter very wet
+    accessibility: 75, // Good airport, cruise port
   },
   Colmar: {
     country: "France",
@@ -250,6 +294,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2100,
     },
     destinationTypes: ["village", "historic", "cultural", "wineries"],
+    crowdLevel: 75, // Very touristy in season
+    recommendedStay: 40, // 2 days sufficient
+    bestSeason: 70, // Spring through fall, Christmas
+    accessibility: 60, // Regional trains, nearby airports
   },
   Sorrento: {
     country: "Italy",
@@ -271,6 +319,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1800,
     },
     destinationTypes: ["coastal", "culinary", "cultural"],
+    crowdLevel: 80, // Very touristy
+    recommendedStay: 70, // 4-5 days (base for Amalfi)
+    bestSeason: 80, // Late spring through early fall
+    accessibility: 65, // Train from Naples
   },
   "Rothenburg ob der Tauber": {
     country: "Germany",
@@ -285,6 +337,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2300,
     },
     destinationTypes: ["village", "historic", "cultural"],
+    crowdLevel: 80, // Very touristy in peak
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 65, // Spring through fall, Christmas
+    accessibility: 50, // Requires train/car connections
   },
   Annecy: {
     country: "France",
@@ -299,7 +355,12 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2600,
     },
     destinationTypes: ["mountain", "village", "historic", "cultural"],
+    crowdLevel: 70, // Popular in summer
+    recommendedStay: 45, // 2-3 days ideal
+    bestSeason: 80, // Summer best for lake
+    accessibility: 60, // Near Geneva airport
   },
+
   Sintra: {
     country: "Portugal",
     cost: 40,
@@ -313,6 +374,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 3200,
     },
     destinationTypes: ["historic", "cultural", "forest"],
+    crowdLevel: 85, // Very touristy
+    recommendedStay: 45, // 2-3 days ideal
+    bestSeason: 75, // Spring through fall
+    accessibility: 75, // Easy trip from Lisbon
   },
   Kotor: {
     country: "Montenegro",
@@ -334,6 +399,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1800,
     },
     destinationTypes: ["coastal", "historic", "cultural", "ports"],
+    crowdLevel: 75, // Very busy in summer
+    recommendedStay: 50, // 2-3 days
+    bestSeason: 75, // Late spring through early fall
+    accessibility: 50, // Smaller airports, cruise port
   },
   Zermatt: {
     country: "Switzerland",
@@ -348,6 +417,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2100,
     },
     destinationTypes: ["mountain", "winter", "adventure", "village"],
+    crowdLevel: 80, // Very touristy in peak seasons
+    recommendedStay: 65, // 3-4 days ideal
+    bestSeason: 20, // Winter peak for skiing, but also nice in summer (85)
+    accessibility: 50, // No cars allowed, train transfer required
   },
   Hallstatt: {
     country: "Austria",
@@ -362,6 +435,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2400,
     },
     destinationTypes: ["mountain", "village", "historic", "cultural"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 70, // Spring through fall
+    accessibility: 45, // Remote, requires connections
   },
   Ronda: {
     country: "Spain",
@@ -376,6 +453,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2000,
     },
     destinationTypes: ["historic", "cultural", "adventure"],
+    crowdLevel: 70, // Popular daytrip
+    recommendedStay: 40, // 2 days ideal
+    bestSeason: 65, // Spring and fall best
+    accessibility: 55, // Regional trains/buses required
   },
   Reine: {
     country: "Norway",
@@ -390,6 +471,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1500,
     },
     destinationTypes: ["coastal", "village", "adventure", "ports"],
+    crowdLevel: 40, // Remote but gaining popularity
+    recommendedStay: 45, // 2-3 days
+    bestSeason: 65, // Summer for midnight sun, winter for aurora
+    accessibility: 25, // Very remote, multiple transfers needed
   },
   Alberobello: {
     country: "Italy",
@@ -411,6 +496,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1700,
     },
     destinationTypes: ["village", "historic", "cultural", "wineries"],
+    crowdLevel: 75, // Touristy but manageable
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 75, // Late spring through early fall
+    accessibility: 45, // Requires connections from Bari
   },
   Carcassonne: {
     country: "France",
@@ -432,6 +521,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2200,
     },
     destinationTypes: ["historic", "cultural", "ancient"],
+    crowdLevel: 80, // Very touristy in season
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 70, // Spring through fall
+    accessibility: 60, // Regional airport, good trains
   },
   Piran: {
     country: "Slovenia",
@@ -446,6 +539,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1600,
     },
     destinationTypes: ["coastal", "historic", "cultural", "ports"],
+    crowdLevel: 60, // Moderately touristic
+    recommendedStay: 40, // 2 days sufficient
+    bestSeason: 80, // Summer best for beaches
+    accessibility: 55, // Requires connection from Ljubljana
   },
   Gjirokaster: {
     country: "Albania",
@@ -467,6 +564,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1300,
     },
     destinationTypes: ["historic", "cultural", "ancient", "emerging"],
+    crowdLevel: 25, // Off the beaten path
+    recommendedStay: 40, // 2-3 days sufficient
+    bestSeason: 75, // Late spring through early fall
+    accessibility: 30, // Remote, requires effort to reach
   },
   Chamonix: {
     country: "France",
@@ -481,6 +582,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2500,
     },
     destinationTypes: ["mountain", "winter", "adventure", "wellness"],
+    crowdLevel: 75, // Very busy in peak seasons
+    recommendedStay: 65, // 4 days ideal
+    bestSeason: 30, // Winter peak, summer also good
+    accessibility: 65, // Near Geneva airport
   },
   Bled: {
     country: "Slovenia",
@@ -495,6 +600,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 3800,
     },
     destinationTypes: ["mountain", "cultural", "adventure", "wellness"],
+    crowdLevel: 80, // Very touristy in summer
+    recommendedStay: 45, // 2-3 days ideal
+    bestSeason: 75, // Summer best, winter also nice
+    accessibility: 60, // Easy trip from Ljubljana
   },
   Mostar: {
     country: "Bosnia and Herzegovina",
@@ -516,6 +625,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2300,
     },
     destinationTypes: ["historic", "cultural", "ancient", "emerging"],
+    crowdLevel: 75, // Busy in peak season
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 70, // Late spring through early fall
+    accessibility: 45, // Limited transport options
   },
   Sighisoara: {
     country: "Romania",
@@ -530,6 +643,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 1400,
     },
     destinationTypes: ["historic", "cultural", "ancient", "village"],
+    crowdLevel: 45, // Less touristy
+    recommendedStay: 35, // 1-2 days sufficient
+    bestSeason: 70, // Late spring through early fall
+    accessibility: 40, // Requires train/car connections
   },
   Nafplio: {
     country: "Greece",
@@ -544,6 +661,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 2000,
     },
     destinationTypes: ["coastal", "historic", "cultural", "ports"],
+    crowdLevel: 60, // Popular with domestic tourism
+    recommendedStay: 50, // 2-3 days ideal
+    bestSeason: 75, // Late spring through early fall
+    accessibility: 55, // Requires bus from Athens
   },
   Paris: {
     country: "France",
@@ -566,6 +687,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 25_000,
     },
     destinationTypes: ["metropolis", "cultural", "arts", "gastronomy"],
+    crowdLevel: 95, // Extremely touristy
+    recommendedStay: 90, // 5-7 days recommended
+    bestSeason: 65, // Spring/Fall best, summer very crowded
+    accessibility: 95, // Major hub, multiple airports
   },
   Rome: {
     country: "Italy",
@@ -580,6 +705,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 21_000,
     },
     destinationTypes: ["metropolis", "historic", "cultural", "ancient", "gastronomy"],
+    crowdLevel: 95, // Extremely touristy
+    recommendedStay: 90, // 5-7 days ideal
+    bestSeason: 65, // Spring/fall best
+    accessibility: 95, // Major hub, multiple airports
   },
   London: {
     country: "United Kingdom",
@@ -602,6 +731,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 23_000,
     },
     destinationTypes: ["metropolis", "cultural", "arts", "digital-nomad"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 90, // 5-7 days ideal
+    bestSeason: 60, // Spring/fall best
+    accessibility: 100, // Major global hub
   },
   Barcelona: {
     country: "Spain",
@@ -616,6 +749,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 20_000,
     },
     destinationTypes: ["coastal", "metropolis", "cultural", "arts", "gastronomy"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 85, // 5-6 days ideal
+    bestSeason: 70, // Spring/fall best
+    accessibility: 90, // Major airport hub
   },
   Amsterdam: {
     country: "Netherlands",
@@ -630,6 +767,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 18_000,
     },
     destinationTypes: ["cultural", "arts", "digital-nomad"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 80, // 4-5 days ideal
+    bestSeason: 65, // Spring/fall best
+    accessibility: 95, // Major airport hub
   },
   Venice: {
     country: "Italy",
@@ -652,6 +793,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 15_000,
     },
     destinationTypes: ["coastal", "historic", "cultural", "arts", "ports"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 60, // 3-4 days ideal
+    bestSeason: 60, // Spring/Fall best to avoid crowds/heat
+    accessibility: 85, // Good airport, easy trains
   },
   Prague: {
     country: "Czech Republic",
@@ -674,6 +819,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 19_000,
     },
     destinationTypes: ["historic", "cultural", "arts", "digital-nomad"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 75, // 4-5 days ideal
+    bestSeason: 65, // Spring/fall best
+    accessibility: 85, // Major airport, good connections
   },
   Florence: {
     country: "Italy",
@@ -696,6 +845,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 17_000,
     },
     destinationTypes: ["historic", "cultural", "arts", "gastronomy"],
+    crowdLevel: 90, // Extremely touristy
+    recommendedStay: 75, // 4-5 days ideal
+    bestSeason: 65, // Spring/fall best
+    accessibility: 80, // Good airport, excellent trains
   },
   Athens: {
     country: "Greece",
@@ -718,6 +871,10 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 14_000,
     },
     destinationTypes: ["historic", "cultural", "ancient", "coastal"],
+    crowdLevel: 85, // Very touristy
+    recommendedStay: 70, // 4-5 days ideal
+    bestSeason: 70, // Spring/fall best
+    accessibility: 85, // Major airport hub
   },
   Dubrovnik: {
     country: "Croatia",
@@ -740,15 +897,23 @@ const fallbackCityData: Record<string, CityData> = {
       totalReviews: 12_000,
     },
     destinationTypes: ["coastal", "historic", "cultural", "ports"],
+    crowdLevel: 90, // Extremely touristy in summer
+    recommendedStay: 55, // 3 days ideal
+    bestSeason: 65, // Spring/fall best
+    accessibility: 75, // Airport, cruise port
   },
 };
 
 const DestinationFinder = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
-    cost: 50,
-    interesting: 50,
-    transit: 50,
+    budget: 50, // 0=Budget-friendly, 100=Luxury
+    crowds: 50, // 0=Off beaten path, 100=Popular
+    tripLength: 50, // 0=Quick visit, 100=Extended stay
+    season: 50, // 0=Winter, 50=Spring/Fall, 100=Summer
+    transit: 50, // 0=Basic, 100=Excellent
+    accessibility: 50, // 0=Remote, 100=Well-connected
   });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [cityData, setCityData] = useState<Record<string, CityData>>(fallbackCityData);
   const [isLoading, setIsLoading] = useState(true);
@@ -781,15 +946,37 @@ const DestinationFinder = () => {
 
   const calculateMatch = (cityAttributes: CityData, userPreferences: UserPreferences) => {
     const matches = {
-      cost: 100 - Math.abs(cityAttributes.cost - userPreferences.cost),
-      interesting: 100 - Math.abs(cityAttributes.interesting - userPreferences.interesting),
+      // Cost/Budget match
+      budget: 100 - Math.abs(cityAttributes.cost - userPreferences.budget),
+
+      // Tourism level match (using crowdLevel attribute)
+      crowds: 100 - Math.abs(cityAttributes.crowdLevel - userPreferences.crowds),
+
+      // Trip duration suitability
+      tripLength: 100 - Math.abs(cityAttributes.recommendedStay - userPreferences.tripLength),
+
+      // Seasonal match
+      season: 100 - Math.abs(cityAttributes.bestSeason - userPreferences.season),
+
+      // Local transit quality
       transit: 100 - Math.abs(cityAttributes.transit - userPreferences.transit),
+
+      // Location accessibility
+      accessibility: 100 - Math.abs(cityAttributes.accessibility - userPreferences.accessibility),
     };
 
-    const overallMatch = (matches.cost + matches.interesting + matches.transit) / 3;
+    // Calculate overall match with weighted preferences
+    const weightedMatch =
+      (matches.budget * 1.2 + // Slightly higher weight for budget (crucial factor)
+        matches.crowds * 1.0 + // Standard weight for crowds
+        matches.tripLength * 0.8 + // Lower weight as it's more flexible
+        matches.season * 1.1 + // Higher weight as it affects experience
+        matches.transit * 1.0 + // Standard weight for transit
+        matches.accessibility * 0.9) / // Slightly lower weight for accessibility
+      6; // Divide by sum of weights
 
     return {
-      matchScore: overallMatch,
+      matchScore: weightedMatch,
       attributeMatches: matches,
     };
   };

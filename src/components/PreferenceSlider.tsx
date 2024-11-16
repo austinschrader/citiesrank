@@ -1,13 +1,14 @@
 import { Slider } from "@/components/ui/slider";
 import { LucideIcon } from "lucide-react";
 
-interface PreferenceSliderProps {
+export interface PreferenceSliderProps {
   icon: LucideIcon;
   label: string;
   value: number;
   onChange: (value: number) => void;
   labels: string[];
   getCurrentLabel: (value: number) => string;
+  hint: string;
 }
 
 export const PreferenceSlider = ({ icon: Icon, label, value, onChange, labels, getCurrentLabel }: PreferenceSliderProps) => (

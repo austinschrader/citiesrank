@@ -30,23 +30,32 @@ export interface CityData {
   highlights: string[];
   reviews?: ReviewSummary;
   destinationTypes: string[];
+  crowdLevel: number; // 0-100 (quiet to very touristy)
+  recommendedStay: number; // 0-100 (short to long stay)
+  bestSeason: number; // 0-100 (winter to summer)
+  accessibility: number; // 0-100 (remote to well-connected)
 }
 
 export interface RankedCity extends CityData {
   name: string;
   matchScore: number;
   attributeMatches: {
-    cost: number;
-    interesting: number;
+    budget: number;
+    crowds: number;
+    tripLength: number;
+    season: number;
     transit: number;
+    accessibility: number;
   };
 }
-
 // User preference types
 export interface UserPreferences {
-  cost: number;
-  interesting: number;
+  budget: number;
+  crowds: number;
+  tripLength: number;
+  season: number;
   transit: number;
+  accessibility: number;
 }
 
 // Highlight-related types
@@ -85,6 +94,7 @@ export interface PreferenceSliderProps {
   onChange: (value: number) => void;
   labels: string[];
   getCurrentLabel: (value: number) => string;
+  hint: string;
 }
 
 export interface PaginationProps {
