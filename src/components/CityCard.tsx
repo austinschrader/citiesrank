@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { MapPin, Star } from "lucide-react";
 import { RankedCity } from "../types";
 import { cn } from "@/lib/utils";
-import { HighlightLink } from "@/components/HighlightLink";
+import { HighlightLinkSection } from "@/components/HighlightsLinkSection";
 
 interface CityCardProps {
   city: RankedCity;
@@ -92,11 +92,12 @@ export const CityCard = ({ city }: CityCardProps) => {
 
         <p className="text-base text-muted-foreground mb-4 line-clamp-2">{city.description}</p>
 
-        <div className="flex flex-wrap gap-2">
-          {city.highlights.map((highlight, index) => (
-            <HighlightLink key={index} highlight={highlight} cityName={city.name} country={city.country} onClick={handleHighlightClick} />
-          ))}
-        </div>
+        <HighlightLinkSection
+          highlights={city.highlights}
+          cityName={city.name}
+          country={city.country}
+          onHighlightClick={handleHighlightClick}
+        />
       </div>
     </Card>
   );
