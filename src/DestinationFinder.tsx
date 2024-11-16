@@ -6,6 +6,7 @@ import { CityData, UserPreferences } from "./types";
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Legend } from "@/components/Legend";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
 
@@ -232,6 +233,7 @@ const DestinationFinder = () => {
           <div className="flex-1 space-y-8">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Discover Hidden Gems</h2>
+              <Legend />
               <div className="text-sm text-muted-foreground">{rankedCities.length} destinations</div>
             </div>
 
