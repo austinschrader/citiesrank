@@ -45,9 +45,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
           type: "attraction" as const,
           title: highlight,
           sources: {
-            mobile: getImageUrl(`${citySlug}/${attractionSlug}`, "thumbnail"),
-            tablet: getImageUrl(`${citySlug}/${attractionSlug}`, "standard"),
-            desktop: getImageUrl(`${citySlug}/${attractionSlug}`, "large"),
+            mobile: getImageUrl(attractionSlug, "thumbnail"),
+            tablet: getImageUrl(attractionSlug, "standard"),
+            desktop: getImageUrl(attractionSlug, "large"),
           },
         };
       }),

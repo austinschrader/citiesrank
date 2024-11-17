@@ -32,6 +32,6 @@ export const getCityImage = (citySlug: string, size: ImageSize = "standard") => 
   return getImageUrl(citySlug, size);
 };
 
-export const getAttractionImage = (citySlug: string, attractionSlug: string, size: ImageSize = "standard") => {
-  return getImageUrl(`${citySlug}/${attractionSlug}`, size);
+export const getAttractionImage = (attractionSlug: string, size: ImageSize = "standard") => {
+  return getImageUrl(attractionSlug, size);
 };
