@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageGalleryProps, GalleryImage } from "@/types";
+import { getImageUrl } from "@/lib/cloudinary";
 
 const createSlug = (text: string): string => {
   return text
@@ -20,7 +21,6 @@ const checkImageExists = (url: string): Promise<boolean> => {
     img.src = url;
   });
 };
-
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -34,9 +34,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
         type: "city" as const,
         title: `${cityName}, ${country}`,
         sources: {
-          mobile: `/images/cities/${citySlug}-400.jpg`,
-          tablet: `/images/cities/${citySlug}-800.jpg`,
-          desktop: `/images/cities/${citySlug}-1600.jpg`,
+          mobile: getImageUrl(citySlug, "thumbnail"),
+          tablet: getImageUrl(citySlug, "standard"),
+          desktop: getImageUrl(citySlug, "large"),
         },
       },
       ...highlights.map((highlight) => {
@@ -45,9 +45,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
           type: "attraction" as const,
           title: highlight,
           sources: {
-            mobile: `/images/attractions/${citySlug}/${attractionSlug}-400.jpg`,
-            tablet: `/images/attractions/${citySlug}/${attractionSlug}-800.jpg`,
-            desktop: `/images/attractions/${citySlug}/${attractionSlug}-1600.jpg`,
+            mobile: getImageUrl(`${citySlug}/${attractionSlug}`, "thumbnail"),
+            tablet: getImageUrl(`${citySlug}/${attractionSlug}`, "standard"),
+            desktop: getImageUrl(`${citySlug}/${attractionSlug}`, "large"),
           },
         };
       }),

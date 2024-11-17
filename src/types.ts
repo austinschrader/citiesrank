@@ -3,6 +3,7 @@ import { LucideIcon } from "lucide-react";
 
 // Image-related types
 export interface ImageSource {
+  blur: string;
   mobile: string;
   tablet: string;
   desktop: string;
@@ -12,6 +13,14 @@ export interface GalleryImage {
   type: "city" | "attraction";
   title: string;
   sources: ImageSource;
+  blur: string;
+}
+
+export interface GalleryImage {
+  type: "city" | "attraction";
+  title: string;
+  sources: ImageSource;
+  blur: string;
 }
 
 // City-related types

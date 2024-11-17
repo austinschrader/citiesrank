@@ -7,11 +7,16 @@ export default {
       animation: {
         pulse: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         ping: "ping 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        shimmer: "shimmer 2s infinite",
       },
       keyframes: {
         pulse: {
           "0%, 100%": { opacity: 1 },
           "50%": { opacity: 0.75 },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
         ping: {
           "0%, 100%": { transform: "scale(1)", opacity: 0.75 },
