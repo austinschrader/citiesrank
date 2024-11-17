@@ -9,7 +9,7 @@ import { useGalleryKeyboard } from "@/hooks/useGalleryKeyboard";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { GalleryImage } from "@/components/GalleryImage";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
-import { galleryControls, galleryStyles } from "@/lib/styles/gallery";
+import { galleryControls, galleryStyles, galleryWrapper } from "@/lib/styles/gallery";
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
   const citySlug = createSlug(cityName);
@@ -59,10 +59,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
   return (
     <div className={galleryStyles.container} role="region" aria-label="Image gallery">
       <div
-        className={cn(
-          "relative overflow-hidden rounded-xl bg-neutral-100 transition-all duration-300 group",
-          isFullscreen ? "fixed inset-0 z-50 bg-black/90" : "aspect-[16/10] cursor-zoom-in"
-        )}
+        className={cn(galleryWrapper({ isFullscreen }))}
         onClick={toggleFullscreen}
         role={isFullscreen ? "dialog" : undefined}
         aria-modal={isFullscreen}
