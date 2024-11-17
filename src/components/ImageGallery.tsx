@@ -9,6 +9,7 @@ import { useGalleryKeyboard } from "@/hooks/useGalleryKeyboard";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { GalleryImage } from "@/components/GalleryImage";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
+import { galleryControls } from "@/lib/styles/gallery";
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
   const citySlug = createSlug(cityName);
@@ -73,11 +74,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
         }}>
         <GalleryImage image={loadedImages[currentIndex]} isFullscreen={isFullscreen} />
 
-        <div
-          className={cn(
-            "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
-            isFullscreen && "opacity-100"
-          )}>
+        <div className={galleryControls({ visible: isFullscreen })}>
           <GalleryNavigation
             onPrevious={(e) => handleNavigationClick(-1, e)}
             onNext={(e) => handleNavigationClick(1, e)}
