@@ -7,7 +7,7 @@ import { env } from "./env";
 
 const cld = new Cloudinary({
   cloud: {
-    cloudName: env.VITE_CLOUDINARY_CLOUD_NAME,
+    cloudName: process.env.VITE_CLOUDINARY_CLOUD_NAME || env.VITE_CLOUDINARY_CLOUD_NAME,
   },
   url: {
     secure: true,
