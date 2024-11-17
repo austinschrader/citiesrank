@@ -8,10 +8,14 @@ export interface ImageSource {
   desktop: string;
 }
 
-export interface GalleryImage {
+export interface GalleryImageType {
   type: "city" | "attraction";
   title: string;
-  sources: ImageSource;
+  sources: {
+    mobile: string;
+    tablet: string;
+    desktop: string;
+  };
 }
 
 // City-related types
