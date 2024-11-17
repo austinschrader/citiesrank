@@ -3,11 +3,10 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { improve } from "@cloudinary/url-gen/actions/adjust";
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
-import { env } from "./env";
 
 const cld = new Cloudinary({
   cloud: {
-    cloudName: process.env.VITE_CLOUDINARY_CLOUD_NAME || env.VITE_CLOUDINARY_CLOUD_NAME,
+    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
   },
   url: {
     secure: true,
