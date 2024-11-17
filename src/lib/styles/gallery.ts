@@ -15,4 +15,17 @@ export const galleryControls = cva(
     },
   }
 );
+export const galleryStyles = {
+  container: "relative",
+  closeButton: [
+    "absolute right-4 top-4 z-[60]", // Added z-index
+    "bg-white/90 hover:bg-white", // Added hover state
+    "p-2 rounded-full",
+    "hover:scale-110 active:scale-95",
+    "transition-all",
+    "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
+  ].join(" "),
+  caption: "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6",
+  captionText: "text-white text-base font-medium",
+} as const;
 export type GalleryControlsVariants = VariantProps<typeof galleryControls>;

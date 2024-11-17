@@ -9,7 +9,7 @@ import { useGalleryKeyboard } from "@/hooks/useGalleryKeyboard";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { GalleryImage } from "@/components/GalleryImage";
 import { GalleryNavigation } from "@/components/GalleryNavigation";
-import { galleryControls } from "@/lib/styles/gallery";
+import { galleryControls, galleryStyles } from "@/lib/styles/gallery";
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
   const citySlug = createSlug(cityName);
@@ -57,7 +57,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
   };
 
   return (
-    <div className="relative" role="region" aria-label="Image gallery">
+    <div className={galleryStyles.container} role="region" aria-label="Image gallery">
       <div
         className={cn(
           "relative overflow-hidden rounded-xl bg-neutral-100 transition-all duration-300 group",
@@ -87,15 +87,15 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
                 e.stopPropagation();
                 toggleFullscreen();
               }}
-              className="absolute right-4 top-4 bg-white p-2 rounded-full hover:scale-110 active:scale-95 transition shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
+              className={galleryStyles.closeButton}
               aria-label="Close gallery"
               title="Close gallery (Esc key)">
               <Minimize2 size={24} />
             </button>
           )}
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6">
-            <p className="text-white text-base font-medium">{loadedImages[currentIndex].title}</p>
+          <div className={galleryStyles.caption}>
+            <p className={galleryStyles.captionText}>{loadedImages[currentIndex].title}</p>
           </div>
         </div>
       </div>
