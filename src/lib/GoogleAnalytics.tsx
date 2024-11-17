@@ -5,7 +5,7 @@ import Script from "next/script";
 const GoogleAnalytics = () => {
   return (
     <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=G-F36JR4K6DZ`} strategy="afterInteractive" />
+      <Script src={`https://www.googletagmanager.com/gtag/js?id=G-X596FMZ50F`} strategy="afterInteractive" />
       <Script id="google-analytics" strategy="afterInteractive">
         {`
 
