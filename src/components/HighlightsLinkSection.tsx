@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronDown, ChevronUp, CameraIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -43,8 +43,25 @@ const generateHighlightUrl = (highlight: string, cityName: string, country: stri
   return `/${slugifiedCountry}/${slugifiedCity}/${type}/${slugifiedHighlight}`;
 };
 
-const HighlightLink: React.FC<HighlightLinkProps> = ({ highlight, cityName, country, onClick, hasImages }) => {
+const HighlightLink: React.FC<HighlightLinkProps> = ({ highlight, cityName, country, onClick }) => {
   const highlightInfo = getHighlightType(highlight);
+  const [imageLoaded, setImageLoaded] = useState<boolean | null>(null);
+
+  // Check image existence only once when component mounts
+  React.useEffect(() => {
+    const img = new Image();
+    const citySlug = cityName
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-");
+    const attractionSlug = highlight
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-");
+    img.src = `/images/attractions/${citySlug}/${attractionSlug}-400.jpg`;
+    img.onload = () => setImageLoaded(true);
+    img.onerror = () => setImageLoaded(false);
+  }, [cityName, highlight]);
 
   return (
     <a
@@ -54,12 +71,12 @@ const HighlightLink: React.FC<HighlightLinkProps> = ({ highlight, cityName, coun
         "flex items-center gap-1 px-2 py-1 rounded-full transition-all text-sm group",
         "hover:scale-105 active:scale-100",
         highlightInfo.className,
-        hasImages ? "cursor-pointer relative" : "cursor-default"
+        imageLoaded ? "cursor-pointer relative" : "cursor-default"
       )}
       aria-label={`Learn more about ${highlight} in ${cityName}, ${country}`}>
       {highlightInfo.icon}
       <span>{highlight}</span>
-      {hasImages && (
+      {imageLoaded && (
         <div>
           <CameraIcon className="w-4 h-4 text-current opacity-50 group-hover:opacity-100 transition-opacity ml-1" />
           <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out animate-pulse">
@@ -75,56 +92,12 @@ export const HighlightLinkSection: React.FC<HighlightLinkSectionProps> = ({ high
   const [isExpanded, setIsExpanded] = useState(false);
   const hasMoreHighlights = highlights.length > MAX_VISIBLE_HIGHLIGHTS;
   const visibleHighlights = isExpanded ? highlights : highlights.slice(0, MAX_VISIBLE_HIGHLIGHTS);
-  const [highlightsWithImages, setHighlightsWithImages] = useState<{ highlight: string; hasImages: boolean }[]>([]);
-
-  const checkImageExists = (url: string): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(true);
-      img.onerror = () => resolve(false);
-      img.src = url;
-    });
-  };
-
-  const createSlug = (text: string): string => {
-    return text
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/--+/g, "-")
-      .trim();
-  };
-
-  const citySlug = createSlug(cityName);
-
-  useEffect(() => {
-    const checkImages = async () => {
-      const updatedHighlights = await Promise.all(
-        visibleHighlights.map(async (highlight) => {
-          const attractionSlug = createSlug(highlight);
-          const imageUrl = `/images/attractions/${citySlug}/${attractionSlug}-400.jpg`;
-          const hasImages = await checkImageExists(imageUrl);
-          return { highlight, hasImages };
-        })
-      );
-      setHighlightsWithImages(updatedHighlights);
-    };
-
-    checkImages();
-  }, [visibleHighlights, citySlug]);
 
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-2">
-        {highlightsWithImages.map(({ highlight, hasImages }, index) => (
-          <HighlightLink
-            key={index}
-            highlight={highlight}
-            cityName={cityName}
-            country={country}
-            onClick={onHighlightClick}
-            hasImages={hasImages}
-          />
+        {visibleHighlights.map((highlight, index) => (
+          <HighlightLink key={index} highlight={highlight} cityName={cityName} country={country} onClick={onHighlightClick} />
         ))}
       </div>
 
