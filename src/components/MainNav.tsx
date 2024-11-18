@@ -1,89 +1,74 @@
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
 import { Heart, List, Users, BookText, PlusCircle, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
-interface MainNavProps {
-  className?: string;
-}
-
-export const MainNav = ({ className }: MainNavProps) => {
-  const location = useLocation();
+export const MainNav = ({ className }: { className?: string }) => {
+  // In a real app, this would come from your router/auth state
+  const currentPath = window.location.pathname;
+  const isLoggedIn = true; // This would come from your auth context
 
   const routes = [
     {
       href: "/",
       label: "Places",
       icon: MapPin,
-      active: location.pathname === "/" || location.pathname === "/places",
+      active: currentPath === "/",
     },
     {
       href: "/lists",
       label: "Lists",
       icon: List,
-      active: location.pathname === "/lists",
+      active: currentPath === "/lists",
     },
     {
       href: "/members",
       label: "Members",
       icon: Users,
-      active: location.pathname === "/members",
+      active: currentPath === "/members",
     },
     {
       href: "/journal",
       label: "Journal",
       icon: BookText,
-      active: location.pathname === "/journal",
-    },
-    {
-      href: "/saved",
-      label: "Saved",
-      icon: Heart,
-      active: location.pathname === "/saved",
-      mobileOnly: true,
+      active: currentPath === "/journal",
     },
   ];
 
   return (
-    <nav className={cn("flex items-center", className)}>
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
-        {routes
-          .filter((route) => !route.mobileOnly)
-          .map((route) => (
-            <Link
-              key={route.href}
-              to={route.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                route.active ? "text-primary" : "text-muted-foreground",
-                "flex items-center gap-1.5"
-              )}>
-              <route.icon className="h-4 w-4 md:hidden" />
-              <span>{route.label}</span>
-            </Link>
-          ))}
-      </div>
+    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)}>
+      {routes.map((route) => (
+        <a
+          key={route.href}
+          href={route.href}
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            route.active ? "text-primary" : "text-muted-foreground",
+            "flex items-center gap-1.5"
+          )}>
+          <route.icon className="h-4 w-4" />
+          <span className="hidden sm:inline">{route.label}</span>
+        </a>
+      ))}
 
-      {/* Mobile Navigation */}
-      <div className="md:hidden w-full">
-        <div className="flex justify-around items-center">
-          {routes.map((route) => (
-            <Link
-              key={route.href}
-              to={route.href}
-              className={cn("flex flex-col items-center gap-1 py-1 px-3", route.active ? "text-primary" : "text-muted-foreground")}>
-              <route.icon className="h-5 w-5" />
-              <span className="text-xs font-medium">{route.label}</span>
-            </Link>
-          ))}
+      {isLoggedIn && (
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="hidden sm:flex gap-1.5">
+            <Heart className="h-4 w-4" />
+            Saved
+          </Button>
+          <Button size="sm" className="gap-1.5">
+            <PlusCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">Add Place</span>
+            <span className="sm:hidden">Add</span>
+          </Button>
         </div>
-      </div>
+      )}
     </nav>
   );
 };
 
-// Add Button Component
 MainNav.AddButton = function AddButton() {
   return (
     <Link to="/add">
