@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { PreferencesCard } from "./components/PreferencesCard";
-import { CityCard } from "./components/CityCard";
-import { Pagination } from "./components/Pagination";
-import { CityData, UserPreferences } from "./types";
-import { ChevronDown, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetHeader } from "@/components/ui/sheet";
+import { PreferencesCard } from "../components/PreferencesCard";
+import { CityCard } from "../components/CityCard";
+import { Pagination } from "../components/Pagination";
+import { CityData, UserPreferences } from "../types";
 import { Legend } from "@/components/Legend";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
+import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { DestinationFilter } from "@/components/DestinationFilter";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
@@ -904,7 +900,7 @@ const fallbackCityData: Record<string, CityData> = {
   },
 };
 
-const DestinationFinder = () => {
+export const PlacesPage = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
     budget: 50, // 0=Budget-friendly, 100=Luxury
     crowds: 50, // 0=Off beaten path, 100=Popular
@@ -1015,78 +1011,15 @@ const DestinationFinder = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-        <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-          <div className="h-20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <a href="/" className="hover:opacity-80 transition-opacity">
-                <img src="/favicon.svg" alt="European Gems Logo" className="w-8 h-8" />
-              </a>
-              <a href="/" className="hover:opacity-80 transition-opacity">
-                <h1 className="text-2xl font-bold text-primary hidden md:block">European Gems</h1>
-                <h1 className="text-xl font-bold text-primary md:hidden">Gems</h1>
-              </a>
-            </div>
+    <PlacesLayout
+      isFilterOpen={isFilterOpen}
+      onFilterOpenChange={setIsFilterOpen}
+      tempPreferences={tempPreferences}
+      onTempPreferencesChange={setTempPreferences}
+      onApplyFilters={handleApplyFilters}>
+      <div className="py-6 space-y-6">
+        <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
 
-            <div className="flex items-center gap-3">
-              {/* Categories Popover on Mobile */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="md:hidden gap-1.5">
-                    Categories
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-72" align="end">
-                  <Legend variant="vertical" />
-                </PopoverContent>
-              </Popover>
-
-              {/* Mobile Filter Button */}
-              <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="md:hidden gap-1.5">
-                    <Filter className="w-4 h-4" />
-                    Filters
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[85vh] p-0 overflow-hidden flex flex-col">
-                  <SheetHeader className="px-6 py-4 border-b flex-shrink-0">
-                    <div className="flex items-center justify-between">
-                      <SheetTitle className="text-lg font-semibold">Customize Search</SheetTitle>
-                    </div>
-                  </SheetHeader>
-
-                  <ScrollArea className="flex-1 px-6 py-4">
-                    <PreferencesCard preferences={tempPreferences} onPreferencesChange={setTempPreferences} />
-                  </ScrollArea>
-
-                  <div className="flex-shrink-0 border-t p-4">
-                    <div className="flex gap-3">
-                      <Button variant="outline" className="flex-1" onClick={() => setIsFilterOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button className="flex-1" onClick={handleApplyFilters}>
-                        Apply Filters
-                      </Button>
-                    </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="border-b">
-        <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-          <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
-        </div>
-      </div>
-
-      <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4 md:py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Desktop Filters */}
           <aside className="hidden md:block w-full md:w-80 shrink-0">
@@ -1121,8 +1054,7 @@ const DestinationFinder = () => {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </PlacesLayout>
   );
 };
-export default DestinationFinder;
