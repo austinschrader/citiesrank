@@ -10,6 +10,7 @@ import { Legend } from "@/components/Legend";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
 import { DestinationFilter } from "@/components/DestinationFilter";
+import { MainNav } from "@/components/MainNav";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
 
@@ -1029,6 +1030,8 @@ const DestinationFinder = () => {
                 <h1 className="text-xl font-bold text-primary md:hidden">Gems</h1>
               </a>
             </div>
+
+            <MainNav className="hidden md:flex mx-6" />
 
             <div className="flex items-center gap-3">
               {/* Categories Popover on Mobile */}
