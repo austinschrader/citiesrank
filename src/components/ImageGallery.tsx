@@ -15,7 +15,7 @@ export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
   const images = useMemo(() => {
     // Generate 2 images per city
     return [1, 2, 3, 4].map((num) => ({
-      title: `${cityName}, ${country} (${num}/2)`,
+      title: `${cityName}, ${country} (${num}/4)`,
       sources: {
         mobile: getImageUrl(`${citySlug}-${country}-${num}`, "thumbnail"),
         tablet: getImageUrl(`${citySlug}-${country}-${num}`, "standard"),
