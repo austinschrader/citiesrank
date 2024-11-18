@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { createSlug } from "@/lib/imageUtils";
 import { getImageUrl } from "@/lib/cloudinary";
 
@@ -10,7 +10,7 @@ interface ImageGalleryProps {
 export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [preloadedIndices, setPreloadedIndices] = useState<number[]>([]);
+  const loadedImages = useRef(new Set<string>());
   const citySlug = createSlug(cityName);
   const countrySlug = createSlug(country);
 
@@ -20,35 +20,47 @@ export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
       sources: {
         mobile: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "thumbnail"),
         tablet: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "standard"),
-        desktop: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "large"),
+        desktop: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "standard"),
       },
     }));
   }, [cityName, country, citySlug, countrySlug]);
 
-  // Preload function that checks if we've already preloaded
+  // Preload the next image only if we haven't loaded it before
   const preloadImage = (index: number) => {
-    if (!preloadedIndices.includes(index)) {
+    const imageUrl = images[index].sources.tablet;
+    if (!loadedImages.current.has(imageUrl)) {
       const img = new Image();
-      img.src = images[index].sources.tablet;
-      setPreloadedIndices((prev) => [...prev, index]);
+      img.src = imageUrl;
+      loadedImages.current.add(imageUrl);
     }
   };
 
-  // Initial preload of the second image
+  // Preload initial images (current and next)
   useEffect(() => {
+    loadedImages.current.clear(); // Reset on images change
+    loadedImages.current.add(images[0].sources.tablet); // Mark first image as loaded
     if (images.length > 1) {
-      preloadImage(1);
+      preloadImage(1); // Preload second image
     }
-  }, [images]); // Only run on images change
+  }, [images]);
 
   const navigate = (direction: number) => {
     const newIndex = (currentIndex + direction + images.length) % images.length;
     setCurrentIndex(newIndex);
-    setIsLoading(true);
+
+    // Only set loading if we haven't loaded this image before
+    if (!loadedImages.current.has(images[newIndex].sources.tablet)) {
+      setIsLoading(true);
+    }
 
     // Preload the next image in sequence
     const nextToPreload = (newIndex + direction + images.length) % images.length;
     preloadImage(nextToPreload);
+  };
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
+    loadedImages.current.add(images[currentIndex].sources.tablet);
   };
 
   return (
@@ -64,9 +76,9 @@ export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
             src={images[currentIndex].sources.tablet}
             alt={images[currentIndex].title}
             className="w-full h-full object-cover"
-            loading="lazy"
+            loading={currentIndex === 0 ? "eager" : "lazy"}
             decoding="async"
-            onLoad={() => setIsLoading(false)}
+            onLoad={handleImageLoad}
           />
         </picture>
 
