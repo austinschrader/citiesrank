@@ -3,14 +3,9 @@ import { PreferencesCard } from "../components/PreferencesCard";
 import { CityCard } from "../components/CityCard";
 import { Pagination } from "../components/Pagination";
 import { CityData, UserPreferences } from "../types";
-import { ChevronDown, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetHeader } from "@/components/ui/sheet";
 import { Legend } from "@/components/Legend";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
+import { Layout } from "@/layouts/Layout";
 import { DestinationFilter } from "@/components/DestinationFilter";
-import { MainNav } from "@/components/MainNav";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
 
@@ -1017,114 +1012,55 @@ export const PlacesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-        <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-          <div className="h-20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <a href="/" className="hover:opacity-80 transition-opacity">
-                <img src="/favicon.svg" alt="European Gems Logo" className="w-8 h-8" />
-              </a>
-              <a href="/" className="hover:opacity-80 transition-opacity">
-                <h1 className="text-2xl font-bold text-primary hidden md:block">European Gems</h1>
-                <h1 className="text-xl font-bold text-primary md:hidden">Gems</h1>
-              </a>
-            </div>
+      <Layout
+        isFilterOpen={isFilterOpen}
+        onFilterOpenChange={setIsFilterOpen}
+        tempPreferences={tempPreferences}
+        onTempPreferencesChange={setTempPreferences}
+        onApplyFilters={handleApplyFilters}>
+        <div className="border-b">
+          <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
+            <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
+          </div>
+        </div>
 
-            <MainNav className="hidden md:flex mx-6" />
+        <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4 md:py-8">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Desktop Filters */}
+            <aside className="hidden md:block w-full md:w-80 shrink-0">
+              <div className="sticky top-20">
+                <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
+              </div>
+            </aside>
 
-            <div className="flex items-center gap-3">
-              {/* Categories Popover on Mobile */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="md:hidden gap-1.5">
-                    Categories
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-72" align="end">
-                  <Legend variant="vertical" />
-                </PopoverContent>
-              </Popover>
-
-              {/* Mobile Filter Button */}
-              <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="md:hidden gap-1.5">
-                    <Filter className="w-4 h-4" />
-                    Filters
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[85vh] p-0 overflow-hidden flex flex-col">
-                  <SheetHeader className="px-6 py-4 border-b flex-shrink-0">
-                    <div className="flex items-center justify-between">
-                      <SheetTitle className="text-lg font-semibold">Customize Search</SheetTitle>
-                    </div>
-                  </SheetHeader>
-
-                  <ScrollArea className="flex-1 px-6 py-4">
-                    <PreferencesCard preferences={tempPreferences} onPreferencesChange={setTempPreferences} />
-                  </ScrollArea>
-
-                  <div className="flex-shrink-0 border-t p-4">
-                    <div className="flex gap-3">
-                      <Button variant="outline" className="flex-1" onClick={() => setIsFilterOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button className="flex-1" onClick={handleApplyFilters}>
-                        Apply Filters
-                      </Button>
-                    </div>
+            {/* Results Section */}
+            <div className="flex-1">
+              <div className="flex flex-col space-y-4 md:space-y-6">
+                {/* Results Header */}
+                <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-semibold">{filteredAndRankedCities.length}</span>
+                    <span className="text-muted-foreground">hidden gems found</span>
                   </div>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      <div className="border-b">
-        <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-          <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
-        </div>
-      </div>
-
-      <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4 md:py-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Desktop Filters */}
-          <aside className="hidden md:block w-full md:w-80 shrink-0">
-            <div className="sticky top-20">
-              <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
-            </div>
-          </aside>
-
-          {/* Results Section */}
-          <div className="flex-1">
-            <div className="flex flex-col space-y-4 md:space-y-6">
-              {/* Results Header */}
-              <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold">{filteredAndRankedCities.length}</span>
-                  <span className="text-muted-foreground">hidden gems found</span>
+                  {/* Desktop Legend */}
+                  <div className="hidden md:block">
+                    <Legend variant="horizontal" />
+                  </div>
                 </div>
 
-                {/* Desktop Legend */}
-                <div className="hidden md:block">
-                  <Legend variant="horizontal" />
+                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6">
+                  {paginatedCities.map((city) => (
+                    <CityCard key={city.name} city={city} />
+                  ))}
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6">
-                {paginatedCities.map((city) => (
-                  <CityCard key={city.name} city={city} />
-                ))}
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
               </div>
-
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </Layout>
     </div>
   );
 };

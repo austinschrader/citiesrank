@@ -10,7 +10,7 @@ export const MainNav = ({ className }: { className?: string }) => {
 
   const routes = [
     {
-      href: "/places",
+      href: "/",
       label: "Places",
       icon: MapPin,
       active: currentPath === "/places",
