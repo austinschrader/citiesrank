@@ -5,46 +5,33 @@ import { getImageUrl } from "@/lib/cloudinary";
 interface ImageGalleryProps {
   cityName: string;
   country: string;
-  highlights: string[];
 }
 
-export const ImageGallery = ({ cityName, country, highlights }: ImageGalleryProps) => {
+export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const citySlug = createSlug(cityName);
 
-  const images = useMemo(
-    () => [
-      {
-        title: `${cityName}, ${country}`,
-        sources: {
-          mobile: getImageUrl(citySlug, "thumbnail"),
-          tablet: getImageUrl(citySlug, "standard"),
-          desktop: getImageUrl(citySlug, "large"),
-        },
+  const images = useMemo(() => {
+    // Generate 2 images per city
+    return [1, 2, 3, 4].map((num) => ({
+      title: `${cityName}, ${country} (${num}/2)`,
+      sources: {
+        mobile: getImageUrl(`${citySlug}-${country}-${num}`, "thumbnail"),
+        tablet: getImageUrl(`${citySlug}-${country}-${num}`, "standard"),
+        desktop: getImageUrl(`${citySlug}-${country}-${num}`, "large"),
       },
-      ...highlights.map((highlight) => ({
-        title: highlight,
-        sources: {
-          mobile: getImageUrl(createSlug(highlight), "thumbnail"),
-          tablet: getImageUrl(createSlug(highlight), "standard"),
-          desktop: getImageUrl(createSlug(highlight), "large"),
-        },
-      })),
-    ],
-    [cityName, country, citySlug, highlights]
-  );
+    }));
+  }, [cityName, country, citySlug]);
 
   const navigate = (direction: number) => {
     setCurrentIndex((current) => (current + direction + images.length) % images.length);
     setIsLoading(true);
   };
 
-  // Using 800x600 ratio from your Cloudinary "standard" size
   return (
     <div className="relative w-full aspect-[800/600]">
       <div className="relative w-full h-full rounded-xl overflow-hidden">
-        {/* Keep placeholder visible while loading */}
         {isLoading && <div className="absolute inset-0 bg-slate-200 animate-pulse" />}
 
         <picture className="w-full h-full">
