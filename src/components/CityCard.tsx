@@ -7,7 +7,7 @@ import { HighlightLinkSection } from "@/components/HighlightsLinkSection";
 import { ImageGallery } from "@/components/ImageGallery";
 
 export const CityCard: React.FC<CityCardProps> = ({ city }) => {
-  const [activeHighlight, setActiveHighlight] = useState<string | null>(null);
+  const [, setActiveHighlight] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const getMatchColor = (score: number) => {
@@ -42,13 +42,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
   return (
     <Card className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300">
       <div className="relative">
-        <ImageGallery
-          cityName={city.name}
-          country={city.country}
-          highlights={city.highlights}
-          currentHighlight={activeHighlight}
-          onHighlightChange={setActiveHighlight}
-        />
+        <ImageGallery cityName={city.name} country={city.country} />
 
         <div className="absolute top-4 left-4 z-20">
           <div

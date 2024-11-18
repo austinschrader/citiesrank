@@ -1,100 +1,85 @@
-import React, { useMemo } from "react";
-import { Minimize2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { ImageGalleryProps, GalleryImageType } from "@/types";
-import { getImageUrl } from "@/lib/cloudinary";
+import React, { useState, useMemo, useEffect } from "react";
 import { createSlug } from "@/lib/imageUtils";
-import { useImageGallery } from "@/hooks/useImageGallery";
-import { useGalleryKeyboard } from "@/hooks/useGalleryKeyboard";
-import { useScrollLock } from "@/hooks/useScrollLock";
-import { GalleryImage } from "@/components/GalleryImage";
-import { GalleryNavigation } from "@/components/GalleryNavigation";
-import { galleryControls, galleryStyles, galleryWrapper } from "@/lib/styles/gallery";
+import { getImageUrl } from "@/lib/cloudinary";
 
-export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
+interface ImageGalleryProps {
+  cityName: string;
+  country: string;
+}
+
+export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [preloadedIndices, setPreloadedIndices] = useState<number[]>([]);
   const citySlug = createSlug(cityName);
+  const countrySlug = createSlug(country);
 
-  const potentialImages: GalleryImageType[] = useMemo(
-    () => [
-      {
-        type: "city" as const,
-        title: `${cityName}, ${country}`,
-        sources: {
-          mobile: getImageUrl(citySlug, "thumbnail"),
-          tablet: getImageUrl(citySlug, "standard"),
-          desktop: getImageUrl(citySlug, "large"),
-        },
+  const images = useMemo(() => {
+    return [1, 2, 3, 4].map((num) => ({
+      title: `${cityName}, ${country} (${num}/4)`,
+      sources: {
+        mobile: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "thumbnail"),
+        tablet: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "standard"),
+        desktop: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "large"),
       },
-      ...highlights.map((highlight) => ({
-        type: "attraction" as const,
-        title: highlight,
-        sources: {
-          mobile: getImageUrl(createSlug(highlight), "thumbnail"),
-          tablet: getImageUrl(createSlug(highlight), "standard"),
-          desktop: getImageUrl(createSlug(highlight), "large"),
-        },
-      })),
-    ],
-    [cityName, country, highlights, citySlug]
-  );
+    }));
+  }, [cityName, country, citySlug, countrySlug]);
 
-  const { currentIndex, isFullscreen, loadedImages, toggleFullscreen, navigate } = useImageGallery({
-    images: potentialImages,
-    onHighlightChange,
-    initialHighlight: currentHighlight,
-  });
+  // Preload function that checks if we've already preloaded
+  const preloadImage = (index: number) => {
+    if (!preloadedIndices.includes(index)) {
+      const img = new Image();
+      img.src = images[index].sources.tablet;
+      setPreloadedIndices((prev) => [...prev, index]);
+    }
+  };
 
-  useGalleryKeyboard(isFullscreen, toggleFullscreen, navigate);
-  useScrollLock(isFullscreen);
+  // Initial preload of the second image
+  useEffect(() => {
+    if (images.length > 1) {
+      preloadImage(1);
+    }
+  }, [images]); // Only run on images change
 
-  if (loadedImages.length === 0) {
-    return null;
-  }
+  const navigate = (direction: number) => {
+    const newIndex = (currentIndex + direction + images.length) % images.length;
+    setCurrentIndex(newIndex);
+    setIsLoading(true);
 
-  const handleNavigationClick = (direction: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(direction);
+    // Preload the next image in sequence
+    const nextToPreload = (newIndex + direction + images.length) % images.length;
+    preloadImage(nextToPreload);
   };
 
   return (
-    <div className={galleryStyles.container} role="region" aria-label="Image gallery">
-      <div
-        className={cn(galleryWrapper({ isFullscreen }))}
-        onClick={toggleFullscreen}
-        role={isFullscreen ? "dialog" : undefined}
-        aria-modal={isFullscreen}
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !isFullscreen) {
-            toggleFullscreen();
-          }
-        }}>
-        <GalleryImage image={loadedImages[currentIndex]} isFullscreen={isFullscreen} />
+    <div className="relative w-full aspect-[800/600]">
+      <div className="relative w-full h-full rounded-xl overflow-hidden">
+        {isLoading && <div className="absolute inset-0 bg-slate-200 animate-pulse" />}
 
-        <div className={galleryControls({ visible: isFullscreen })}>
-          <GalleryNavigation
-            onPrevious={(e) => handleNavigationClick(-1, e)}
-            onNext={(e) => handleNavigationClick(1, e)}
-            showControls={loadedImages.length > 1}
+        <picture className="w-full h-full">
+          <source media="(max-width: 640px)" srcSet={images[currentIndex].sources.mobile} />
+          <source media="(max-width: 1024px)" srcSet={images[currentIndex].sources.tablet} />
+          <source media="(min-width: 1025px)" srcSet={images[currentIndex].sources.desktop} />
+          <img
+            src={images[currentIndex].sources.tablet}
+            alt={images[currentIndex].title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setIsLoading(false)}
           />
+        </picture>
 
-          {isFullscreen && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFullscreen();
-              }}
-              className={galleryStyles.closeButton}
-              aria-label="Close gallery"
-              title="Close gallery (Esc key)">
-              <Minimize2 size={24} />
+        {images.length > 1 && (
+          <div className="absolute inset-x-0 bottom-0 flex justify-between p-4">
+            <button onClick={() => navigate(-1)} className="bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70">
+              Previous
             </button>
-          )}
-
-          <div className={galleryStyles.caption}>
-            <p className={galleryStyles.captionText}>{loadedImages[currentIndex].title}</p>
+            <button onClick={() => navigate(1)} className="bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70">
+              Next
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
