@@ -4,7 +4,7 @@ import { CityCard } from "../components/CityCard";
 import { Pagination } from "../components/Pagination";
 import { CityData, UserPreferences } from "../types";
 import { Legend } from "@/components/Legend";
-import { Layout } from "@/layouts/Layout";
+import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { DestinationFilter } from "@/components/DestinationFilter";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
@@ -1011,56 +1011,50 @@ export const PlacesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Layout
-        isFilterOpen={isFilterOpen}
-        onFilterOpenChange={setIsFilterOpen}
-        tempPreferences={tempPreferences}
-        onTempPreferencesChange={setTempPreferences}
-        onApplyFilters={handleApplyFilters}>
-        <div className="border-b">
-          <div className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4">
-            <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
-          </div>
-        </div>
+    <PlacesLayout
+      isFilterOpen={isFilterOpen}
+      onFilterOpenChange={setIsFilterOpen}
+      tempPreferences={tempPreferences}
+      onTempPreferencesChange={setTempPreferences}
+      onApplyFilters={handleApplyFilters}>
+      <div className="py-6 space-y-6">
+        <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
 
-        <main className="max-w-[2520px] mx-auto xl:px-20 md:px-10 sm:px-2 px-4 py-4 md:py-8">
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Desktop Filters */}
-            <aside className="hidden md:block w-full md:w-80 shrink-0">
-              <div className="sticky top-20">
-                <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
-              </div>
-            </aside>
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Desktop Filters */}
+          <aside className="hidden md:block w-full md:w-80 shrink-0">
+            <div className="sticky top-20">
+              <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
+            </div>
+          </aside>
 
-            {/* Results Section */}
-            <div className="flex-1">
-              <div className="flex flex-col space-y-4 md:space-y-6">
-                {/* Results Header */}
-                <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-semibold">{filteredAndRankedCities.length}</span>
-                    <span className="text-muted-foreground">hidden gems found</span>
-                  </div>
-
-                  {/* Desktop Legend */}
-                  <div className="hidden md:block">
-                    <Legend variant="horizontal" />
-                  </div>
+          {/* Results Section */}
+          <div className="flex-1">
+            <div className="flex flex-col space-y-4 md:space-y-6">
+              {/* Results Header */}
+              <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-semibold">{filteredAndRankedCities.length}</span>
+                  <span className="text-muted-foreground">hidden gems found</span>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6">
-                  {paginatedCities.map((city) => (
-                    <CityCard key={city.name} city={city} />
-                  ))}
+                {/* Desktop Legend */}
+                <div className="hidden md:block">
+                  <Legend variant="horizontal" />
                 </div>
-
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
               </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6">
+                {paginatedCities.map((city) => (
+                  <CityCard key={city.name} city={city} />
+                ))}
+              </div>
+
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
           </div>
-        </main>
-      </Layout>
-    </div>
+        </div>
+      </div>
+    </PlacesLayout>
   );
 };
