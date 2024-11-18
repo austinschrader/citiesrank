@@ -11,18 +11,18 @@ export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const citySlug = createSlug(cityName);
+  const countrySlug = createSlug(country);
 
   const images = useMemo(() => {
-    // Generate 2 images per city
     return [1, 2, 3, 4].map((num) => ({
       title: `${cityName}, ${country} (${num}/4)`,
       sources: {
-        mobile: getImageUrl(`${citySlug}-${country}-${num}`, "thumbnail"),
-        tablet: getImageUrl(`${citySlug}-${country}-${num}`, "standard"),
-        desktop: getImageUrl(`${citySlug}-${country}-${num}`, "large"),
+        mobile: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "thumbnail"),
+        tablet: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "standard"),
+        desktop: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "large"),
       },
     }));
-  }, [cityName, country, citySlug]);
+  }, [cityName, countrySlug, citySlug, country]);
 
   const navigate = (direction: number) => {
     setCurrentIndex((current) => (current + direction + images.length) % images.length);
