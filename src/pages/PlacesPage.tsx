@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { PreferencesCard } from "./components/PreferencesCard";
-import { CityCard } from "./components/CityCard";
-import { Pagination } from "./components/Pagination";
-import { CityData, UserPreferences } from "./types";
+import { PreferencesCard } from "../components/PreferencesCard";
+import { CityCard } from "../components/CityCard";
+import { Pagination } from "../components/Pagination";
+import { CityData, UserPreferences } from "../types";
 import { ChevronDown, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetHeader } from "@/components/ui/sheet";
 import { Legend } from "@/components/Legend";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { DestinationFilter } from "@/components/DestinationFilter";
 import { MainNav } from "@/components/MainNav";
 
@@ -905,7 +905,7 @@ const fallbackCityData: Record<string, CityData> = {
   },
 };
 
-const DestinationFinder = () => {
+export const PlacesPage = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
     budget: 50, // 0=Budget-friendly, 100=Luxury
     crowds: 50, // 0=Off beaten path, 100=Popular
@@ -1128,4 +1128,3 @@ const DestinationFinder = () => {
     </div>
   );
 };
-export default DestinationFinder;
