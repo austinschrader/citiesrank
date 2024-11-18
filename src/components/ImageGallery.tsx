@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { createSlug } from "@/lib/imageUtils";
 import { getImageUrl } from "@/lib/cloudinary";
 
@@ -10,6 +10,7 @@ interface ImageGalleryProps {
 export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [preloadedIndices, setPreloadedIndices] = useState<number[]>([]);
   const citySlug = createSlug(cityName);
   const countrySlug = createSlug(country);
 
@@ -22,11 +23,32 @@ export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
         desktop: getImageUrl(`${citySlug}-${countrySlug}-${num}`, "large"),
       },
     }));
-  }, [cityName, countrySlug, citySlug, country]);
+  }, [cityName, country, citySlug, countrySlug]);
+
+  // Preload function that checks if we've already preloaded
+  const preloadImage = (index: number) => {
+    if (!preloadedIndices.includes(index)) {
+      const img = new Image();
+      img.src = images[index].sources.tablet;
+      setPreloadedIndices((prev) => [...prev, index]);
+    }
+  };
+
+  // Initial preload of the second image
+  useEffect(() => {
+    if (images.length > 1) {
+      preloadImage(1);
+    }
+  }, [images]); // Only run on images change
 
   const navigate = (direction: number) => {
-    setCurrentIndex((current) => (current + direction + images.length) % images.length);
+    const newIndex = (currentIndex + direction + images.length) % images.length;
+    setCurrentIndex(newIndex);
     setIsLoading(true);
+
+    // Preload the next image in sequence
+    const nextToPreload = (newIndex + direction + images.length) % images.length;
+    preloadImage(nextToPreload);
   };
 
   return (
