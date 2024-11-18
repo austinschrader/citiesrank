@@ -1,23 +1,21 @@
-import React, { useMemo } from "react";
-import { Minimize2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import type { ImageGalleryProps, GalleryImageType } from "@/types";
-import { getImageUrl } from "@/lib/cloudinary";
+import React, { useState, useMemo } from "react";
 import { createSlug } from "@/lib/imageUtils";
-import { useImageGallery } from "@/hooks/useImageGallery";
-import { useGalleryKeyboard } from "@/hooks/useGalleryKeyboard";
-import { useScrollLock } from "@/hooks/useScrollLock";
-import { GalleryImage } from "@/components/GalleryImage";
-import { GalleryNavigation } from "@/components/GalleryNavigation";
-import { galleryControls, galleryStyles, galleryWrapper } from "@/lib/styles/gallery";
+import { getImageUrl } from "@/lib/cloudinary";
 
-export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, highlights, currentHighlight, onHighlightChange }) => {
+interface ImageGalleryProps {
+  cityName: string;
+  country: string;
+  highlights: string[];
+}
+
+export const ImageGallery = ({ cityName, country, highlights }: ImageGalleryProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const citySlug = createSlug(cityName);
 
-  const potentialImages: GalleryImageType[] = useMemo(
+  const images = useMemo(
     () => [
       {
-        type: "city" as const,
         title: `${cityName}, ${country}`,
         sources: {
           mobile: getImageUrl(citySlug, "thumbnail"),
@@ -26,7 +24,6 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
         },
       },
       ...highlights.map((highlight) => ({
-        type: "attraction" as const,
         title: highlight,
         sources: {
           mobile: getImageUrl(createSlug(highlight), "thumbnail"),
@@ -35,66 +32,45 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ cityName, country, h
         },
       })),
     ],
-    [cityName, country, highlights, citySlug]
+    [cityName, country, citySlug, highlights]
   );
 
-  const { currentIndex, isFullscreen, loadedImages, toggleFullscreen, navigate } = useImageGallery({
-    images: potentialImages,
-    onHighlightChange,
-    initialHighlight: currentHighlight,
-  });
-
-  useGalleryKeyboard(isFullscreen, toggleFullscreen, navigate);
-  useScrollLock(isFullscreen);
-
-  if (loadedImages.length === 0) {
-    return null;
-  }
-
-  const handleNavigationClick = (direction: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(direction);
+  const navigate = (direction: number) => {
+    setCurrentIndex((current) => (current + direction + images.length) % images.length);
+    setIsLoading(true);
   };
 
+  // Using 800x600 ratio from your Cloudinary "standard" size
   return (
-    <div className={galleryStyles.container} role="region" aria-label="Image gallery">
-      <div
-        className={cn(galleryWrapper({ isFullscreen }))}
-        onClick={toggleFullscreen}
-        role={isFullscreen ? "dialog" : undefined}
-        aria-modal={isFullscreen}
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !isFullscreen) {
-            toggleFullscreen();
-          }
-        }}>
-        <GalleryImage image={loadedImages[currentIndex]} isFullscreen={isFullscreen} />
+    <div className="relative w-full aspect-[800/600]">
+      <div className="relative w-full h-full rounded-xl overflow-hidden">
+        {/* Keep placeholder visible while loading */}
+        {isLoading && <div className="absolute inset-0 bg-slate-200 animate-pulse" />}
 
-        <div className={galleryControls({ visible: isFullscreen })}>
-          <GalleryNavigation
-            onPrevious={(e) => handleNavigationClick(-1, e)}
-            onNext={(e) => handleNavigationClick(1, e)}
-            showControls={loadedImages.length > 1}
+        <picture className="w-full h-full">
+          <source media="(max-width: 640px)" srcSet={images[currentIndex].sources.mobile} />
+          <source media="(max-width: 1024px)" srcSet={images[currentIndex].sources.tablet} />
+          <source media="(min-width: 1025px)" srcSet={images[currentIndex].sources.desktop} />
+          <img
+            src={images[currentIndex].sources.tablet}
+            alt={images[currentIndex].title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setIsLoading(false)}
           />
+        </picture>
 
-          {isFullscreen && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFullscreen();
-              }}
-              className={galleryStyles.closeButton}
-              aria-label="Close gallery"
-              title="Close gallery (Esc key)">
-              <Minimize2 size={24} />
+        {images.length > 1 && (
+          <div className="absolute inset-x-0 bottom-0 flex justify-between p-4">
+            <button onClick={() => navigate(-1)} className="bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70">
+              Previous
             </button>
-          )}
-
-          <div className={galleryStyles.caption}>
-            <p className={galleryStyles.captionText}>{loadedImages[currentIndex].title}</p>
+            <button onClick={() => navigate(1)} className="bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70">
+              Next
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
