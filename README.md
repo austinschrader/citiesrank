@@ -8,3 +8,4 @@ delete /images folder
 npm run process-images
 npm run dev
 
+npx shadcn@latest add popover
