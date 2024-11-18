@@ -6,6 +6,9 @@ import { CityData, UserPreferences } from "../types";
 import { Legend } from "@/components/Legend";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { DestinationFilter } from "@/components/DestinationFilter";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ITEMS_PER_PAGE = 6; // Increased for better grid layout
 
@@ -917,6 +920,9 @@ export const PlacesPage = () => {
   const [tempPreferences, setTempPreferences] = useState(preferences);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("match");
+
   useEffect(() => {
     // Update temp preferences when main preferences change
     setTempPreferences(preferences);
@@ -977,18 +983,6 @@ export const PlacesPage = () => {
     };
   };
 
-  const filteredAndRankedCities = Object.entries(cityData)
-    .filter(([, data]) => !selectedFilter || data.destinationTypes.includes(selectedFilter))
-    .map(([name, data]) => ({
-      name,
-      ...data,
-      ...calculateMatch(data, preferences),
-    }))
-    .sort((a, b) => b.matchScore - a.matchScore);
-
-  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
-  const paginatedCities = filteredAndRankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
   const handleFilterSelect = (filter: string) => {
     setSelectedFilter(selectedFilter === filter ? null : filter);
     setCurrentPage(1); // Reset to first page when filter changes
@@ -1010,6 +1004,48 @@ export const PlacesPage = () => {
     );
   }
 
+  const filteredAndRankedCities = Object.entries(cityData)
+    .filter(([name, data]) => {
+      const matchesFilter = !selectedFilter || data.destinationTypes.includes(selectedFilter);
+      const matchesSearch =
+        !searchQuery ||
+        name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        data.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        data.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesFilter && matchesSearch;
+    })
+    .map(([name, data]) => ({
+      name,
+      ...data,
+      ...calculateMatch(data, preferences),
+    }))
+    .sort((a, b) => {
+      switch (sortOrder) {
+        case "cost-low":
+          return a.cost - b.cost;
+        case "cost-high":
+          return b.cost - a.cost;
+        case "popular":
+          return b.crowdLevel - a.crowdLevel;
+        default:
+          return b.matchScore - a.matchScore;
+      }
+    });
+
+  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
+  const paginatedCities = filteredAndRankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+          <p className="text-muted-foreground">Finding perfect destinations...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <PlacesLayout
       isFilterOpen={isFilterOpen}
@@ -1018,6 +1054,34 @@ export const PlacesPage = () => {
       onTempPreferencesChange={setTempPreferences}
       onApplyFilters={handleApplyFilters}>
       <div className="py-6 space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Discover Places</h1>
+            <p className="text-muted-foreground max-w-2xl">Find your perfect destination based on your preferences and travel style.</p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="relative w-[200px]">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search places..." className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+            <Select defaultValue="match" onValueChange={setSortOrder}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Sort by</SelectLabel>
+                  <SelectItem value="match">Best Match</SelectItem>
+                  <SelectItem value="popular">Most Popular</SelectItem>
+                  <SelectItem value="cost-low">Price: Low to High</SelectItem>
+                  <SelectItem value="cost-high">Price: High to Low</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
 
         <div className="flex flex-col md:flex-row gap-8">
