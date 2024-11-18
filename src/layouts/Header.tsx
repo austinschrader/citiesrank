@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Menu, X, Settings, LogIn, BellDot } from "lucide-react";
+import { Search, Menu, X, Globe, BookOpen, Map, Heart, Users, Settings, LogIn, BellDot } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -13,12 +13,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { MainNav } from "@/components/MainNav";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export const Header = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const navItems = [
+    { label: "Places", icon: Globe, to: "/" },
+    { label: "Lists", icon: Map, to: "/lists" },
+    { label: "Members", icon: Users, to: "/members" },
+    { label: "Journal", icon: BookOpen, to: "/journal" },
+    { label: "Saved", icon: Heart, to: "/saved", mobileOnly: true },
+  ];
 
   const SearchBar = () => (
     <div className="relative w-full max-w-md">
@@ -26,7 +33,7 @@ export const Header = () => {
       <Input
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search places, lists, or members..."
+        placeholder="Search cities, regions, or experiences..."
         className="pl-9 pr-4 h-10 w-full bg-muted/40 focus:bg-background"
       />
       {searchQuery && (
@@ -57,7 +64,16 @@ export const Header = () => {
                     <SheetTitle>Menu</SheetTitle>
                   </SheetHeader>
                   <ScrollArea className="h-[calc(100vh-8rem)]">
-                    <MainNav className="flex-col items-start" />
+                    <div className="flex flex-col gap-2">
+                      {navItems.map(({ label, icon: Icon, to }) => (
+                        <Link key={to} to={to}>
+                          <Button variant="ghost" className="justify-start gap-2 w-full">
+                            <Icon className="h-4 w-4" />
+                            {label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
                   </ScrollArea>
                 </SheetContent>
               </Sheet>
@@ -71,15 +87,19 @@ export const Header = () => {
             </div>
 
             {/* Center section - Navigation (desktop) */}
-            <MainNav className="hidden md:flex" />
+            <nav className="hidden md:flex items-center gap-1">
+              {navItems.map(({ label, icon: Icon, to }) => (
+                <Link key={to} to={to}>
+                  <Button variant="ghost" className="gap-2">
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Button>
+                </Link>
+              ))}
+            </nav>
 
             {/* Right section - Actions */}
             <div className="flex items-center gap-2">
-              {/* Add Button */}
-              <div className="hidden md:block">
-                <MainNav.AddButton />
-              </div>
-
               {/* Search trigger for mobile */}
               <Dialog open={isSearchActive} onOpenChange={setIsSearchActive}>
                 <DialogTrigger asChild>
@@ -89,7 +109,8 @@ export const Header = () => {
                 </DialogTrigger>
                 <DialogContent className="top-4 gap-0 p-0">
                   <DialogHeader className="px-4 pt-4 pb-2">
-                    <DialogTitle>Search WanderLog</DialogTitle>
+                    <DialogTitle>Search Destinations</DialogTitle>
+                    <DialogDescription>Discover cities, regions, and experiences</DialogDescription>
                   </DialogHeader>
                   <div className="px-4 pb-4">
                     <SearchBar />
@@ -135,9 +156,20 @@ export const Header = () => {
       {/* Mobile navigation bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
         <nav className="container h-16">
-          <MainNav />
+          <div className="grid h-full grid-cols-4">
+            {navItems.map(({ label, icon: Icon, to }) => (
+              <Link key={to} to={to} className="h-full">
+                <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
+                  <Icon className="h-5 w-5" />
+                  <span className="text-xs">{label}</span>
+                </Button>
+              </Link>
+            ))}
+          </div>
         </nav>
       </div>
     </>
   );
 };
+
+export default Header;
