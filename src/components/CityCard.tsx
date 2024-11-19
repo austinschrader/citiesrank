@@ -63,12 +63,6 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
         </button>
       </div>
 
-      <button
-        className="absolute top-4 right-4 p-2.5 rounded-full bg-white/90 hover:bg-white transition-colors hover:scale-110 active:scale-95 z-10"
-        aria-label="Save to favorites">
-        <Star className="w-6 h-6" />
-      </button>
-
       <div className="pt-5 pb-2 px-1">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-baseline gap-1">
@@ -87,7 +81,6 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
           </div>
           {city.reviews && (
             <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 fill-primary text-primary" />
               <span className="font-medium">{city.reviews.averageRating.toFixed(1)}</span>
             </div>
           )}
