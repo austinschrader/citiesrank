@@ -8,7 +8,8 @@ import { AddPlacePage } from "@/pages/AddPlacePage";
 import { Routes, Route } from "react-router-dom";
 import { RootLayout } from "@/layouts/RootLayout";
 import { CreateListPage } from "@/pages/CreateListPage";
-import { ViewListPage } from "./pages/ViewListPage";
+import { ViewListPage } from "@/pages/ViewListPage";
+import { ListRoute } from "@/components/travel/ListRoute";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PlacesPage />} />
         <Route path="/lists" element={<ListsPage />} />
+        <Route path="/lists/:id" element={<ListRoute />} />
         <Route path="/members" element={<MembersPage />} />
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/saved" element={<SavedPage />} />
