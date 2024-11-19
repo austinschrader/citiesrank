@@ -14,162 +14,31 @@ import { Select, SelectTrigger, SelectItem, SelectValue, SelectContent } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
+import { ListHero } from "@/components/travel/ListHero";
+import { DEFAULT_TRAVEL_LIST, Place, TravelList } from "@/types/travel";
 
-// Static data that would come from a database
-const LIST_DATA = {
-  id: "hidden-gems-western-europe-2024",
-  title: "Enchanting Hidden Gems of Western Europe (2024 Edition)",
-  description:
-    "Venture beyond Paris and Rome to discover Western Europe's most charming under-the-radar destinations. From fairy-tale towns to alpine retreats, these magical places offer authentic experiences away from the tourist crowds.",
-  author: {
-    id: "thomas123",
-    name: "Thomas Laurent",
-    avatar: "/avatars/mike.jpg",
-    location: "Colmar, France",
-    bio: "Travel writer specializing in European cultural heritage and off-beat destinations",
-  },
-  stats: {
-    views: 14567,
-    likes: 945,
-    saves: 423,
-    shares: 189,
-  },
-  metadata: {
-    createdAt: "2024-02-10",
-    updatedAt: "2024-03-15",
-    isVerified: true,
-    category: "Hidden Gems",
-  },
-  tags: ["hidden-gems", "medieval", "culture", "photography", "authentic"],
-  places: [
-    {
-      id: "colmar-france",
-      name: "Colmar",
-      country: "France",
-      imageUrl: "colmar-france-1",
-      description: "A fairy-tale Alsatian town with colorful half-timbered houses, peaceful canals, and world-class wine culture.",
-      highlight: "Little Venice district and wine tastings",
-      rating: 4.8,
-      reviews: 2100,
-      coordinates: [48.0794, 7.3585],
-      tags: ["wine", "architecture", "romantic"],
-      bestTime: "Spring/Fall",
-      suggestedStay: "2-3 days",
-    },
-    {
-      id: "ghent-belgium",
-      name: "Ghent",
-      country: "Belgium",
-      imageUrl: "ghent-belgium-1",
-      description: "A medieval gem with stunning Gothic architecture, vibrant cultural scene, and fewer tourists than Bruges.",
-      highlight: "Gravensteen Castle and canal-side architecture",
-      rating: 4.6,
-      reviews: 1876,
-      coordinates: [51.0543, 3.7174],
-      tags: ["medieval", "cultural", "canals"],
-      bestTime: "Spring/Summer",
-      suggestedStay: "2-3 days",
-    },
-    {
-      id: "rothenburg-germany",
-      name: "Rothenburg ob der Tauber",
-      country: "Germany",
-      imageUrl: "rothenburg-ob-der-Tauber-germany-1",
-      description: "The best-preserved medieval town in Germany, with intact city walls and enchanting architecture.",
-      highlight: "Medieval Old Town and Night Watchman's Tour",
-      rating: 4.9,
-      reviews: 2300,
-      coordinates: [49.3724, 10.1797],
-      tags: ["medieval", "historic", "romantic"],
-      bestTime: "Spring/Fall",
-      suggestedStay: "2 days",
-    },
-    {
-      id: "sintra-portugal",
-      name: "Sintra",
-      country: "Portugal",
-      imageUrl: "sintra-portugal-1",
-      description: "A mystical town of fairy-tale palaces, lush gardens, and romantic architecture set in hills near Lisbon.",
-      highlight: "Pena Palace and Quinta da Regaleira",
-      rating: 4.9,
-      reviews: 3200,
-      coordinates: [38.7983, -9.3876],
-      tags: ["palaces", "unesco", "romantic"],
-      bestTime: "Spring/Fall",
-      suggestedStay: "2-3 days",
-    },
-  ],
-  relatedLists: [
-    {
-      id: "alpine-villages",
-      title: "Charming Alpine Villages",
-      places: 10,
-      author: "Sofia Müller",
-      imageUrl: "zermatt-switzerland-1",
-    },
-    {
-      id: "medieval-france",
-      title: "Medieval Treasures of France",
-      places: 8,
-      author: "Pierre Dubois",
-      imageUrl: "paris-france-1",
-    },
-  ],
-};
+interface ViewListPageProps {
+  data?: TravelList;
+}
+export const ViewListPage: React.FC<ViewListPageProps> = ({ data = DEFAULT_TRAVEL_LIST }) => {
+  const [activePlace, setActivePlace] = useState<Place>(data.places[0]);
 
-export const ViewListPage = () => {
-  const [activePlace, setActivePlace] = useState(LIST_DATA.places[0]);
-
-  const citySlug = createSlug(LIST_DATA.places[0].name);
-  const countrySlug = createSlug(LIST_DATA.places[0].country);
+  const citySlug = createSlug(activePlace.name);
+  const countrySlug = createSlug(activePlace.country);
   const coverImage = getCityImage(`${citySlug}-${countrySlug}-1`, "large");
 
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="relative h-[50vh] min-h-[400px] bg-black">
-        <img src={coverImage} alt={LIST_DATA.title} className="absolute inset-0 w-full h-full object-cover opacity-90" />
-        {/* Multiple layered protection for text */}
-        <div className="absolute inset-0 bg-black/40" /> {/* Overall dimming */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" /> {/* Bottom gradient for text */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-8">
-          <div className="container max-w-screen-xl mx-auto">
-            <div className="max-w-3xl space-y-4">
-              <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="bg-black/80 backdrop-blur-sm text-white border-white/20">
-                  {LIST_DATA.metadata.category}
-                </Badge>
-                {LIST_DATA.metadata.isVerified && (
-                  <Badge variant="secondary" className="bg-black/80 backdrop-blur-sm text-white border-white/20">
-                    Verified
-                  </Badge>
-                )}
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-white [text-shadow:_2px_2px_8px_rgb(0_0_0_/_90%)]">{LIST_DATA.title}</h1>
-              <p className="text-lg text-white [text-shadow:_1px_1px_4px_rgb(0_0_0_/_90%)] bg-black/30 backdrop-blur-sm inline-block px-2 py-1 rounded-md">
-                {LIST_DATA.description}
-              </p>
-              <div className="flex items-center gap-6 pt-2 bg-black/40 backdrop-blur-sm px-3 py-2 rounded-lg inline-flex">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-10 w-10 border-2 border-white shadow-2xl">
-                    <AvatarImage src={LIST_DATA.author.avatar} />
-                    <AvatarFallback>{LIST_DATA.author.name[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="text-white [text-shadow:_1px_1px_2px_rgb(0_0_0_/_90%)]">
-                    <p className="font-semibold">{LIST_DATA.author.name}</p>
-                    <p className="text-sm text-white/90 font-medium">{LIST_DATA.author.location}</p>
-                  </div>
-                </div>
-                <div className="h-8 w-px bg-white/30" />
-                <div className="flex items-center gap-4 text-white [text-shadow:_1px_1px_2px_rgb(0_0_0_/_90%)]">
-                  <span className="text-sm font-medium">{LIST_DATA.places.length} places</span>
-                  <span className="text-sm font-medium">Updated {new Date(LIST_DATA.metadata.updatedAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ListHero
+        title={data.title}
+        description={data.description}
+        metadata={data.metadata}
+        author={data.author}
+        places={data.places}
+        coverImage={coverImage}
+      />
+
       {/* Main Content */}
       <div className="container max-w-screen-xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
@@ -188,7 +57,7 @@ export const ViewListPage = () => {
             </div>
 
             <div className="grid gap-4">
-              {LIST_DATA.places.map((place) => (
+              {data.places.map((place) => (
                 <Card
                   key={place.id}
                   className={`cursor-pointer transition-all hover:shadow-md ${activePlace.id === place.id ? "ring-2 ring-primary" : ""}`}
@@ -233,15 +102,15 @@ export const ViewListPage = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="text-center">
-                        <p className="font-semibold">{LIST_DATA.stats.views.toLocaleString()}</p>
+                        <p className="font-semibold">{data.stats.views.toLocaleString()}</p>
                         <p className="text-xs text-muted-foreground">Views</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-semibold">{LIST_DATA.stats.likes.toLocaleString()}</p>
+                        <p className="font-semibold">{data.stats.likes.toLocaleString()}</p>
                         <p className="text-xs text-muted-foreground">Likes</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-semibold">{LIST_DATA.stats.saves.toLocaleString()}</p>
+                        <p className="font-semibold">{data.stats.saves.toLocaleString()}</p>
                         <p className="text-xs text-muted-foreground">Saves</p>
                       </div>
                     </div>
@@ -301,7 +170,7 @@ export const ViewListPage = () => {
               <CardContent className="p-4">
                 <h3 className="font-semibold mb-3">Tags</h3>
                 <div className="flex flex-wrap gap-2">
-                  {LIST_DATA.tags.map((tag) => (
+                  {data.tags.map((tag) => (
                     <Badge key={tag} variant="secondary">
                       {tag}
                     </Badge>
@@ -315,7 +184,7 @@ export const ViewListPage = () => {
               <CardContent className="p-4">
                 <h3 className="font-semibold mb-3">Related Lists</h3>
                 <div className="space-y-3">
-                  {LIST_DATA.relatedLists.map((list) => (
+                  {data.relatedLists.map((list) => (
                     <div key={list.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer">
                       <div className="w-12 h-12 bg-muted rounded-md overflow-hidden">
                         <img src={getCityImage(list.imageUrl ?? "", "thumbnail")} alt={list.title} className="w-full h-full object-cover" />
@@ -334,12 +203,12 @@ export const ViewListPage = () => {
           </div>
         </div>
       </div>
-      <CommentsAndFollowUp />
+      <CommentsAndFollowUp data={data} />
     </div>
   );
 };
 
-function CommentsAndFollowUp() {
+function CommentsAndFollowUp({ data }: { data: TravelList }) {
   return (
     <div>
       <div className="container max-w-screen-xl mx-auto px-4 py-8 border-t">
@@ -461,12 +330,12 @@ function CommentsAndFollowUp() {
               <CardContent className="p-6">
                 <div className="text-center mb-4">
                   <Avatar className="h-20 w-20 mx-auto mb-4">
-                    <AvatarImage src={LIST_DATA.author.avatar} />
-                    <AvatarFallback>{LIST_DATA.author.name[0]}</AvatarFallback>
+                    <AvatarImage src={data.author.avatar} />
+                    <AvatarFallback>{data.author.name[0]}</AvatarFallback>
                   </Avatar>
-                  <h3 className="font-semibold text-lg mb-1">{LIST_DATA.author.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">{LIST_DATA.author.location}</p>
-                  <p className="text-sm">{LIST_DATA.author.bio}</p>
+                  <h3 className="font-semibold text-lg mb-1">{data.author.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-3">{data.author.location}</p>
+                  <p className="text-sm">{data.author.bio}</p>
                 </div>
                 <div className="flex justify-center gap-2">
                   <Button className="flex-1">Follow</Button>
@@ -478,7 +347,7 @@ function CommentsAndFollowUp() {
             {/* More from Author */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">More from {LIST_DATA.author.name}</h3>
+                <h3 className="font-semibold mb-4">More from {data.author.name}</h3>
                 <div className="space-y-4">
                   {[
                     {
