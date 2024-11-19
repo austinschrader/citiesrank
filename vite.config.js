@@ -7,11 +7,14 @@ export default defineConfig({
   server: {
     proxy: {
       "/data": {
-        target: "https://20.3.188.93",
+        target: "http://20.3.188.93", // Using http since this works
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/data/, "/api"),
+        secure: false,
       },
     },
+    // Add this to ensure we're listening on all available network interfaces
+    host: "0.0.0.0",
   },
   resolve: {
     alias: {
