@@ -158,11 +158,13 @@ const MemberCard = ({ member }: { member: MemberProfile }) => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">{member.name}</h3>
+                {/* 
+                TODO: fix spacing issue
                 {member.verified && (
                   <Badge variant="secondary" className="text-xs">
                     Verified
                   </Badge>
-                )}
+                )} */}
               </div>
               <p className="text-sm text-muted-foreground">@{member.username}</p>
               <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
