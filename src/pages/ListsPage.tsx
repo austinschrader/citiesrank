@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { getCityImage } from "@/lib/cloudinary";
 import { Link } from "react-router-dom";
+import { MOCK_LISTS } from "@/mockTravelLists";
 
 // Types
 interface TravelList {
@@ -34,92 +35,6 @@ interface TravelList {
 }
 
 // Mock Data
-const MOCK_LISTS: TravelList[] = [
-  {
-    id: "1",
-    title: "Family-Friendly European Cities with Kids Under 5",
-    description: "Perfect destinations for young families with playgrounds, museums, and child-friendly restaurants",
-    author: {
-      id: "user1",
-      name: "Sarah Parker",
-      avatar: "/avatars/sarah.jpg",
-    },
-    places: [
-      { citySlug: "copenhagen-denmark", name: "Copenhagen", country: "Denmark" },
-      { citySlug: "amsterdam-netherlands", name: "Amsterdam", country: "Netherlands" },
-      { citySlug: "munich-germany", name: "Munich", country: "Germany" },
-    ],
-    tags: ["family", "kids", "europe", "playgrounds"],
-    likes: 1242,
-    shares: 89,
-    saves: 456,
-    createdAt: "2024-03-15",
-    updatedAt: "2024-03-15",
-    totalPlaces: 8,
-  },
-  {
-    id: "2",
-    title: "Portland's Hidden Gem Restaurants 2024",
-    description: "Local food critic's guide to the most underrated eateries in PDX",
-    author: {
-      id: "user2",
-      name: "Mike Chen",
-      avatar: "/avatars/mike.jpg",
-    },
-    places: [{ citySlug: "portland-united-states", name: "Portland", country: "United States" }],
-    tags: ["food", "local", "portland", "restaurants"],
-    likes: 892,
-    shares: 234,
-    saves: 567,
-    createdAt: "2024-03-10",
-    updatedAt: "2024-03-14",
-    totalPlaces: 15,
-  },
-  {
-    id: "3",
-    title: "LGBTQ+ Friendly Winter Destinations in Europe",
-    description: "Cozy cities and festive locations perfect for holiday trips with friends",
-    author: {
-      id: "user3",
-      name: "Alex Rivera",
-      avatar: "/avatars/alex.jpg",
-    },
-    places: [
-      { citySlug: "berlin-germany", name: "Berlin", country: "Germany" },
-      { citySlug: "stockholm-sweden", name: "Stockholm", country: "Sweden" },
-      { citySlug: "prague-czech", name: "Prague", country: "Czech Republic" },
-    ],
-    tags: ["lgbtq", "winter", "europe", "nightlife"],
-    likes: 2341,
-    shares: 567,
-    saves: 890,
-    createdAt: "2024-03-01",
-    updatedAt: "2024-03-12",
-    totalPlaces: 12,
-  },
-  {
-    id: "4",
-    title: "Ultimate College Euro Trip (Budget Edition)",
-    description: "2-week itinerary hitting the best spots while keeping costs low",
-    author: {
-      id: "user4",
-      name: "Jordan Smith",
-      avatar: "/avatars/jordan.jpg",
-    },
-    places: [
-      { citySlug: "barcelona-spain", name: "Barcelona", country: "Spain" },
-      { citySlug: "budapest-hungary", name: "Budapest", country: "Hungary" },
-      { citySlug: "krakow-poland", name: "Krakow", country: "Poland" },
-    ],
-    tags: ["budget", "backpacking", "students", "hostels"],
-    likes: 3456,
-    shares: 789,
-    saves: 1234,
-    createdAt: "2024-02-28",
-    updatedAt: "2024-03-10",
-    totalPlaces: 10,
-  },
-];
 
 const ListCard = ({ list }: { list: TravelList }) => {
   const coverImage = getCityImage(`${list.places[0].citySlug}-1`, "standard");
