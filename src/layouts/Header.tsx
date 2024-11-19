@@ -23,7 +23,7 @@ export const Header = () => {
     { label: "Places", icon: Globe, to: "/" },
     { label: "Lists", icon: Map, to: "/lists" },
     { label: "Members", icon: Users, to: "/members" },
-    { label: "Journal", icon: BookOpen, to: "/journal" },
+    { label: "Hello", icon: BookOpen, to: "/journal" },
     { label: "Saved", icon: Heart, to: "/saved", mobileOnly: true },
   ];
 
@@ -87,7 +87,7 @@ export const Header = () => {
             </div>
 
             {/* Center section - Navigation (desktop) */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="gap-1">
               {navItems.map(({ label, icon: Icon, to }) => (
                 <Link key={to} to={to}>
                   <Button variant="ghost" className="gap-2">
