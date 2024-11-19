@@ -7,10 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       "/data": {
-        target: "http://20.3.188.93", // Using http since this works
+        target: "https://api.citiesrank.com",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/data/, "/api"),
-        secure: false,
+        secure: true,
       },
     },
     // Add this to ensure we're listening on all available network interfaces
