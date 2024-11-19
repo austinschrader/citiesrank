@@ -359,7 +359,6 @@ const fallbackCityData: Record<string, CityData> = {
     bestSeason: 80, // Summer best for lake
     accessibility: 60, // Near Geneva airport
   },
-
   Sintra: {
     country: "Portugal",
     cost: 40,
