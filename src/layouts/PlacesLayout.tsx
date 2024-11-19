@@ -74,7 +74,7 @@ export const PlacesLayout = ({
       </div>
 
       {/* Main content */}
-      <div className="container px-4">{children}</div>
+      <div className="container mx-auto px-4">{children}</div>
     </div>
   );
 };

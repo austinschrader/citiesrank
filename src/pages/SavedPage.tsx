@@ -251,7 +251,7 @@ export const SavedPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   return (
-    <div className="container max-w-screen-2xl py-8 px-4">
+    <div className="container max-w-screen-2xl mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Saved Items</h1>
         <p className="text-muted-foreground max-w-2xl">
