@@ -31,7 +31,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 3842,
+      totalReviews: 42055,
     },
     destinationTypes: ["coastal", "historic", "culinary", "wineries", "cultural"],
     crowdLevel: 65, // Popular but not overwhelming
@@ -57,7 +57,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.6,
-      totalReviews: 2156,
+      totalReviews: 38010,
     },
     destinationTypes: ["cultural", "historic", "arts", "digital-nomad"],
     crowdLevel: 45, // Less touristy than major capitals
@@ -83,7 +83,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.8,
-      totalReviews: 2987,
+      totalReviews: 81199,
     },
     destinationTypes: ["historic", "cultural", "culinary", "gastronomy", "arts"],
     crowdLevel: 50, // Authentic city, moderate tourism
@@ -109,7 +109,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 4521,
+      totalReviews: 50915,
     },
     destinationTypes: ["coastal", "metropolis", "cultural", "arts", "gastronomy"],
     crowdLevel: 70, // Popular but less than Barcelona
@@ -135,7 +135,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.6,
-      totalReviews: 1876,
+      totalReviews: 30563,
     },
     destinationTypes: ["historic", "cultural", "arts"],
     crowdLevel: 55, // Less touristy than Bruges
@@ -161,7 +161,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.5,
-      totalReviews: 2245,
+      totalReviews: 56713,
     },
     destinationTypes: ["historic", "cultural", "village", "arts"],
     crowdLevel: 65, // Popular university town
@@ -211,7 +211,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.8,
-      totalReviews: 2100,
+      totalReviews: 26901,
     },
     destinationTypes: ["historic", "cultural", "village", "arts"],
     crowdLevel: 75, // Very touristy in peak season
@@ -236,7 +236,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 1800,
+      totalReviews: 9355,
     },
     destinationTypes: ["coastal", "historic", "cultural", "digital-nomad", "emerging"],
     crowdLevel: 60, // Growing in popularity
@@ -254,7 +254,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Golden Roof", "Innsbruck Old Town", "Nordkette Cable Car", "Ambras Castle", "Bergisel Ski Jump", "Hofburg Palace"],
     reviews: {
       averageRating: 4.6,
-      totalReviews: 1900,
+      totalReviews: 19931,
     },
     destinationTypes: ["mountain", "historic", "winter", "adventure"],
     crowdLevel: 70, // Popular year-round
@@ -272,7 +272,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Bryggen Wharf", "Mount Fløyen", "Fisketorget (Fish Market)", "Ulriken Cable Car", "Fantoft Stave Church", "Troldhaugen"],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 2500,
+      totalReviews: 7265,
     },
     destinationTypes: ["coastal", "ports", "cultural", "adventure"],
     crowdLevel: 65, // Gateway to fjords
@@ -290,7 +290,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["La Petite Venise", "Unterlinden Museum", "St Martin's Church", "Bartholdi Museum", "Old Town", "Dominican Church"],
     reviews: {
       averageRating: 4.8,
-      totalReviews: 2100,
+      totalReviews: 48409,
     },
     destinationTypes: ["village", "historic", "cultural", "wineries"],
     crowdLevel: 75, // Very touristy in season
@@ -315,7 +315,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 1800,
+      totalReviews: 8900,
     },
     destinationTypes: ["coastal", "culinary", "cultural"],
     crowdLevel: 80, // Very touristy
@@ -333,7 +333,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Town Walls", "Plönlein", "Medieval Crime Museum", "Market Square", "St. Jakob's Church", "Burggarten"],
     reviews: {
       averageRating: 4.9,
-      totalReviews: 2300,
+      totalReviews: 5378,
     },
     destinationTypes: ["village", "historic", "cultural"],
     crowdLevel: 80, // Very touristy in peak
@@ -351,7 +351,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Lake Annecy", "Annecy Old Town", "Palais de l'Isle", "Château d'Annecy", "Pont des Amours", "Semnoz Mountain"],
     reviews: {
       averageRating: 4.8,
-      totalReviews: 2600,
+      totalReviews: 11692,
     },
     destinationTypes: ["mountain", "village", "historic", "cultural"],
     crowdLevel: 70, // Popular in summer
@@ -370,7 +370,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Pena Palace", "Quinta da Regaleira", "Moorish Castle", "Monserrate Palace", "Sintra National Palace", "Cabo da Roca"],
     reviews: {
       averageRating: 4.9,
-      totalReviews: 3200,
+      totalReviews: 57698,
     },
     destinationTypes: ["historic", "cultural", "forest"],
     crowdLevel: 85, // Very touristy
@@ -395,7 +395,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 1800,
+      totalReviews: 2440,
     },
     destinationTypes: ["coastal", "historic", "cultural", "ports"],
     crowdLevel: 75, // Very busy in summer
@@ -413,7 +413,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Matterhorn", "Gornergrat Railway", "Zermatt Village", "Hiking trails", "Matterhorn Museum", "Sunnegga Paradise"],
     reviews: {
       averageRating: 4.9,
-      totalReviews: 2100,
+      totalReviews: 1047,
     },
     destinationTypes: ["mountain", "winter", "adventure", "village"],
     crowdLevel: 80, // Very touristy in peak seasons
@@ -431,7 +431,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Salt Mines", "Hallstatt Skywalk", "Market Square", "Dachstein Caves", "Lake Hallstatt", "Hallstatt Museum"],
     reviews: {
       averageRating: 4.8,
-      totalReviews: 2400,
+      totalReviews: 5718,
     },
     destinationTypes: ["mountain", "village", "historic", "cultural"],
     crowdLevel: 90, // Extremely touristy
@@ -449,7 +449,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Puente Nuevo", "Ronda Bullring", "El Tajo Gorge", "Arab Baths", "Palacio de Mondragón", "Jardines de Cuenca"],
     reviews: {
       averageRating: 4.7,
-      totalReviews: 2000,
+      totalReviews: 31335,
     },
     destinationTypes: ["historic", "cultural", "adventure"],
     crowdLevel: 70, // Popular daytrip
@@ -467,7 +467,7 @@ const fallbackCityData: Record<string, CityData> = {
     highlights: ["Reinebringen Hike", "Fishing Villages", "Northern Lights", "Sakrisøy", "Reinefjord", "Arctic Kayaking"],
     reviews: {
       averageRating: 4.8,
-      totalReviews: 1500,
+      totalReviews: 1679,
     },
     destinationTypes: ["coastal", "village", "adventure", "ports"],
     crowdLevel: 40, // Remote but gaining popularity
@@ -492,7 +492,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.6,
-      totalReviews: 1700,
+      totalReviews: 11207,
     },
     destinationTypes: ["village", "historic", "cultural", "wineries"],
     crowdLevel: 75, // Touristy but manageable
@@ -683,7 +683,7 @@ const fallbackCityData: Record<string, CityData> = {
     ],
     reviews: {
       averageRating: 4.9,
-      totalReviews: 25_000,
+      totalReviews: 409915,
     },
     destinationTypes: ["metropolis", "cultural", "arts", "gastronomy"],
     crowdLevel: 95, // Extremely touristy

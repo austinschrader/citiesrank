@@ -82,6 +82,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
           {city.reviews && (
             <div className="flex items-center gap-1.5">
               <span className="font-medium">{city.reviews.averageRating.toFixed(1)}</span>
+              <span className="text-muted-foreground text-sm">({city.reviews.totalReviews})</span>
             </div>
           )}
         </div>
