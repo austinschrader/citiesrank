@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { getCityImage } from "@/lib/cloudinary";
+import { Link } from "react-router-dom";
 
 // Types
 interface TravelList {
@@ -193,9 +194,11 @@ export const ListsPage = () => {
             perfect inspiration for your next adventure.
           </p>
         </div>
-        <Button size="lg" className="md:self-start">
-          <Plus className="mr-2 h-5 w-5" /> Create List
-        </Button>
+        <Link key="/create-list" to="/create-list">
+          <Button size="lg" className="md:self-start">
+            <Plus className="mr-2 h-5 w-5" /> Create List
+          </Button>
+        </Link>
       </div>
 
       <Tabs defaultValue="popular" className="space-y-8">
