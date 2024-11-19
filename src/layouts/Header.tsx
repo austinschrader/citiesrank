@@ -108,7 +108,7 @@ export const Header = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="top-4 gap-0 p-0">
-                  <DialogHeader className="px-4 pt-4 pb-2">
+                  <DialogHeader className="px-4 pt-24 pb-2">
                     <DialogTitle>Search Destinations</DialogTitle>
                     <DialogDescription>Discover cities, regions, and experiences</DialogDescription>
                   </DialogHeader>
