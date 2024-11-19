@@ -24,26 +24,26 @@ export const DestinationFilter = ({ selectedFilter, onFilterSelect }: Destinatio
     // { id: "adventure", label: "Adventure Sports" },
     // { id: "ports", label: "Port Cities" },
     // { id: "winter", label: "Winter Sports" },
-    { id: "coastal", label: "Coastal Cities" },
-    { id: "mountain", label: "Mountain Towns" },
-    { id: "metropolis", label: "Major Metros" },
-    { id: "historic", label: "Historic Cities" },
-    { id: "culinary", label: "Food Capitals" },
-    { id: "cultural", label: "Cultural Hubs" },
-    { id: "wineries", label: "Wine Regions" },
-    { id: "adventure", label: "Adventure Sports" },
-    { id: "ports", label: "Port Cities" },
-    { id: "winter", label: "Winter Sports" },
-    { id: "tropical", label: "Tropical Paradise" },
-    { id: "ancient", label: "Ancient Cities" },
-    { id: "digital-nomad", label: "Digital Nomad" },
-    { id: "arts", label: "Arts & Music" },
-    { id: "village", label: "Small Villages" },
-    { id: "forest", label: "Forest Towns" },
-    { id: "emerging", label: "Up & Coming" },
-    { id: "wellness", label: "Wellness" },
-    { id: "surf", label: "Surf Towns" },
-    { id: "gastronomy", label: "Fine Dining" },
+    // { id: "tropical", label: "Tropical Paradise" },
+    // { id: "ancient", label: "Ancient Cities" },
+    // { id: "digital-nomad", label: "Digital Nomad" },
+    // { id: "arts", label: "Arts & Music" },
+    // { id: "village", label: "Small Villages" },
+    // { id: "forest", label: "Forest Towns" },
+    // { id: "emerging", label: "Up & Coming" },
+    // { id: "wellness", label: "Wellness" },
+    // { id: "surf", label: "Surf Towns" },
+    // { id: "gastronomy", label: "Fine Dining" },
+    { id: "metropolis", label: "Major Cities" }, // Covers urban experiences
+    { id: "coastal", label: "Coastal Cities" }, // Beach/ocean destinations
+    { id: "mountain", label: "Mountain Towns" }, // Mountain/hiking destinations
+    { id: "historic", label: "Historic Sites" }, // Cultural/historical places
+    { id: "cultural", label: "Cultural Hubs" }, // Arts, music, museums
+    { id: "culinary", label: "Food & Wine" }, // Combines culinary/wineries
+    { id: "tropical", label: "Tropical" }, // Island/warm destinations
+    { id: "adventure", label: "Adventure" }, // Sports/outdoor activities
+    { id: "wellness", label: "Wellness" }, // Spas/retreats/relaxation
+    { id: "village", label: "Small Towns" },
   ];
 
   const handleScroll = (direction: "left" | "right") => {
