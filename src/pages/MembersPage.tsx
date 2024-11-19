@@ -238,7 +238,7 @@ export const MembersPage = () => {
   const [selectedFilter, setSelectedFilter] = useState("popular");
 
   return (
-    <div className="container max-w-screen-2xl py-8 px-4">
+    <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">Members</h1>

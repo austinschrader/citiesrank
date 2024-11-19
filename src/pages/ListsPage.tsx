@@ -184,7 +184,7 @@ export const ListsPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   return (
-    <div className="container max-w-screen-2xl py-8 px-4">
+    <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-4xl font-bold mb-2">Lists</h1>
