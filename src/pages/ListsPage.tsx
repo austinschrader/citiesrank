@@ -125,59 +125,79 @@ const ListCard = ({ list }: { list: TravelList }) => {
   const coverImage = getCityImage(`${list.places[0].citySlug}-1`, "standard");
 
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-lg">
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={coverImage}
-          alt={list.places[0].name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4">
-          <h3 className="text-white font-semibold text-lg line-clamp-2">{list.title}</h3>
-        </div>
-      </div>
-      <CardHeader className="space-y-2 p-4">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={list.author.avatar} />
-            <AvatarFallback>{list.author.name[0]}</AvatarFallback>
-          </Avatar>
-          <span className="text-sm text-muted-foreground">{list.author.name}</span>
-        </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">{list.description}</p>
-        <div className="flex flex-wrap gap-2">
-          {list.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardHeader>
-      <CardFooter className="p-4 pt-0 flex items-center justify-between">
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <MapPin className="h-4 w-4" />
-            <span>{list.totalPlaces} places</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            <span>{new Date(list.updatedAt).toLocaleDateString()}</span>
+    <Link to={`/lists/${list.id}`} className="block">
+      <Card className="group overflow-hidden transition-all hover:shadow-lg">
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={coverImage}
+            alt={list.places[0].name}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4">
+            <h3 className="text-white font-semibold text-lg line-clamp-2">{list.title}</h3>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Heart className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Share2 className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <BookmarkPlus className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+        <CardHeader className="space-y-2 p-4">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={list.author.avatar} />
+              <AvatarFallback>{list.author.name[0]}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-muted-foreground">{list.author.name}</span>
+          </div>
+          <p className="text-sm text-muted-foreground line-clamp-2">{list.description}</p>
+          <div className="flex flex-wrap gap-2">
+            {list.tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </CardHeader>
+        <CardFooter className="p-4 pt-0 flex items-center justify-between">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <MapPin className="h-4 w-4" />
+              <span>{list.totalPlaces} places</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              <span>{new Date(list.updatedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.preventDefault(); // Prevent navigation
+                // Add your like handler here
+              }}>
+              <Heart className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.preventDefault(); // Prevent navigation
+                // Add your share handler here
+              }}>
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => {
+                e.preventDefault(); // Prevent navigation
+                // Add your bookmark handler here
+              }}>
+              <BookmarkPlus className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
 
