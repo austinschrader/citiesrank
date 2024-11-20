@@ -37,6 +37,8 @@ interface TravelList {
 // Mock Data
 
 const ListCard = ({ list }: { list: TravelList }) => {
+  const coverImage = getCityImage(`${list.places[0].citySlug}-1`, "standard");
+
   const handleButtonClick = (e: React.MouseEvent, action: string) => {
     e.preventDefault();
     e.stopPropagation();
