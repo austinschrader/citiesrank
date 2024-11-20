@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Search, Menu, X, Globe, BookOpen, Map, Heart, Users, LogIn, BellDot } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Search, Menu, X, Globe, BookOpen, Map, Heart, Users, Settings, BellDot, User, LifeBuoy, LogOut, Bookmark } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -10,7 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -22,6 +24,12 @@ export const Header = () => {
   const { user, signOut } = useAuth();
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    signOut();
+    navigate("/");
+  };
 
   const navItems = [
     { label: "Places", icon: Globe, to: "/" },
@@ -47,15 +55,14 @@ export const Header = () => {
       )}
     </div>
   );
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container px-4 mx-auto">
-          {/* Main header row */}
           <div className="h-16 flex items-center justify-between gap-4">
             {/* Logo section */}
             <div className="flex items-center gap-6">
-              {/* Mobile menu */}
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="md:hidden">
@@ -68,11 +75,11 @@ export const Header = () => {
                   </SheetHeader>
                   <ScrollArea className="h-[calc(100vh-8rem)]">
                     <div className="flex flex-col gap-2">
-                      {navItems.map(({ label, icon: Icon, to }) => (
-                        <Link key={to} to={to}>
+                      {navItems.map((item) => (
+                        <Link key={item.to} to={item.to}>
                           <Button variant="ghost" className="justify-start gap-2 w-full">
-                            <Icon className="h-4 w-4" />
-                            {label}
+                            <item.icon className="h-4 w-4" />
+                            {item.label}
                           </Button>
                         </Link>
                       ))}
@@ -81,7 +88,6 @@ export const Header = () => {
                 </SheetContent>
               </Sheet>
 
-              {/* Logo */}
               <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                 <img src="/favicon.svg" alt="WanderLog Logo" className="w-8 h-8" />
                 <span className="font-bold text-xl hidden sm:inline">WanderLog</span>
@@ -89,21 +95,22 @@ export const Header = () => {
               </Link>
             </div>
 
-            {/* Center section - Navigation (desktop) */}
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
-              {navItems.map(({ label, icon: Icon, to }) => (
-                <Link key={to} to={to}>
-                  <Button variant="ghost" className="gap-2">
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </Button>
-                </Link>
-              ))}
+              {navItems
+                .filter((item) => !item.mobileOnly)
+                .map((item) => (
+                  <Link key={item.to} to={item.to}>
+                    <Button variant="ghost" className="gap-2">
+                      <item.icon className="h-4 w-4" />
+                      {item.label}
+                    </Button>
+                  </Link>
+                ))}
             </nav>
 
-            {/* Right section - Actions */}
+            {/* User menu section */}
             <div className="flex items-center gap-2">
-              {/* Search trigger for mobile */}
               <Dialog open={isSearchActive} onOpenChange={setIsSearchActive}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon" className="md:hidden">
@@ -111,9 +118,9 @@ export const Header = () => {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="top-4 gap-0 p-0">
-                  <DialogHeader className="px-4 pt-24 pb-2">
-                    <DialogTitle>Search Destinations</DialogTitle>
-                    <DialogDescription>Discover cities, regions, and experiences</DialogDescription>
+                  <DialogHeader className="px-4 pt-5 pb-4">
+                    <DialogTitle>Search</DialogTitle>
+                    <DialogDescription>Find places, lists, and more</DialogDescription>
                   </DialogHeader>
                   <div className="px-4 pb-4">
                     <SearchBar />
@@ -121,12 +128,10 @@ export const Header = () => {
                 </DialogContent>
               </Dialog>
 
-              {/* Desktop search bar */}
               <div className="hidden md:block">
                 <SearchBar />
               </div>
 
-              {/* Notifications */}
               <Button variant="ghost" size="icon">
                 <BellDot className="h-5 w-5" />
               </Button>
@@ -141,18 +146,54 @@ export const Header = () => {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuContent className="w-56" align="end">
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name ?? "User"}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email ?? ""}</p>
+                        <p className="text-sm font-medium leading-none">{user.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={signOut}>
-                      <LogIn className="mr-2 h-4 w-4" />
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
+
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile" className="cursor-pointer">
+                          <User className="mr-2 h-4 w-4" />
+                          Profile
+                          <DropdownMenuShortcut>⇧P</DropdownMenuShortcut>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/saved" className="cursor-pointer">
+                          <Bookmark className="mr-2 h-4 w-4" />
+                          Saved Items
+                          <DropdownMenuShortcut>⇧S</DropdownMenuShortcut>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/settings" className="cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                          <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                        </Link>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <a href="https://docs.citiesrank.com" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                          <LifeBuoy className="mr-2 h-4 w-4" />
+                          Support
+                        </a>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleSignOut} className="text-red-600 focus:text-red-600 cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign out
+                        <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
@@ -167,14 +208,16 @@ export const Header = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
         <nav className="container h-16">
           <div className="grid h-full grid-cols-4">
-            {navItems.map(({ label, icon: Icon, to }) => (
-              <Link key={to} to={to} className="h-full">
-                <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
-                  <Icon className="h-5 w-5" />
-                  <span className="text-xs">{label}</span>
-                </Button>
-              </Link>
-            ))}
+            {navItems
+              .filter((item) => !item.mobileOnly)
+              .map((item) => (
+                <Link key={item.to} to={item.to} className="h-full">
+                  <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
+                    <item.icon className="h-5 w-5" />
+                    <span className="text-xs">{item.label}</span>
+                  </Button>
+                </Link>
+              ))}
           </div>
         </nav>
       </div>
