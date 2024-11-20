@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Globe, BookOpen, Map, Heart, Users, Settings, BellDot, User, LifeBuoy, LogOut, Bookmark } from "lucide-react";
+import { Search, Menu, X, Globe, BookOpen, Map, Users, Settings, BellDot, User, LifeBuoy, LogOut, Bookmark } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -36,7 +36,7 @@ export const Header = () => {
     { label: "Lists", icon: Map, to: "/lists" },
     { label: "Members", icon: Users, to: "/members" },
     { label: "Journal", icon: BookOpen, to: "/journal" },
-    { label: "Saved", icon: Heart, to: "/saved", mobileOnly: true },
+    { label: "Saved", icon: Bookmark, to: "/saved" },
   ];
 
   const SearchBar = () => (
@@ -97,16 +97,14 @@ export const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
-              {navItems
-                .filter((item) => !item.mobileOnly)
-                .map((item) => (
-                  <Link key={item.to} to={item.to}>
-                    <Button variant="ghost" className="gap-2">
-                      <item.icon className="h-4 w-4" />
-                      {item.label}
-                    </Button>
-                  </Link>
-                ))}
+              {navItems.map((item) => (
+                <Link key={item.to} to={item.to}>
+                  <Button variant="ghost" className="gap-2">
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
             </nav>
 
             {/* User menu section */}
@@ -164,13 +162,6 @@ export const Header = () => {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to="/saved" className="cursor-pointer">
-                          <Bookmark className="mr-2 h-4 w-4" />
-                          Saved Items
-                          <DropdownMenuShortcut>⇧S</DropdownMenuShortcut>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
                         <Link to="/settings" className="cursor-pointer">
                           <Settings className="mr-2 h-4 w-4" />
                           Settings
@@ -207,17 +198,15 @@ export const Header = () => {
       {/* Mobile navigation bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
         <nav className="container h-16">
-          <div className="grid h-full grid-cols-4">
-            {navItems
-              .filter((item) => !item.mobileOnly)
-              .map((item) => (
-                <Link key={item.to} to={item.to} className="h-full">
-                  <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
-                    <item.icon className="h-5 w-5" />
-                    <span className="text-xs">{item.label}</span>
-                  </Button>
-                </Link>
-              ))}
+          <div className="grid h-full grid-cols-5">
+            {navItems.map((item) => (
+              <Link key={item.to} to={item.to} className="h-full">
+                <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-xs">{item.label}</span>
+                </Button>
+              </Link>
+            ))}
           </div>
         </nav>
       </div>
