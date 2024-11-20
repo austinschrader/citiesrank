@@ -34,6 +34,54 @@
             },
             {
                 "system": false,
+                "id": "list_status",
+                "name": "status",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "published",
+                        "draft"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_collection",
+                "name": "collection",
+                "type": "select",
+                "required": false,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "want-to-visit",
+                        "visited",
+                        "planning",
+                        "favorites"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_privacy",
+                "name": "privacy",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "public",
+                        "private",
+                        "followers"
+                    ]
+                }
+            },
+            {
+                "system": false,
                 "id": "list_author_data",
                 "name": "author",
                 "type": "json",

@@ -1,61 +1,120 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Grid, List as ListIcon, Heart, Share2, BookmarkPlus, Users2, Calendar, MapPin, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Grid,
+  List as ListIcon,
+  Heart,
+  Share2,
+  BookmarkPlus,
+  Users2,
+  Calendar,
+  MapPin,
+  Search,
+  Globe,
+  Camera,
+  Compass,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { getCityImage } from "@/lib/cloudinary";
 import { Link } from "react-router-dom";
-import PocketBase from "pocketbase";
 import { useNavigate } from "react-router-dom";
-import type { RecordModel } from "pocketbase";
+import PocketBase, { RecordModel } from "pocketbase";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 const pb = new PocketBase("https://api.citiesrank.com");
+
+interface Place {
+  citySlug: string;
+  name: string;
+  country: string;
+  imageUrl: string;
+}
+
+interface ListAuthor {
+  id: string;
+  name: string;
+  avatar: string;
+}
 
 interface TravelList {
   id: string;
   title: string;
   description: string;
-  author: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
-  places: {
-    citySlug: string;
-    name: string;
-    country: string;
-    imageUrl: string;
-  }[];
+  author: ListAuthor;
+  places: Place[];
   tags: string[];
   likes: number;
   shares: number;
   saves: number;
-  createdAt: string;
-  updatedAt: string;
-  totalPlaces: number;
+  status: "draft" | "published";
+  created: string;
+  updated: string;
+  updatedAt: string; // For compatibility with existing code
 }
 
-const transformRecord = (record: RecordModel): TravelList => ({
-  id: record.id,
-  title: record.title,
-  description: record.description,
-  author: record.author,
-  places: record.places,
-  tags: record.tags,
-  likes: record.likes,
-  shares: record.shares,
-  saves: record.saves,
-  createdAt: record.created,
-  updatedAt: record.updated,
-  totalPlaces: record.totalPlaces,
-});
+interface ListTemplate {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  bgClass: string;
+  textClass: string;
+}
 
-const ListCard = ({ list }: { list: TravelList }) => {
+const LIST_TEMPLATES: ListTemplate[] = [
+  {
+    icon: Sparkles,
+    title: "Hidden Gems",
+    description: "Share your secret spots",
+    bgClass: "bg-purple-500/10",
+    textClass: "text-purple-500",
+  },
+  {
+    icon: Camera,
+    title: "Photo Walks",
+    description: "Best photography routes",
+    bgClass: "bg-blue-500/10",
+    textClass: "text-blue-500",
+  },
+  {
+    icon: Globe,
+    title: "Local Favorites",
+    description: "Your city's best spots",
+    bgClass: "bg-green-500/10",
+    textClass: "text-green-500",
+  },
+  {
+    icon: Compass,
+    title: "Weekend Trips",
+    description: "Perfect 48-hour guides",
+    bgClass: "bg-orange-500/10",
+    textClass: "text-orange-500",
+  },
+];
+
+interface ListCardProps {
+  list: TravelList;
+}
+
+const LoadingSpinner = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="text-center space-y-4">
+      <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+      <p className="text-muted-foreground">Loading lists...</p>
+    </div>
+  </div>
+);
+
+const ListCard: React.FC<ListCardProps> = ({ list }) => {
   const navigate = useNavigate();
-  const coverImage = getCityImage(list.places[0].imageUrl, "standard");
+  const coverImage = getCityImage(list.places[0]?.imageUrl, "standard");
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -65,7 +124,6 @@ const ListCard = ({ list }: { list: TravelList }) => {
   const handleButtonClick = (e: React.MouseEvent, action: string) => {
     e.preventDefault();
     e.stopPropagation();
-    // Handle the action (like, share, bookmark)
     console.log(`${action} clicked for list ${list.id}`);
   };
 
@@ -104,11 +162,11 @@ const ListCard = ({ list }: { list: TravelList }) => {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
-              <span>{list.totalPlaces} places</span>
+              <span>{list.places.length} places</span>
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              <span>{new Date(list.updatedAt).toLocaleDateString()}</span>
+              <span>{new Date(list.updated).toLocaleDateString()}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -128,9 +186,12 @@ const ListCard = ({ list }: { list: TravelList }) => {
   );
 };
 
-export const ListsPage = () => {
+export const ListsPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [lists, setLists] = useState<TravelList[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -138,8 +199,30 @@ export const ListsPage = () => {
       try {
         const records = await pb.collection("lists").getFullList({
           sort: "-created",
+          ...(searchQuery && {
+            filter: `title ~ "${searchQuery}" || description ~ "${searchQuery}"`,
+          }),
         });
-        setLists(records.map(transformRecord));
+
+        const transformedLists = records.map(
+          (record: RecordModel): TravelList => ({
+            id: record.id,
+            title: record.title,
+            description: record.description,
+            author: record.expand?.author || record.author,
+            places: typeof record.places === "string" ? JSON.parse(record.places) : record.places,
+            tags: typeof record.tags === "string" ? JSON.parse(record.tags) : record.tags,
+            likes: record.likes || 0,
+            shares: record.shares || 0,
+            saves: record.saves || 0,
+            status: record.status || "published",
+            created: record.created,
+            updated: record.updated,
+            updatedAt: record.updated, // For compatibility
+          })
+        );
+
+        setLists(transformedLists);
       } catch (err) {
         console.error("Error loading lists:", err);
       } finally {
@@ -148,14 +231,14 @@ export const ListsPage = () => {
     };
 
     loadLists();
-  }, []);
+  }, [searchQuery]);
 
-  const getSortedLists = (sortType: "popular" | "recent" | "trending") => {
+  const getSortedLists = (sortType: "popular" | "recent" | "trending"): TravelList[] => {
     switch (sortType) {
       case "popular":
         return [...lists].sort((a, b) => b.likes - a.likes);
       case "recent":
-        return [...lists].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+        return [...lists].sort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime());
       case "trending":
         return [...lists].sort((a, b) => b.shares - a.shares);
       default:
@@ -164,30 +247,51 @@ export const ListsPage = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
-  // Rest of your existing JSX remains the same, but replace MOCK_LISTS with getSortedLists()
   return (
     <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Lists</h1>
+          <h1 className="text-4xl font-bold mb-2">Travel Lists</h1>
           <p className="text-muted-foreground max-w-2xl">
-            Discover curated collections of destinations from our community. From family-friendly cities to hidden foodie spots, find the
-            perfect inspiration for your next adventure.
+            Discover curated collections of amazing places and create your own lists to share with the community.
           </p>
         </div>
-        <Link key="/create-list" to="/create-list">
+        <Link to="/create-list">
           <Button size="lg" className="md:self-start">
             <Plus className="mr-2 h-5 w-5" /> Create List
           </Button>
         </Link>
       </div>
+
+      {/* Quick Create Templates */}
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Start Your Own List</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {LIST_TEMPLATES.map((template) => (
+              <Card
+                key={template.title}
+                className="group cursor-pointer hover:shadow-lg transition-all"
+                onClick={() => navigate("/create-list")}>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className={`p-3 rounded-lg ${template.bgClass} ${template.textClass}`}>
+                      <template.icon className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-1">{template.title}</h3>
+                      <p className="text-sm text-muted-foreground">{template.description}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="popular" className="space-y-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -195,10 +299,16 @@ export const ListsPage = () => {
             <TabsTrigger value="popular">Popular</TabsTrigger>
             <TabsTrigger value="recent">Recent</TabsTrigger>
             <TabsTrigger value="trending">Trending</TabsTrigger>
+            {user && <TabsTrigger value="my-lists">My Lists</TabsTrigger>}
             <TabsTrigger value="following">Following</TabsTrigger>
           </TabsList>
 
           <div className="flex items-center gap-2">
+            <div className="relative w-[200px]">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input className="pl-9" placeholder="Search lists..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            </div>
+
             <Select defaultValue="this-week">
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="Time period" />
@@ -207,7 +317,6 @@ export const ListsPage = () => {
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="this-week">This Week</SelectItem>
                 <SelectItem value="this-month">This Month</SelectItem>
-                <SelectItem value="this-year">This Year</SelectItem>
                 <SelectItem value="all-time">All Time</SelectItem>
               </SelectContent>
             </Select>
@@ -254,6 +363,18 @@ export const ListsPage = () => {
             ))}
           </div>
         </TabsContent>
+
+        {user && (
+          <TabsContent value="my-lists" className="mt-0">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {lists
+                .filter((list) => list.author.id === user.id)
+                .map((list) => (
+                  <ListCard key={list.id} list={list} />
+                ))}
+            </div>
+          </TabsContent>
+        )}
 
         <TabsContent value="following" className="mt-0">
           <div className="flex flex-col items-center justify-center py-12 text-center">

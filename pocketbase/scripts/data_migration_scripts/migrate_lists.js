@@ -3,18 +3,16 @@ import { MOCK_LISTS } from "../raw_data/lists_data.js";
 
 const pb = new PocketBase("https://api.citiesrank.com");
 
-// Helper function to get random items from an array
+// Helper functions remain the same
 function getRandomItems(arr, count) {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
 
-// Helper function to generate a random number within a range
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// Helper function to create URL-friendly slugs
 function createSlug(text) {
   return text
     .toLowerCase()
@@ -22,29 +20,36 @@ function createSlug(text) {
     .replace(/(^-|-$)/g, "");
 }
 
+// Updated templates with new fields
 const listTemplates = {
   themes: [
     {
       name: "Hidden Gems",
       tags: ["hidden-gems", "off-beaten-path", "authentic"],
       description: "Discover secret spots and local favorites off the tourist trail.",
+      collection: "want-to-visit",
     },
     {
       name: "Foodie Paradise",
       tags: ["food", "culinary", "restaurants", "gastronomy"],
       description: "A culinary journey through the best food scenes and local delicacies.",
+      collection: "planning",
     },
     {
       name: "Cultural Journey",
       tags: ["culture", "history", "arts", "museums"],
       description: "Immerse yourself in rich cultural heritage and artistic traditions.",
+      collection: "favorites",
     },
     {
       name: "Adventure Seekers",
       tags: ["adventure", "outdoor", "hiking", "sports"],
       description: "Thrilling experiences and outdoor activities for the adventurous spirit.",
+      collection: "visited",
     },
   ],
+  collections: ["want-to-visit", "visited", "planning", "favorites"],
+  privacyOptions: ["public", "private", "followers"],
   authors: [
     {
       id: "user1",
@@ -62,6 +67,7 @@ const listTemplates = {
     },
   ],
   cities: [
+    // Cities remain the same
     {
       citySlug: "porto-portugal",
       name: "Porto",
@@ -91,6 +97,7 @@ const listTemplates = {
   ],
 };
 
+// Helper functions remain the same
 function generatePlaceDetails(city) {
   return {
     id: city.citySlug,
@@ -136,6 +143,7 @@ function generateAdditionalLists(count) {
     const author = listTemplates.authors[i % listTemplates.authors.length];
     const selectedCities = getRandomItems(listTemplates.cities, randomNumber(3, 6));
     const createdDate = new Date(baseDate.getTime() + i * 24 * 60 * 60 * 1000);
+    const isDraft = Math.random() > 0.8; // 20% chance of being a draft
 
     const newList = {
       id: `generated_${i + 1}`,
@@ -164,6 +172,10 @@ function generateAdditionalLists(count) {
       tags: [...theme.tags, "europe", selectedCities[0].country.toLowerCase()],
       relatedLists: generateRelatedLists(theme, `generated_${i + 1}`),
       totalPlaces: selectedCities.length,
+      // New fields
+      status: isDraft ? "draft" : "published",
+      collection: isDraft ? null : theme.collection,
+      privacy: isDraft ? "private" : listTemplates.privacyOptions[randomNumber(0, 2)],
     };
 
     newLists.push(newList);
@@ -208,10 +220,14 @@ async function migrateTravelLists(generateCount = 20) {
           shares: list.stats.shares,
           saves: list.stats.saves,
           totalPlaces: list.totalPlaces,
+          // New fields
+          status: list.status || "published",
+          collection: list.collection || null,
+          privacy: list.privacy || "public",
         };
 
         await pb.collection("lists").create(listData);
-        console.log(`Successfully added list: ${list.title}`);
+        console.log(`Successfully added list: ${list.title} (${list.status})`);
         successCount++;
       } catch (error) {
         console.error(`Error adding list ${list.title}:`, error.message);
