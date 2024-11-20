@@ -104,7 +104,7 @@ export const MOCK_LISTS = [
         id: "portland-downtown",
         name: "Portland Downtown",
         country: "United States",
-        imageUrl: "portland-downtown-1",
+        imageUrl: "portland-united-states-1",
         description:
           "Portland's downtown district is a treasure trove of hidden culinary gems, from basement ramen shops to rooftop farm-to-table experiences. The food cart pods offer some of the most innovative cuisine in the city.",
         highlight: "Food Cart Pods, Underground Speakeasies, and Pop-up Restaurants",
