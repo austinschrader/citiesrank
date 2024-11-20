@@ -1,6 +1,21 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Menu, X, Globe, BookOpen, Map, Users, Settings, BellDot, User, LifeBuoy, LogOut, Bookmark } from "lucide-react";
+import {
+  Search,
+  Menu,
+  X,
+  Globe,
+  BookOpen,
+  Map,
+  Heart,
+  Users,
+  Settings,
+  BellDot,
+  UserCircle,
+  LifeBuoy,
+  LogOut,
+  Bookmark,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -36,7 +51,7 @@ export const Header = () => {
     { label: "Lists", icon: Map, to: "/lists" },
     { label: "Members", icon: Users, to: "/members" },
     { label: "Journal", icon: BookOpen, to: "/journal" },
-    { label: "Saved", icon: Bookmark, to: "/saved" },
+    { label: "Saved", icon: Heart, to: "/saved", mobileOnly: true },
   ];
 
   const SearchBar = () => (
@@ -46,7 +61,7 @@ export const Header = () => {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search cities, regions, or experiences..."
-        className="pl-9 pr-4 h-10 w-full bg-muted/40 focus:bg-background"
+        className="pl-9 pr-4 h-11 w-full bg-muted/40 focus:bg-background"
       />
       {searchQuery && (
         <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -89,29 +104,31 @@ export const Header = () => {
               </Sheet>
 
               <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <img src="/favicon.svg" alt="WanderLog Logo" className="w-8 h-8" />
+                <img src="/favicon.svg" alt="WanderLog Logo" className="w-9 h-9" />
                 <span className="font-bold text-xl hidden sm:inline">WanderLog</span>
                 <span className="font-bold text-xl sm:hidden">WL</span>
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to}>
-                  <Button variant="ghost" className="gap-2">
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
+            <nav className="hidden md:flex items-center gap-2">
+              {navItems
+                .filter((item) => !item.mobileOnly)
+                .map((item) => (
+                  <Link key={item.to} to={item.to}>
+                    <Button variant="ghost" size="lg" className="gap-2">
+                      <item.icon className="h-5 w-5" />
+                      {item.label}
+                    </Button>
+                  </Link>
+                ))}
             </nav>
 
             {/* User menu section */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Dialog open={isSearchActive} onOpenChange={setIsSearchActive}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
+                  <Button variant="ghost" size="icon" className="md:hidden h-11 w-11">
                     <Search className="h-5 w-5" />
                   </Button>
                 </DialogTrigger>
@@ -130,21 +147,21 @@ export const Header = () => {
                 <SearchBar />
               </div>
 
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-11 w-11">
                 <BellDot className="h-5 w-5" />
               </Button>
 
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className="relative h-11 w-11 rounded-full">
+                      <Avatar className="h-9 w-9">
                         <AvatarImage src={user.avatar} alt={user.name ?? ""} />
-                        <AvatarFallback>{user.name?.[0] ?? "?"}</AvatarFallback>
+                        <AvatarFallback>{user.name?.[0] ?? user.email?.[0].toUpperCase()}</AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuContent className="w-64" align="end">
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user.name}</p>
@@ -156,15 +173,22 @@ export const Header = () => {
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
                         <Link to="/profile" className="cursor-pointer">
-                          <User className="mr-2 h-4 w-4" />
-                          Profile
+                          <UserCircle className="mr-2 h-5 w-5" />
+                          View Profile
                           <DropdownMenuShortcut>⇧P</DropdownMenuShortcut>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
+                        <Link to="/saved" className="cursor-pointer">
+                          <Bookmark className="mr-2 h-5 w-5" />
+                          Saved Items
+                          <DropdownMenuShortcut>⇧S</DropdownMenuShortcut>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link to="/settings" className="cursor-pointer">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Settings
+                          <Settings className="mr-2 h-5 w-5" />
+                          Account Settings
                           <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                         </Link>
                       </DropdownMenuItem>
@@ -175,12 +199,12 @@ export const Header = () => {
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
                         <a href="https://docs.citiesrank.com" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                          <LifeBuoy className="mr-2 h-4 w-4" />
-                          Support
+                          <LifeBuoy className="mr-2 h-5 w-5" />
+                          Help & Support
                         </a>
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={handleSignOut} className="text-red-600 focus:text-red-600 cursor-pointer">
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <LogOut className="mr-2 h-5 w-5" />
                         Sign out
                         <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                       </DropdownMenuItem>
@@ -198,15 +222,17 @@ export const Header = () => {
       {/* Mobile navigation bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
         <nav className="container h-16">
-          <div className="grid h-full grid-cols-5">
-            {navItems.map((item) => (
-              <Link key={item.to} to={item.to} className="h-full">
-                <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
-                  <item.icon className="h-5 w-5" />
-                  <span className="text-xs">{item.label}</span>
-                </Button>
-              </Link>
-            ))}
+          <div className="grid h-full grid-cols-4">
+            {navItems
+              .filter((item) => !item.mobileOnly)
+              .map((item) => (
+                <Link key={item.to} to={item.to} className="h-full">
+                  <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
+                    <item.icon className="h-5 w-5" />
+                    <span className="text-xs">{item.label}</span>
+                  </Button>
+                </Link>
+              ))}
           </div>
         </nav>
       </div>
