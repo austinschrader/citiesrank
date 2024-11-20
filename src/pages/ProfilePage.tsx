@@ -108,21 +108,21 @@ export function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-b from-primary/10 to-background pb-10">
-        <div className="container max-w-6xl mx-auto px-4 pt-8">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      {/* Hero Section - removed gradient background */}
+      <div className="py-8">
+        <div className="container max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Profile Info */}
             <div className="flex-1 space-y-4">
               <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                <Avatar className="h-24 w-24 border-4 border-background">
+                <Avatar className="h-24 w-24 border-4 border-background shadow-sm">
                   <AvatarImage src={user?.avatar} />
                   <AvatarFallback>{user?.name?.[0] ?? "?"}</AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                   <div className="space-y-1">
-                    <h1 className="text-2xl font-bold">{user?.name}</h1>
+                    <h1 className="text-4xl font-bold mb-2">{user?.name}</h1>
                     <p className="text-muted-foreground flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       {user?.location ?? "Location not set"}
@@ -175,10 +175,10 @@ export function ProfilePage() {
       </div>
 
       {/* Main Content */}
-      <div className="container max-w-6xl mx-auto px-4 -mt-6">
+      <div className="container max-w-6xl mx-auto px-4">
         <Tabs defaultValue="overview" className="space-y-6">
-          <div className="bg-background/95 backdrop-blur sticky top-16 z-10 -mx-4 px-4 py-2 border-b">
-            <TabsList className="bg-background/50">
+          <div className="bg-background sticky top-16 z-10 -mx-4 px-4 border-b">
+            <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="lists">Lists</TabsTrigger>
               <TabsTrigger value="reviews">Reviews</TabsTrigger>
