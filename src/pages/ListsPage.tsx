@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Plus, Grid, List as ListIcon, Heart, Share2, BookmarkPlus, Users2, Calendar, MapPin } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Grid, List as ListIcon, Heart, Share2, BookmarkPlus, Users2, Calendar, MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,9 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { getCityImage } from "@/lib/cloudinary";
 import { Link } from "react-router-dom";
-import { MOCK_LISTS } from "@/mockTravelLists";
+import PocketBase from "pocketbase";
+import { useNavigate } from "react-router-dom";
+import type { RecordModel } from "pocketbase";
 
-// Types
+const pb = new PocketBase("https://api.citiesrank.com");
+
 interface TravelList {
   id: string;
   title: string;
@@ -24,6 +27,7 @@ interface TravelList {
     citySlug: string;
     name: string;
     country: string;
+    imageUrl: string;
   }[];
   tags: string[];
   likes: number;
@@ -34,18 +38,44 @@ interface TravelList {
   totalPlaces: number;
 }
 
-// Mock Data
+const transformRecord = (record: RecordModel): TravelList => ({
+  id: record.id,
+  title: record.title,
+  description: record.description,
+  author: record.author,
+  places: record.places,
+  tags: record.tags,
+  likes: record.likes,
+  shares: record.shares,
+  saves: record.saves,
+  createdAt: record.created,
+  updatedAt: record.updated,
+  totalPlaces: record.totalPlaces,
+});
 
 const ListCard = ({ list }: { list: TravelList }) => {
-  const coverImage = getCityImage(`${list.places[0].citySlug}-1`, "standard");
+  const navigate = useNavigate();
+  const coverImage = getCityImage(list.places[0].imageUrl, "standard");
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/lists/${list.id}`);
+  };
+
+  const handleButtonClick = (e: React.MouseEvent, action: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Handle the action (like, share, bookmark)
+    console.log(`${action} clicked for list ${list.id}`);
+  };
 
   return (
-    <Link to={`/lists/${list.id}`} className="block">
+    <div onClick={handleCardClick} className="cursor-pointer">
       <Card className="group overflow-hidden transition-all hover:shadow-lg">
         <div className="relative h-48 overflow-hidden">
           <img
             src={coverImage}
-            alt={list.places[0].name}
+            alt={list.places[0]?.name || "Cover image"}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -82,43 +112,66 @@ const ListCard = ({ list }: { list: TravelList }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation
-                // Add your like handler here
-              }}>
+            <Button variant="ghost" size="icon" onClick={(e) => handleButtonClick(e, "like")}>
               <Heart className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation
-                // Add your share handler here
-              }}>
+            <Button variant="ghost" size="icon" onClick={(e) => handleButtonClick(e, "share")}>
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation
-                // Add your bookmark handler here
-              }}>
+            <Button variant="ghost" size="icon" onClick={(e) => handleButtonClick(e, "bookmark")}>
               <BookmarkPlus className="h-4 w-4" />
             </Button>
           </div>
         </CardFooter>
       </Card>
-    </Link>
+    </div>
   );
 };
 
 export const ListsPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [lists, setLists] = useState<TravelList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const loadLists = async () => {
+      try {
+        const records = await pb.collection("lists").getFullList({
+          sort: "-created",
+        });
+        setLists(records.map(transformRecord));
+      } catch (err) {
+        console.error("Error loading lists:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadLists();
+  }, []);
+
+  const getSortedLists = (sortType: "popular" | "recent" | "trending") => {
+    switch (sortType) {
+      case "popular":
+        return [...lists].sort((a, b) => b.likes - a.likes);
+      case "recent":
+        return [...lists].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      case "trending":
+        return [...lists].sort((a, b) => b.shares - a.shares);
+      default:
+        return lists;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Rest of your existing JSX remains the same, but replace MOCK_LISTS with getSortedLists()
   return (
     <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -180,7 +233,7 @@ export const ListsPage = () => {
 
         <TabsContent value="popular" className="mt-0">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {MOCK_LISTS.map((list) => (
+            {getSortedLists("popular").map((list) => (
               <ListCard key={list.id} list={list} />
             ))}
           </div>
@@ -188,17 +241,15 @@ export const ListsPage = () => {
 
         <TabsContent value="recent" className="mt-0">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {MOCK_LISTS.slice()
-              .reverse()
-              .map((list) => (
-                <ListCard key={list.id} list={list} />
-              ))}
+            {getSortedLists("recent").map((list) => (
+              <ListCard key={list.id} list={list} />
+            ))}
           </div>
         </TabsContent>
 
         <TabsContent value="trending" className="mt-0">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {MOCK_LISTS.sort((a, b) => b.shares - a.shares).map((list) => (
+            {getSortedLists("trending").map((list) => (
               <ListCard key={list.id} list={list} />
             ))}
           </div>
@@ -218,5 +269,3 @@ export const ListsPage = () => {
     </div>
   );
 };
-
-export default ListsPage;

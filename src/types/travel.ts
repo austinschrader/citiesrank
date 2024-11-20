@@ -69,6 +69,10 @@ export interface TravelList {
   tags: string[];
   places: Place[];
   relatedLists: RelatedList[];
+  likes?: number;
+  shares?: number;
+  saves?: number;
+  createdAt?: string;
 }
 
 // Default data export

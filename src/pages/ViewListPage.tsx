@@ -1,5 +1,5 @@
-// /components/travel/ViewListPage.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ListHero } from "@/components/travel/ListHero";
 import { PlaceCard } from "@/components/travel/PlaceCard";
@@ -8,17 +8,44 @@ import { PlaceDetails } from "@/components/travel/PlaceDetails";
 import { RelatedLists } from "@/components/travel/RelatedLists";
 import { CommentsSection } from "@/components/travel/CommentsSection";
 import type { TravelList, Place } from "@/types/travel";
-import { DEFAULT_TRAVEL_LIST } from "@/types/travel";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 import { Tags } from "@/components/travel/Tags";
+import PocketBase from "pocketbase";
+import type { RecordModel } from "pocketbase";
 
-interface ViewListPageProps {
-  data?: TravelList;
-}
+const pb = new PocketBase("https://api.citiesrank.com");
 
-export const ViewListPage: React.FC<ViewListPageProps> = ({ data = DEFAULT_TRAVEL_LIST }) => {
-  const [activePlace, setActivePlace] = useState<Place>(data.places[0]);
+const transformRecord = (record: RecordModel): TravelList => ({
+  id: record.id,
+  title: record.title,
+  description: record.description,
+  author: typeof record.author === "string" ? JSON.parse(record.author) : record.author,
+  stats: typeof record.stats === "string" ? JSON.parse(record.stats) : record.stats,
+  metadata: typeof record.metadata === "string" ? JSON.parse(record.metadata) : record.metadata,
+  tags: typeof record.tags === "string" ? JSON.parse(record.tags) : record.tags,
+  places: typeof record.places === "string" ? JSON.parse(record.places) : record.places,
+  relatedLists: typeof record.relatedLists === "string" ? JSON.parse(record.relatedLists) : record.relatedLists,
+});
+
+export const ViewListPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const [data, setData] = useState<TravelList | null>(null);
+  const [activePlace, setActivePlace] = useState<Place | null>(null);
+
+  useEffect(() => {
+    const loadList = async () => {
+      if (!id) return;
+      const record = await pb.collection("lists").getOne(id);
+      const transformedData = transformRecord(record);
+      setData(transformedData);
+      setActivePlace(transformedData.places[0]);
+    };
+
+    loadList();
+  }, [id]);
+
+  if (!data || !activePlace) return null;
 
   const citySlug = createSlug(activePlace.name);
   const countrySlug = createSlug(activePlace.country);
@@ -53,7 +80,7 @@ export const ViewListPage: React.FC<ViewListPageProps> = ({ data = DEFAULT_TRAVE
 
             <div className="grid gap-4">
               {data.places.map((place) => (
-                <PlaceCard key={place.id} place={place} isActive={activePlace.id === place.id} onClick={() => setActivePlace(place)} />
+                <PlaceCard key={place.name} place={place} isActive={activePlace.id === place.id} onClick={() => setActivePlace(place)} />
               ))}
             </div>
           </div>
