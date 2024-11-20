@@ -1,0 +1,233 @@
+import PocketBase from "pocketbase";
+import { MOCK_LISTS } from "../raw_data/lists_data.js";
+
+const pb = new PocketBase("https://api.citiesrank.com");
+
+// Helper function to get random items from an array
+function getRandomItems(arr, count) {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+// Helper function to generate a random number within a range
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+// Helper function to create URL-friendly slugs
+function createSlug(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+const listTemplates = {
+  themes: [
+    {
+      name: "Hidden Gems",
+      tags: ["hidden-gems", "off-beaten-path", "authentic"],
+      description: "Discover secret spots and local favorites off the tourist trail.",
+    },
+    {
+      name: "Foodie Paradise",
+      tags: ["food", "culinary", "restaurants", "gastronomy"],
+      description: "A culinary journey through the best food scenes and local delicacies.",
+    },
+    {
+      name: "Cultural Journey",
+      tags: ["culture", "history", "arts", "museums"],
+      description: "Immerse yourself in rich cultural heritage and artistic traditions.",
+    },
+    {
+      name: "Adventure Seekers",
+      tags: ["adventure", "outdoor", "hiking", "sports"],
+      description: "Thrilling experiences and outdoor activities for the adventurous spirit.",
+    },
+  ],
+  authors: [
+    {
+      id: "user1",
+      name: "Emma Thompson",
+      avatar: "/avatars/emma.jpg",
+      location: "London, UK",
+      bio: "Travel photographer and culinary enthusiast exploring hidden corners of Europe.",
+    },
+    {
+      id: "user2",
+      name: "James Wilson",
+      avatar: "/avatars/james.jpg",
+      location: "Berlin, Germany",
+      bio: "Digital nomad and coffee shop connoisseur. Always seeking the next great workspace.",
+    },
+  ],
+  cities: [
+    {
+      citySlug: "porto-portugal",
+      name: "Porto",
+      country: "Portugal",
+      description: "Historic port city known for its stunning bridges and port wine cellars.",
+      highlight: "Ribeira District and Port Wine Cellars",
+      rating: 4.8,
+      reviews: 2345,
+      coordinates: [41.1579, -8.6291],
+      tags: ["wine", "history", "architecture"],
+      bestTime: "March-October",
+      suggestedStay: "3-4 days",
+    },
+    {
+      citySlug: "ljubljana-slovenia",
+      name: "Ljubljana",
+      country: "Slovenia",
+      description: "Charming capital with beautiful architecture and vibrant cafe culture.",
+      highlight: "Ljubljana Castle and Triple Bridge",
+      rating: 4.7,
+      reviews: 1876,
+      coordinates: [46.0569, 14.5058],
+      tags: ["charming", "cafe-culture", "architecture"],
+      bestTime: "April-October",
+      suggestedStay: "2-3 days",
+    },
+  ],
+};
+
+function generatePlaceDetails(city) {
+  return {
+    id: city.citySlug,
+    name: city.name,
+    country: city.country,
+    imageUrl: `${city.citySlug}-1`,
+    description: city.description,
+    highlight: city.highlight,
+    rating: city.rating,
+    reviews: city.reviews,
+    coordinates: city.coordinates,
+    tags: city.tags,
+    bestTime: city.bestTime,
+    suggestedStay: city.suggestedStay,
+  };
+}
+
+function generateRelatedLists(theme, excluded_id) {
+  return [
+    {
+      id: `${createSlug(theme.name)}-${Math.random().toString(36).substr(2, 9)}`,
+      title: `Best of ${theme.name} in Europe`,
+      places: randomNumber(5, 12),
+      author: listTemplates.authors[randomNumber(0, listTemplates.authors.length - 1)].name,
+      imageUrl: `${listTemplates.cities[randomNumber(0, listTemplates.cities.length - 1)].citySlug}-1`,
+    },
+    {
+      id: `${createSlug(theme.name)}-${Math.random().toString(36).substr(2, 9)}`,
+      title: `${theme.name} for Beginners`,
+      places: randomNumber(5, 12),
+      author: listTemplates.authors[randomNumber(0, listTemplates.authors.length - 1)].name,
+      imageUrl: `${listTemplates.cities[randomNumber(0, listTemplates.cities.length - 1)].citySlug}-1`,
+    },
+  ];
+}
+
+function generateAdditionalLists(count) {
+  const newLists = [];
+  const baseDate = new Date("2024-01-01");
+
+  for (let i = 0; i < count; i++) {
+    const theme = listTemplates.themes[i % listTemplates.themes.length];
+    const author = listTemplates.authors[i % listTemplates.authors.length];
+    const selectedCities = getRandomItems(listTemplates.cities, randomNumber(3, 6));
+    const createdDate = new Date(baseDate.getTime() + i * 24 * 60 * 60 * 1000);
+
+    const newList = {
+      id: `generated_${i + 1}`,
+      title: `${theme.name} in Europe: ${new Date().getFullYear()} Edition`,
+      description: theme.description,
+      author: {
+        id: author.id,
+        name: author.name,
+        avatar: author.avatar,
+        location: author.location,
+        bio: author.bio,
+      },
+      places: selectedCities.map((city) => generatePlaceDetails(city)),
+      stats: {
+        views: randomNumber(5000, 50000),
+        likes: randomNumber(100, 3000),
+        saves: randomNumber(100, 1000),
+        shares: randomNumber(50, 500),
+      },
+      metadata: {
+        createdAt: createdDate.toISOString(),
+        updatedAt: new Date().toISOString(),
+        isVerified: Math.random() > 0.3,
+        category: theme.name,
+      },
+      tags: [...theme.tags, "europe", selectedCities[0].country.toLowerCase()],
+      relatedLists: generateRelatedLists(theme, `generated_${i + 1}`),
+      totalPlaces: selectedCities.length,
+    };
+
+    newLists.push(newList);
+  }
+
+  return newLists;
+}
+
+async function migrateTravelLists(generateCount = 20) {
+  try {
+    const additionalLists = generateAdditionalLists(generateCount);
+    const allLists = [...MOCK_LISTS, ...additionalLists];
+
+    console.log("Deleting existing travel list records...");
+    const existingRecords = await pb.collection("lists").getFullList();
+    for (const record of existingRecords) {
+      try {
+        await pb.collection("lists").delete(record.id);
+        console.log(`Deleted list: ${record.title}`);
+      } catch (error) {
+        console.error(`Error deleting list ${record.title}:`, error.message);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    console.log("\nAdding new travel list records...");
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const list of allLists) {
+      try {
+        const listData = {
+          title: list.title,
+          description: list.description,
+          author: JSON.stringify(list.author),
+          places: JSON.stringify(list.places),
+          stats: JSON.stringify(list.stats),
+          metadata: JSON.stringify(list.metadata),
+          tags: JSON.stringify(list.tags),
+          relatedLists: JSON.stringify(list.relatedLists),
+          likes: list.stats.likes,
+          shares: list.stats.shares,
+          saves: list.stats.saves,
+          totalPlaces: list.totalPlaces,
+        };
+
+        await pb.collection("lists").create(listData);
+        console.log(`Successfully added list: ${list.title}`);
+        successCount++;
+      } catch (error) {
+        console.error(`Error adding list ${list.title}:`, error.message);
+        console.error("Data:", list);
+        errorCount++;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+
+    console.log("\nMigration complete!");
+    console.log(`Successfully added: ${successCount} lists`);
+    console.log(`Failed to add: ${errorCount} lists`);
+  } catch (error) {
+    console.error("Migration failed:", error);
+  }
+}
+
+// Run the migration
+migrateTravelLists(20);
