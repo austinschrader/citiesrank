@@ -57,7 +57,6 @@ const ListCard = ({ list }: { list: TravelList }) => {
   const navigate = useNavigate();
   const coverImage = getCityImage(list.places[0].imageUrl, "standard");
 
-  console.log(list.places[0].imageUrl);
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate(`/lists/${list.id}`);
@@ -140,7 +139,7 @@ export const ListsPage = () => {
         const records = await pb.collection("lists").getFullList({
           sort: "-created",
         });
-        setLists(records.map(transformRecord)); // Here's the key change
+        setLists(records.map(transformRecord));
       } catch (err) {
         console.error("Error loading lists:", err);
       } finally {
