@@ -37,7 +37,12 @@ interface TravelList {
 // Mock Data
 
 const ListCard = ({ list }: { list: TravelList }) => {
-  const coverImage = getCityImage(`${list.places[0].citySlug}-1`, "standard");
+  const handleButtonClick = (e: React.MouseEvent, action: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Handle the action (like, share, bookmark)
+    console.log(`${action} clicked for list ${list.id}`);
+  };
 
   return (
     <Link to={`/lists/${list.id}`} className="block">
@@ -82,31 +87,13 @@ const ListCard = ({ list }: { list: TravelList }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation
-                // Add your like handler here
-              }}>
+            <Button variant="ghost" size="icon" onClick={(e) => handleButtonClick(e, "like")}>
               <Heart className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation
-                // Add your share handler here
-              }}>
+            <Button variant="ghost" size="icon" onClick={(e) => handleButtonClick(e, "share")}>
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={(e) => {
-                e.preventDefault(); // Prevent navigation
-                // Add your bookmark handler here
-              }}>
+            <Button variant="ghost" size="icon" onClick={(e) => handleButtonClick(e, "bookmark")}>
               <BookmarkPlus className="h-4 w-4" />
             </Button>
           </div>
