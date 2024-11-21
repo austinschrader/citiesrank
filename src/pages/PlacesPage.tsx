@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import PocketBase from "pocketbase";
 import debounce from "lodash/debounce";
 
-const ITEMS_PER_PAGE = 50;
+const ITEMS_PER_PAGE = 20;
 const pb = new PocketBase("https://api.citiesrank.com");
 
 export const PlacesPage = () => {

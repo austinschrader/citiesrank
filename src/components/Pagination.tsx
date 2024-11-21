@@ -1,4 +1,3 @@
-// components/Pagination.tsx
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,15 +59,15 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
   };
 
   return (
-    <div className="flex items-center justify-between pt-4">
+    <div className="flex items-center justify-center gap-2 pt-4">
       <Button variant="outline" size="sm" onClick={() => onPageChange(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
         <ChevronLeft className="w-4 h-4 mr-1" />
         Previous
       </Button>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {showInput ? (
-          <form onSubmit={handleInputSubmit} className="flex items-center gap-2">
+          <form onSubmit={handleInputSubmit} className="flex items-center gap-1">
             <Input
               type="text"
               value={inputPage}
@@ -81,7 +80,7 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
             <span className="text-sm text-muted-foreground">of {totalPages}</span>
           </form>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {getPageNumbers().map((page, index) =>
               typeof page === "number" ? (
                 <Button
@@ -113,3 +112,5 @@ export const Pagination = ({ currentPage, totalPages, onPageChange }: Pagination
     </div>
   );
 };
+
+export default Pagination;
