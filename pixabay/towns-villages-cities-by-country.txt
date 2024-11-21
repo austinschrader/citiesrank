@@ -1,0 +1,1234 @@
+United States
+Northeast:
+
+New York City
+Boston
+Cape May
+Bar Harbor
+Portland (Maine)
+The Hamptons
+Montauk
+
+Midwest:
+Chicago
+Traverse City
+Mackinac Island
+Door County
+Lake Geneva
+Minneapolis
+St. Louis
+Madison
+South:
+
+New Orleans
+Charleston
+Savannah
+Nashville
+Asheville
+Austin
+Key West
+San Antonio
+Gatlinburg
+Destin
+West:
+
+San Francisco
+Los Angeles
+San Diego
+Seattle
+Portland (Oregon)
+Sedona
+Jackson Hole
+Park City
+Boulder
+Santa Fe
+Flagstaff
+Mountain States:
+
+Denver
+Salt Lake City
+Boise
+Boulder
+Jackson
+Vail
+Aspen
+Pacific Northwest:
+
+Vancouver (Washington)
+Cannon Beach
+Bend (Oregon)
+Whidbey Island
+Alaska:
+
+Anchorage
+Juneau
+Homer
+Sitka
+Hawaii:
+
+Honolulu
+Lahaina
+Hilo
+Kailua-Kona
+
+
+
+
+Canada
+Alberta:
+
+Banff
+Jasper
+Canmore
+Lake Louise
+Calgary
+Edmonton (West Edmonton Mall)
+British Columbia:
+
+Vancouver
+Victoria
+Whistler
+Tofino
+Kelowna
+Nelson
+Revelstoke
+Manitoba:
+
+Winnipeg
+Churchill
+Riding Mountain National Park
+New Brunswick:
+
+Saint John
+Fredericton
+Fundy National Park
+Alma
+Newfoundland and Labrador:
+
+St. John's
+Gros Morne National Park
+Twillingate
+Fogo Island
+Nova Scotia:
+
+Halifax
+Lunenburg
+Annapolis Royal
+Baddeck
+Cape Breton Island (Cabot Trail)
+Ontario:
+
+Toronto
+Niagara Falls
+Ottawa
+Kingston
+Stratford
+Blue Mountain Resort
+Muskoka Lakes
+Prince Edward Island:
+
+Charlottetown
+Cavendish
+North Rustico
+Quebec:
+
+Montreal
+Quebec City
+Mont-Tremblant
+Magog
+Charlevoix
+Gaspé Peninsula
+Saskatchewan:
+
+Saskatoon
+Regina
+Prince Albert National Park
+Yukon:
+
+Whitehorse
+Kluane National Park
+Northwest Territories:
+
+Yellowknife
+Nahanni National Park
+Nunavut:
+
+Iqaluit
+
+
+
+
+
+United Kingdom
+London
+Bath
+Oxford
+Cambridge
+York
+Winchester
+Stratford-upon-Avon
+Chester
+Brighton
+Lake District (Ambleside, Keswick)
+Cornwall (St Ives, Falmouth)
+Canterbury
+Durham
+Cotswolds (Bibury, Bourton-on-the-Water)
+Canterbury
+Manchester
+Liverpool
+Windsor
+Scotland:
+
+Edinburgh
+Glasgow
+Inverness
+St. Andrews
+Aberdeen
+Isle of Skye (Portree)
+Pitlochry
+Stirling
+Dundee
+Wales:
+
+Cardiff
+Snowdonia (Betws-y-Coed)
+Conwy
+Llandudno
+Aberystwyth
+Tenby
+Northern Ireland:
+
+Belfast
+Derry
+Portrush
+Armagh
+
+
+
+
+Germany
+Berlin
+Munich
+Hamburg
+Cologne
+Frankfurt
+Heidelberg
+Nuremberg
+Rothenburg ob der Tauber
+Dresden
+Leipzig
+Bamberg
+Garmisch-Partenkirchen
+Regensburg
+Lübeck
+Freiburg
+Potsdam
+Würzburg
+Tübingen
+Fussen
+Dusseldorf
+Trier
+Cochem
+Bacharach
+Weimar
+Quedlinburg
+
+
+France
+Île-de-France (Paris Region):
+
+Paris
+Versailles
+Fontainebleau
+Provence-Alpes-Côte d'Azur:
+
+Nice
+Marseille
+Cannes
+Aix-en-Provence
+Saint-Tropez
+Avignon
+Arles
+Grasse
+Menton
+Occitanie:
+
+Toulouse
+Montpellier
+Carcassonne
+Albi
+Nîmes
+Collioure
+Lourdes
+Nouvelle-Aquitaine:
+
+Bordeaux
+Saint-Émilion
+Biarritz
+Arcachon
+La Rochelle
+Cognac
+Angoulême
+Brittany:
+
+Rennes
+Saint-Malo
+Quimper
+Dinan
+Vannes
+Concarneau
+Normandy:
+
+Rouen
+Caen
+Honfleur
+Bayeux
+Etretat
+Mont Saint-Michel
+Grand Est:
+
+Strasbourg
+Colmar
+Metz
+Reims
+Mulhouse
+Bourgogne-Franche-Comté:
+
+Dijon
+Beaune
+Besançon
+Auxerre
+Auvergne-Rhône-Alpes:
+
+Lyon
+Grenoble
+Annecy
+Clermont-Ferrand
+Chamonix
+Vienne
+Aix-les-Bains
+Pays de la Loire:
+
+Nantes
+Angers
+Le Mans
+La Roche-sur-Yon
+Centre-Val de Loire:
+
+Tours
+Bourges
+Orléans
+Blois
+Amboise
+Corsica:
+
+Ajaccio
+Bonifacio
+Calvi
+Bastia
+
+
+
+Italy
+Abruzzo:
+
+L'Aquila
+Sulmona
+Pescara
+Basilicata:
+
+Matera
+Potenza
+Calabria:
+
+Tropea
+Scilla
+Reggio Calabria
+Campania:
+
+Naples
+Sorrento
+Amalfi
+Positano
+Ravello
+Pompeii
+Emilia-Romagna:
+
+Bologna
+Ravenna
+Parma
+Modena
+Ferrara
+Friuli Venezia Giulia:
+
+Trieste
+Udine
+Grado
+Lazio:
+
+Rome
+Tivoli
+Viterbo
+Liguria:
+
+Genoa
+Cinque Terre (Monterosso al Mare, Vernazza, Corniglia, Manarola, Riomaggiore)
+Portofino
+Lombardy:
+
+Milan
+Bergamo
+Como
+Lecco
+Pavia
+Marche:
+
+Ancona
+Urbino
+Ascoli Piceno
+Molise:
+
+Campobasso
+Termoli
+Piedmont:
+
+Turin
+Alba
+Asti
+Apulia:
+
+Bari
+Lecce
+Alberobello
+Polignano a Mare
+Ostuni
+Sardinia:
+
+Cagliari
+Alghero
+Olbia
+Bosa
+Sicily:
+
+Palermo
+Catania
+Taormina
+Siracusa
+Agrigento
+Noto
+Cefalù
+Tuscany:
+
+Florence
+Siena
+Pisa
+Lucca
+San Gimignano
+Arezzo
+Volterra
+Trentino-Alto Adige/Südtirol:
+
+Bolzano
+Trento
+Merano
+Bressanone
+Umbria:
+
+Perugia
+Assisi
+Orvieto
+Spoleto
+Veneto:
+
+Venice
+Verona
+Padua
+Vicenza
+Treviso
+
+
+Japan
+Tokyo
+Kyoto
+Osaka
+Hokkaido (Sapporo, Otaru, Furano)
+Nara
+Hakone
+Kanazawa
+Nikko
+Takayama
+Kamakura
+Fukuoka
+Hiroshima
+Miyajima
+Kobe
+Nagoya
+Yokohama
+Nagasaki
+Ise
+Karuizawa
+Kusatsu
+Beppu
+Kawagoe
+Arashiyama
+Shirakawa-go
+Kawaguchi
+Matsumoto
+Gifu
+Kyoto (Uji, Ohara)
+Nara (Asuka)
+Hakodate
+
+
+Australia
+New South Wales:
+
+Sydney
+Byron Bay
+Blue Mountains (Katoomba)
+Port Macquarie
+Newcastle
+Wollongong
+Bowral
+Victoria:
+
+Melbourne
+Great Ocean Road (Apollo Bay, Lorne)
+Daylesford
+Bright
+Phillip Island
+Ballarat
+Mornington Peninsula
+Queensland:
+
+Brisbane
+Cairns
+Gold Coast
+Noosa
+Whitsunday Islands (Airlie Beach)
+Townsville
+Hervey Bay
+Port Douglas
+South Australia:
+
+Adelaide
+Kangaroo Island
+Barossa Valley (Tanunda, Angaston)
+Victor Harbor
+Clare Valley
+Western Australia:
+
+Perth
+Margaret River
+Broome
+Fremantle
+Albany
+Tasmania:
+
+Hobart
+Launceston
+Cradle Mountain
+Port Arthur
+St Helens
+Northern Territory:
+
+Darwin
+Alice Springs
+Uluru (Ayers Rock)
+Katherine
+Australian Capital Territory:
+
+Canberra
+
+
+Netherlands
+Amsterdam
+Rotterdam
+Utrecht
+Haarlem
+The Hague
+Giethoorn
+Leiden
+Maastricht
+Delft
+Edam
+Zaanse Schans
+Alkmaar
+Arnhem
+Zwolle
+Gouda
+Enkhuizen
+Hoorn
+Den Bosch (’s-Hertogenbosch)
+Middelburg
+Volendam
+
+
+Sweden
+Stockholm
+Gothenburg
+Malmö
+Kiruna
+Visby
+Uppsala
+Lund
+Helsingborg
+Åre
+Östersund
+Vimmerby
+Kalmar
+Kiruna
+Mora
+Fjällbacka
+
+
+Switzerland
+Zurich
+Lucerne
+Geneva
+Interlaken
+Bern
+Zermatt
+St. Moritz
+Grindelwald
+Lausanne
+Basel
+Montreux
+Lugano
+Thun
+Lauterbrunnen
+Appenzell
+Weggis
+Davos
+Arosa
+Sion
+Ascona
+
+
+Norway
+Oslo
+Bergen
+Stavanger
+Tromsø
+Trondheim
+Ålesund
+Lofoten Islands (Reine, Svolvær)
+Geiranger
+Flam
+Sognefjord
+Lillehammer
+Bodø
+Kristiansand
+Røros
+Voss
+Henningsvær
+Kongsberg
+Narvik
+Åndalsnes
+Senja
+
+
+Belgium
+Brussels
+Bruges
+Ghent
+Antwerp
+Leuven
+Liège
+Brugge (historic center)
+Dinant
+Mechelen
+Namur
+Tournai
+Ostend
+Ypres
+Spa
+Durbuy
+Waterloo
+
+
+Austria
+Vienna
+Salzburg
+Innsbruck
+Hallstatt
+Linz
+Graz
+Zell am See
+Kitzbühel
+St. Wolfgang
+Bad Ischl
+Klagenfurt
+Melk
+Eisenstadt
+Krems an der Donau
+Steyr
+
+
+Denmark
+Copenhagen
+Aarhus
+Odense
+Aalborg
+Helsingør
+Roskilde
+Skagen
+Kolding
+Esbjerg
+Middelfart
+Søndervig
+Hillerød
+Viborg
+Bornholm
+Holbæk
+
+Finland
+Helsinki
+Rovaniemi
+Lapland
+Turku
+Tampere
+Oulu
+Porvoo
+Lappeenranta
+Kemi
+Kittilä
+Kuopio
+Joensuu
+Jyvaskyla
+Savonlinna
+Hanko
+Rauma
+Pori
+Inari
+Fiskars
+Naantali
+
+
+Spain
+Andalusia:
+
+Seville
+Granada
+Córdoba
+Ronda
+Málaga
+Cádiz
+Marbella
+Aragon:
+
+Zaragoza
+Albarracín
+Huesca
+Asturias:
+
+Oviedo
+Gijón
+Cudillero
+Balearic Islands:
+
+Palma de Mallorca
+Ibiza Town
+Ciutadella
+Canary Islands:
+
+Las Palmas
+Santa Cruz de Tenerife
+La Laguna
+Cantabria:
+
+Santander
+Comillas
+Potes
+Castilla y León:
+
+Salamanca
+Segovia
+Ávila
+Burgos
+León
+Castilla-La Mancha:
+
+Toledo
+Cuenca
+Almagro
+Catalonia:
+
+Barcelona
+Girona
+Tarragona
+Sitges
+Cadaqués
+Extremadura:
+
+Cáceres
+Mérida
+Trujillo
+Galicia:
+
+Santiago de Compostela
+A Coruña
+Lugo
+Combarro
+Madrid:
+
+Madrid
+Alcalá de Henares
+San Lorenzo de El Escorial
+Murcia:
+
+Murcia
+Cartagena
+Navarre:
+
+Pamplona
+Olite
+La Rioja:
+
+Logroño
+Haro
+Basque Country:
+
+Bilbao
+San Sebastián
+Vitoria-Gasteiz
+Valencia:
+
+Valencia
+Alicante
+Castellón de la Plana
+Xàtiva
+Castilla-La Mancha:
+
+Toledo
+Cuenca
+
+
+Ireland
+Dublin Region:
+
+Dublin
+County Cork:
+
+Cork
+Kinsale
+Cobh
+Clonakilty
+County Kerry:
+
+Killarney
+Dingle
+Tralee
+Kenmare
+County Galway:
+
+Galway
+Clifden
+Spiddal
+Roundstone
+County Clare:
+
+Ennis
+Doolin
+Lahinch
+Kilkee
+County Limerick:
+
+Limerick
+Adare
+County Wicklow:
+
+Bray
+Greystones
+Wicklow Town
+Arklow
+County Kilkenny:
+
+Kilkenny
+County Waterford:
+
+Waterford
+Dungarvan
+Tramore
+County Tipperary:
+
+Clonmel
+Cashel
+County Donegal:
+
+Letterkenny
+Dunfanaghy
+Ardara
+County Antrim:
+
+Ballycastle
+Cushendall
+County Down:
+
+Newcastle
+Bangor
+County Mayo:
+
+Westport
+Ballina
+Castlebar
+County Wexford:
+
+Wexford Town
+Rosslare
+County Laois:
+
+Portlaoise
+County Cavan:
+
+Cavan Town
+
+
+
+New Zealand
+North Island:
+
+Auckland
+Wellington
+Rotorua
+Taupo
+Napier
+Gisborne
+Hobbiton (Matamata)
+New Plymouth
+Whangarei
+Paihia
+Mount Maunganui
+Whitianga
+Te Anau (gateway to Fiordland)
+South Island:
+
+Christchurch
+Queenstown
+Dunedin
+Nelson
+Blenheim
+Kaikoura
+Picton
+Wanaka
+Franz Josef
+Greymouth
+Arrowtown
+Akaroa
+Golden Bay
+Stewart Island
+
+
+Luxembourg
+Luxembourg City
+Echternach
+Vianden
+Clervaux
+Remich
+Wiltz
+Mondorf-les-Bains
+Diekirch
+Berdorf
+Larochette
+
+
+Poland
+Kraków
+Warsaw
+Gdańsk
+Wrocław
+Zakopane
+Poznań
+Toruń
+Lublin
+Łódź
+Sopot
+Białystok
+Bydgoszcz
+Gniezno
+Kazimierz Dolny
+Zamość
+Malbork
+Świnoujście
+Olsztyn
+Karpacz
+Kłodzko
+Sandomierz
+Włocławek
+Piotrków Trybunalski
+Częstochowa
+Gorzów Wielkopolski
+
+
+Czech Republic
+Prague
+Český Krumlov
+Brno
+Karlovy Vary
+Kutná Hora
+Olomouc
+Telč
+Plzeň
+Litoměřice
+Pardubice
+Třebíč
+Hradec Králové
+Mikulov
+Zlín
+Jindřichův Hradec
+Kroměříž
+Česká Lípa
+Písek
+Sázava
+Liberec
+
+
+Portugal
+Lisbon
+Porto
+Sintra
+Cascais
+Lagos
+Coimbra
+Faro
+Évora
+Obidos
+Aveiro
+Braga
+Funchal (Madeira)
+Ponta Delgada (Azores)
+Tomar
+Tavira
+Peniche
+Guimaraes
+Albufeira
+Viana do Castelo
+Cascais
+
+Greece
+Athens
+2. Santorini
+3. Mykonos
+4. Crete (Heraklion, Chania, Rethymno)
+5. Thessaloniki
+6. Rhodes
+7. Corfu
+8. Naxos
+9. Paros
+10. Fira (Santorini)
+11. Oia (Santorini)
+12. Nafplio
+13. Meteora
+14. Zakynthos
+15. Delphi
+16. Pelion (Makrinitsa, Portaria)
+17. Monemvasia
+18. Hydra
+19. Milos
+20. Skiathos
+21. Andros
+22. Tinos
+23. Sifnos
+24. Kastellorizo
+25. Patmos
+26. Kavala
+27. Loutraki
+28. Kifisia (Athens suburb)
+29. Aegina
+30. Ios
+
+Hungary
+Budapest
+Eger
+Pécs
+Szeged
+Debrecen
+Sopron
+Visegrád
+Hévíz
+Keszthely
+Szentendre
+Tokaj
+Veszprém
+Kőszeg
+Baja
+Győr
+
+Slovakia
+Bratislava
+Košice
+Poprad
+High Tatras (Štrbské Pleso, Tatranská Lomnica)
+Banská Štiavnica
+Trnava
+Nitra
+Levoča
+Spišská Nová Ves
+Žilina
+Bojnice
+Kremnica
+Stará Ľubovňa
+Orava
+Dolný Kubín
+Martin
+Komárno
+
+Slovenia
+Ljubljana
+Bled
+Piran
+Maribor
+Celje
+Kranj
+Lake Bohinj
+Ptuj
+Radovljica
+Koper
+Idrija
+Škofja Loka
+Logarska Dolina
+Velenje
+Tolmin
+
+Croatia
+Dubrovnik
+Split
+Zadar
+Rijeka
+Pula
+Trogir
+Rovinj
+Hvar
+Korčula
+Šibenik
+Poreč
+Makarska
+Opatija
+Vis
+Cavtat
+Varaždin
+Samobor
+
+Estonia
+Tallinn
+Tartu
+Pärnu
+Narva
+Kuressaare
+Viljandi
+Rakvere
+Haapsalu
+Paide
+Jõgeva
+Kärdla
+Elva
+Valga
+
+Latvia
+Riga
+Jurmala
+Cēsis
+Sigulda
+Ventspils
+Kuldīga
+Liepāja
+Jelgava
+Daugavpils
+Valmiera
+Jūrmala
+Talsi
+Rundāle
+Bauska
+Jēkabpils
+
+Lithuania
+Vilnius
+Kaunas
+Klaipėda
+Šiauliai
+Palanga
+Trakai
+Nida
+Druskininkai
+Kernavė
+Alytus
+Utena
+Rūdninkai
+Panevėžys
+
+
+Romania
+Bucharest
+Brașov
+Sibiu
+Cluj-Napoca
+Timișoara
+Iași
+Constanța
+Sighişoara
+Alba Iulia
+Sinaia
+Ploiești
+Suceava
+Târgu Mureș
+Bacău
+Făgăraș
+Bistrița
+Brașov County (Poiana Brașov, Bran)
+Maramureș (Sighetu Marmației, Baia Mare)
+Horezu
+Curtea de Argeș
+
+Bulgaria
+Sofia
+Plovdiv
+Varna
+Burgas
+Veliko Tarnovo
+Ruse
+Bansko
+Velingrad
+Koprivshtitsa
+Nessebar
+Sandanski
+Tryavna
+Gabrovo
+Shumen
+Blagoevgrad
+Petrich
+Lovech
+Tsarevo
+Sozopol
+Kazanlak
+
+
+Cyprus
+Nicosia
+Limassol
+Paphos
+Larnaca
+Ayia Napa
+Protaras
+Polis
+Kyrenia
+Troodos Village
+Lefkara
+Paralimni
+
+Malta
+Valletta
+Mdina
+Rabat
+Sliema
+St. Julian's
+Gozo (Island)
+Marsaxlokk
+Victoria (Gozo)
+Mellieħa
+Marsaskala
+Birgu
+Senglea
+Cospicua
+Qrendi
+Xlendi (Gozo)
