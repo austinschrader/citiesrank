@@ -74,7 +74,8 @@ export const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container px-4 mx-auto">
+        {/* Changed from container/px-4 to match PlacesLayout */}
+        <div className="mx-8 2xl:mx-16">
           <div className="h-16 flex items-center justify-between gap-4">
             {/* Logo section */}
             <div className="flex items-center gap-6">
@@ -221,7 +222,7 @@ export const Header = () => {
 
       {/* Mobile navigation bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
-        <nav className="container h-16">
+        <nav className="mx-8 2xl:mx-16 h-16">
           <div className="grid h-full grid-cols-4">
             {navItems
               .filter((item) => !item.mobileOnly)
@@ -239,5 +240,3 @@ export const Header = () => {
     </>
   );
 };
-
-export default Header;

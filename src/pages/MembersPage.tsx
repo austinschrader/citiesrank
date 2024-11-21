@@ -238,111 +238,111 @@ export const MembersPage = () => {
   const [selectedFilter, setSelectedFilter] = useState("popular");
 
   return (
-    <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
-      <div className="flex justify-between items-start mb-8">
-        <div>
-          <h1 className="text-4xl font-bold mb-2">Members</h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Connect with passionate travelers, local experts, and culture enthusiasts from around the world.
-          </p>
-        </div>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-64 flex-shrink-0">
-          <div className="sticky top-24 space-y-6">
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search members" className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Browse By</h3>
-              <div className="space-y-1">
-                <Button
-                  variant={selectedFilter === "popular" ? "secondary" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedFilter("popular")}>
-                  <Trophy className="h-4 w-4 mr-2" />
-                  Popular Members
-                </Button>
-                <Button
-                  variant={selectedFilter === "recent" ? "secondary" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedFilter("recent")}>
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Recent Joiners
-                </Button>
-                <Button
-                  variant={selectedFilter === "active" ? "secondary" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedFilter("active")}>
-                  <Users className="h-4 w-4 mr-2" />
-                  Most Active
-                </Button>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">Filter By</h3>
-              <div className="space-y-2">
-                <Select defaultValue="all">
-                  <SelectTrigger>
-                    <GlobeIcon className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Region" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Regions</SelectItem>
-                    <SelectItem value="europe">Europe</SelectItem>
-                    <SelectItem value="asia">Asia</SelectItem>
-                    <SelectItem value="americas">Americas</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select defaultValue="all">
-                  <SelectTrigger>
-                    <ListFilter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Expertise" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Expertise</SelectItem>
-                    <SelectItem value="food">Food & Dining</SelectItem>
-                    <SelectItem value="photography">Photography</SelectItem>
-                    <SelectItem value="family">Family Travel</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-1">
-          <div className="mb-6 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing <span className="font-medium text-foreground">{MOCK_MEMBERS.length}</span> members
+    <div className="min-h-[calc(100vh-4rem)] pb-20 md:pb-0">
+      <div className="mx-8 2xl:mx-16 py-8">
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Members</h1>
+            <p className="text-muted-foreground max-w-2xl">
+              Connect with passionate travelers, local experts, and culture enthusiasts from around the world.
             </p>
-            <Select defaultValue="recent">
-              <SelectTrigger className="w-[180px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recent">Recently Active</SelectItem>
-                <SelectItem value="followers">Most Followers</SelectItem>
-                <SelectItem value="contributions">Top Contributors</SelectItem>
-              </SelectContent>
-            </Select>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="w-full md:w-64 flex-shrink-0">
+            <div className="sticky top-24 space-y-6">
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search members" className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Browse By</h3>
+                <div className="space-y-1">
+                  <Button
+                    variant={selectedFilter === "popular" ? "secondary" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedFilter("popular")}>
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Popular Members
+                  </Button>
+                  <Button
+                    variant={selectedFilter === "recent" ? "secondary" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedFilter("recent")}>
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Recent Joiners
+                  </Button>
+                  <Button
+                    variant={selectedFilter === "active" ? "secondary" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => setSelectedFilter("active")}>
+                    <Users className="h-4 w-4 mr-2" />
+                    Most Active
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Filter By</h3>
+                <div className="space-y-2">
+                  <Select defaultValue="all">
+                    <SelectTrigger>
+                      <GlobeIcon className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Region" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Regions</SelectItem>
+                      <SelectItem value="europe">Europe</SelectItem>
+                      <SelectItem value="asia">Asia</SelectItem>
+                      <SelectItem value="americas">Americas</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select defaultValue="all">
+                    <SelectTrigger>
+                      <ListFilter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Expertise" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Expertise</SelectItem>
+                      <SelectItem value="food">Food & Dining</SelectItem>
+                      <SelectItem value="photography">Photography</SelectItem>
+                      <SelectItem value="family">Family Travel</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {MOCK_MEMBERS.map((member) => (
-              <MemberCard key={member.id} member={member} />
-            ))}
+          <div className="flex-1">
+            <div className="mb-6 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Showing <span className="font-medium text-foreground">{MOCK_MEMBERS.length}</span> members
+              </p>
+              <Select defaultValue="recent">
+                <SelectTrigger className="w-[180px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">Recently Active</SelectItem>
+                  <SelectItem value="followers">Most Followers</SelectItem>
+                  <SelectItem value="contributions">Top Contributors</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {MOCK_MEMBERS.map((member) => (
+                <MemberCard key={member.id} member={member} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-export default MembersPage;
