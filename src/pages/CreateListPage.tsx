@@ -11,7 +11,10 @@ import { PlaceSearchCard } from "@/components/createList/PlaceSearchCard";
 import { PlaceCard } from "@/components/createList/PlaceCard";
 import { PreviewCard } from "@/components/createList/PreviewCard";
 import { LIST_TEMPLATES, POPULAR_LISTS } from "@/components/createList/templates";
+import PocketBase from "pocketbase";
 import type { Template, PopularList, Place } from "@/components/createList/types";
+
+const pb = new PocketBase("https://api.citiesrank.com");
 
 export function CreateListPage() {
   const navigate = useNavigate();
@@ -22,6 +25,88 @@ export function CreateListPage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState("saved");
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Form validation with debug logging
+  const isFormValid = () => {
+    console.log("Validating form:", { title, placesCount: places.length });
+
+    if (!title.trim()) {
+      toast({
+        title: "Title Required",
+        description: "Please give your list a title before saving.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (!places || places.length === 0) {
+      toast({
+        title: "Places Required",
+        description: "Add at least one place to your list before saving.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleDone = async () => {
+    if (isSaving) return;
+
+    console.log("Current state:", {
+      title,
+      places,
+      isPrivate,
+      tags,
+      selectedTemplate,
+    });
+
+    if (!isFormValid()) return;
+
+    setIsSaving(true);
+    try {
+      const data = {
+        title,
+        description: `A curated list of places in ${places.map((p) => p.name).join(", ")}`,
+        author: user?.id,
+        places: JSON.stringify(places),
+        tags: JSON.stringify(tags),
+        isPrivate,
+        template: selectedTemplate?.id,
+        stats: JSON.stringify({
+          placeCount: places.length,
+          likes: 0,
+          views: 0,
+          shares: 0,
+        }),
+      };
+
+      console.log("Saving data:", data);
+
+      const record = await pb.collection("lists").create(data);
+      console.log("Save successful:", record);
+
+      toast({
+        title: "List Saved!",
+        description: "Your list has been successfully saved.",
+      });
+
+      navigate(`/lists/${record.id}`);
+    } catch (error) {
+      console.error("Error saving list:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem saving your list. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     if (title || places.length > 0) {
@@ -31,11 +116,12 @@ export function CreateListPage() {
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [title, places]);
+  }, [title, places, tags, isPrivate]);
 
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
     setTitle(template.placeholderTitle);
+    setTags(template.tags);
     toast({
       title: "Template Selected",
       description: "We've started you off with some suggestions. Add your own places!",
@@ -52,12 +138,21 @@ export function CreateListPage() {
   };
 
   const handleAddPlace = (place: Place) => {
-    setPlaces([...places, place]);
+    console.log("Adding place:", place);
+    setPlaces((prevPlaces) => {
+      const newPlaces = [...prevPlaces, place];
+      console.log("Updated places:", newPlaces);
+      return newPlaces;
+    });
     setIsSearching(false);
   };
 
   const handleRemovePlace = (id: string) => {
-    setPlaces(places.filter((place) => place.id !== id));
+    setPlaces((prevPlaces) => {
+      const newPlaces = prevPlaces.filter((place) => place.id !== id);
+      console.log("After removing place:", newPlaces);
+      return newPlaces;
+    });
   };
 
   if (!selectedTemplate) {
@@ -93,18 +188,12 @@ export function CreateListPage() {
 
   return (
     <div className="container max-w-screen-xl py-8 px-4 mx-auto">
-      <ListHeader
-        title={title}
-        onTitleChange={setTitle}
-        autoSaveStatus={autoSaveStatus}
-        onPreview={() => {}}
-        onDone={() => navigate(`/lists/1`)}
-      />
+      <ListHeader title={title} onTitleChange={setTitle} autoSaveStatus={autoSaveStatus} onPreview={() => {}} onDone={handleDone} />
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Places</h2>
+            <h2 className="font-semibold">Places ({places.length})</h2>
             <Button variant="outline" size="sm" className="gap-2" onClick={() => setIsSearching(true)}>
               <Plus className="h-4 w-4" />
               Add Place
@@ -129,7 +218,18 @@ export function CreateListPage() {
 
         <div className="space-y-6">
           <h2 className="font-semibold">Preview</h2>
-          <PreviewCard template={selectedTemplate} userName={user?.name} userAvatar={user?.avatar} />
+          <PreviewCard
+            template={{
+              ...selectedTemplate,
+              title: title || selectedTemplate.placeholderTitle,
+              description: `A curated list of ${places.length} places`,
+            }}
+            places={places} // Add this line
+            userName={user?.name}
+            userAvatar={user?.avatar}
+            onTagsChange={setTags}
+            onPrivacyChange={setIsPrivate}
+          />
         </div>
       </div>
     </div>
