@@ -1,3 +1,5 @@
+https://duplicateword.com/
+
 United States
 Northeast:
 
@@ -207,6 +209,10 @@ Armagh
 
 
 
+
+---------------
+STARTED
+---------------
 Germany
 Berlin
 Munich
@@ -219,6 +225,7 @@ Rothenburg ob der Tauber
 Dresden
 Leipzig
 Bamberg
+
 Garmisch-Partenkirchen
 Regensburg
 Lübeck
@@ -226,6 +233,7 @@ Freiburg
 Potsdam
 Würzburg
 Tübingen
+
 Fussen
 Dusseldorf
 Trier
@@ -233,74 +241,63 @@ Cochem
 Bacharach
 Weimar
 Quedlinburg
+---------------------------
+images downloaded & migrated too
+---------------------------
 
 
 France
-Île-de-France (Paris Region):
-
 Paris
 Versailles
 Fontainebleau
-Provence-Alpes-Côte d'Azur:
-
 Nice
 Marseille
 Cannes
+
 Aix-en-Provence
 Saint-Tropez
 Avignon
 Arles
 Grasse
 Menton
-Occitanie:
-
 Toulouse
+
 Montpellier
 Carcassonne
 Albi
 Nîmes
 Collioure
 Lourdes
-Nouvelle-Aquitaine:
-
 Bordeaux
+
 Saint-Émilion
 Biarritz
 Arcachon
 La Rochelle
 Cognac
 Angoulême
-Brittany:
-
 Rennes
+
 Saint-Malo
 Quimper
 Dinan
 Vannes
 Concarneau
-Normandy:
-
 Rouen
 Caen
 Honfleur
 Bayeux
 Etretat
 Mont Saint-Michel
-Grand Est:
-
 Strasbourg
 Colmar
 Metz
 Reims
 Mulhouse
-Bourgogne-Franche-Comté:
-
 Dijon
 Beaune
 Besançon
 Auxerre
-Auvergne-Rhône-Alpes:
-
 Lyon
 Grenoble
 Annecy
@@ -308,13 +305,12 @@ Clermont-Ferrand
 Chamonix
 Vienne
 Aix-les-Bains
-Pays de la Loire:
-
 Nantes
 Angers
 Le Mans
 La Roche-sur-Yon
-Centre-Val de Loire:
+
+
 
 Tours
 Bourges
@@ -458,6 +454,7 @@ Hakone
 Kanazawa
 Nikko
 Takayama
+
 Kamakura
 Fukuoka
 Hiroshima
@@ -500,6 +497,8 @@ Bright
 Phillip Island
 Ballarat
 Mornington Peninsula
+
+
 Queensland:
 
 Brisbane

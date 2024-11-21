@@ -8,10 +8,12 @@ const cities = [
   { city: "Aix-en-Provence", country: "France" },
   { city: "Saint-Tropez", country: "France" },
   { city: "Avignon", country: "France" },
+
   { city: "Arles", country: "France" },
   { city: "Grasse", country: "France" },
   { city: "Menton", country: "France" },
   { city: "Toulouse", country: "France" },
+
   { city: "Montpellier", country: "France" },
   { city: "Carcassonne", country: "France" },
   { city: "Albi", country: "France" },
@@ -21,6 +23,8 @@ const cities = [
   { city: "Bordeaux", country: "France" },
   { city: "Saint-Émilion", country: "France" },
   { city: "Biarritz", country: "France" },
+
+
   { city: "Arcachon", country: "France" },
   { city: "La Rochelle", country: "France" },
   { city: "Cognac", country: "France" },
@@ -30,6 +34,8 @@ const cities = [
   { city: "Quimper", country: "France" },
   { city: "Dinan", country: "France" },
   { city: "Vannes", country: "France" },
+
+
   { city: "Concarneau", country: "France" },
   { city: "Rouen", country: "France" },
   { city: "Caen", country: "France" },
@@ -38,6 +44,7 @@ const cities = [
   { city: "Etretat", country: "France" },
   { city: "Mont Saint-Michel", country: "France" },
   { city: "Strasbourg", country: "France" },
+
   { city: "Colmar", country: "France" },
   { city: "Metz", country: "France" },
   { city: "Reims", country: "France" },
@@ -46,6 +53,7 @@ const cities = [
   { city: "Beaune", country: "France" },
   { city: "Besançon", country: "France" },
   { city: "Auxerre", country: "France" },
+
   { city: "Lyon", country: "France" },
   { city: "Grenoble", country: "France" },
   { city: "Annecy", country: "France" },
@@ -54,6 +62,7 @@ const cities = [
   { city: "Vienne", country: "France" },
   { city: "Aix-les-Bains", country: "France" },
   { city: "Nantes", country: "France" },
+
   { city: "Angers", country: "France" },
   { city: "Le Mans", country: "France" },
   { city: "La Roche-sur-Yon", country: "France" },
@@ -61,6 +70,7 @@ const cities = [
   { city: "Bourges", country: "France" },
   { city: "Orléans", country: "France" },
   { city: "Blois", country: "France" },
+
   { city: "Amboise", country: "France" },
   { city: "Ajaccio", country: "France" },
   { city: "Bonifacio", country: "France" },
@@ -69,16 +79,16 @@ const cities = [
   { city: "L'Aquila", country: "Italy" },
   { city: "Sulmona", country: "Italy" },
   { city: "Pescara", country: "Italy" },
+
   { city: "Matera", country: "Italy" },
   { city: "Potenza", country: "Italy" },
   { city: "Tropea", country: "Italy" },
   { city: "Scilla", country: "Italy" },
   { city: "Reggio Calabria", country: "Italy" },
-
   { city: "Sorrento", country: "Italy" },
-
   { city: "Positano", country: "Italy" },
   { city: "Pompeii", country: "Italy" },
+
 
   { city: "Ravenna", country: "Italy" },
   { city: "Parma", country: "Italy" },
@@ -118,15 +128,16 @@ const cities = [
   { city: "Olbia", country: "Italy" },
   { city: "Bosa", country: "Italy" },
   { city: "Palermo", country: "Italy" },
+
   { city: "Catania", country: "Italy" },
   { city: "Taormina", country: "Italy" },
   { city: "Siracusa", country: "Italy" },
   { city: "Agrigento", country: "Italy" },
   { city: "Noto", country: "Italy" },
   { city: "Cefalù", country: "Italy" },
-
   { city: "Lucca", country: "Italy" },
   { city: "Arezzo", country: "Italy" },
+
   { city: "Volterra", country: "Italy" },
   { city: "Bolzano", country: "Italy" },
   { city: "Trento", country: "Italy" },
@@ -136,6 +147,7 @@ const cities = [
   { city: "Assisi", country: "Italy" },
   { city: "Todi", country: "Italy" },
   { city: "Norcia", country: "Italy" },
+
   { city: "Spoleto", country: "Italy" },
   { city: "Ravello", country: "Italy" },
   { city: "Portofino", country: "Italy" },
@@ -146,6 +158,7 @@ const cities = [
   { city: "Vicenza", country: "Italy" },
   { city: "Treviso", country: "Italy" },
   { city: "Tokyo", country: "Japan" },
+
   { city: "Kyoto", country: "Japan" },
   { city: "Osaka", country: "Japan" },
   { city: "Sapporo", country: "Japan" },
@@ -163,6 +176,7 @@ const cities = [
   { city: "Kobe", country: "Japan" },
   { city: "Nagoya", country: "Japan" },
   { city: "Yokohama", country: "Japan" },
+
   { city: "Nagasaki", country: "Japan" },
   { city: "Ise", country: "Japan" },
   { city: "Karuizawa", country: "Japan" },
@@ -172,17 +186,17 @@ const cities = [
   { city: "Arashiyama", country: "Japan" },
   { city: "Shirakawa-go", country: "Japan" },
   { city: "Kawaguchi", country: "Japan" },
+
   { city: "Matsumoto", country: "Japan" },
   { city: "Gifu", country: "Japan" },
   { city: "Uji", country: "Japan" },
   { city: "Ohara", country: "Japan" },
   { city: "Asuka", country: "Japan" },
   { city: "Hakodate", country: "Japan" },
-
   { city: "Katoomba", country: "Australia" },
-
   { city: "Wollongong", country: "Australia" },
   { city: "Bowral", country: "Australia" },
+
 
   { city: "Apollo Bay", country: "Australia" },
   { city: "Lorne", country: "Australia" },
@@ -194,6 +208,7 @@ const cities = [
 
   { city: "Noosa", country: "Australia" },
   { city: "Airlie Beach", country: "Australia" },
+
   { city: "Townsville", country: "Australia" },
   { city: "Hervey Bay", country: "Australia" },
 
@@ -215,6 +230,7 @@ const cities = [
   { city: "Darwin", country: "Australia" },
   { city: "Alice Springs", country: "Australia" },
   { city: "Uluru", country: "Australia" },
+
   { city: "Katherine", country: "Australia" },
 
   { city: "Amsterdam", country: "Netherlands" },
@@ -249,6 +265,14 @@ const cities = [
   { city: "Östersund", country: "Sweden" },
   { city: "Vimmerby", country: "Sweden" },
   { city: "Kalmar", country: "Sweden" },
+
+
+
+
+
+
+
+  
   { city: "Mora", country: "Sweden" },
   { city: "Fjällbacka", country: "Sweden" },
   { city: "Zurich", country: "Switzerland" },
