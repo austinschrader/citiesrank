@@ -1,4 +1,3 @@
-// src/components/auth/SignInButton.tsx
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useState } from "react";
@@ -21,13 +20,14 @@ export function SignInButton() {
   };
 
   return (
-    <Button onClick={handleSignIn} disabled={isLoading} variant="outline" className="gap-2">
+    <Button onClick={handleSignIn} disabled={isLoading} variant="outline" size="sm" className="gap-2 whitespace-nowrap">
       {isLoading ? (
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       ) : (
         <LogIn className="h-4 w-4" />
       )}
-      Sign in with Google
+      <span className="hidden md:inline">Sign in with Google</span>
+      <span className="md:hidden">Sign in</span>
     </Button>
   );
 }
