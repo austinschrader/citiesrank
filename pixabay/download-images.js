@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import { normalizeString } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -324,7 +325,7 @@ async function downloadImage(url, filepath) {
   });
 }
 const formatForFilename = (text) => {
-  return text.toLowerCase().split(" ").join("-");
+  return normalizeString(text).replace(/ /g, "-");
 };
 
 async function searchAndDownloadCityImages() {

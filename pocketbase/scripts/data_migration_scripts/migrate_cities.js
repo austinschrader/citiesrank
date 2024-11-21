@@ -1,20 +1,9 @@
 import PocketBase from "pocketbase";
 import { fallbackCityData } from "../raw_data/cities_data.js";
 import slugify from "slugify";
+import { normalizeString } from "./utils.js";
 
 const pb = new PocketBase("https://api.citiesrank.com");
-
-// Utility function to normalize text (remove diacritics)
-const normalizeString = (str) => {
-  return str
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/[-']/g, " ") // Replace hyphens and apostrophes with spaces
-    .replace(/[^a-zA-Z0-9\s]/g, "") // Remove any remaining special characters
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " "); // Normalize multiple spaces to single space
-};
 
 // Create URL-friendly slug
 const createSlug = (name, country) => {
