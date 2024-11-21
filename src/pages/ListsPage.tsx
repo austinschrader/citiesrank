@@ -254,7 +254,7 @@ export const ListsPage: React.FC = () => {
     <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Travel Lists</h1>
+          <h1 className="text-4xl font-bold mb-2">Lists</h1>
           <p className="text-muted-foreground max-w-2xl">
             Discover curated collections of amazing places and create your own lists to share with the community.
           </p>
