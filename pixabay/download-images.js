@@ -45,11 +45,10 @@ const BASE_URL = "https://pixabay.com/api/";
 const IMAGES_PER_CITY = 4;
 
 const cities = [
-  { city: "Kyoto", country: "Japan" },
-  { city: "Istanbul", country: "Turkey" },
-  { city: "Queenstown", country: "New Zealand" },
-  { city: "Cusco", country: "Peru" },
-  { city: "Santorini", country: "Greece" },
+  { city: "Salzburg", country: "Austria" },
+  { city: "Havana", country: "Cuba" },
+  { city: "Jaipur", country: "India" },
+  { city: "Tromsø", country: "Norway" }
 ];
 
 async function downloadImage(url, filepath) {
@@ -66,6 +65,9 @@ async function downloadImage(url, filepath) {
     writer.on("error", reject);
   });
 }
+const formatForFilename = (text) => {
+  return text.toLowerCase().split(" ").join("-");
+};
 
 async function searchAndDownloadCityImages() {
   // Create downloads directory if it doesn't exist
@@ -97,7 +99,8 @@ async function searchAndDownloadCityImages() {
         const image = images[i];
         const imageUrl = image.largeImageURL;
         const imageNumber = i + 1;
-        const filename = `${location.city.toLowerCase()}-${location.country.toLowerCase()}-${imageNumber}.jpg`;
+        // Use the new formatting function here
+        const filename = `${formatForFilename(location.city)}-${formatForFilename(location.country)}-${imageNumber}.jpg`;
         const filepath = path.join(downloadDir, filename);
 
         // Download the image
