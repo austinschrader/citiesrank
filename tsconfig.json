@@ -24,6 +24,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "pocketbase/scripts/process-images.js"],
+  "include": ["src", "pixabay/process-images.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
