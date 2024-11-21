@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import { PreferencesCard } from "../components/PreferencesCard";
-import { CityCard } from "../components/CityCard";
-import { Pagination } from "../components/Pagination";
-import { CityData, UserPreferences } from "../types";
-import { Legend } from "@/components/Legend";
+import { CityCard } from "@/components/CityCard";
+import { Pagination } from "@/components/Pagination";
+import { CityData, UserPreferences } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
-import { DestinationFilter } from "@/components/DestinationFilter";
+import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PocketBase from "pocketbase";
 import debounce from "lodash/debounce";
+import { MobileSearch } from "@/components/places/MobileSearch";
+import { DesktopFilters } from "@/components/places/DesktopFilters";
+import { MobileFilters } from "@/components/places/MobileFilters";
+import { filterOptions } from "@/components/places/constants";
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 20;
 const pb = new PocketBase("https://api.citiesrank.com");
 
 export const PlacesPage = () => {
@@ -25,22 +25,27 @@ export const PlacesPage = () => {
     accessibility: 50,
   });
 
+  const [sortOrder, setSortOrder] = useState("match");
+
+  const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [cityData, setCityData] = useState<Record<string, CityData>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [tempPreferences, setTempPreferences] = useState(preferences);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState("match");
 
   // Add request tracking refs
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
 
   useEffect(() => {
-    setTempPreferences(preferences);
-  }, [preferences]);
+    if (isMobileSearchActive && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isMobileSearchActive]);
 
   useEffect(() => {
     const loadCityData = async () => {
@@ -136,14 +141,41 @@ export const PlacesPage = () => {
     };
   }, [debouncedSearch]);
 
+  const getFilteredCities = (prefs: UserPreferences) => {
+    return Object.entries(cityData)
+      .filter(([name, data]) => {
+        const matchesFilter = !selectedFilter || data.destinationTypes.includes(selectedFilter);
+        const matchesSearch =
+          !searchQuery ||
+          name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          data.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          data.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesFilter && matchesSearch;
+      })
+      .map(([name, data]) => ({
+        name,
+        ...data,
+        ...calculateMatch(data, prefs),
+      }))
+      .sort((a, b) => {
+        switch (sortOrder) {
+          case "cost-low":
+            return a.cost - b.cost;
+          case "cost-high":
+            return b.cost - a.cost;
+          case "popular":
+            return b.crowdLevel - a.crowdLevel;
+          default:
+            return b.matchScore - a.matchScore;
+        }
+      });
+  };
+
+  const filteredAndRankedCities = getFilteredCities(preferences);
+
   const handleFilterSelect = (filter: string) => {
     setSelectedFilter(selectedFilter === filter ? null : filter);
     setCurrentPage(1);
-  };
-
-  const handleApplyFilters = () => {
-    setPreferences(tempPreferences);
-    setIsFilterOpen(false);
   };
 
   if (isLoading) {
@@ -157,108 +189,80 @@ export const PlacesPage = () => {
     );
   }
 
-  const filteredAndRankedCities = Object.entries(cityData)
-    .filter(([name, data]) => {
-      const matchesFilter = !selectedFilter || data.destinationTypes.includes(selectedFilter);
-      const matchesSearch =
-        !searchQuery ||
-        name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        data.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        data.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesFilter && matchesSearch;
-    })
-    .map(([name, data]) => ({
-      name,
-      ...data,
-      ...calculateMatch(data, preferences),
-    }))
-    .sort((a, b) => {
-      switch (sortOrder) {
-        case "cost-low":
-          return a.cost - b.cost;
-        case "cost-high":
-          return b.cost - a.cost;
-        case "popular":
-          return b.crowdLevel - a.crowdLevel;
-        default:
-          return b.matchScore - a.matchScore;
-      }
-    });
-
   const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
   const paginatedCities = filteredAndRankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <PlacesLayout
-      isFilterOpen={isFilterOpen}
-      onFilterOpenChange={setIsFilterOpen}
-      tempPreferences={tempPreferences}
-      onTempPreferencesChange={setTempPreferences}
-      onApplyFilters={handleApplyFilters}>
-      <div className="py-6 space-y-6">
+    <PlacesLayout>
+      <div className="py-4 md:py-6 space-y-4 md:space-y-6">
+        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Discover Places</h1>
-            <p className="text-muted-foreground max-w-2xl">Find your perfect destination based on your preferences and travel style.</p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative w-[200px]">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-8" placeholder="Search..." value={searchQuery} onChange={handleSearchChange} />
-            </div>
-            <Select defaultValue="match" onValueChange={setSortOrder}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Sort by</SelectLabel>
-                  <SelectItem value="match">Best Match</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="cost-low">Price: Low to High</SelectItem>
-                  <SelectItem value="cost-high">Price: High to Low</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Discover Places</h1>
+            <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
+              Find your perfect destination based on your preferences and travel style.
+            </p>
           </div>
         </div>
 
-        <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
-
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Desktop Filters */}
-          <aside className="hidden md:block w-full md:w-80 shrink-0">
-            <div className="sticky top-20">
-              <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
+        {/* Mobile Search Trigger */}
+        <div className="md:hidden">
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-between text-muted-foreground h-12"
+            onClick={() => setIsMobileSearchActive(true)}>
+            <div className="flex items-center gap-2">
+              <Search className="h-4 w-4" />
+              <span>Search destinations...</span>
             </div>
-          </aside>
+          </Button>
+        </div>
 
-          {/* Results Section */}
-          <div className="flex-1">
-            <div className="flex flex-col space-y-4 md:space-y-6">
-              {/* Results Header */}
-              <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold">{filteredAndRankedCities.length}</span>
-                  <span className="text-muted-foreground">hidden gems found</span>
-                </div>
+        {/* Mobile Search Overlay */}
+        {isMobileSearchActive && (
+          <MobileSearch
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            onClose={() => setIsMobileSearchActive(false)}
+            searchInputRef={searchInputRef}
+            filteredCities={filteredAndRankedCities}
+          />
+        )}
 
-                {/* Desktop Legend */}
-                <div className="hidden md:block">
-                  <Legend variant="horizontal" />
-                </div>
-              </div>
+        {/* Desktop Filters */}
+        <DesktopFilters
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          filteredCities={filteredAndRankedCities}
+        />
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-6">
-                {paginatedCities.map((city) => (
-                  <CityCard key={city.name} city={city} />
-                ))}
-              </div>
+        {/* Mobile Filters */}
+        <MobileFilters
+          isFilterSheetOpen={isFilterSheetOpen}
+          setIsFilterSheetOpen={setIsFilterSheetOpen}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          filterOptions={filterOptions}
+        />
 
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-            </div>
-          </div>
+        {/* Results Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {paginatedCities.map((city) => (
+            <CityCard key={city.name} city={city} />
+          ))}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-8 flex justify-center">
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </div>
     </PlacesLayout>

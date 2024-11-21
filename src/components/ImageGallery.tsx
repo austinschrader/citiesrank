@@ -1,13 +1,16 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { createSlug } from "@/lib/imageUtils";
 import { getImageUrl } from "@/lib/cloudinary";
 
 interface ImageGalleryProps {
   cityName: string;
   country: string;
+  showControls?: boolean; // Add this prop
 }
 
-export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
+export const ImageGallery = ({ cityName, country, showControls = false }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const loadedImages = useRef(new Set<string>());
@@ -64,35 +67,41 @@ export const ImageGallery = ({ cityName, country }: ImageGalleryProps) => {
   };
 
   return (
-    <div className="relative w-full aspect-[800/600]">
-      <div className="relative w-full h-full rounded-xl overflow-hidden">
-        {isLoading && <div className="absolute inset-0 bg-slate-200 animate-pulse" />}
+    <div className="relative w-full h-full">
+      {isLoading && <div className="absolute inset-0 bg-slate-200 animate-pulse" />}
 
-        <picture className="w-full h-full">
-          <source media="(max-width: 640px)" srcSet={images[currentIndex].sources.mobile} />
-          <source media="(max-width: 1024px)" srcSet={images[currentIndex].sources.tablet} />
-          <source media="(min-width: 1025px)" srcSet={images[currentIndex].sources.desktop} />
-          <img
-            src={images[currentIndex].sources.tablet}
-            alt={images[currentIndex].title}
-            className="w-full h-full object-cover"
-            loading={currentIndex === 0 ? "eager" : "lazy"}
-            decoding="async"
-            onLoad={handleImageLoad}
-          />
-        </picture>
+      <picture className="w-full h-full">
+        <source media="(max-width: 640px)" srcSet={images[currentIndex].sources.mobile} />
+        <source media="(max-width: 1024px)" srcSet={images[currentIndex].sources.tablet} />
+        <source media="(min-width: 1025px)" srcSet={images[currentIndex].sources.desktop} />
+        <img
+          src={images[currentIndex].sources.tablet}
+          alt={images[currentIndex].title}
+          className="w-full h-full object-cover"
+          loading={currentIndex === 0 ? "eager" : "lazy"}
+          decoding="async"
+          onLoad={handleImageLoad}
+        />
+      </picture>
 
-        {images.length > 1 && (
-          <div className="absolute inset-x-0 bottom-0 flex justify-between p-4">
-            <button onClick={() => navigate(-1)} className="bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70">
-              Previous
-            </button>
-            <button onClick={() => navigate(1)} className="bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70">
-              Next
-            </button>
-          </div>
-        )}
-      </div>
+      {images.length > 1 && (
+        <div
+          className={cn(
+            "absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between transition-opacity duration-200",
+            showControls ? "opacity-100" : "opacity-0"
+          )}>
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-transform hover:scale-105">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => navigate(1)}
+            className="p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-transform hover:scale-105">
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
