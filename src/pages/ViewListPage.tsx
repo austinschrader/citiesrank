@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import type { TravelList, Place } from "@/types/travel";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
@@ -42,6 +42,15 @@ const transformRecord = (record: RecordModel): TravelList => ({
   relatedLists: typeof record.relatedLists === "string" ? JSON.parse(record.relatedLists) : record.relatedLists,
 });
 
+const LoadingSpinner = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="text-center space-y-4">
+      <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+      <p className="text-muted-foreground">Loading list...</p>
+    </div>
+  </div>
+);
+
 export const ViewListPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -50,40 +59,34 @@ export const ViewListPage = () => {
   const [data, setData] = useState<TravelList | null>(null);
   const [activePlace, setActivePlace] = useState<Place | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Add ref for handling request cancellation
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
 
   useEffect(() => {
     const loadList = async () => {
       if (!id || isLoadingRef.current) return;
 
-      // Cancel any ongoing request
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      // Create new abort controller for this request
-      abortControllerRef.current = new AbortController();
+      const requestId = Math.random().toString(36).substring(7);
+      currentRequestIdRef.current = requestId;
       isLoadingRef.current = true;
+      setIsLoading(true);
 
       try {
         const record = await pb.collection("lists").getOne(id, {
-          $autoCancel: false, // Disable PocketBase's auto-cancellation
+          $autoCancel: false,
         });
 
-        // Check if the request was aborted
-        if (abortControllerRef.current.signal.aborted) {
-          return;
+        // Only update state if this is still the current request
+        if (currentRequestIdRef.current === requestId) {
+          const transformedData = transformRecord(record);
+          setData(transformedData);
+          setActivePlace(transformedData.places[0]);
         }
-
-        const transformedData = transformRecord(record);
-        setData(transformedData);
-        setActivePlace(transformedData.places[0]);
       } catch (error) {
-        if (error instanceof Error && error.name !== "AbortError") {
-          console.error("Error loading list:", error);
+        console.error("Error loading list:", error);
+        if (currentRequestIdRef.current === requestId) {
           toast({
             title: "Error loading list",
             description: "Failed to load the list. Please try again.",
@@ -91,18 +94,14 @@ export const ViewListPage = () => {
           });
         }
       } finally {
-        isLoadingRef.current = false;
+        if (currentRequestIdRef.current === requestId) {
+          isLoadingRef.current = false;
+          setIsLoading(false);
+        }
       }
     };
 
     loadList();
-
-    // Cleanup function
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
   }, [id, toast]);
 
   const handleDelete = async () => {
@@ -130,14 +129,19 @@ export const ViewListPage = () => {
     }
   };
 
-  if (!data || !activePlace) return null;
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!data || !activePlace) {
+    return null;
+  }
 
   const citySlug = createSlug(activePlace.name);
   const countrySlug = createSlug(activePlace.country);
   const coverImage = getCityImage(`${citySlug}-${countrySlug}-1`, "large");
   const isAuthor = user?.id === data.author.id;
 
-  // Rest of the component remains the same...
   return (
     <div className="min-h-screen bg-background">
       <ListHero
