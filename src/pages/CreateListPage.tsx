@@ -125,10 +125,8 @@ export function CreateListPage() {
   };
 
   const handleAddPlace = (place: Place) => {
-    console.log("Adding place:", place);
     setPlaces((prevPlaces) => {
       const newPlaces = [...prevPlaces, place];
-      console.log("Updated places:", newPlaces);
       return newPlaces;
     });
     setIsSearching(false);
@@ -137,7 +135,6 @@ export function CreateListPage() {
   const handleRemovePlace = (id: string) => {
     setPlaces((prevPlaces) => {
       const newPlaces = prevPlaces.filter((place) => place.id !== id);
-      console.log("After removing place:", newPlaces);
       return newPlaces;
     });
   };

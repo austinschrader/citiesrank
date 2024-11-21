@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ListHero } from "@/components/travel/ListHero";
@@ -51,17 +51,59 @@ export const ViewListPage = () => {
   const [activePlace, setActivePlace] = useState<Place | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Add ref for handling request cancellation
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const isLoadingRef = useRef(false);
+
   useEffect(() => {
     const loadList = async () => {
-      if (!id) return;
-      const record = await pb.collection("lists").getOne(id);
-      const transformedData = transformRecord(record);
-      setData(transformedData);
-      setActivePlace(transformedData.places[0]);
+      if (!id || isLoadingRef.current) return;
+
+      // Cancel any ongoing request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
+      isLoadingRef.current = true;
+
+      try {
+        const record = await pb.collection("lists").getOne(id, {
+          $autoCancel: false, // Disable PocketBase's auto-cancellation
+        });
+
+        // Check if the request was aborted
+        if (abortControllerRef.current.signal.aborted) {
+          return;
+        }
+
+        const transformedData = transformRecord(record);
+        setData(transformedData);
+        setActivePlace(transformedData.places[0]);
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Error loading list:", error);
+          toast({
+            title: "Error loading list",
+            description: "Failed to load the list. Please try again.",
+            variant: "destructive",
+          });
+        }
+      } finally {
+        isLoadingRef.current = false;
+      }
     };
 
     loadList();
-  }, [id]);
+
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [id, toast]);
 
   const handleDelete = async () => {
     if (!id || isDeleting) return;
@@ -95,6 +137,7 @@ export const ViewListPage = () => {
   const coverImage = getCityImage(`${citySlug}-${countrySlug}-1`, "large");
   const isAuthor = user?.id === data.author.id;
 
+  // Rest of the component remains the same...
   return (
     <div className="min-h-screen bg-background">
       <ListHero

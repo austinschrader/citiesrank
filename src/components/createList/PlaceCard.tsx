@@ -10,7 +10,6 @@ interface PlaceCardProps {
 }
 
 export function PlaceCard({ place, onRemove, isDragging }: PlaceCardProps) {
-  console.log(place);
   return (
     <Card className={isDragging ? "opacity-50" : ""}>
       <CardContent className="p-4">
