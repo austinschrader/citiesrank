@@ -140,7 +140,7 @@
                 "id": "list_related_lists",
                 "name": "relatedLists",
                 "type": "json",
-                "required": true,
+                "required": false,
                 "presentable": false,
                 "options": {
                     "maxSize": 2000000
@@ -154,7 +154,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "min": 0,
+                    "min": 1,
                     "max": null,
                     "noDecimal": true
                 }
@@ -167,7 +167,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "min": 0,
+                    "min": 1,
                     "max": null,
                     "noDecimal": true
                 }
@@ -180,7 +180,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "min": 0,
+                    "min": 1,
                     "max": null,
                     "noDecimal": true
                 }

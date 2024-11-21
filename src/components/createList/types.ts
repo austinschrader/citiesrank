@@ -6,6 +6,7 @@ export interface Template {
   image: string;
   tags: string[];
   placeholderTitle: string;
+  collection?: string | null;
 }
 
 export interface PopularList {

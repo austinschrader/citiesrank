@@ -1,4 +1,4 @@
-import { Users, PenLine, ArrowRight } from "lucide-react";
+import { Users, PenLine, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -8,9 +8,10 @@ interface ListHeaderProps {
   autoSaveStatus: string;
   onPreview: () => void;
   onDone: () => void;
+  isSubmitting?: boolean;
 }
 
-export function ListHeader({ title, onTitleChange, autoSaveStatus, onPreview, onDone }: ListHeaderProps) {
+export function ListHeader({ title, onTitleChange, autoSaveStatus, onPreview, onDone, isSubmitting = false }: ListHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-8">
       <div className="flex-1 max-w-2xl">
@@ -35,8 +36,17 @@ export function ListHeader({ title, onTitleChange, autoSaveStatus, onPreview, on
         <Button variant="outline" size="sm" onClick={onPreview}>
           Preview
         </Button>
-        <Button size="sm" className="gap-2" onClick={onDone}>
-          Done <ArrowRight className="h-4 w-4" />
+        <Button size="sm" className="gap-2" onClick={onDone} disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              Done <ArrowRight className="h-4 w-4" />
+            </>
+          )}
         </Button>
       </div>
     </div>

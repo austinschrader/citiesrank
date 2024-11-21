@@ -29,66 +29,54 @@ export function CreateListPage() {
   const [tags, setTags] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Form validation with debug logging
-  const isFormValid = () => {
-    console.log("Validating form:", { title, placesCount: places.length });
-
-    if (!title.trim()) {
-      toast({
-        title: "Title Required",
-        description: "Please give your list a title before saving.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    if (!places || places.length === 0) {
-      toast({
-        title: "Places Required",
-        description: "Add at least one place to your list before saving.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    return true;
-  };
-
   const handleDone = async () => {
     if (isSaving) return;
-
-    console.log("Current state:", {
-      title,
-      places,
-      isPrivate,
-      tags,
-      selectedTemplate,
-    });
-
-    if (!isFormValid()) return;
+    if (!title.trim() || !places.length || !user?.id) return;
 
     setIsSaving(true);
     try {
-      const data = {
-        title,
+      const listData = {
+        // Basic fields that match the migration script
+        title: title.trim(),
         description: `A curated list of places in ${places.map((p) => p.name).join(", ")}`,
-        author: user?.id,
         places: JSON.stringify(places),
-        tags: JSON.stringify(tags),
-        isPrivate,
-        template: selectedTemplate?.id,
+        tags: JSON.stringify(tags.length > 0 ? tags : [selectedTemplate?.title || "Travel"]),
+        totalPlaces: places.length,
+
+        // Match exact format from migration script
+        author: JSON.stringify({
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar,
+        }),
+
         stats: JSON.stringify({
-          placeCount: places.length,
-          likes: 0,
           views: 0,
+          likes: 0,
+          saves: 0,
           shares: 0,
         }),
+
+        metadata: JSON.stringify({
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          isVerified: false,
+          category: selectedTemplate?.title || "Travel",
+        }),
+
+        // These fields are in the migration script but were missing
+        status: "published",
+        collection: selectedTemplate?.collection || null,
+        privacy: isPrivate ? "private" : "public",
+
+        // Empty related lists to match migration
+        relatedLists: JSON.stringify([]),
+        likes: 1,
+        shares: 1,
+        saves: 1,
       };
 
-      console.log("Saving data:", data);
-
-      const record = await pb.collection("lists").create(data);
-      console.log("Save successful:", record);
+      const record = await pb.collection("lists").create(listData);
 
       toast({
         title: "List Saved!",
@@ -100,14 +88,13 @@ export function CreateListPage() {
       console.error("Error saving list:", error);
       toast({
         title: "Error",
-        description: "There was a problem saving your list. Please try again.",
+        description: "Failed to save your list. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSaving(false);
     }
   };
-
   useEffect(() => {
     if (title || places.length > 0) {
       setAutoSaveStatus("saving...");
@@ -188,8 +175,14 @@ export function CreateListPage() {
 
   return (
     <div className="container max-w-screen-xl py-8 px-4 mx-auto">
-      <ListHeader title={title} onTitleChange={setTitle} autoSaveStatus={autoSaveStatus} onPreview={() => {}} onDone={handleDone} />
-
+      <ListHeader
+        title={title}
+        onTitleChange={setTitle}
+        autoSaveStatus={autoSaveStatus}
+        onPreview={() => {}}
+        onDone={handleDone}
+        isSubmitting={isSaving}
+      />
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
