@@ -36,7 +36,6 @@ export const PlacesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Add request tracking refs
   const currentRequestIdRef = useRef<string>("");
@@ -238,8 +237,6 @@ export const PlacesPage = () => {
           onFilterSelect={handleFilterSelect}
           preferences={preferences}
           setPreferences={setPreferences}
-          dialogOpen={dialogOpen}
-          setDialogOpen={setDialogOpen}
           filteredCities={filteredAndRankedCities}
         />
 
