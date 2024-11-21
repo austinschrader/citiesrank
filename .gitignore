@@ -34,6 +34,9 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# add pixabay/downloads to gitignore
+pixabay/downloads
+
 # Testing
 coverage
 
