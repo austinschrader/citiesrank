@@ -34,6 +34,54 @@
             },
             {
                 "system": false,
+                "id": "list_status",
+                "name": "status",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "published",
+                        "draft"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_collection",
+                "name": "collection",
+                "type": "select",
+                "required": false,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "want-to-visit",
+                        "visited",
+                        "planning",
+                        "favorites"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_privacy",
+                "name": "privacy",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "public",
+                        "private",
+                        "followers"
+                    ]
+                }
+            },
+            {
+                "system": false,
                 "id": "list_author_data",
                 "name": "author",
                 "type": "json",
@@ -92,7 +140,7 @@
                 "id": "list_related_lists",
                 "name": "relatedLists",
                 "type": "json",
-                "required": true,
+                "required": false,
                 "presentable": false,
                 "options": {
                     "maxSize": 2000000
@@ -106,7 +154,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "min": 0,
+                    "min": 1,
                     "max": null,
                     "noDecimal": true
                 }
@@ -119,7 +167,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "min": 0,
+                    "min": 1,
                     "max": null,
                     "noDecimal": true
                 }
@@ -132,7 +180,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "min": 0,
+                    "min": 1,
                     "max": null,
                     "noDecimal": true
                 }

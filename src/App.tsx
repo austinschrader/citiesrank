@@ -12,6 +12,7 @@ import { ViewListPage } from "@/pages/ViewListPage";
 import { AuthProvider } from "@/lib/auth/AuthContext";
 import { SettingsPage } from "@/pages/SettingsPage"; // You'll need to create this
 import { ProfilePage } from "@/pages/ProfilePage"; // You'll need to create this
+import { Toaster } from "@/components/ui/toaster"; // Add this import
 
 function App() {
   return (
@@ -26,11 +27,11 @@ function App() {
           <Route path="/saved" element={<SavedPage />} />
           <Route path="/add" element={<AddPlacePage />} />
           <Route path="/create-list" element={<CreateListPage />} />
-          <Route path="/view-list" element={<ViewListPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </RootLayout>
+      <Toaster />
     </AuthProvider>
   );
 }

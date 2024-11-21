@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PreferencesCard } from "../components/PreferencesCard";
 import { CityCard } from "../components/CityCard";
 import { Pagination } from "../components/Pagination";
@@ -10,6 +10,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PocketBase from "pocketbase";
+import debounce from "lodash/debounce";
 
 const ITEMS_PER_PAGE = 6;
 const pb = new PocketBase("https://api.citiesrank.com");
@@ -33,42 +34,61 @@ export const PlacesPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("match");
 
+  // Add request tracking refs
+  const currentRequestIdRef = useRef<string>("");
+  const isLoadingRef = useRef(false);
+
   useEffect(() => {
     setTempPreferences(preferences);
   }, [preferences]);
 
   useEffect(() => {
     const loadCityData = async () => {
+      if (isLoadingRef.current) return;
+
+      const requestId = Math.random().toString(36).substring(7);
+      currentRequestIdRef.current = requestId;
+      isLoadingRef.current = true;
       setIsLoading(true);
+
       try {
-        const records = await pb.collection("cities_list").getFullList();
+        const records = await pb.collection("cities_list").getFullList({
+          $autoCancel: false,
+        });
 
-        // Transform PocketBase records into the expected format
-        const transformedData: Record<string, CityData> = records.reduce((acc, record) => {
-          acc[record.name] = {
-            country: record.country,
-            cost: record.cost,
-            interesting: record.interesting,
-            transit: record.transit,
-            description: record.description,
-            population: record.population,
-            highlights: typeof record.highlights === "string" ? JSON.parse(record.highlights) : record.highlights,
-            reviews: typeof record.reviews === "string" ? JSON.parse(record.reviews) : record.reviews,
-            destinationTypes: typeof record.destinationTypes === "string" ? JSON.parse(record.destinationTypes) : record.destinationTypes,
-            crowdLevel: record.crowdLevel,
-            recommendedStay: record.recommendedStay,
-            bestSeason: record.bestSeason,
-            accessibility: record.accessibility,
-          };
-          return acc;
-        }, {} as Record<string, CityData>);
+        // Only update state if this is still the current request
+        if (currentRequestIdRef.current === requestId) {
+          const transformedData: Record<string, CityData> = records.reduce((acc, record) => {
+            acc[record.name] = {
+              country: record.country,
+              cost: record.cost,
+              interesting: record.interesting,
+              transit: record.transit,
+              description: record.description,
+              population: record.population,
+              highlights: typeof record.highlights === "string" ? JSON.parse(record.highlights) : record.highlights,
+              reviews: typeof record.reviews === "string" ? JSON.parse(record.reviews) : record.reviews,
+              destinationTypes: typeof record.destinationTypes === "string" ? JSON.parse(record.destinationTypes) : record.destinationTypes,
+              crowdLevel: record.crowdLevel,
+              recommendedStay: record.recommendedStay,
+              bestSeason: record.bestSeason,
+              accessibility: record.accessibility,
+            };
+            return acc;
+          }, {} as Record<string, CityData>);
 
-        setCityData(transformedData);
+          setCityData(transformedData);
+        }
       } catch (error) {
-        console.error("Error loading city data:", error);
-        setCityData({});
+        if (currentRequestIdRef.current === requestId) {
+          console.error("Error loading city data:", error);
+          setCityData({});
+        }
       } finally {
-        setIsLoading(false);
+        if (currentRequestIdRef.current === requestId) {
+          isLoadingRef.current = false;
+          setIsLoading(false);
+        }
       }
     };
 
@@ -100,6 +120,21 @@ export const PlacesPage = () => {
       attributeMatches: matches,
     };
   };
+
+  // Debounced search
+  const debouncedSearch = debounce((value: string) => {
+    setSearchQuery(value);
+  }, 300);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   const handleFilterSelect = (filter: string) => {
     setSelectedFilter(selectedFilter === filter ? null : filter);
@@ -170,7 +205,7 @@ export const PlacesPage = () => {
           <div className="flex items-center gap-2">
             <div className="relative w-[200px]">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search places..." className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              <Input className="pl-8" placeholder="Search..." value={searchQuery} onChange={handleSearchChange} />
             </div>
             <Select defaultValue="match" onValueChange={setSortOrder}>
               <SelectTrigger className="w-[140px]">

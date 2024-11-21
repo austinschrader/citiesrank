@@ -302,7 +302,7 @@ export function ProfilePage() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle>Travel Lists</CardTitle>
+                      <CardTitle>Lists</CardTitle>
                       <CardDescription>Collections and guides you've created</CardDescription>
                     </div>
                     <Button className="gap-2">
