@@ -8,7 +8,8 @@ const pb = new PocketBase("https://api.citiesrank.com");
 const normalizeString = (str) => {
   return str
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .replace(/[-]/g, " ") // Replace hyphens with spaces
     .toLowerCase()
     .trim();
 };
