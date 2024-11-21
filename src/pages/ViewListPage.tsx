@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ListHero } from "@/components/travel/ListHero";
 import { PlaceCard } from "@/components/travel/PlaceCard";
@@ -7,12 +7,26 @@ import { ListStatistics } from "@/components/travel/ListStatistics";
 import { PlaceDetails } from "@/components/travel/PlaceDetails";
 import { RelatedLists } from "@/components/travel/RelatedLists";
 import { CommentsSection } from "@/components/travel/CommentsSection";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { Trash2 } from "lucide-react";
 import type { TravelList, Place } from "@/types/travel";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 import { Tags } from "@/components/travel/Tags";
 import PocketBase from "pocketbase";
 import type { RecordModel } from "pocketbase";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 const pb = new PocketBase("https://api.citiesrank.com");
 
@@ -30,8 +44,12 @@ const transformRecord = (record: RecordModel): TravelList => ({
 
 export const ViewListPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user } = useAuth();
   const [data, setData] = useState<TravelList | null>(null);
   const [activePlace, setActivePlace] = useState<Place | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const loadList = async () => {
@@ -45,11 +63,37 @@ export const ViewListPage = () => {
     loadList();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (!id || isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      await pb.collection("lists").delete(id);
+
+      toast({
+        title: "List Deleted",
+        description: "Your list has been successfully deleted.",
+      });
+
+      navigate("/lists");
+    } catch (error) {
+      console.error("Error deleting list:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete list. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (!data || !activePlace) return null;
 
   const citySlug = createSlug(activePlace.name);
   const countrySlug = createSlug(activePlace.country);
   const coverImage = getCityImage(`${citySlug}-${countrySlug}-1`, "large");
+  const isAuthor = user?.id === data.author.id;
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,21 +107,46 @@ export const ViewListPage = () => {
       />
 
       <div className="container max-w-screen-xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Places List */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Places to Visit</h2>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm">
-                  View Map
-                </Button>
-                <Button variant="outline" size="sm">
-                  Download PDF
-                </Button>
-              </div>
-            </div>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold">Places to Visit</h2>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm">
+              View Map
+            </Button>
+            <Button variant="outline" size="sm">
+              Download PDF
+            </Button>
+            {isAuthor && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete "{data.title}" and remove it from our servers. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      disabled={isDeleting}>
+                      {isDeleting ? "Deleting..." : "Delete List"}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+        </div>
 
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
             <div className="grid gap-4">
               {data.places.map((place) => (
                 <PlaceCard key={place.name} place={place} isActive={activePlace.id === place.id} onClick={() => setActivePlace(place)} />
@@ -85,7 +154,6 @@ export const ViewListPage = () => {
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
             <ListStatistics stats={data.stats} />
             <PlaceDetails place={activePlace} />
