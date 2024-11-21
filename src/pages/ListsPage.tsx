@@ -28,6 +28,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PocketBase, { RecordModel } from "pocketbase";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { EmptyListsState } from "@/components/createList/EmptyListsState";
 
 const pb = new PocketBase("https://api.citiesrank.com");
 
@@ -373,6 +374,22 @@ export const ListsPage: React.FC = () => {
                   <ListCard key={list.id} list={list} />
                 ))}
             </div>
+          </TabsContent>
+        )}
+
+        {user && (
+          <TabsContent value="my-lists" className="mt-0">
+            {lists.filter((list) => list.author.id === user.id).length > 0 ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {lists
+                  .filter((list) => list.author.id === user.id)
+                  .map((list) => (
+                    <ListCard key={list.id} list={list} />
+                  ))}
+              </div>
+            ) : (
+              <EmptyListsState />
+            )}
           </TabsContent>
         )}
 
