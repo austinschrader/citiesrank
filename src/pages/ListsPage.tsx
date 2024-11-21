@@ -283,150 +283,156 @@ export const ListsPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="mx-8 2xl:mx-16">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
-    <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-4xl font-bold mb-2">Lists</h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Discover curated collections of amazing places and create your own lists to share with the community.
-          </p>
-        </div>
-        <Link to="/create-list">
-          <Button size="lg" className="md:self-start">
-            <Plus className="mr-2 h-5 w-5" /> Create List
-          </Button>
-        </Link>
-      </div>
-
-      {/* Quick Create Templates */}
-      <Card className="mb-8">
-        <CardContent className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Start Your Own List</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {LIST_TEMPLATES.map((template) => (
-              <Card
-                key={template.title}
-                className="group cursor-pointer hover:shadow-lg transition-all"
-                onClick={() => navigate("/create-list")}>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-lg ${template.bgClass} ${template.textClass}`}>
-                      <template.icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-1">{template.title}</h3>
-                      <p className="text-sm text-muted-foreground">{template.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="popular" className="space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <TabsList>
-            <TabsTrigger value="popular">Popular</TabsTrigger>
-            <TabsTrigger value="recent">Recent</TabsTrigger>
-            <TabsTrigger value="trending">Trending</TabsTrigger>
-            {user && <TabsTrigger value="my-lists">My Lists</TabsTrigger>}
-            <TabsTrigger value="following">Following</TabsTrigger>
-          </TabsList>
-
-          <div className="flex items-center gap-2">
-            <div className="relative w-[200px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search lists..." onChange={handleSearchChange} value={searchInputValue} />
-            </div>
-
-            <Select defaultValue="this-week">
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Time period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="this-week">This Week</SelectItem>
-                <SelectItem value="this-month">This Month</SelectItem>
-                <SelectItem value="all-time">All Time</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <div className="flex border rounded-md">
-              <Button
-                variant={viewMode === "grid" ? "secondary" : "ghost"}
-                size="icon"
-                className="rounded-r-none"
-                onClick={() => setViewMode("grid")}>
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "secondary" : "ghost"}
-                size="icon"
-                className="rounded-l-none border-l"
-                onClick={() => setViewMode("list")}>
-                <ListIcon className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <TabsContent value="popular" className="mt-0">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {getSortedLists("popular").map((list) => (
-              <ListCard key={list.id} list={list} />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="recent" className="mt-0">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {getSortedLists("recent").map((list) => (
-              <ListCard key={list.id} list={list} />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="trending" className="mt-0">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {getSortedLists("trending").map((list) => (
-              <ListCard key={list.id} list={list} />
-            ))}
-          </div>
-        </TabsContent>
-
-        {user && (
-          <TabsContent value="my-lists" className="mt-0">
-            {lists.filter((list) => list.author.id === user.id).length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {lists
-                  .filter((list) => list.author.id === user.id)
-                  .map((list) => (
-                    <ListCard key={list.id} list={list} />
-                  ))}
-              </div>
-            ) : (
-              <EmptyListsState />
-            )}
-          </TabsContent>
-        )}
-
-        <TabsContent value="following" className="mt-0">
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Users2 className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Follow travel enthusiasts</h3>
-            <p className="text-muted-foreground max-w-md mb-4">
-              Follow other travelers to see their curated lists and get inspired for your next adventure.
+    <div className="min-h-[calc(100vh-4rem)] pb-20 md:pb-0">
+      <div className="mx-8 2xl:mx-16 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Lists</h1>
+            <p className="text-muted-foreground max-w-2xl">
+              Discover curated collections of amazing places and create your own lists to share with the community.
             </p>
-            <Button>Discover People</Button>
           </div>
-        </TabsContent>
-      </Tabs>
+          <Link to="/create-list">
+            <Button size="lg" className="md:self-start">
+              <Plus className="mr-2 h-5 w-5" /> Create List
+            </Button>
+          </Link>
+        </div>
+
+        {/* Quick Create Templates */}
+        <Card className="mb-8">
+          <CardContent className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Start Your Own List</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {LIST_TEMPLATES.map((template) => (
+                <Card
+                  key={template.title}
+                  className="group cursor-pointer hover:shadow-lg transition-all"
+                  onClick={() => navigate("/create-list")}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-lg ${template.bgClass} ${template.textClass}`}>
+                        <template.icon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold mb-1">{template.title}</h3>
+                        <p className="text-sm text-muted-foreground">{template.description}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Tabs defaultValue="popular" className="space-y-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <TabsList>
+              <TabsTrigger value="popular">Popular</TabsTrigger>
+              <TabsTrigger value="recent">Recent</TabsTrigger>
+              <TabsTrigger value="trending">Trending</TabsTrigger>
+              {user && <TabsTrigger value="my-lists">My Lists</TabsTrigger>}
+              <TabsTrigger value="following">Following</TabsTrigger>
+            </TabsList>
+
+            <div className="flex items-center gap-2">
+              <div className="relative w-[200px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input className="pl-9" placeholder="Search lists..." onChange={handleSearchChange} value={searchInputValue} />
+              </div>
+
+              <Select defaultValue="this-week">
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Time period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="this-week">This Week</SelectItem>
+                  <SelectItem value="this-month">This Month</SelectItem>
+                  <SelectItem value="all-time">All Time</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="flex border rounded-md">
+                <Button
+                  variant={viewMode === "grid" ? "secondary" : "ghost"}
+                  size="icon"
+                  className="rounded-r-none"
+                  onClick={() => setViewMode("grid")}>
+                  <Grid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "secondary" : "ghost"}
+                  size="icon"
+                  className="rounded-l-none border-l"
+                  onClick={() => setViewMode("list")}>
+                  <ListIcon className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <TabsContent value="popular" className="mt-0">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {getSortedLists("popular").map((list) => (
+                <ListCard key={list.id} list={list} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="recent" className="mt-0">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {getSortedLists("recent").map((list) => (
+                <ListCard key={list.id} list={list} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="trending" className="mt-0">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {getSortedLists("trending").map((list) => (
+                <ListCard key={list.id} list={list} />
+              ))}
+            </div>
+          </TabsContent>
+
+          {user && (
+            <TabsContent value="my-lists" className="mt-0">
+              {lists.filter((list) => list.author.id === user.id).length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {lists
+                    .filter((list) => list.author.id === user.id)
+                    .map((list) => (
+                      <ListCard key={list.id} list={list} />
+                    ))}
+                </div>
+              ) : (
+                <EmptyListsState />
+              )}
+            </TabsContent>
+          )}
+
+          <TabsContent value="following" className="mt-0">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Users2 className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Follow travel enthusiasts</h3>
+              <p className="text-muted-foreground max-w-md mb-4">
+                Follow other travelers to see their curated lists and get inspired for your next adventure.
+              </p>
+              <Button>Discover People</Button>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };

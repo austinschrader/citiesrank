@@ -298,70 +298,70 @@ export const JournalPage = () => {
   const latestEntries = MOCK_ENTRIES.filter((entry) => !entry.featured);
 
   return (
-    <div className="container max-w-screen-2xl py-8 px-4 mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-4xl font-bold mb-2">Journal</h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Stories, guides, and insights from travelers around the world. Share your journey and inspire others.
-          </p>
-        </div>
-        <Button size="lg" className="gap-2">
-          <Plus className="h-5 w-5" /> Write Entry
-        </Button>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-5">
-        <div className="lg:col-span-3 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Featured Stories</h2>
-            <Button variant="ghost" className="gap-2">
-              View all <ChevronRight className="h-4 w-4" />
-            </Button>
+    <div className="min-h-[calc(100vh-4rem)] pb-20 md:pb-0">
+      <div className="mx-8 2xl:mx-16 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Journal</h1>
+            <p className="text-muted-foreground max-w-2xl">
+              Stories, guides, and insights from travelers around the world. Share your journey and inspire others.
+            </p>
           </div>
-
-          <div className="space-y-6">
-            {featuredEntries.map((entry) => (
-              <FeaturedStoryCard key={entry.id} entry={entry} />
-            ))}
-          </div>
+          <Button size="lg" className="gap-2">
+            <Plus className="h-5 w-5" /> Write Entry
+          </Button>
         </div>
 
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Latest Entries</h2>
-            <Button variant="ghost" className="gap-2">
-              View all <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid gap-6">
-            {latestEntries.map((entry) => (
-              <JournalEntryCard key={entry.id} entry={entry} />
-            ))}
-          </div>
-
-          <Card className="p-6 bg-muted/50">
-            <h3 className="font-semibold mb-4">Popular Topics</h3>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Camera className="h-4 w-4" /> Photography
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Compass className="h-4 w-4" /> Adventure
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Tag className="h-4 w-4" /> Food & Drink
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <UserCircle2 className="h-4 w-4" /> Solo Travel
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="lg:col-span-3 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">Featured Stories</h2>
+              <Button variant="ghost" className="gap-2">
+                View all <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-          </Card>
+
+            <div className="space-y-6">
+              {featuredEntries.map((entry) => (
+                <FeaturedStoryCard key={entry.id} entry={entry} />
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">Latest Entries</h2>
+              <Button variant="ghost" className="gap-2">
+                View all <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="grid gap-6">
+              {latestEntries.map((entry) => (
+                <JournalEntryCard key={entry.id} entry={entry} />
+              ))}
+            </div>
+
+            <Card className="p-6 bg-muted/50">
+              <h3 className="font-semibold mb-4">Popular Topics</h3>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Camera className="h-4 w-4" /> Photography
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Compass className="h-4 w-4" /> Adventure
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Tag className="h-4 w-4" /> Food & Drink
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <UserCircle2 className="h-4 w-4" /> Solo Travel
+                </Button>
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
   );
 };
-
-export default JournalPage;
