@@ -2,21 +2,54 @@ import axios from "axios";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// TODO: Replace with your actual API key
-const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
+// Construct the path to .env
+const envPath = path.join(__dirname, "../.env");
+
+// Debug info
+console.log("Current directory:", __dirname);
+console.log("Looking for .env at:", envPath);
+console.log("File exists:", fs.existsSync(envPath));
+
+// If the file exists, let's see what's in it (careful not to log sensitive data)
+if (fs.existsSync(envPath)) {
+  console.log("Contents of .env file:");
+  const envContents = fs.readFileSync(envPath, "utf8");
+  console.log(
+    envContents
+      .split("\n")
+      .map((line) => (line.startsWith("PIXABAY_API_KEY") ? "PIXABAY_API_KEY=***" : line))
+      .join("\n")
+  );
+}
+
+// Load the env file
+const result = dotenv.config({ path: envPath });
+console.log("dotenv config result:", result.error || "success");
+
+// Show all environment variables (but hide sensitive values)
+console.log("\nEnvironment variables:");
+console.log("PIXABAY_API_KEY exists:", !!process.env.PIXABAY_API_KEY);
+console.log("VITE_PIXABAY_API_KEY exists:", !!process.env.VITE_PIXABAY_API_KEY);
+
+const API_KEY = process.env.PIXABAY_API_KEY;
+if (!API_KEY) {
+  throw new Error("Missing PIXABAY_API_KEY in environment variables. Please add it to your .env file.");
+}
+
 const BASE_URL = "https://pixabay.com/api/";
 const IMAGES_PER_CITY = 4;
 
 const cities = [
-  { city: "Paris", country: "France" },
-  { city: "London", country: "UK" },
-  { city: "Tokyo", country: "Japan" },
-  { city: "New York", country: "USA" },
-  { city: "Sydney", country: "Australia" },
+  { city: "Kyoto", country: "Japan" },
+  { city: "Istanbul", country: "Turkey" },
+  { city: "Queenstown", country: "New Zealand" },
+  { city: "Cusco", country: "Peru" },
+  { city: "Santorini", country: "Greece" },
 ];
 
 async function downloadImage(url, filepath) {
