@@ -1,35 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { PreferencesCard } from "@/components/PreferencesCard";
 import { CityCard } from "@/components/CityCard";
 import { Pagination } from "@/components/Pagination";
 import { CityData, UserPreferences } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
-import { DestinationFilter } from "@/components/DestinationFilter";
-import { Filter, Search, SlidersHorizontal } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Search } from "lucide-react";
 import PocketBase from "pocketbase";
 import debounce from "lodash/debounce";
+import { MobileSearch } from "@/components/places/MobileSearch";
+import { DesktopFilters } from "@/components/places/DesktopFilters";
+import { MobileFilters } from "@/components/places/MobileFilters";
+import { filterOptions } from "@/components/places/constants";
 
 const ITEMS_PER_PAGE = 20;
 const pb = new PocketBase("https://api.citiesrank.com");
-
-const filterOptions = [
-  { id: "metropolis", label: "Major Cities" },
-  { id: "coastal", label: "Coastal Cities" },
-  { id: "mountain", label: "Mountain Towns" },
-  { id: "historic", label: "Historic Sites" },
-  { id: "cultural", label: "Cultural Hubs" },
-  { id: "culinary", label: "Food & Wine" },
-  { id: "tropical", label: "Tropical" },
-  { id: "adventure", label: "Adventure" },
-  { id: "wellness", label: "Wellness" },
-  { id: "village", label: "Small Towns" },
-];
 
 export const PlacesPage = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -41,6 +25,8 @@ export const PlacesPage = () => {
     accessibility: 50,
   });
 
+  const [sortOrder, setSortOrder] = useState("match");
+
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +36,6 @@ export const PlacesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState("match");
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Add request tracking refs
@@ -187,51 +172,6 @@ export const PlacesPage = () => {
       });
   };
 
-  const DesktopFiltersDialog = () => (
-    <DialogContent className="sm:max-w-[600px]">
-      <DialogHeader>
-        <DialogTitle>Filters</DialogTitle>
-      </DialogHeader>
-      <div className="py-6">
-        <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
-      </div>
-      <div className="flex items-center justify-between pt-4 border-t">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            setPreferences({
-              budget: 50,
-              crowds: 50,
-              tripLength: 50,
-              season: 50,
-              transit: 50,
-              accessibility: 50,
-            });
-          }}
-          className={
-            Object.values(preferences).some((value) => value !== 50) ? "text-primary hover:text-primary" : "text-muted-foreground"
-          }>
-          Clear all
-        </Button>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 px-4 py-2 bg-muted/50 rounded-lg">
-            <div className="space-y-0.5 text-sm">
-              <div className="text-muted-foreground">{filteredAndRankedCities.length} places</div>
-              <div className="text-primary font-medium flex items-center gap-1.5">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary/80" />
-                {filteredAndRankedCities.filter((city) => city.matchScore >= 80).length} perfect matches
-              </div>
-            </div>
-          </div>
-          <Button onClick={() => setDialogOpen(false)} className="min-w-[100px]" size="sm">
-            Done
-          </Button>
-        </div>
-      </div>
-    </DialogContent>
-  );
-
   const filteredAndRankedCities = getFilteredCities(preferences);
 
   const handleFilterSelect = (filter: string) => {
@@ -250,49 +190,13 @@ export const PlacesPage = () => {
     );
   }
 
-  const MobileSearch = () => (
-    <div className="fixed inset-0 z-50 bg-background pt-16">
-      <div className="flex items-center gap-2 p-4 border-b">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            ref={searchInputRef}
-            className="pl-9 pr-4"
-            placeholder="Search destinations..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </div>
-        <Button variant="ghost" size="sm" onClick={() => setIsMobileSearchActive(false)}>
-          Cancel
-        </Button>
-      </div>
-
-      {searchQuery && (
-        <ScrollArea className="h-[calc(100vh-8rem)]">
-          <div className="p-4 space-y-2">
-            {filteredAndRankedCities.slice(0, 5).map((city) => (
-              <div key={city.name} className="flex items-center gap-3 p-2 hover:bg-accent rounded-md">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <div className="font-medium">{city.name}</div>
-                  <div className="text-sm text-muted-foreground">{city.country}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      )}
-    </div>
-  );
-
   const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
   const paginatedCities = filteredAndRankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <PlacesLayout>
       <div className="py-4 md:py-6 space-y-4 md:space-y-6">
-        {/* Header Section - Responsive */}
+        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Discover Places</h1>
@@ -316,137 +220,50 @@ export const PlacesPage = () => {
         </div>
 
         {/* Mobile Search Overlay */}
-        {isMobileSearchActive && <MobileSearch />}
+        {isMobileSearchActive && (
+          <MobileSearch
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            onClose={() => setIsMobileSearchActive(false)}
+            searchInputRef={searchInputRef}
+            filteredCities={filteredAndRankedCities}
+          />
+        )}
 
-        {/* Filter Section - Desktop */}
-        <div className="hidden md:block sticky top-16 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-y py-3">
-          <div className="flex items-center gap-4">
-            <div className="relative w-[250px] shrink-0">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-8" placeholder="Search destinations..." value={searchQuery} onChange={handleSearchChange} />
-            </div>
-            <div className="h-8 w-px bg-border" />
-            <div className="flex-1 overflow-x-auto hide-scrollbar">
-              <DestinationFilter selectedFilter={selectedFilter} onFilterSelect={handleFilterSelect} />
-            </div>
-            <div className="h-8 w-px bg-border" />
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 px-3 gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filters
-                  {Object.values(preferences).filter((value) => value !== 50).length > 0 && (
-                    <span className="ml-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                      {Object.values(preferences).filter((value) => value !== 50).length}
-                    </span>
-                  )}
-                </Button>
-              </DialogTrigger>
-              <DesktopFiltersDialog />
-            </Dialog>
-            <div className="h-8 w-px bg-border" />
-            <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger className="w-[130px] h-9">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Sort by</SelectLabel>
-                  <SelectItem value="match">Best Match</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="cost-low">Price: Low to High</SelectItem>
-                  <SelectItem value="cost-high">Price: High to Low</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+        {/* Desktop Filters */}
+        <DesktopFilters
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          dialogOpen={dialogOpen}
+          setDialogOpen={setDialogOpen}
+          filteredCities={filteredAndRankedCities}
+        />
 
-        {/* Mobile Filter Bar */}
-        <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur pt-2 pb-4 overflow-hidden">
-          <div className="overflow-x-auto hide-scrollbar">
-            <div className="flex items-center gap-2 px-4 min-w-max">
-              <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-9 px-3 gap-2 whitespace-nowrap">
-                    <SlidersHorizontal className="h-4 w-4" />
-                    Filters
-                    {Object.values(preferences).filter((value) => value !== 50).length > 0 && (
-                      <span className="ml-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                        {Object.values(preferences).filter((value) => value !== 50).length}
-                      </span>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[85vh]">
-                  <SheetHeader>
-                    <SheetTitle>Filters</SheetTitle>
-                  </SheetHeader>
-                  <ScrollArea className="flex-1 mt-4">
-                    <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
-                  </ScrollArea>
-                  <SheetFooter className="flex-row gap-3 mt-4">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => {
-                        setPreferences({
-                          budget: 50,
-                          crowds: 50,
-                          tripLength: 50,
-                          season: 50,
-                          transit: 50,
-                          accessibility: 50,
-                        });
-                      }}>
-                      Reset
-                    </Button>
-                    <Button className="flex-1" onClick={() => setIsFilterSheetOpen(false)}>
-                      Apply
-                    </Button>
-                  </SheetFooter>
-                </SheetContent>
-              </Sheet>
+        {/* Mobile Filters */}
+        <MobileFilters
+          isFilterSheetOpen={isFilterSheetOpen}
+          setIsFilterSheetOpen={setIsFilterSheetOpen}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          filterOptions={filterOptions}
+        />
 
-              <Select value={sortOrder} onValueChange={setSortOrder}>
-                <SelectTrigger className="h-9 whitespace-nowrap">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Sort by</SelectLabel>
-                    <SelectItem value="match">Best Match</SelectItem>
-                    <SelectItem value="popular">Most Popular</SelectItem>
-                    <SelectItem value="cost-low">Price: Low to High</SelectItem>
-                    <SelectItem value="cost-high">Price: High to Low</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-
-              <div className="flex gap-2">
-                {filterOptions.map((option) => (
-                  <Button
-                    key={option.id}
-                    variant={selectedFilter === option.id ? "default" : "outline"}
-                    size="sm"
-                    className="h-9 whitespace-nowrap"
-                    onClick={() => handleFilterSelect(option.id)}>
-                    {option.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Grid - Responsive */}
+        {/* Results Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {paginatedCities.map((city) => (
             <CityCard key={city.name} city={city} />
           ))}
         </div>
 
-        {/* Pagination - Responsive */}
+        {/* Pagination */}
         <div className="mt-8 flex justify-center">
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
