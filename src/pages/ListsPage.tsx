@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Plus,
   Grid,
@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import PocketBase, { RecordModel } from "pocketbase";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { EmptyListsState } from "@/components/createList/EmptyListsState";
+import debounce from "lodash/debounce";
 
 const pb = new PocketBase("https://api.citiesrank.com");
 
@@ -193,46 +194,80 @@ export const ListsPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [lists, setLists] = useState<TravelList[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchInputValue, setSearchInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const currentRequestIdRef = useRef<string>("");
+  const isLoadingRef = useRef(false);
 
   useEffect(() => {
     const loadLists = async () => {
+      if (isLoadingRef.current) return;
+
+      const requestId = Math.random().toString(36).substring(7);
+      currentRequestIdRef.current = requestId;
+      isLoadingRef.current = true;
+
       try {
         const records = await pb.collection("lists").getFullList({
           sort: "-created",
           ...(searchQuery && {
             filter: `title ~ "${searchQuery}" || description ~ "${searchQuery}"`,
           }),
+          expand: "author",
+          $autoCancel: false,
         });
 
-        const transformedLists = records.map(
-          (record: RecordModel): TravelList => ({
-            id: record.id,
-            title: record.title,
-            description: record.description,
-            author: record.expand?.author || record.author,
-            places: typeof record.places === "string" ? JSON.parse(record.places) : record.places,
-            tags: typeof record.tags === "string" ? JSON.parse(record.tags) : record.tags,
-            likes: record.likes || 0,
-            shares: record.shares || 0,
-            saves: record.saves || 0,
-            status: record.status || "published",
-            created: record.created,
-            updated: record.updated,
-            updatedAt: record.updated, // For compatibility
-          })
-        );
-
-        setLists(transformedLists);
-      } catch (err) {
-        console.error("Error loading lists:", err);
+        // Only update state if this is still the current request
+        if (currentRequestIdRef.current === requestId) {
+          const transformedLists = records.map(
+            (record: RecordModel): TravelList => ({
+              id: record.id,
+              title: record.title,
+              description: record.description,
+              author: record.expand?.author || record.author,
+              places: typeof record.places === "string" ? JSON.parse(record.places) : record.places,
+              tags: typeof record.tags === "string" ? JSON.parse(record.tags) : record.tags,
+              likes: record.likes || 0,
+              shares: record.shares || 0,
+              saves: record.saves || 0,
+              status: record.status || "published",
+              created: record.created,
+              updated: record.updated,
+              updatedAt: record.updated,
+            })
+          );
+          setLists(transformedLists);
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name !== "AbortError") {
+          console.error("Error loading lists:", error);
+        }
       } finally {
-        setIsLoading(false);
+        if (currentRequestIdRef.current === requestId) {
+          isLoadingRef.current = false;
+          setIsLoading(false);
+        }
       }
     };
 
     loadLists();
   }, [searchQuery]);
+
+  const debouncedSearch = debounce((value: string) => {
+    setSearchQuery(value);
+  }, 300);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchInputValue(value);
+    debouncedSearch(value);
+  };
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   const getSortedLists = (sortType: "popular" | "recent" | "trending"): TravelList[] => {
     switch (sortType) {
@@ -307,7 +342,7 @@ export const ListsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className="relative w-[200px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search lists..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              <Input className="pl-9" placeholder="Search lists..." onChange={handleSearchChange} value={searchInputValue} />
             </div>
 
             <Select defaultValue="this-week">
@@ -364,18 +399,6 @@ export const ListsPage: React.FC = () => {
             ))}
           </div>
         </TabsContent>
-
-        {user && (
-          <TabsContent value="my-lists" className="mt-0">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {lists
-                .filter((list) => list.author.id === user.id)
-                .map((list) => (
-                  <ListCard key={list.id} list={list} />
-                ))}
-            </div>
-          </TabsContent>
-        )}
 
         {user && (
           <TabsContent value="my-lists" className="mt-0">
