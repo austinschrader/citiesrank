@@ -32,7 +32,6 @@ export const PlacesPage = () => {
   const [tempPreferences, setTempPreferences] = useState(preferences);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInputValue, setSearchInputValue] = useState("");
   const [sortOrder, setSortOrder] = useState("match");
 
   // Add request tracking refs
@@ -128,9 +127,7 @@ export const PlacesPage = () => {
   }, 300);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchInputValue(value); // Immediate UI update
-    debouncedSearch(value); // Debounced data fetch
+    setSearchQuery(e.target.value);
   };
 
   useEffect(() => {
@@ -208,7 +205,7 @@ export const PlacesPage = () => {
           <div className="flex items-center gap-2">
             <div className="relative w-[200px]">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-8" placeholder="Search..." value={searchInputValue} onChange={handleSearchChange} />
+              <Input className="pl-8" placeholder="Search..." value={searchQuery} onChange={handleSearchChange} />
             </div>
             <Select defaultValue="match" onValueChange={setSortOrder}>
               <SelectTrigger className="w-[140px]">
