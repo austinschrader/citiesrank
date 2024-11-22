@@ -10,6 +10,10 @@ npm run dev
 
 npx shadcn@latest add popover
 
+## Running the db locally
+There is a copy of the database executable in the repo that you can run for local testing. You can also run it from anywhere else on your PC, but running it in the repo has the benefit of being with the pb_migration scripts. When you run it (pocketbase serve) with the migrations present, it will automatically apply them to your local db. You can also optionally manually apply them with "pocketbase migrate up."
 
----
-Once the migrations are merged u just need to run$: /pocketbase/pocketbase serve
+note: You will need to create an admin account the first time you run it.
+```bash
+./pocketbase/pocketbase serve
+```
