@@ -65,6 +65,7 @@ export const PlacesPage = () => {
         if (currentRequestIdRef.current === requestId) {
           const transformedData: Record<string, CityData> = records.reduce((acc, record) => {
             acc[record.name] = {
+              name: record.name,
               country: record.country,
               cost: record.cost,
               interesting: record.interesting,
@@ -153,8 +154,8 @@ export const PlacesPage = () => {
         return matchesFilter && matchesSearch;
       })
       .map(([name, data]) => ({
-        name,
         ...data,
+        name,
         ...calculateMatch(data, prefs),
       }))
       .sort((a, b) => {
