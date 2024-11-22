@@ -42,3 +42,6 @@ coverage
 
 # Typescript
 *.tsbuildinfo
+
+# PocketBase
+pb_data/

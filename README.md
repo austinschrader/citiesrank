@@ -9,3 +9,7 @@ npm run process-images
 npm run dev
 
 npx shadcn@latest add popover
+
+
+---
+Once the migrations are merged u just need to run$: /pocketbase/pocketbase serve
