@@ -9,7 +9,7 @@ import { CityInsight, LocationState } from "@/components/city/types";
 import PocketBase from "pocketbase";
 import { CityData } from "@/types";
 import { PopularLists } from "@/components/city/PopularLists";
-import { ChartColumnIncreasing, Building, Coffee, Sparkles } from "lucide-react";
+import { ChartColumnIncreasing, Building, Coffee, Sparkles, Users } from "lucide-react";
 import { NeighborhoodMap } from "@/components/city/NeighborhoodMap";
 import { TrendingTopics } from "@/components/city/TrendingTopics";
 import { LocalEvents } from "@/components/city/LocalEvents";
@@ -101,6 +101,10 @@ export const CityDetailsPage = () => {
                   <TabsTrigger value="local" className="gap-2">
                     <Coffee className="h-4 w-4" />
                     Local Scene
+                  </TabsTrigger>
+                  <TabsTrigger value="insights" className="gap-2">
+                    <Users className="h-4 w-4" />
+                    Community Insights
                   </TabsTrigger>
                 </TabsList>
               </TabsList>

@@ -25,7 +25,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ cityName, description,
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
 
       <div className="absolute top-4 left-4 right-4">
-        <Button variant="ghost" className="text-white hover:text-white/80" onClick={() => navigate(-1)}>
+        <Button variant="ghost" className="text-black hover:text-white/80" onClick={() => navigate(-1)}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Cities
         </Button>
