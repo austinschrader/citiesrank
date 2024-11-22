@@ -8,8 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CityInsight, LocationState } from "@/components/city/types";
 import PocketBase from "pocketbase";
 import { CityData } from "@/types";
-import { Sparkles, Users } from "lucide-react";
 import { PopularLists } from "@/components/city/PopularLists";
+import { ChartColumnIncreasing, Building, Coffee, Sparkles } from "lucide-react";
+import { NeighborhoodMap } from "@/components/city/NeighborhoodMap";
+import { TrendingTopics } from "@/components/city/TrendingTopics";
+import { LocalEvents } from "@/components/city/LocalEvents";
 
 const pb = new PocketBase("https://api.citiesrank.com");
 
@@ -82,18 +85,28 @@ export const CityDetailsPage = () => {
           <CardContent className="p-6">
             <Tabs defaultValue="overview" className="space-y-6">
               <TabsList>
-                <TabsTrigger value="overview" className="gap-2">
-                  <Sparkles className="h-4 w-4" />
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger value="insights" className="gap-2">
-                  <Users className="h-4 w-4" />
-                  Community Insights
-                </TabsTrigger>
+                <TabsList>
+                  <TabsTrigger value="overview" className="gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="neighborhoods" className="gap-2">
+                    <Building className="h-4 w-4" />
+                    Neighborhoods
+                  </TabsTrigger>
+                  <TabsTrigger value="trending" className="gap-2">
+                    <ChartColumnIncreasing className="h-4 w-4" />
+                    Trending
+                  </TabsTrigger>
+                  <TabsTrigger value="local" className="gap-2">
+                    <Coffee className="h-4 w-4" />
+                    Local Scene
+                  </TabsTrigger>
+                </TabsList>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-8">
-                <QuickFacts cityData={cityData} />
+                <QuickFacts />
                 <div className="grid gap-8 lg:grid-cols-3">
                   <div className="lg:col-span-2">
                     <h2 className="text-2xl font-semibold mb-4">About {cityData.name}</h2>
@@ -106,6 +119,21 @@ export const CityDetailsPage = () => {
                     <PopularLists cityName={cityData.name} />
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="neighborhoods">
+                <h2 className="text-2xl font-semibold mb-4">Explore Neighborhoods</h2>
+                <NeighborhoodMap />
+              </TabsContent>
+
+              <TabsContent value="trending">
+                <h2 className="text-2xl font-semibold mb-4">What's Happening</h2>
+                <TrendingTopics />
+              </TabsContent>
+
+              <TabsContent value="local">
+                <h2 className="text-2xl font-semibold mb-4">Local Events & Meetups</h2>
+                <LocalEvents />
               </TabsContent>
 
               <TabsContent value="insights">

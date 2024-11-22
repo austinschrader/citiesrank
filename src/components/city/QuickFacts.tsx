@@ -1,51 +1,22 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CityData } from "@/types";
-import { formatPopulation, getCostLabel, getTransitLabel } from "@/lib/utils/formatters";
 
-interface QuickFactProps {
-  label: string;
-  value: string;
-  trend: string;
-}
-
-const QuickFact: React.FC<QuickFactProps> = ({ label, value, trend }) => (
-  <Card className="bg-card/50">
-    <CardContent className="p-4">
-      <div className="text-sm text-muted-foreground mb-1">{label}</div>
-      <div className="text-2xl font-bold mb-1">{value}</div>
-      <div className="text-xs text-muted-foreground">{trend}</div>
-    </CardContent>
-  </Card>
+export const QuickFacts = () => (
+  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+    {[
+      { label: "Population", value: "8.4M", trend: "+2.1% yearly" },
+      { label: "Weather", value: "75°F", trend: "Clear skies" },
+      { label: "Time", value: "2:30 PM", trend: "GMT-4" },
+      { label: "Cost Index", value: "8.5/10", trend: "Very Expensive" },
+      { label: "Safety", value: "7.8/10", trend: "Generally Safe" },
+      { label: "Walkability", value: "9.2/10", trend: "Very Walkable" },
+    ].map((fact, i) => (
+      <Card key={i} className="bg-card/50">
+        <CardContent className="p-4">
+          <div className="text-sm text-muted-foreground mb-1">{fact.label}</div>
+          <div className="text-2xl font-bold mb-1">{fact.value}</div>
+          <div className="text-xs text-muted-foreground">{fact.trend}</div>
+        </CardContent>
+      </Card>
+    ))}
+  </div>
 );
-
-interface QuickFactsProps {
-  cityData: CityData;
-}
-
-export const QuickFacts: React.FC<QuickFactsProps> = ({ cityData }) => {
-  const facts = [
-    {
-      label: "Population",
-      value: formatPopulation(Number(cityData.population)),
-      trend: "+2.1% yearly",
-    },
-    {
-      label: "Cost Index",
-      value: `${cityData.cost / 10}/10`,
-      trend: getCostLabel(cityData.cost / 10),
-    },
-    {
-      label: "Transit",
-      value: `${cityData.transit}/10`,
-      trend: getTransitLabel(cityData.transit),
-    },
-  ];
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      {facts.map((fact, i) => (
-        <QuickFact key={i} {...fact} />
-      ))}
-    </div>
-  );
-};
