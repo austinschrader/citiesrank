@@ -26,6 +26,7 @@ export interface ReviewSummary {
 
 export interface CityData {
   country: string;
+  name: string;
   cost: number; // 0-100 (low to high)
   interesting: number; // 0-100 (based on combined factors)
   transit: number; // 0-100 (poor to excellent)
