@@ -4,8 +4,19 @@ import { MapPin, Star } from "lucide-react";
 import { CityCardProps } from "@/types";
 import { cn } from "@/lib/utils";
 import { ImageGallery } from "@/components/ImageGallery";
+import { useNavigate } from "react-router-dom";
+
+// Add this utility function at the top
+const createSlug = (text: string): string => {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/--+/g, "-"); // Replace multiple - with single -
+};
 
 export const CityCard: React.FC<CityCardProps> = ({ city }) => {
+  const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const [showControls, setShowControls] = useState(false);
 
@@ -16,20 +27,33 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
     return "bg-gray-50 text-gray-700";
   };
 
-  const citySlug = city.name.toLowerCase().replace(/\s+/g, "-");
-  const countrySlug = city.country.toLowerCase().replace(/\s+/g, "-");
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking the favorite button
+    if ((e.target as HTMLElement).closest("button")) {
+      return;
+    }
+
+    const citySlug = createSlug(city.name);
+    const countrySlug = createSlug(city.country);
+    navigate(`/cities/${countrySlug}/${citySlug}`, {
+      state: { cityData: city },
+    });
+  };
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click from triggering
+    setIsFavorite(!isFavorite);
+    // Add your favorite logic here
+  };
 
   return (
     <Card
-      className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300"
+      className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300 cursor-pointer"
       onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}>
+      onMouseLeave={() => setShowControls(false)}
+      onClick={handleCardClick}>
       <div className="relative aspect-[4/3]">
-        <ImageGallery
-          cityName={city.name}
-          country={city.country}
-          showControls={showControls} // Pass show controls state
-        />
+        <ImageGallery cityName={city.name} country={city.country} showControls={showControls} />
 
         <div className="absolute top-2 left-2 z-20">
           <div
@@ -43,7 +67,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
         </div>
 
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={handleFavoriteClick}
           className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 hover:bg-white transition-all hover:scale-110 active:scale-95 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
           aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}>
           <Star className={cn("w-4 h-4", isFavorite && "fill-primary text-primary")} />
@@ -54,14 +78,8 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex-1">
             <div className="flex items-baseline gap-2 mb-1">
-              <a
-                href={`/${countrySlug}/${citySlug}`}
-                className="text-lg font-medium text-foreground hover:text-primary/90 transition-colors">
-                {city.name}
-              </a>
-              <a href={`/${countrySlug}`} className="text-sm font-medium text-muted-foreground hover:text-primary/80 transition-colors">
-                {city.country}
-              </a>
+              <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">{city.name}</span>
+              <span className="text-sm font-medium text-muted-foreground">{city.country}</span>
             </div>
 
             <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2 mb-3">{city.description}</p>

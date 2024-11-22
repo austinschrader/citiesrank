@@ -13,6 +13,7 @@ import { AuthProvider } from "@/lib/auth/AuthContext";
 import { SettingsPage } from "@/pages/SettingsPage"; // You'll need to create this
 import { ProfilePage } from "@/pages/ProfilePage"; // You'll need to create this
 import { Toaster } from "@/components/ui/toaster"; // Add this import
+import { CityDetailsPage } from "@/pages/CityDetailsPage"; // Add this import
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/create-list" element={<CreateListPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/cities/:country/:city" element={<CityDetailsPage />} />
         </Routes>
       </RootLayout>
       <Toaster />
