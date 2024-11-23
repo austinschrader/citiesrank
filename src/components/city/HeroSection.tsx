@@ -31,7 +31,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ cityName, country, des
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="mt-6 bg-white/10 hover:bg-white/20 text-white border border-white/20 
                      backdrop-blur-md transition-colors gap-2">
             <ArrowLeft className="h-4 w-4" />
