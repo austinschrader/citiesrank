@@ -8,7 +8,8 @@ import { About } from "@/components/city/overview/About";
 import { BestTimeToVisit } from "@/components/city/overview/BestTimeToVisit";
 import { PopularLists } from "@/components/city/shared/PopularLists";
 import { TopExperiences } from "@/components/city/community/TopExperiences";
-import CommunitySection from "@/components/city/community/CommunitySection";
+import { CommunitySection } from "@/components/city/community/CommunitySection";
+import { CommunityHeader } from "@/components/city/community/CommunityHeader";
 
 export function CityDetailsPage() {
   return (
@@ -74,6 +75,7 @@ export function CityDetailsPage() {
               </TabsContent>
 
               <TabsContent value="community" className="space-y-6">
+                <CommunityHeader />
                 <CommunitySection />
               </TabsContent>
             </Tabs>
