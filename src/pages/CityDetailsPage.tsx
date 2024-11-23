@@ -24,54 +24,19 @@ import {
   MessageCircle,
   TrendingUp,
 } from "lucide-react";
+import { HeroSection } from "@/components/city/HeroSection";
 
 export function CityDetailsPage() {
   // State management would be similar to original, just expanded data
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Enhanced Hero Section */}
-      <div className="relative h-[60vh] bg-black">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80" />
-        <img src="/api/placeholder/1920/1080" alt="City View" className="w-full h-full object-cover" />
-
-        {/* Back Button */}
-        <div className="absolute top-6 left-6">
-          <Button variant="secondary" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Cities
-          </Button>
-        </div>
-
-        {/* City Title & Quick Actions */}
-        <div className="absolute bottom-0 left-0 right-0 p-8">
-          <div className="container max-w-7xl mx-auto">
-            <div className="flex items-end justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <span className="text-primary font-medium">France</span>
-                </div>
-                <h1 className="text-5xl font-bold text-white mb-2">Paris</h1>
-                <p className="text-lg text-white/90 max-w-2xl">
-                  The City of Light beckons with its magnificent art, architecture, culture, and cuisine. A global center for art, fashion,
-                  gastronomy, and culture.
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button variant="secondary" size="lg" className="gap-2">
-                  <BookmarkPlus className="h-5 w-5" />
-                  Save
-                </Button>
-                <Button variant="secondary" size="lg" className="gap-2">
-                  <Share2 className="h-5 w-5" />
-                  Share
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Hero Section */}
+      <HeroSection
+        cityName="Paris"
+        country="France"
+        description="The City of Light beckons with its magnificent art, architecture, culture, and cuisine. A global center for art, fashion, gastronomy, and culture."
+      />
 
       {/* Main Content */}
       <div className="container max-w-7xl mx-auto px-4 py-8">
