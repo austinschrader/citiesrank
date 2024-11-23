@@ -12,18 +12,13 @@ import {
   BookmarkPlus,
   Share2,
   MapPin,
-  Sun,
-  Clock,
-  DollarSign,
-  Shield,
-  Footprints,
-  Train,
   Star,
   Calendar,
   MessageCircle,
   TrendingUp,
 } from "lucide-react";
 import { HeroSection } from "@/components/city/HeroSection";
+import { QuickFacts } from "@/components/city/QuickFacts";
 
 export function CityDetailsPage() {
   // State management would be similar to original, just expanded data
@@ -40,27 +35,7 @@ export function CityDetailsPage() {
       {/* Main Content */}
       <div className="container max-w-7xl mx-auto px-4 py-8">
         {/* Quick Facts Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          {[
-            { icon: Sun, label: "Weather", value: "22°C", trend: "Sunny" },
-            { icon: Clock, label: "Local Time", value: "2:30 PM", trend: "GMT+1" },
-            { icon: DollarSign, label: "Cost Index", value: "$$$$", trend: "Very High" },
-            { icon: Shield, label: "Safety Score", value: "8.9/10", trend: "Very Safe" },
-            { icon: Footprints, label: "Walk Score", value: "96/100", trend: "Walker's Paradise" },
-            { icon: Train, label: "Transit", value: "9.5/10", trend: "Excellent" },
-          ].map((item, i) => (
-            <Card key={i} className="bg-card">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <item.icon className="h-4 w-4 text-primary" />
-                  <span className="text-sm text-muted-foreground">{item.label}</span>
-                </div>
-                <div className="text-2xl font-bold mb-1">{item.value}</div>
-                <div className="text-sm text-muted-foreground">{item.trend}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <QuickFacts />
 
         {/* Main Tabs Interface */}
         <Card className="mt-6">
