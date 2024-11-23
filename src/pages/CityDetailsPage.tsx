@@ -9,7 +9,6 @@ import {
   Users,
   Sparkles,
   ChartColumnIncreasing,
-  ArrowLeft,
   BookmarkPlus,
   Share2,
   MapPin,
