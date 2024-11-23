@@ -2,22 +2,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Building,
-  Coffee,
-  Users,
-  Sparkles,
-  ChartColumnIncreasing,
-  BookmarkPlus,
-  Share2,
-  MapPin,
-  Star,
-  MessageCircle,
-  TrendingUp,
-} from "lucide-react";
+import { Building, Coffee, Users, Sparkles, ChartColumnIncreasing, Share2, Star, MessageCircle, TrendingUp } from "lucide-react";
 import { HeroSection } from "@/components/city/shared/HeroSection";
 import { QuickFacts } from "@/components/city/shared/QuickFacts";
 import { LocalEvents } from "@/components/city/local-scene/LocalEvents";
+import { About } from "@/components/city/overview/About";
+import { BestTimeToVisit } from "@/components/city/overview/BestTimeToVisit";
+import { PopularLists } from "@/components/city/shared/PopularLists";
 
 export function CityDetailsPage() {
   return (
@@ -64,74 +55,12 @@ export function CityDetailsPage() {
               <TabsContent value="overview" className="space-y-8">
                 <div className="grid gap-8 lg:grid-cols-3">
                   <div className="lg:col-span-2 space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-semibold mb-4">About Paris</h2>
-                      <div className="prose max-w-none">
-                        <p>
-                          Paris captivates millions of visitors each year with its unforgettable ambiance. Known for its art, culture, and
-                          history, the city is home to many iconic landmarks such as the Eiffel Tower, the Louvre, Notre-Dame, and the Arc
-                          de Triomphe.
-                        </p>
-                        <p>
-                          The city is divided into 20 arrondissements (districts), each offering its own character and charm. From the
-                          historic Le Marais to the artistic Montmartre, every neighborhood tells its own unique story.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-semibold mb-4">Best Time to Visit</h3>
-                      <div className="grid grid-cols-4 gap-4">
-                        {[
-                          { season: "Spring", months: "Mar-May", score: 9.5, notes: "Perfect weather, blooming gardens" },
-                          { season: "Summer", months: "Jun-Aug", score: 8.0, notes: "Peak season, warm & crowded" },
-                          { season: "Fall", months: "Sep-Nov", score: 9.0, notes: "Mild weather, fewer tourists" },
-                          { season: "Winter", months: "Dec-Feb", score: 7.5, notes: "Festive but cold" },
-                        ].map((season) => (
-                          <Card key={season.season}>
-                            <CardContent className="p-4">
-                              <h4 className="font-semibold mb-2">{season.season}</h4>
-                              <div className="text-sm text-muted-foreground mb-2">{season.months}</div>
-                              <div className="flex items-center gap-1 text-primary mb-2">
-                                <Star className="h-4 w-4 fill-primary" />
-                                <span>{season.score}</span>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{season.notes}</p>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    </div>
+                    <About />
+                    <BestTimeToVisit />
                   </div>
 
                   <div className="space-y-6">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-4">Popular Lists</h3>
-                      <div className="space-y-3">
-                        {[
-                          { title: "Ultimate Paris in 3 Days", saves: "4.2k", items: 15 },
-                          { title: "Hidden Gems of Le Marais", saves: "2.8k", items: 12 },
-                          { title: "Best Cafés & Patisseries", saves: "3.1k", items: 20 },
-                          { title: "Art Lover's Guide", saves: "1.9k", items: 18 },
-                        ].map((list) => (
-                          <Card key={list.title} className="group cursor-pointer">
-                            <CardContent className="p-4">
-                              <h4 className="font-semibold mb-2 group-hover:text-primary">{list.title}</h4>
-                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                <span className="flex items-center gap-1">
-                                  <BookmarkPlus className="h-4 w-4" />
-                                  {list.saves} saves
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="h-4 w-4" />
-                                  {list.items} places
-                                </span>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    </div>
+                    <PopularLists cityName="Paris" />
 
                     <div>
                       <h3 className="text-xl font-semibold mb-4">Top Experiences</h3>

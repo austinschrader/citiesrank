@@ -1,39 +1,39 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { BookmarkPlus, MapPin } from "lucide-react";
 
 interface PopularListsProps {
   cityName: string;
 }
 
 export const PopularLists: React.FC<PopularListsProps> = ({ cityName }) => {
+  console.log(cityName);
   return (
-    <div className="grid gap-4">
-      {[
-        {
-          title: `48 Hours in ${cityName}`,
-          saves: "2.3k saves",
-          items: "12 places",
-        },
-        {
-          title: "Best Local Spots",
-          saves: "1.8k saves",
-          items: "8 places",
-        },
-        {
-          title: "Hidden Gems",
-          saves: "956 saves",
-          items: "15 places",
-        },
-      ].map((list, i) => (
-        <Card key={i} className="group cursor-pointer hover:shadow-md transition-all">
-          <CardContent className="p-4">
-            <h3 className="font-semibold mb-2 group-hover:text-primary">{list.title}</h3>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>{list.saves}</span>
-              <span>{list.items}</span>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+    <div>
+      <h3 className="text-xl font-semibold mb-4">Popular Lists</h3>
+      <div className="space-y-3">
+        {[
+          { title: "Ultimate Paris in 3 Days", saves: "4.2k", items: 15 },
+          { title: "Hidden Gems of Le Marais", saves: "2.8k", items: 12 },
+          { title: "Best Cafés & Patisseries", saves: "3.1k", items: 20 },
+          { title: "Art Lover's Guide", saves: "1.9k", items: 18 },
+        ].map((list) => (
+          <Card key={list.title} className="group cursor-pointer">
+            <CardContent className="p-4">
+              <h4 className="font-semibold mb-2 group-hover:text-primary">{list.title}</h4>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <BookmarkPlus className="h-4 w-4" />
+                  {list.saves} saves
+                </span>
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  {list.items} places
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
