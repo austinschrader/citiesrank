@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_VM_KEY}}
-        SSH_KEY_PATH: ~/.ssh/
+        SSH_KEY_PATH: ~/.ssh
         SSH_KEY_NAME: private.key
     steps:
       - name: Checkout repository
@@ -25,7 +25,7 @@ jobs:
         
       - name: Copy migrations to VM
         run: |
-          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}}}} citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com 'mkdir -p ~/pb/pb_migrations'
-          scp -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}}}} -r pocketbase/pb_migrations/* citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/pb_migrations/
+          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com 'mkdir -p ~/pb/pb_migrations'
+          scp -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} -r pocketbase/pb_migrations/* citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/pb_migrations/
           # Restart the pocketbase service to apply the migrations
-          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}}}} citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com 'sudo systemctl restart pocketbase'
+          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com 'sudo systemctl restart pocketbase'
