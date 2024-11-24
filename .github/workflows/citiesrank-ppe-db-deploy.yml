@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_VM_KEY}}
-        SSH_KEY_PATH: ~/.ssh/private.key
+        SSH_KEY_PATH: ~/.ssh/
         SSH_KEY_NAME: private.key
     steps:
       - name: Checkout repository
