@@ -1,0 +1,35 @@
+name: Deploy migrations to CitiesRank PPE DB
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          ssh-keyscan -H citiesrank-ppe.westus2.cloudapp.azure.com > ~/.ssh/known_hosts
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_VM_KEY}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+
+      - name: Copy migrations to VM
+        run: |
+          ssh -i $SSH_KEY_PATH azureuser@citiesrank-ppe.westus2.cloudapp.azure.com 'mkdir -p ~/pb/pb_migrations'
+          scp -i $SSH_KEY_PATH -r pocketbase/pb_migrations/* citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/pb_migrations/
+          # Restart the pocketbase service to apply the migrations
+          ssh -i $SSH_KEY_PATH azureuser@citiesrank-ppe.westus2.cloudapp.azure.com 'sudo systemctl restart pocketbase'
+        env:
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
