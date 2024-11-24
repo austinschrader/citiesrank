@@ -13,12 +13,13 @@ const cld = new Cloudinary({
   },
 });
 
-type ImageSize = "thumbnail" | "standard" | "large";
+type ImageSize = "thumbnail" | "standard" | "large" | "wide";
 
 const SIZES: Record<ImageSize, { width: number; height: number; quality: number }> = {
   thumbnail: { width: 400, height: 300, quality: 70 },
   standard: { width: 800, height: 600, quality: 80 },
   large: { width: 1600, height: 1200, quality: 85 },
+  wide: { width: 2400, height: 1600, quality: 90 },
 };
 
 export const getImageUrl = (path: string, size: ImageSize = "standard") => {
