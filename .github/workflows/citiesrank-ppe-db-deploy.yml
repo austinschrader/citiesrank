@@ -27,6 +27,7 @@ jobs:
 
       - name: Copy migrations to VM
         run: |
-          scp -i $SSH_KEY_PATH -r pocketbase/pb_migrations azureuser@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/
+          ssh -i $SSH_KEY_PATH azureuser@citiesrank-ppe.westus2.cloudapp.azure.com 'mkdir -p ~/pb/pb_migrations'
+          scp -i $SSH_KEY_PATH -r pocketbase/pb_migrations/* citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/pb_migrations/
         env:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
