@@ -31,3 +31,5 @@ jobs:
           scp -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} -r pocketbase/pb_migrations/* ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}}:~/pb/pb_migrations/
           # Restart the pocketbase service to apply the migrations
           ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}} 'sudo systemctl restart pocketbase'
+          # Allow pocketbase to bind to port 443
+          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}} 'sudo setcap cap_net_bind_service=+ep ~/${{env.VM_ADMIN}}/pb/pocketbase'
