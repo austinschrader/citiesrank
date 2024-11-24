@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { InsightFilters } from "./InsightFilters";
-import { InsightInput } from "./InsightInput";
-import { InsightCard } from "./InsightCard";
+import { InsightFilters } from "@/components/city/insights/InsightFilters";
+import { InsightInput } from "@/components/city/insights/InsightInput";
+import { InsightCard } from "@/components/city/insights/InsightCard";
 import { CityInsight } from "@/components/city/types";
 
 interface CommunityInsightsProps {

@@ -8,8 +8,9 @@ import { About } from "@/components/city/overview/About";
 import { BestTimeToVisit } from "@/components/city/overview/BestTimeToVisit";
 import { PopularLists } from "@/components/city/shared/PopularLists";
 import { TopExperiences } from "@/components/city/community/TopExperiences";
-import { CommunitySection } from "@/components/city/community/CommunitySection";
 import { CommunityHeader } from "@/components/city/community/CommunityHeader";
+import { InsightsList } from "@/components/city/community/InsightsList";
+import { CommunitySidebar } from "@/components/city/community/CommunitySidebar";
 
 export function CityDetailsPage() {
   return (
@@ -75,8 +76,13 @@ export function CityDetailsPage() {
               </TabsContent>
 
               <TabsContent value="community" className="space-y-6">
-                <CommunityHeader />
-                <CommunitySection />
+                <div>
+                  <CommunityHeader />
+                  <div className="grid gap-6 lg:grid-cols-3">
+                    <InsightsList />
+                    <CommunitySidebar />
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
