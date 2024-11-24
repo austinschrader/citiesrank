@@ -1,0 +1,26 @@
+name: Deploy to VM
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ../private.key
+          sudo chmod 600 ../private.key
+          ssh-keyscan -H citiesrank-ppe.westus2.cloudapp.azure.com > ~/.ssh/known_hosts
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_VM_KEY}}
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+
+      - name: Copy migrations to VM
+        run: |
+          scp -i $SSH_KEY_PATH -r pocketbase/pb_migrations azureuser@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/
+        env:
+          SSH_KEY_PATH: ${{ github.workspace }}/../private.key
