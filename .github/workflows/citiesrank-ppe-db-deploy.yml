@@ -1,5 +1,11 @@
-name: Deploy to VM
-on: [push]
+name: Deploy migrations to CitiesRank PPE DB
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - closed
 
 jobs:
   build:
