@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types:
-      - closed
 
 jobs:
   build:
@@ -17,8 +14,8 @@ jobs:
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ../private.key
-          sudo chmod 600 ../private.key
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private.key
+          sudo chmod 600 ~/ssh/private.key
           ssh-keyscan -H citiesrank-ppe.westus2.cloudapp.azure.com > ~/.ssh/known_hosts
         shell: bash
         env:
