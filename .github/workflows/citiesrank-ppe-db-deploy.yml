@@ -29,5 +29,7 @@ jobs:
         run: |
           ssh -i $SSH_KEY_PATH azureuser@citiesrank-ppe.westus2.cloudapp.azure.com 'mkdir -p ~/pb/pb_migrations'
           scp -i $SSH_KEY_PATH -r pocketbase/pb_migrations/* citiesrank-ppe-admin@citiesrank-ppe.westus2.cloudapp.azure.com:~/pb/pb_migrations/
+          # Restart the pocketbase service to apply the migrations
+          ssh -i $SSH_KEY_PATH azureuser@citiesrank-ppe.westus2.cloudapp.azure.com 'sudo systemctl restart pocketbase'
         env:
           SSH_KEY_PATH: ${{ github.workspace }}/../private.key
