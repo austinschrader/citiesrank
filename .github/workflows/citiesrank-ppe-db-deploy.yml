@@ -40,13 +40,29 @@ jobs:
       - name: Wait for service to be healthy
         run: |
           retries=0
-          until curl -s -I https://${{env.VM_DOMAIN}} | grep "HTTP/[1-9].[0-9] [23]"; do
-            if [ $retries -ge ${{env.MAX_HEALTH_CHECK_RETRIES}} ]; then
-              echo "Service did not become healthy within 5 minutes"
-              exit 1
+          echo "Starting health checks for https://${{env.VM_DOMAIN}}/_/"
+
+          while [ $retries -lt ${{env.MAX_HEALTH_CHECK_RETRIES}} ]; do
+            echo "Attempt $((retries + 1)) of ${{env.MAX_HEALTH_CHECK_RETRIES}}"
+            
+            response=$(curl -s https://${{env.VM_DOMAIN}}/_/)
+            status_code=$?
+            
+            echo "Curl exit code: $status_code"
+            echo "Response: $response"
+            
+            if [[ "$status_code" -eq 0 ]] && [[ ! -z "$response" ]]; then
+              echo "Service is healthy!"
+              exit 0
             fi
-            echo "Waiting for service to become healthy... (Attempt $retries of ${{env.MAX_HEALTH_CHECK_RETRIES}})"
-            sleep 5
+            
+            echo "Service not healthy yet. Waiting ${{env.HEALTH_CHECK_INTERVAL}} seconds before next attempt..."
+            sleep ${{env.HEALTH_CHECK_INTERVAL}}
             retries=$((retries + 1))
           done
-          echo "Service is healthy!"
+            
+            echo "ERROR: Service did not become healthy within $((MAX_HEALTH_CHECK_RETRIES * HEALTH_CHECK_INTERVAL)) seconds"
+            echo "Last response: $response"
+            echo "Making a verbose request for debugging:"
+            curl -v https://${{env.VM_DOMAIN}}/_/
+            exit 1
