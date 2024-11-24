@@ -3,17 +3,20 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+  # This enables manual triggering
+  # You can optionally add inputs here if you need to parameterize the workflow
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-        SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_VM_KEY}}
-        SSH_KEY_PATH: ~/.ssh
-        SSH_KEY_NAME: citiesrank-ppe-key
-        VM_DOMAIN: citiesrank-ppe.westus2.cloudapp.azure.com
-        VM_ADMIN: citiesrank-ppe-admin
-        MAX_HEALTH_CHECK_RETRIES: 30
+      SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_VM_KEY}}
+      SSH_KEY_PATH: ~/.ssh
+      SSH_KEY_NAME: citiesrank-ppe-key
+      VM_DOMAIN: citiesrank-ppe.westus2.cloudapp.azure.com
+      VM_ADMIN: citiesrank-ppe-admin
+      MAX_HEALTH_CHECK_RETRIES: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,7 +28,7 @@ jobs:
           sudo chmod 600 ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}}
           ssh-keyscan -H ${{env.VM_DOMAIN}} > ${{env.SSH_KEY_PATH}}/known_hosts
         shell: bash
-        
+
       - name: Copy migrations to VM
         run: |
           ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}} 'mkdir -p ~/pb/pb_migrations'
