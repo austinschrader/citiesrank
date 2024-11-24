@@ -11,6 +11,7 @@ import { TopExperiences } from "@/components/city/community/TopExperiences";
 import { CommunityHeader } from "@/components/city/community/CommunityHeader";
 import { InsightsList } from "@/components/city/community/InsightsList";
 import { CommunitySidebar } from "@/components/city/community/CommunitySidebar";
+import { NeighborhoodExplorer } from "@/components/city/neighborhoods/NeighborhoodExplorer";
 
 export function CityDetailsPage() {
   return (
@@ -73,6 +74,10 @@ export function CityDetailsPage() {
 
               <TabsContent value="local" className="space-y-8">
                 <LocalEvents />
+              </TabsContent>
+
+              <TabsContent value="neighborhoods" className="space-y-8">
+                <NeighborhoodExplorer />
               </TabsContent>
 
               <TabsContent value="community" className="space-y-6">
