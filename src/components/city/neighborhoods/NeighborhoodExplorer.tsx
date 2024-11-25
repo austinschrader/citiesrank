@@ -271,6 +271,29 @@ export const NeighborhoodExplorer = () => {
   const [selectedNeighborhood, setSelectedNeighborhood] = useState<Neighborhood | null>(null);
   const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'map'
 
+  const ViewToggle = () => {
+    return (
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
+        <Button
+          variant={viewMode === "grid" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("grid")}
+          className="whitespace-nowrap">
+          <Building2 className="w-4 h-4 mr-2" />
+          Grid View
+        </Button>
+        <Button
+          variant={viewMode === "map" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setViewMode("map")}
+          className="whitespace-nowrap">
+          <MapPin className="w-4 h-4 mr-2" />
+          Map View
+        </Button>
+      </div>
+    );
+  };
+
   const VibeIndicator = ({ score }: { score: number }) => (
     <div className="flex items-center gap-2">
       <div className="w-full h-2 bg-gray-200 rounded-full">
@@ -593,20 +616,8 @@ export const NeighborhoodExplorer = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold mb-1">Explore Neighborhoods</h2>
-          <p className="text-muted-foreground">Discover the unique character of each district</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant={viewMode === "grid" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grid")}>
-            <Building2 className="w-4 h-4 mr-2" />
-            Grid
-          </Button>
-          <Button variant={viewMode === "map" ? "default" : "outline"} size="sm" onClick={() => setViewMode("map")}>
-            <MapPin className="w-4 h-4 mr-2" />
-            Map
-          </Button>
-        </div>
+        <h2 className="text-2xl font-semibold">Explore Neighborhoods</h2>
+        <ViewToggle />
       </div>
 
       {selectedNeighborhood ? (
