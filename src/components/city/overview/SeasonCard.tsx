@@ -10,7 +10,7 @@ interface SeasonCardProps {
 
 export function SeasonCard({ season, months, score, notes }: SeasonCardProps) {
   return (
-    <Card>
+    <Card key={season} className="h-full">
       <CardContent className="p-4">
         <h4 className="font-semibold mb-2">{season}</h4>
         <div className="text-sm text-muted-foreground mb-2">{months}</div>
