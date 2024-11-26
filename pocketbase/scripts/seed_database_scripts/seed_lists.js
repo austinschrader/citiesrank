@@ -1,6 +1,9 @@
 import PocketBase from "pocketbase";
 import { MOCK_LISTS } from "../raw_data/lists_data.js";
 
+// pre - https://citiesrank-ppe.westus2.cloudapp.azure.com/
+// prod - https://api.citiesrank.com
+// dev - http://127.0.0.1:8090
 const pb = new PocketBase("https://api.citiesrank.com");
 
 // Helper functions remain the same

@@ -83,6 +83,7 @@ Example [.env](cci:7://file:///Users/austinschrader/citiesrank/.env:0:0-0:0) fil
 ```env
 VITE_ENV=development
 VITE_API_URL_DEVELOPMENT=http://127.0.0.1:8090
+VITE_API_URL_PRE=https://citiesrank-ppe.westus2.cloudapp.azure.com/
 VITE_API_URL_PRODUCTION=https://api.citiesrank.com
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 PIXABAY_API_KEY=your_pixabay_api_key
@@ -100,3 +101,9 @@ But idc actually because I’ll just create a 2nd vm for ppe db
 That’s fine I figured out how to create an https domain using a built in domain on the VM
 
 https://citiesrank-ppe.westus2.cloudapp.azure.com/_/
+
+
+## Environments
+local/dev - http://127.0.0.1:8090
+pre - https://citiesrank-ppe.westus2.cloudapp.azure.com/
+prod - api.citiesrank.com

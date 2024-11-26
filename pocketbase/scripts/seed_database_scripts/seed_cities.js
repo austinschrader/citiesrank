@@ -3,7 +3,10 @@ import { fallbackCityData } from "../raw_data/cities_data.js";
 import slugify from "slugify";
 import { normalizeString } from "../../../pixabay/utils.js";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+// pre - https://citiesrank-ppe.westus2.cloudapp.azure.com/
+// prod - https://api.citiesrank.com
+// dev - http://127.0.0.1:8090
+const pb = new PocketBase("https://citiesrank-ppe.westus2.cloudapp.azure.com/");
 
 // Create URL-friendly slug
 const createSlug = (name, country) => {

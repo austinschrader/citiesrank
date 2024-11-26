@@ -2,11 +2,11 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { getApiUrl } from './src/appConfig';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  const apiUrl = mode === 'production' ? env.VITE_API_URL_PRODUCTION : env.VITE_API_URL_DEVELOPMENT;
-  console.log("API URL:", apiUrl);
+  const env = loadEnv("", process.cwd(), ["VITE_", "PIXABAY_"]);
+  const apiUrl = getApiUrl(env.VITE_ENV);
 
   return {
     plugins: [react()],
