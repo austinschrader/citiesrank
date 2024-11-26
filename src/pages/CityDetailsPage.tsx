@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building, Coffee, Users, Sparkles, ChartColumnIncreasing } from "lucide-react";
+import { Building, Coffee, Users, Sparkles } from "lucide-react";
 import { HeroSection } from "@/components/city/shared/HeroSection";
 import { QuickFacts } from "@/components/city/shared/QuickFacts";
 import { LocalEvents } from "@/components/city/local-scene/LocalEvents";
@@ -17,9 +17,8 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 export function CityDetailsPage() {
   const tabs = [
     { value: "overview", label: "Overview", icon: Sparkles },
-    { value: "local", label: "Local", icon: Coffee },
-    { value: "neighborhoods", label: "Areas", icon: Building },
-    { value: "trending", label: "Trending", icon: ChartColumnIncreasing },
+    { value: "local", label: "Events", icon: Coffee },
+    { value: "neighborhoods", label: "Neighborhoods", icon: Building },
     { value: "community", label: "Community", icon: Users },
   ];
 
