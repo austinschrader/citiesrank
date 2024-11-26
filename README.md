@@ -25,3 +25,40 @@ note: You will need to create an admin account the first time you run it.
 ```bash
 curl -L https://github.com/pocketbase/pocketbase/releases/download/v0.21.1/pocketbase_0.21.1_darwin_arm64.zip -o pb.zip && unzip pb.zip -d pocketbase && rm pb.zip
 ```
+
+## Database Environments
+
+The application uses two separate database environments:
+
+1. **Pre-Production (Pre)**: Testing environment for validating changes before production
+2. **Production (Prod)**: Live production environment
+
+### Database Migrations
+
+Migrations are used to manage database schema changes across environments.
+
+#### Creating Migration Scripts
+
+1. **Using Local UI**:
+   - Run the database locally in the citiesrank repo
+   - Make changes through the UI
+   - Migration scripts will be generated automatically
+
+2. **Manual Creation**:
+   - Create migration scripts manually
+   - Place them in `citiesrank/pocketbase/pb_migrations`
+   - Test against your local database to validate
+
+#### Deploying to Pre-Production
+
+1. Add migration scripts to `citiesrank/pocketbase/pb_migrations`
+2. Merge changes to master branch
+3. Upon merge, migrations will automatically be applied to the Pre-Production database
+
+```bash
+# Run database locally
+./pocketbase/pocketbase serve
+
+# Manually apply migrations (optional)
+pocketbase migrate up
+```
