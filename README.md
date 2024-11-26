@@ -22,9 +22,14 @@ note: You will need to create an admin account the first time you run it.
 
 ## Replace pocketbase for Apple M2 chip
 
+1. go to root of repo
+2. run this command
 ```bash
 curl -L https://github.com/pocketbase/pocketbase/releases/download/v0.21.1/pocketbase_0.21.1_darwin_arm64.zip -o pb.zip && unzip pb.zip -d pocketbase && rm pb.zip
 ```
+3. "replace pcoketbase/pocketbase?" [y]
+4. Don't commit it
+5. Might have to go into System Preferences -> Security & Privacy and approve it manually to run
 
 ## Database Environments
 
@@ -62,3 +67,22 @@ Migrations are used to manage database schema changes across environments.
 # Manually apply migrations (optional)
 pocketbase migrate up
 ```
+
+## Environment Variables
+
+The following environment variables need to be configured in your [.env](cci:7://file:///Users/austinschrader/citiesrank/.env:0:0-0:0) file:
+
+### Development Configuration
+- `VITE_ENV`: Set to "development" for local development
+- `VITE_API_URL_DEVELOPMENT`: URL for local API (default: http://127.0.0.1:8090)
+- `VITE_API_URL_PRODUCTION`: URL for production API
+- `VITE_CLOUDINARY_CLOUD_NAME`: Your Cloudinary cloud name for image uploads
+- `PIXABAY_API_KEY`: Your Pixabay API key for fetching images
+
+Example [.env](cci:7://file:///Users/austinschrader/citiesrank/.env:0:0-0:0) file:
+```env
+VITE_ENV=development
+VITE_API_URL_DEVELOPMENT=http://127.0.0.1:8090
+VITE_API_URL_PRODUCTION=https://api.citiesrank.com
+VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+PIXABAY_API_KEY=your_pixabay_api_key

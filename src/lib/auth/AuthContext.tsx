@@ -22,7 +22,7 @@ interface AuthContextType {
   signOut: () => void;
 }
 
-const pb = new PocketBase("https://api.citiesrank.com");
+import { pb } from '@/lib/pocketbase';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

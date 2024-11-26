@@ -14,7 +14,7 @@ import { LIST_TEMPLATES, POPULAR_LISTS } from "@/components/createList/templates
 import PocketBase from "pocketbase";
 import type { Template, PopularList, Place } from "@/components/createList/types";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+import { pb } from '@/lib/pocketbase';
 
 export function CreateListPage() {
   const navigate = useNavigate();

@@ -31,7 +31,7 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { EmptyListsState } from "@/components/createList/EmptyListsState";
 import debounce from "lodash/debounce";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+import { pb } from '@/lib/pocketbase';
 
 interface Place {
   citySlug: string;
