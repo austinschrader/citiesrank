@@ -86,3 +86,8 @@ VITE_API_URL_DEVELOPMENT=http://127.0.0.1:8090
 VITE_API_URL_PRODUCTION=https://api.citiesrank.com
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 PIXABAY_API_KEY=your_pixabay_api_key
+
+
+## Oauth
+- cant run db locally
+- pre/prod dbs have to point to https
