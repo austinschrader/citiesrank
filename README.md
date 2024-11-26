@@ -91,3 +91,12 @@ PIXABAY_API_KEY=your_pixabay_api_key
 ## Oauth
 - cant run db locally
 - pre/prod dbs have to point to https
+
+
+## PPE
+A lower env to test migrations mostly so u don’t bust the prod db 
+I mean is it 20.3.188.93 or 20.3.188.93:8090
+But idc actually because I’ll just create a 2nd vm for ppe db 
+That’s fine I figured out how to create an https domain using a built in domain on the VM
+
+https://citiesrank-ppe.westus2.cloudapp.azure.com/_/
