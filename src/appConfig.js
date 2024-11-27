@@ -1,4 +1,4 @@
-var env = import.meta.env.VITE_ENV || "dev";
+var env = import.meta.env.VITE_ENV || "pre";
 export var appConfig = {
     api: {
         dev: "http://127.0.0.1:8090",

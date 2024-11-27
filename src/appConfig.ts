@@ -1,4 +1,4 @@
-const env = import.meta.env.VITE_ENV || "dev";
+const env = import.meta.env.VITE_ENV || "pre";
 
 type Env = "dev" | "pre" | "prod";
 

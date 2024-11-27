@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 var getApiUrl = function () {
-    var env = process.env.VITE_ENV || "dev";
+    var env = process.env.VITE_ENV || "pre";
     var apiConfig = {
         dev: "http://127.0.0.1:8090",
         pre: "https://citiesrank-ppe.westus2.cloudapp.azure.com",
