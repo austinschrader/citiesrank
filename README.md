@@ -62,3 +62,9 @@ Migrations are used to manage database schema changes across environments.
 # Manually apply migrations (optional)
 pocketbase migrate up
 ```
+
+## Reset the database back to the migrations
+
+1. Stop your PocketBase server if it's running
+2. Delete the pb_data directory (this contains your database)
+3. Then start PocketBase again, which will recreate the database from your migrations

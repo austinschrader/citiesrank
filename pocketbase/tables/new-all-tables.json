@@ -1,0 +1,795 @@
+[
+    {
+        "id": "_pb_users_auth_",
+        "name": "users",
+        "type": "auth",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "users_name",
+                "name": "name",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "users_avatar",
+                "name": "avatar",
+                "type": "file",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "mimeTypes": [
+                        "image/jpeg",
+                        "image/png",
+                        "image/svg+xml",
+                        "image/gif",
+                        "image/webp"
+                    ],
+                    "thumbs": null,
+                    "maxSelect": 1,
+                    "maxSize": 5242880,
+                    "protected": false
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": "id = @request.auth.id",
+        "viewRule": "id = @request.auth.id",
+        "createRule": "",
+        "updateRule": "id = @request.auth.id",
+        "deleteRule": "id = @request.auth.id",
+        "options": {
+            "allowEmailAuth": true,
+            "allowOAuth2Auth": true,
+            "allowUsernameAuth": true,
+            "exceptEmailDomains": null,
+            "manageRule": null,
+            "minPasswordLength": 8,
+            "onlyEmailDomains": null,
+            "onlyVerified": false,
+            "requireEmail": false
+        }
+    },
+    {
+        "id": "wmmnhjc7jej7ohx",
+        "name": "countries",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "vnqxauqs",
+                "name": "name",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "rfek159o",
+                "name": "population",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "giewgak0",
+                "name": "description",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "rdwarkug",
+                "name": "isoCode",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 2,
+                    "max": 2,
+                    "pattern": ""
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": "",
+        "viewRule": null,
+        "createRule": "",
+        "updateRule": null,
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "cities_list",
+        "name": "cities",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "city_name_field",
+                "name": "name",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": true,
+                "options": {
+                    "min": 1,
+                    "max": 100,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "city_normalized_name",
+                "name": "normalizedName",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 100,
+                    "pattern": "^[a-z0-9 ]+$"
+                }
+            },
+            {
+                "system": false,
+                "id": "city_country_field",
+                "name": "country",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 100,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "city_cost_number",
+                "name": "cost",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_interesting_score",
+                "name": "interesting",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_transit_score",
+                "name": "transit",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_description_text",
+                "name": "description",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 10,
+                    "max": 500,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "city_population_value",
+                "name": "population",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 1,
+                    "max": 50,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "city_highlights_json_data",
+                "name": "highlights",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "city_reviews_json_data",
+                "name": "reviews",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "city_destination_types_list",
+                "name": "destinationTypes",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "city_crowd_level_score",
+                "name": "crowdLevel",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_recommended_stay_days",
+                "name": "recommendedStay",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_best_season_score",
+                "name": "bestSeason",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_accessibility_score",
+                "name": "accessibility",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            },
+            {
+                "system": false,
+                "id": "city_url_friendly_slug_text",
+                "name": "slug",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": true,
+                "options": {
+                    "min": 1,
+                    "max": 100,
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                }
+            },
+            {
+                "system": false,
+                "id": "city_image_url_link",
+                "name": "imageUrl",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "city_coordinates_location",
+                "name": "coordinates",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "lists_table",
+        "name": "lists",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "list_title_field",
+                "name": "title",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": true,
+                "options": {
+                    "min": 1,
+                    "max": 200,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "list_description_text",
+                "name": "description",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 1,
+                    "max": 500,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "list_author_id",
+                "name": "author",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "_pb_users_auth_",
+                    "cascadeDelete": false,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "name"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_status",
+                "name": "status",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "published",
+                        "draft"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_collection",
+                "name": "collection",
+                "type": "select",
+                "required": false,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "want-to-visit",
+                        "visited",
+                        "planning",
+                        "favorites"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_privacy",
+                "name": "privacy",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "public",
+                        "private",
+                        "followers"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_category",
+                "name": "category",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 1,
+                    "max": 50,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "list_is_verified",
+                "name": "isVerified",
+                "type": "bool",
+                "required": false,
+                "presentable": false,
+                "options": {}
+            },
+            {
+                "system": false,
+                "id": "list_total_places",
+                "name": "totalPlaces",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": null,
+                    "noDecimal": true
+                }
+            }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "list_places_table",
+        "name": "list_places",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "list_places_list_id",
+                "name": "list",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "lists_table",
+                    "cascadeDelete": true,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "title"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_places_city_id",
+                "name": "city",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "cities_list",
+                    "cascadeDelete": false,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "name"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_places_order",
+                "name": "order",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": null,
+                    "noDecimal": true
+                }
+            }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "list_stats_table",
+        "name": "list_stats",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "list_stats_list_id",
+                "name": "list",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "lists_table",
+                    "cascadeDelete": true,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "title"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_stats_views",
+                "name": "views",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": null,
+                    "noDecimal": true
+                }
+            },
+            {
+                "system": false,
+                "id": "list_stats_likes",
+                "name": "likes",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": null,
+                    "noDecimal": true
+                }
+            },
+            {
+                "system": false,
+                "id": "list_stats_saves",
+                "name": "saves",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": null,
+                    "noDecimal": true
+                }
+            },
+            {
+                "system": false,
+                "id": "list_stats_shares",
+                "name": "shares",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": null,
+                    "noDecimal": true
+                }
+            },
+            {
+                "system": false,
+                "id": "list_stats_date",
+                "name": "date",
+                "type": "date",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": "",
+                    "max": ""
+                }
+            }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "list_tags_table",
+        "name": "list_tags",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "list_tags_list_id",
+                "name": "list",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "lists_table",
+                    "cascadeDelete": true,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "title"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "list_tags_name",
+                "name": "tag",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "options": {
+                    "min": 1,
+                    "max": 50,
+                    "pattern": ""
+                }
+            }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    },
+    {
+        "id": "related_lists_table",
+        "name": "related_lists",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "related_lists_source_id",
+                "name": "sourceList",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "lists_table",
+                    "cascadeDelete": true,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "title"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "related_lists_related_id",
+                "name": "relatedList",
+                "type": "relation",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "collectionId": "lists_table",
+                    "cascadeDelete": false,
+                    "minSelect": null,
+                    "maxSelect": 1,
+                    "displayFields": [
+                        "title"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "related_lists_weight",
+                "name": "weight",
+                "type": "number",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "min": 0,
+                    "max": 100,
+                    "noDecimal": false
+                }
+            }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": "",
+        "options": {}
+    }
+]
