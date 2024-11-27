@@ -431,7 +431,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "collectionId": "users_table",
+                    "collectionId": "_pb_users_auth_",
                     "cascadeDelete": false,
                     "minSelect": null,
                     "maxSelect": 1,
@@ -562,7 +562,7 @@
                 "required": true,
                 "presentable": false,
                 "options": {
-                    "collectionId": "cities_table",
+                    "collectionId": "cities_list",
                     "cascadeDelete": false,
                     "minSelect": null,
                     "maxSelect": 1,
