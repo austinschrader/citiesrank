@@ -17,9 +17,9 @@ export default defineConfig({
             "/data": {
                 target: getApiUrl(),
                 changeOrigin: true,
-                rewrite: function (path) { return path.replace(/^\/data/, "/api"); },
+                rewrite: (path) => path.replace(/^\/data/, "/api"),
                 secure: true,
-            },
+              },
         },
         host: "0.0.0.0",
     },
