@@ -22,7 +22,10 @@ interface AuthContextType {
   signOut: () => void;
 }
 
-const pb = new PocketBase("https://api.citiesrank.com");
+import { getApiUrl } from "@/appConfig";
+
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 const AuthContext = createContext<AuthContextType | null>(null);
 

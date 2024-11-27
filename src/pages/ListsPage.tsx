@@ -31,7 +31,10 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { EmptyListsState } from "@/components/createList/EmptyListsState";
 import debounce from "lodash/debounce";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+import { getApiUrl } from "@/appConfig";
+
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 interface Place {
   citySlug: string;

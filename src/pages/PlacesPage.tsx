@@ -13,7 +13,10 @@ import { MobileFilters } from "@/components/places/MobileFilters";
 import { filterOptions } from "@/components/places/constants";
 
 const ITEMS_PER_PAGE = 20;
-const pb = new PocketBase("https://api.citiesrank.com");
+import { getApiUrl } from "@/appConfig";
+
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 export const PlacesPage = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
