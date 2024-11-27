@@ -121,42 +121,15 @@ function generatePlaceDetails(city) {
   };
 }
 
-function generateRelatedLists(theme, excluded_id) {
-  return [
-    {
-      id: `${createSlug(theme.name)}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`,
-      title: `Best of ${theme.name} in Europe`,
-      places: randomNumber(5, 12),
-      author:
-        listTemplates.authors[randomNumber(0, listTemplates.authors.length - 1)]
-          .name,
-      imageUrl: `${
-        listTemplates.cities[randomNumber(0, listTemplates.cities.length - 1)]
-          .citySlug
-      }-1`,
-    },
-    {
-      id: `${createSlug(theme.name)}-${Math.random()
-        .toString(36)
-        .substr(2, 9)}`,
-      title: `${theme.name} for Beginners`,
-      places: randomNumber(5, 12),
-      author:
-        listTemplates.authors[randomNumber(0, listTemplates.authors.length - 1)]
-          .name,
-      imageUrl: `${
-        listTemplates.cities[randomNumber(0, listTemplates.cities.length - 1)]
-          .citySlug
-      }-1`,
-    },
-  ];
+function generateRelatedLists(theme, excluded_id, existingListIds) {
+  // Modified to return just the IDs of related lists
+  return existingListIds.filter((id) => id !== excluded_id).slice(0, 2); // Get 2 random related lists
 }
 
 function generateAdditionalLists(count) {
   const newLists = [];
   const baseDate = new Date("2024-01-01");
+  const listIds = Array.from({ length: count }, (_, i) => `generated_${i + 1}`);
 
   for (let i = 0; i < count; i++) {
     const theme = listTemplates.themes[i % listTemplates.themes.length];
@@ -166,7 +139,7 @@ function generateAdditionalLists(count) {
       randomNumber(3, 6)
     );
     const createdDate = new Date(baseDate.getTime() + i * 24 * 60 * 60 * 1000);
-    const isDraft = Math.random() > 0.8; // 20% chance of being a draft
+    const isDraft = Math.random() > 0.8;
 
     const newList = {
       id: `generated_${i + 1}`,
@@ -180,12 +153,10 @@ function generateAdditionalLists(count) {
         bio: author.bio,
       },
       places: selectedCities.map((city) => generatePlaceDetails(city)),
-      stats: {
-        views: randomNumber(5000, 50000),
-        likes: randomNumber(100, 3000),
-        saves: randomNumber(100, 1000),
-        shares: randomNumber(50, 500),
-      },
+      views: randomNumber(5000, 50000),
+      likes: randomNumber(100, 3000),
+      saves: randomNumber(100, 1000),
+      shares: randomNumber(50, 500),
       metadata: {
         createdAt: createdDate.toISOString(),
         updatedAt: new Date().toISOString(),
@@ -193,9 +164,7 @@ function generateAdditionalLists(count) {
         category: theme.name,
       },
       tags: [...theme.tags, "europe", selectedCities[0].country.toLowerCase()],
-      relatedLists: generateRelatedLists(theme, `generated_${i + 1}`),
       totalPlaces: selectedCities.length,
-      // New fields
       status: isDraft ? "draft" : "published",
       collection: isDraft ? null : theme.collection,
       privacy: isDraft
@@ -224,7 +193,6 @@ async function migrateTravelLists(generateCount = 20) {
       );
 
     const cities = await pb.collection("cities").getFullList();
-    // Use normalizedName instead of slug
     const cityMap = new Map(
       cities.map((city) => [city.normalizedName.toLowerCase(), city.id])
     );
@@ -235,7 +203,6 @@ async function migrateTravelLists(generateCount = 20) {
 
     for (const list of allLists) {
       try {
-        // Get city IDs, using normalizedName
         const cityIds = list.places
           .map((place) => {
             const normalizedName = place.name
@@ -258,15 +225,13 @@ async function migrateTravelLists(generateCount = 20) {
         const listData = {
           title: list.title,
           description: list.description,
-          author: "66n5q77pkxvgzxb",
-          list_places: cityIds,
-          stats: JSON.stringify(list.stats),
+          author: "gs5hha3036wvotx",
+          places: JSON.stringify(cityIds), // Store city IDs directly in the places column
           metadata: JSON.stringify(list.metadata),
           tags: JSON.stringify(list.tags),
-          relatedLists: JSON.stringify(list.relatedLists),
-          likes: list.stats.likes,
-          shares: list.stats.shares,
-          saves: list.stats.saves,
+          likes: list.likes,
+          shares: list.shares,
+          saves: list.saves,
           totalPlaces: cityIds.length,
           category: list.metadata.category || "Uncategorized",
           status: list.status || "published",

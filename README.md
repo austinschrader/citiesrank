@@ -22,6 +22,10 @@ note: You will need to create an admin account the first time you run it.
 
 ## Replace pocketbase for Apple M2 chip
 
+1. in root directory above src
+
+2.
+
 ```bash
 curl -L https://github.com/pocketbase/pocketbase/releases/download/v0.21.1/pocketbase_0.21.1_darwin_arm64.zip -o pb.zip && unzip pb.zip -d pocketbase && rm pb.zip
 ```
@@ -40,6 +44,7 @@ Migrations are used to manage database schema changes across environments.
 #### Creating Migration Scripts
 
 1. **Using Local UI**:
+
    - Run the database locally in the citiesrank repo
    - Make changes through the UI
    - Migration scripts will be generated automatically
@@ -68,3 +73,14 @@ pocketbase migrate up
 1. Stop your PocketBase server if it's running
 2. Delete the pb_data directory (this contains your database)
 3. Then start PocketBase again, which will recreate the database from your migrations
+
+## Typegen
+
+1. in the root directory
+2. cd pocketbase
+3. rm -rf pb_data
+4. ./pocketbase serve
+5. move to the root directory, run:
+```bash
+npm run generate-types
+```
