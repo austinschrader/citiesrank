@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { CityInsight } from "@/components/city/types";
 import { CityData } from "@/types";
 import PocketBase from "pocketbase";
+import { getApiUrl } from "@/appConfig";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 interface UseCityDataReturn {
   cityData: CityData | null;

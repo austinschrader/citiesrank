@@ -1,152 +1,105 @@
-import { useParams, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { HeroSection } from "@/components/city/HeroSection";
-import { QuickFacts } from "@/components/city/QuickFacts";
-import { CommunityInsights } from "@/components/city/insights/CommunityInsights";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CityInsight, LocationState } from "@/components/city/types";
-import PocketBase from "pocketbase";
-import { CityData } from "@/types";
-import { PopularLists } from "@/components/city/PopularLists";
-import { ChartColumnIncreasing, Building, Coffee, Sparkles, Users } from "lucide-react";
-import { NeighborhoodMap } from "@/components/city/NeighborhoodMap";
-import { TrendingTopics } from "@/components/city/TrendingTopics";
-import { LocalEvents } from "@/components/city/LocalEvents";
+import { Building, Coffee, Users, Sparkles } from "lucide-react";
+import { HeroSection } from "@/components/city/shared/HeroSection";
+import { QuickFacts } from "@/components/city/shared/QuickFacts";
+import { LocalEvents } from "@/components/city/local-scene/LocalEvents";
+import { About } from "@/components/city/overview/About";
+import { BestTimeToVisit } from "@/components/city/overview/BestTimeToVisit";
+import { PopularLists } from "@/components/city/shared/PopularLists";
+import { TopExperiences } from "@/components/city/community/TopExperiences";
+import { CommunityHeader } from "@/components/city/community/CommunityHeader";
+import { InsightsList } from "@/components/city/community/InsightsList";
+import { CommunitySidebar } from "@/components/city/community/CommunitySidebar";
+import { NeighborhoodExplorer } from "@/components/city/neighborhoods/NeighborhoodExplorer";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const pb = new PocketBase("https://api.citiesrank.com");
-
-export const CityDetailsPage = () => {
-  const { country, city } = useParams();
-  const location = useLocation();
-  const [cityData, setCityData] = useState<CityData | null>(null);
-  const [insights, setInsights] = useState<CityInsight[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const state = location.state as LocationState;
-
-        if (state?.cityData) {
-          setCityData(state.cityData);
-        } else {
-          const records = await pb.collection("cities_list").getList(1, 1, {
-            filter: `name ~ "${city}" && country ~ "${country}"`,
-          });
-          if (records.items.length > 0) {
-            setCityData(records.items[0] as unknown as CityData);
-          }
-        }
-
-        const insightRecords = await pb.collection("city_insights").getList(1, 20, {
-          filter: `city = "${city}"`,
-          sort: "-votes,-created",
-          expand: "author",
-        });
-
-        setInsights(insightRecords.items as unknown as CityInsight[]);
-      } catch (error) {
-        console.error("Error loading data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, [city, country, location.state]);
-
-  const handleInsightSubmit = async (content: string) => {
-    // Implement submitting insights
-    console.log(content);
-  };
-
-  const handleInsightVote = async (id: string) => {
-    // Implement voting
-    console.log(id);
-  };
-
-  if (isLoading || !cityData) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
-          <p className="text-muted-foreground">Loading city details...</p>
-        </div>
-      </div>
-    );
-  }
+export function CityDetailsPage() {
+  const tabs = [
+    { value: "overview", label: "Overview", icon: Sparkles },
+    { value: "local", label: "Events", icon: Coffee },
+    { value: "neighborhoods", label: "Neighborhoods", icon: Building },
+    { value: "community", label: "Community", icon: Users },
+  ];
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <HeroSection cityName={cityData.name} country={cityData.country} description={cityData.description} />
-      <div className="container max-w-7xl mx-auto px-4 -mt-20 relative z-10">
-        <Card>
-          <CardContent className="p-6">
-            <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList>
-                <TabsList>
-                  <TabsTrigger value="overview" className="gap-2">
-                    <Sparkles className="h-4 w-4" />
-                    Overview
-                  </TabsTrigger>
-                  <TabsTrigger value="neighborhoods" className="gap-2">
-                    <Building className="h-4 w-4" />
-                    Neighborhoods
-                  </TabsTrigger>
-                  <TabsTrigger value="trending" className="gap-2">
-                    <ChartColumnIncreasing className="h-4 w-4" />
-                    Trending
-                  </TabsTrigger>
-                  <TabsTrigger value="local" className="gap-2">
-                    <Coffee className="h-4 w-4" />
-                    Local Scene
-                  </TabsTrigger>
-                  <TabsTrigger value="insights" className="gap-2">
-                    <Users className="h-4 w-4" />
-                    Community Insights
-                  </TabsTrigger>
-                </TabsList>
-              </TabsList>
+    <div className="min-h-screen bg-background pb-16 md:pb-0">
+      {/* Hero Section */}
+      <HeroSection
+        cityName="Paris"
+        country="France"
+        description="The City of Light beckons with its magnificent art, architecture, culture, and cuisine. A global center for art, fashion, gastronomy, and culture."
+      />
 
-              <TabsContent value="overview" className="space-y-8">
-                <QuickFacts />
-                <div className="grid gap-8 lg:grid-cols-3">
-                  <div className="lg:col-span-2">
-                    <h2 className="text-2xl font-semibold mb-4">About {cityData.name}</h2>
-                    <div className="prose max-w-none">
-                      <p>{cityData.description}</p>
+      {/* Main Content */}
+      <div className="container max-w-7xl mx-auto px-4 py-8">
+        {/* Quick Facts Grid */}
+        <QuickFacts />
+
+        {/* Main Tabs Interface */}
+        <Card className="mt-6">
+          <CardContent className="p-0 sm:p-6">
+            <Tabs defaultValue="overview" className="space-y-6">
+              {/* Scrollable TabsList for mobile */}
+              <div className="sticky top-0 z-10 bg-background border-b sm:border-none">
+                <ScrollArea className="w-full whitespace-nowrap sm:w-auto">
+                  <TabsList className="h-16 sm:h-auto w-full inline-flex sm:grid sm:grid-cols-5 gap-4 p-4 bg-transparent">
+                    {tabs.map(({ value, label, icon: Icon }) => (
+                      <TabsTrigger
+                        key={value}
+                        value={value}
+                        className="flex-1 sm:flex-initial gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                        <Icon className="h-4 w-4" />
+                        <span className="hidden sm:inline">{label}</span>
+                        <span className="sm:hidden">{label}</span>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" className="sm:hidden" />
+                </ScrollArea>
+              </div>
+
+              {/* Tab Content with improved mobile padding */}
+              <div className="px-4 sm:px-0">
+                <TabsContent value="overview" className="space-y-8 m-0">
+                  <div className="grid gap-8 lg:grid-cols-3">
+                    <div className="lg:col-span-2 space-y-8">
+                      <About />
+                      <BestTimeToVisit />
+                    </div>
+                    <div className="space-y-6">
+                      <PopularLists cityName="Paris" />
+                      <TopExperiences />
                     </div>
                   </div>
+                </TabsContent>
+
+                <TabsContent value="local" className="space-y-8 m-0">
+                  <LocalEvents />
+                </TabsContent>
+
+                <TabsContent value="neighborhoods" className="space-y-8 m-0">
+                  <NeighborhoodExplorer />
+                </TabsContent>
+
+                <TabsContent value="community" className="space-y-6 m-0">
                   <div>
-                    <h2 className="text-2xl font-semibold mb-4">Popular Lists</h2>
-                    <PopularLists cityName={cityData.name} />
+                    <CommunityHeader />
+                    <div className="grid gap-6 lg:grid-cols-3">
+                      <div className="lg:col-span-2">
+                        <InsightsList />
+                      </div>
+                      <div className="hidden lg:block">
+                        <CommunitySidebar />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="neighborhoods">
-                <h2 className="text-2xl font-semibold mb-4">Explore Neighborhoods</h2>
-                <NeighborhoodMap />
-              </TabsContent>
-
-              <TabsContent value="trending">
-                <h2 className="text-2xl font-semibold mb-4">What's Happening</h2>
-                <TrendingTopics />
-              </TabsContent>
-
-              <TabsContent value="local">
-                <h2 className="text-2xl font-semibold mb-4">Local Events & Meetups</h2>
-                <LocalEvents />
-              </TabsContent>
-
-              <TabsContent value="insights">
-                <CommunityInsights insights={insights} onInsightSubmit={handleInsightSubmit} onInsightVote={handleInsightVote} />
-              </TabsContent>
+                </TabsContent>
+              </div>
             </Tabs>
           </CardContent>
         </Card>
       </div>
     </div>
   );
-};
+}

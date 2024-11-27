@@ -45,3 +45,5 @@ coverage
 
 # PocketBase
 pb_data/
+/pocketbase/CHANGELOG.md
+/pocketbase/LICENSE.md
