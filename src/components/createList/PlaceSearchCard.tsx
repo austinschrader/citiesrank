@@ -7,8 +7,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import PocketBase from "pocketbase";
 import { useToast } from "@/hooks/use-toast";
 import debounce from "lodash/debounce";
+import { getApiUrl } from "@/appConfig";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 const ITEMS_PER_PAGE = 20;
 
 interface Place {

@@ -28,7 +28,10 @@ import PocketBase from "pocketbase";
 import type { RecordModel } from "pocketbase";
 import { useAuth } from "@/lib/auth/AuthContext";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+import { getApiUrl } from "@/appConfig";
+
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 const transformRecord = (record: RecordModel): TravelList => ({
   id: record.id,

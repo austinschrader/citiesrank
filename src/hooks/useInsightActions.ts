@@ -1,7 +1,9 @@
 import { useState } from "react";
 import PocketBase from "pocketbase";
+import { getApiUrl } from "@/appConfig";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 interface UseInsightActionsReturn {
   submitInsight: (content: string) => Promise<void>;
