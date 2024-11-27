@@ -25,3 +25,9 @@ note: You will need to create an admin account the first time you run it.
 ```bash
 curl -L https://github.com/pocketbase/pocketbase/releases/download/v0.21.1/pocketbase_0.21.1_darwin_arm64.zip -o pb.zip && unzip pb.zip -d pocketbase && rm pb.zip
 ```
+
+## Reset the database back to the migrations
+
+1. Stop your PocketBase server if it's running
+2. Delete the pb_data directory (this contains your database)
+3. Then start PocketBase again, which will recreate the database from your migrations
