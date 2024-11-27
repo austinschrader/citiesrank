@@ -435,9 +435,7 @@
                     "cascadeDelete": false,
                     "minSelect": null,
                     "maxSelect": 1,
-                    "displayFields": [
-                        "name"
-                    ]
+                    "displayFields": ["name"]
                 }
             },
             {
@@ -449,10 +447,7 @@
                 "presentable": false,
                 "options": {
                     "maxSelect": 1,
-                    "values": [
-                        "published",
-                        "draft"
-                    ]
+                    "values": ["published", "draft"]
                 }
             },
             {
@@ -464,12 +459,7 @@
                 "presentable": false,
                 "options": {
                     "maxSelect": 1,
-                    "values": [
-                        "want-to-visit",
-                        "visited",
-                        "planning",
-                        "favorites"
-                    ]
+                    "values": ["want-to-visit", "visited", "planning", "favorites"]
                 }
             },
             {
@@ -481,11 +471,7 @@
                 "presentable": false,
                 "options": {
                     "maxSelect": 1,
-                    "values": [
-                        "public",
-                        "private",
-                        "followers"
-                    ]
+                    "values": ["public", "private", "followers"]
                 }
             },
             {
@@ -509,6 +495,50 @@
                 "required": false,
                 "presentable": false,
                 "options": {}
+            },
+            {
+                "system": false,
+                "id": "list_places",
+                "name": "places",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "list_stats",
+                "name": "stats",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "list_tags",
+                "name": "tags",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "list_related_lists",
+                "name": "relatedLists",
+                "type": "json",
+                "required": true,
+                "presentable": false,
+                "options": {
+                    "maxSize": 2000000
+                }
             },
             {
                 "system": false,

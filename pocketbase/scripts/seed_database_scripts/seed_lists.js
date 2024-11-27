@@ -1,7 +1,7 @@
 import PocketBase from "pocketbase";
 import { MOCK_LISTS } from "../raw_data/lists_data.js";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const pb = new PocketBase("http://127.0.0.1:8090");
 
 // Helper functions remain the same
 function getRandomItems(arr, count) {
@@ -210,7 +210,7 @@ async function migrateTravelLists(generateCount = 20) {
         const listData = {
           title: list.title,
           description: list.description,
-          author: JSON.stringify(list.author),
+          author: "66n5q77pkxvgzxb", // Use the real PocketBase user ID
           places: JSON.stringify(list.places),
           stats: JSON.stringify(list.stats),
           metadata: JSON.stringify(list.metadata),
@@ -220,9 +220,9 @@ async function migrateTravelLists(generateCount = 20) {
           shares: list.stats.shares,
           saves: list.stats.saves,
           totalPlaces: list.totalPlaces,
-          // New fields
+          category: list.metadata.category || "Uncategorized",
           status: list.status || "published",
-          collection: list.collection || null,
+          collection: list.collection || "want-to-visit",
           privacy: list.privacy || "public",
         };
 

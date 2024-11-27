@@ -3,7 +3,7 @@
 import PocketBase from "pocketbase";
 import { europeanCountries } from "../raw_data/countries_data.js";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const pb = new PocketBase("http://127.0.0.1:8090");
 
 async function populateCountries() {
   try {
