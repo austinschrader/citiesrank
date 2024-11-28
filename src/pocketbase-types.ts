@@ -42,6 +42,7 @@ export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Th
 	bestSeason: number
 	coordinates: null | Tcoordinates
 	cost: number
+	costIndex: number
 	country: string
 	crowdLevel: number
 	description: string
@@ -54,9 +55,12 @@ export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Th
 	population: string
 	recommendedStay: number
 	reviews: null | Treviews
+	safetyScore: number
 	slug: string
 	totalReviews?: number
 	transit: number
+	transitScore: number
+	walkScore: number
 }
 
 export type CountriesRecord = {
