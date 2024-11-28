@@ -4,7 +4,8 @@ import { Pagination } from "@/components/Pagination";
 import { UserPreferences, RankedCity } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 import PocketBase from "pocketbase";
 import debounce from "lodash/debounce";
 import { MobileSearch } from "@/components/places/MobileSearch";
@@ -76,6 +77,7 @@ export const PlacesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCity, setSelectedCity] = useState<RankedCity | null>(null);
 
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
@@ -85,6 +87,29 @@ export const PlacesPage = () => {
       searchInputRef.current.focus();
     }
   }, [isMobileSearchActive]);
+
+  const handleCitySelect = (city: RankedCity) => {
+    setSelectedCity(city);
+    setSearchQuery(city.name); // Update search query to show what was selected
+
+    // Create a slug from the city name for the ID
+    const citySlug = city.name
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/--+/g, "-");
+
+    // Clear any existing filters to show all results
+    setSelectedFilter(null);
+
+    // Find and scroll to the city card
+    const cityElement = document.getElementById(`city-${citySlug}`);
+    if (cityElement) {
+      setTimeout(() => {
+        cityElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  };
 
   useEffect(() => {
     const loadCityData = async () => {
@@ -248,17 +273,31 @@ export const PlacesPage = () => {
         </div>
 
         {/* Mobile Search Trigger */}
-        <div className="md:hidden">
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-between text-muted-foreground h-12"
-            onClick={() => setIsMobileSearchActive(true)}
-          >
-            <div className="flex items-center gap-2">
-              <Search className="h-4 w-4" />
-              <span>Search destinations...</span>
-            </div>
-          </Button>
+        {/* Mobile Search Trigger with Integrated Search */}
+        <div className="md:hidden relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              className="w-full pl-9 pr-10 h-12"
+              placeholder="Search destinations..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onClick={() => setIsMobileSearchActive(true)}
+              readOnly
+            />
+            {searchQuery && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSearchQuery("");
+                  setSelectedCity(null);
+                }}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile Search Overlay */}
@@ -269,6 +308,7 @@ export const PlacesPage = () => {
             onClose={() => setIsMobileSearchActive(false)}
             searchInputRef={searchInputRef}
             filteredCities={filteredAndRankedCities}
+            onCitySelect={handleCitySelect}
           />
         )}
 
