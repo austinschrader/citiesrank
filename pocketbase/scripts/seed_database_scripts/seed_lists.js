@@ -121,11 +121,6 @@ function generatePlaceDetails(city) {
   };
 }
 
-function generateRelatedLists(theme, excluded_id, existingListIds) {
-  // Modified to return just the IDs of related lists
-  return existingListIds.filter((id) => id !== excluded_id).slice(0, 2); // Get 2 random related lists
-}
-
 function generateAdditionalLists(count) {
   const newLists = [];
   const baseDate = new Date("2024-01-01");
@@ -225,7 +220,7 @@ async function migrateTravelLists(generateCount = 20) {
         const listData = {
           title: list.title,
           description: list.description,
-          author: "gs5hha3036wvotx",
+          author: "j15y616adiaeazx",
           places: JSON.stringify(cityIds), // Store city IDs directly in the places column
           metadata: JSON.stringify(list.metadata),
           tags: JSON.stringify(list.tags),

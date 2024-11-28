@@ -1,12 +1,17 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ListsResponse } from "@/pocketbase-types";
 
 interface TagsProps {
-  tags: string[];
+  tags: ListsResponse["tags"];
 }
 
 export const Tags: React.FC<TagsProps> = ({ tags }) => {
+  if (!tags || !Array.isArray(tags) || tags.length === 0) {
+    return null;
+  }
+
   return (
     <Card>
       <CardContent className="p-4">

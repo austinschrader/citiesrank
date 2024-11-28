@@ -38,6 +38,7 @@ export type AuthSystemFields<T = never> = {
 
 export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Thighlights = unknown, Treviews = unknown> = {
 	accessibility: number
+	averageRating?: number
 	bestSeason: number
 	coordinates: null | Tcoordinates
 	cost: number
@@ -54,6 +55,7 @@ export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Th
 	recommendedStay: number
 	reviews: null | Treviews
 	slug: string
+	totalReviews?: number
 	transit: number
 }
 
@@ -88,7 +90,7 @@ export type ListsRecord<Ttags = unknown> = {
 	description: string
 	isVerified?: boolean
 	likes?: number
-	list_places?: RecordIdString[]
+	places?: RecordIdString[]
 	privacy: ListsPrivacyOptions
 	relatedLists?: RecordIdString[]
 	saves?: number
