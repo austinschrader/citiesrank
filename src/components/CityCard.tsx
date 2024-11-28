@@ -48,6 +48,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
 
   return (
     <Card
+      id={`city-${createSlug(city.name)}`}
       className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300 cursor-pointer"
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
