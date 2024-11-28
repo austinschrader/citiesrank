@@ -4,23 +4,43 @@ import { useNavigate } from "react-router-dom";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 import { CitiesRecord } from "@/pocketbase-types";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
   city: CitiesRecord;
 }
+
 export const HeroSection: React.FC<HeroSectionProps> = ({ city }) => {
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
   const citySlug = createSlug(city.name);
   const countrySlug = createSlug(city.country);
   const imageUrl = getCityImage(`${citySlug}-${countrySlug}-1`, "wide");
 
+  useEffect(() => {
+    const img = new Image();
+    img.src = imageUrl;
+    img.onload = () => {
+      setImageLoaded(true);
+    };
+  }, [imageUrl]);
+
   return (
     <div className="relative h-[60vh] bg-black">
-      {/* Multiple gradient layers for better control over light/dark areas */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+      {/* Loading state with gradients */}
+      <div className={cn("absolute inset-0 transition-opacity duration-1000 bg-gray-900", imageLoaded ? "opacity-0" : "opacity-100")}>
+        {/* Apply same gradients to loading state */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+      </div>
 
-      <img src={imageUrl} alt={city.name} className="object-cover w-full h-full" />
+      {/* Image container with gradients */}
+      <div className={cn("absolute inset-0 transition-opacity duration-1000", imageLoaded ? "opacity-100" : "opacity-0")}>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        <img src={imageUrl} alt={city.name} className="object-cover w-full h-full" />
+      </div>
 
       {/* Back button - Mobile optimized */}
       <div className="absolute top-0 left-0 right-0 h-16 md:h-20 bg-gradient-to-b from-black/60 to-transparent">
