@@ -1,9 +1,9 @@
 import PocketBase from "pocketbase";
 import { fallbackCityData } from "../raw_data/cities_data.js";
 import slugify from "slugify";
-import { normalizeString } from "./utils.js";
+import { normalizeString } from "../../../pixabay/utils.js";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const pb = new PocketBase("http://127.0.0.1:8090");
 
 // Create URL-friendly slug
 const createSlug = (name, country) => {

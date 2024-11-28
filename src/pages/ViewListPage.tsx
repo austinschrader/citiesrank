@@ -20,30 +20,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Loader2 } from "lucide-react";
-import type { TravelList, Place } from "@/types/travel";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 import { Tags } from "@/components/travel/Tags";
 import PocketBase from "pocketbase";
-import type { RecordModel } from "pocketbase";
 import { useAuth } from "@/lib/auth/AuthContext";
-
+import {
+  ListsResponse,
+  CitiesResponse,
+  UsersResponse,
+} from "@/pocketbase-types";
 import { getApiUrl } from "@/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
 
-const transformRecord = (record: RecordModel): TravelList => ({
-  id: record.id,
-  title: record.title,
-  description: record.description,
-  author: typeof record.author === "string" ? JSON.parse(record.author) : record.author,
-  stats: typeof record.stats === "string" ? JSON.parse(record.stats) : record.stats,
-  metadata: typeof record.metadata === "string" ? JSON.parse(record.metadata) : record.metadata,
-  tags: typeof record.tags === "string" ? JSON.parse(record.tags) : record.tags,
-  places: typeof record.places === "string" ? JSON.parse(record.places) : record.places,
-  relatedLists: typeof record.relatedLists === "string" ? JSON.parse(record.relatedLists) : record.relatedLists,
-});
+interface ExpandedListResponse extends ListsResponse {
+  expand?: {
+    places?: CitiesResponse[];
+    author?: UsersResponse;
+    relatedLists?: ListsResponse[];
+  };
+}
 
 const LoadingSpinner = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -59,8 +57,8 @@ export const ViewListPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const [data, setData] = useState<TravelList | null>(null);
-  const [activePlace, setActivePlace] = useState<Place | null>(null);
+  const [data, setData] = useState<ExpandedListResponse | null>(null);
+  const [activePlace, setActivePlace] = useState<CitiesResponse | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -77,15 +75,18 @@ export const ViewListPage = () => {
       setIsLoading(true);
 
       try {
-        const record = await pb.collection("lists").getOne(id, {
-          $autoCancel: false,
-        });
+        const record = await pb
+          .collection("lists")
+          .getOne<ExpandedListResponse>(id, {
+            expand: "places,author,relatedLists",
+            $autoCancel: false,
+          });
 
-        // Only update state if this is still the current request
         if (currentRequestIdRef.current === requestId) {
-          const transformedData = transformRecord(record);
-          setData(transformedData);
-          setActivePlace(transformedData.places[0]);
+          setData(record);
+          if (record.expand?.places?.[0]) {
+            setActivePlace(record.expand.places[0]);
+          }
         }
       } catch (error) {
         console.error("Error loading list:", error);
@@ -142,19 +143,14 @@ export const ViewListPage = () => {
 
   const citySlug = createSlug(activePlace.name);
   const countrySlug = createSlug(activePlace.country);
-  const coverImage = getCityImage(`${citySlug}-${countrySlug}-1`, "large");
-  const isAuthor = user?.id === data.author.id;
+  const coverImage = activePlace.imageUrl
+    ? getCityImage(activePlace.imageUrl, "large")
+    : getCityImage(`${citySlug}-${countrySlug}-1`, "large");
+  const isAuthor = user?.id === data.author;
 
   return (
     <div className="min-h-screen bg-background">
-      <ListHero
-        title={data.title}
-        description={data.description}
-        metadata={data.metadata}
-        author={data.author}
-        places={data.places}
-        coverImage={coverImage}
-      />
+      <ListHero list={data} />
 
       <div className="container max-w-screen-xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
@@ -169,7 +165,11 @@ export const ViewListPage = () => {
             {isAuthor && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-destructive">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </AlertDialogTrigger>
@@ -177,7 +177,8 @@ export const ViewListPage = () => {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently delete "{data.title}" and remove it from our servers. This action cannot be undone.
+                      This will permanently delete "{data.title}" and remove it
+                      from our servers. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -185,7 +186,8 @@ export const ViewListPage = () => {
                     <AlertDialogAction
                       onClick={handleDelete}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      disabled={isDeleting}>
+                      disabled={isDeleting}
+                    >
                       {isDeleting ? "Deleting..." : "Delete List"}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -198,17 +200,29 @@ export const ViewListPage = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div className="grid gap-4">
-              {data.places.map((place) => (
-                <PlaceCard key={place.name} place={place} isActive={activePlace.id === place.id} onClick={() => setActivePlace(place)} />
+              {data.expand?.places?.map((place) => (
+                <PlaceCard
+                  key={place.id}
+                  place={place}
+                  isActive={activePlace.id === place.id}
+                  onClick={() => setActivePlace(place)}
+                />
               ))}
             </div>
           </div>
 
           <div className="space-y-6">
-            <ListStatistics stats={data.stats} />
+            <ListStatistics
+              views={data.views}
+              likes={data.likes}
+              saves={data.saves}
+              shares={data.shares}
+            />
             <PlaceDetails place={activePlace} />
-            <Tags tags={data.tags} />
-            <RelatedLists lists={data.relatedLists} />
+            <Tags tags={data.tags || []} />
+            {data.expand?.relatedLists && (
+              <RelatedLists lists={data.expand.relatedLists} />
+            )}
           </div>
         </div>
       </div>

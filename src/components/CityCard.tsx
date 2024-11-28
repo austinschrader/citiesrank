@@ -51,9 +51,14 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
       className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300 cursor-pointer"
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
-      onClick={handleCardClick}>
+      onClick={handleCardClick}
+    >
       <div className="relative aspect-[4/3]">
-        <ImageGallery cityName={city.name} country={city.country} showControls={showControls} />
+        <ImageGallery
+          cityName={city.name}
+          country={city.country}
+          showControls={showControls}
+        />
 
         <div className="absolute top-2 left-2 z-20">
           <div
@@ -61,7 +66,8 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
               "px-2 py-1 rounded-full text-xs font-medium",
               "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
               getMatchColor(city.matchScore)
-            )}>
+            )}
+          >
             {Math.round(city.matchScore)}% match
           </div>
         </div>
@@ -69,8 +75,13 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
         <button
           onClick={handleFavoriteClick}
           className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 hover:bg-white transition-all hover:scale-110 active:scale-95 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
-          aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}>
-          <Star className={cn("w-4 h-4", isFavorite && "fill-primary text-primary")} />
+          aria-label={
+            isFavorite ? "Remove from favorites" : "Save to favorites"
+          }
+        >
+          <Star
+            className={cn("w-4 h-4", isFavorite && "fill-primary text-primary")}
+          />
         </button>
       </div>
 
@@ -78,17 +89,27 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex-1">
             <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">{city.name}</span>
-              <span className="text-sm font-medium text-muted-foreground">{city.country}</span>
+              <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
+                {city.name}
+              </span>
+              <span className="text-sm font-medium text-muted-foreground">
+                {city.country}
+              </span>
             </div>
 
-            <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2 mb-3">{city.description}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2 mb-3">
+              {city.description}
+            </p>
           </div>
 
           {city.reviews && (
             <div className="text-right">
-              <div className="text-lg font-semibold text-foreground mb-1">{city.reviews.averageRating.toFixed(1)}</div>
-              <div className="text-xs text-muted-foreground">{city.reviews.totalReviews} reviews</div>
+              <div className="text-lg font-semibold text-foreground mb-1">
+                {city.reviews.averageRating.toFixed(1)}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {city.reviews.totalReviews} reviews
+              </div>
             </div>
           )}
         </div>

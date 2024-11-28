@@ -2,7 +2,8 @@ export const MOCK_LISTS = [
   {
     id: "1",
     title: "Family-Friendly European Cities with Kids Under 5",
-    description: "Perfect destinations for young families with playgrounds, museums, and child-friendly restaurants",
+    description:
+      "Perfect destinations for young families with playgrounds, museums, and child-friendly restaurants",
     author: {
       id: "user1",
       name: "Sarah Parker",
@@ -12,13 +13,13 @@ export const MOCK_LISTS = [
     },
     places: [
       {
-        id: "copenhagen-denmark",
-        name: "Copenhagen",
-        country: "Denmark",
-        imageUrl: "copenhagen-denmark-1",
+        id: "berlin-germany",
+        name: "Berlin",
+        country: "Germany",
+        imageUrl: "berlin-germany-1",
         description:
-          "A family paradise with interactive museums, safe cycling paths, and the magical Tivoli Gardens. The city's compact size and excellent public transportation make it perfect for families with young children.",
-        highlight: "Tivoli Gardens, Denmark's National Aquarium, and Copenhagen Zoo",
+          "A family paradise with interactive museums, safe cycling paths, and the magical Tiergarten Park.",
+        highlight: "Tiergarten Park,and the Berlin Zoo with the Pegasus",
         rating: 4.8,
         reviews: 1456,
         coordinates: [55.6761, 12.5683],
@@ -69,7 +70,14 @@ export const MOCK_LISTS = [
       isVerified: true,
       category: "Family Travel",
     },
-    tags: ["family", "kids", "europe", "playgrounds", "museums", "child-friendly"],
+    tags: [
+      "family",
+      "kids",
+      "europe",
+      "playgrounds",
+      "museums",
+      "child-friendly",
+    ],
     relatedLists: [
       {
         id: "family-friendly-beaches",
@@ -87,64 +95,5 @@ export const MOCK_LISTS = [
       },
     ],
     totalPlaces: 3,
-  },
-  {
-    id: "2",
-    title: "Portland's Hidden Gem Restaurants 2024",
-    description: "Local food critic's guide to the most underrated eateries in PDX, from hole-in-the-wall spots to innovative food carts",
-    author: {
-      id: "user2",
-      name: "Mike Chen",
-      avatar: "/avatars/mike.jpg",
-      location: "Portland, OR",
-      bio: "Food critic for The Oregonian, cookbook author, and Portland native sharing the city's best kept culinary secrets.",
-    },
-    places: [
-      {
-        id: "portland-downtown",
-        name: "Portland Downtown",
-        country: "United States",
-        imageUrl: "portland-united-states-1",
-        description:
-          "Portland's downtown district is a treasure trove of hidden culinary gems, from basement ramen shops to rooftop farm-to-table experiences. The food cart pods offer some of the most innovative cuisine in the city.",
-        highlight: "Food Cart Pods, Underground Speakeasies, and Pop-up Restaurants",
-        rating: 4.9,
-        reviews: 3456,
-        coordinates: [45.5155, -122.6789],
-        tags: ["food-carts", "fine-dining", "fusion", "farm-to-table"],
-        bestTime: "Year-round",
-        suggestedStay: "3-4 days",
-      },
-    ],
-    stats: {
-      views: 28945,
-      likes: 892,
-      saves: 567,
-      shares: 234,
-    },
-    metadata: {
-      createdAt: "2024-03-10",
-      updatedAt: "2024-03-14",
-      isVerified: true,
-      category: "Food & Dining",
-    },
-    tags: ["food", "local", "portland", "restaurants", "food-carts", "hidden-gems"],
-    relatedLists: [
-      {
-        id: "pdx-breakfast",
-        title: "Portland's Best Breakfast Spots",
-        places: 12,
-        author: "Sarah Lee",
-        imageUrl: "portland-breakfast-1",
-      },
-      {
-        id: "pdx-food-carts",
-        title: "Ultimate PDX Food Cart Guide",
-        places: 20,
-        author: "Mike Chen",
-        imageUrl: "portland-carts-1",
-      },
-    ],
-    totalPlaces: 15,
   },
 ];

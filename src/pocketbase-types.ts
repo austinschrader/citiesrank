@@ -38,6 +38,7 @@ export type AuthSystemFields<T = never> = {
 
 export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Thighlights = unknown, Treviews = unknown> = {
 	accessibility: number
+	averageRating?: number
 	bestSeason: number
 	coordinates: null | Tcoordinates
 	cost: number
@@ -54,6 +55,7 @@ export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Th
 	recommendedStay: number
 	reviews: null | Treviews
 	slug: string
+	totalReviews?: number
 	transit: number
 }
 
@@ -81,22 +83,23 @@ export enum ListsPrivacyOptions {
 	"private" = "private",
 	"followers" = "followers",
 }
-export type ListsRecord<Tauthor = unknown, Tmetadata = unknown, Tplaces = unknown, TrelatedLists = unknown, Tstats = unknown, Ttags = unknown> = {
-	author: null | Tauthor
+export type ListsRecord<Ttags = unknown> = {
+	author: RecordIdString
+	category: string
 	collection?: ListsCollectionOptions
 	description: string
-	likes: number
-	metadata: null | Tmetadata
-	places: null | Tplaces
+	isVerified?: boolean
+	likes?: number
+	places?: RecordIdString[]
 	privacy: ListsPrivacyOptions
-	relatedLists?: null | TrelatedLists
-	saves: number
-	shares: number
-	stats: null | Tstats
+	relatedLists?: RecordIdString[]
+	saves?: number
+	shares?: number
 	status: ListsStatusOptions
 	tags: null | Ttags
 	title: string
 	totalPlaces: number
+	views?: number
 }
 
 export type UsersRecord = {
@@ -107,7 +110,7 @@ export type UsersRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type CitiesResponse<Tcoordinates = unknown, TdestinationTypes = unknown, Thighlights = unknown, Treviews = unknown, Texpand = unknown> = Required<CitiesRecord<Tcoordinates, TdestinationTypes, Thighlights, Treviews>> & BaseSystemFields<Texpand>
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
-export type ListsResponse<Tauthor = unknown, Tmetadata = unknown, Tplaces = unknown, TrelatedLists = unknown, Tstats = unknown, Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Tauthor, Tmetadata, Tplaces, TrelatedLists, Tstats, Ttags>> & BaseSystemFields<Texpand>
+export type ListsResponse<Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Ttags>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions

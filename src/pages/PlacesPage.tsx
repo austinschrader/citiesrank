@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CityCard } from "@/components/CityCard";
 import { Pagination } from "@/components/Pagination";
-import { CityData, UserPreferences } from "@/types";
+import { UserPreferences, RankedCity } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
@@ -11,12 +11,51 @@ import { MobileSearch } from "@/components/places/MobileSearch";
 import { DesktopFilters } from "@/components/places/DesktopFilters";
 import { MobileFilters } from "@/components/places/MobileFilters";
 import { filterOptions } from "@/components/places/constants";
-
-const ITEMS_PER_PAGE = 20;
+import { CitiesResponse } from "@/pocketbase-types";
 import { getApiUrl } from "@/appConfig";
 
+const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
+
+const transformResponseToCity = (record: CitiesResponse): RankedCity => {
+  return {
+    name: record.name,
+    country: record.country,
+    cost: record.cost,
+    interesting: record.interesting,
+    transit: record.transit,
+    description: record.description,
+    population: record.population,
+    highlights: Array.isArray(record.highlights) ? record.highlights : [],
+    reviews: record.reviews
+      ? {
+          averageRating: 0,
+          totalReviews: 0,
+          ...record.reviews,
+        }
+      : {
+          averageRating: 0,
+          totalReviews: 0,
+        },
+    destinationTypes: Array.isArray(record.destinationTypes)
+      ? record.destinationTypes
+      : [],
+    crowdLevel: record.crowdLevel,
+    recommendedStay: record.recommendedStay,
+    bestSeason: record.bestSeason,
+    accessibility: record.accessibility,
+    matchScore: 0,
+    attributeMatches: {
+      budget: 0,
+      crowds: 0,
+      tripLength: 0,
+      season: 0,
+      transit: 0,
+      accessibility: 0,
+    },
+  };
+};
 
 export const PlacesPage = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -29,18 +68,15 @@ export const PlacesPage = () => {
   });
 
   const [sortOrder, setSortOrder] = useState("match");
-
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [cityData, setCityData] = useState<Record<string, CityData>>({});
+  const [cityData, setCityData] = useState<Record<string, RankedCity>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Add request tracking refs
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
 
@@ -60,31 +96,18 @@ export const PlacesPage = () => {
       setIsLoading(true);
 
       try {
-        const records = await pb.collection("cities_list").getFullList({
-          $autoCancel: false,
-        });
+        const records = await pb
+          .collection("cities")
+          .getFullList<CitiesResponse>();
 
-        // Only update state if this is still the current request
         if (currentRequestIdRef.current === requestId) {
-          const transformedData: Record<string, CityData> = records.reduce((acc, record) => {
-            acc[record.name] = {
-              name: record.name,
-              country: record.country,
-              cost: record.cost,
-              interesting: record.interesting,
-              transit: record.transit,
-              description: record.description,
-              population: record.population,
-              highlights: typeof record.highlights === "string" ? JSON.parse(record.highlights) : record.highlights,
-              reviews: typeof record.reviews === "string" ? JSON.parse(record.reviews) : record.reviews,
-              destinationTypes: typeof record.destinationTypes === "string" ? JSON.parse(record.destinationTypes) : record.destinationTypes,
-              crowdLevel: record.crowdLevel,
-              recommendedStay: record.recommendedStay,
-              bestSeason: record.bestSeason,
-              accessibility: record.accessibility,
-            };
-            return acc;
-          }, {} as Record<string, CityData>);
+          const transformedData: Record<string, RankedCity> = records.reduce(
+            (acc, record) => {
+              acc[record.name] = transformResponseToCity(record);
+              return acc;
+            },
+            {} as Record<string, RankedCity>
+          );
 
           setCityData(transformedData);
         }
@@ -104,15 +127,23 @@ export const PlacesPage = () => {
     loadCityData();
   }, []);
 
-  // Rest of your component code remains the same...
-  const calculateMatch = (cityAttributes: CityData, userPreferences: UserPreferences) => {
+  const calculateMatch = (
+    cityAttributes: RankedCity,
+    userPreferences: UserPreferences
+  ) => {
     const matches = {
       budget: 100 - Math.abs(cityAttributes.cost - userPreferences.budget),
-      crowds: 100 - Math.abs(cityAttributes.crowdLevel - userPreferences.crowds),
-      tripLength: 100 - Math.abs(cityAttributes.recommendedStay - userPreferences.tripLength),
-      season: 100 - Math.abs(cityAttributes.bestSeason - userPreferences.season),
+      crowds:
+        100 - Math.abs(cityAttributes.crowdLevel - userPreferences.crowds),
+      tripLength:
+        100 -
+        Math.abs(cityAttributes.recommendedStay - userPreferences.tripLength),
+      season:
+        100 - Math.abs(cityAttributes.bestSeason - userPreferences.season),
       transit: 100 - Math.abs(cityAttributes.transit - userPreferences.transit),
-      accessibility: 100 - Math.abs(cityAttributes.accessibility - userPreferences.accessibility),
+      accessibility:
+        100 -
+        Math.abs(cityAttributes.accessibility - userPreferences.accessibility),
     };
 
     const weightedMatch =
@@ -145,10 +176,11 @@ export const PlacesPage = () => {
     };
   }, [debouncedSearch]);
 
-  const getFilteredCities = (prefs: UserPreferences) => {
+  const getFilteredCities = (prefs: UserPreferences): RankedCity[] => {
     return Object.entries(cityData)
       .filter(([name, data]) => {
-        const matchesFilter = !selectedFilter || data.destinationTypes.includes(selectedFilter);
+        const matchesFilter =
+          !selectedFilter || data.destinationTypes.includes(selectedFilter);
         const matchesSearch =
           !searchQuery ||
           name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -158,7 +190,6 @@ export const PlacesPage = () => {
       })
       .map(([name, data]) => ({
         ...data,
-        name,
         ...calculateMatch(data, prefs),
       }))
       .sort((a, b) => {
@@ -176,6 +207,11 @@ export const PlacesPage = () => {
   };
 
   const filteredAndRankedCities = getFilteredCities(preferences);
+  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
+  const paginatedCities = filteredAndRankedCities.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handleFilterSelect = (filter: string) => {
     setSelectedFilter(selectedFilter === filter ? null : filter);
@@ -187,14 +223,13 @@ export const PlacesPage = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
-          <p className="text-muted-foreground">Finding perfect destinations...</p>
+          <p className="text-muted-foreground">
+            Finding perfect destinations...
+          </p>
         </div>
       </div>
     );
   }
-
-  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
-  const paginatedCities = filteredAndRankedCities.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <PlacesLayout>
@@ -202,9 +237,12 @@ export const PlacesPage = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Discover Places</h1>
+            <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">
+              Discover Places
+            </h1>
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-              Find your perfect destination based on your preferences and travel style.
+              Find your perfect destination based on your preferences and travel
+              style.
             </p>
           </div>
         </div>
@@ -214,7 +252,8 @@ export const PlacesPage = () => {
           <Button
             variant="outline"
             className="w-full flex items-center justify-between text-muted-foreground h-12"
-            onClick={() => setIsMobileSearchActive(true)}>
+            onClick={() => setIsMobileSearchActive(true)}
+          >
             <div className="flex items-center gap-2">
               <Search className="h-4 w-4" />
               <span>Search destinations...</span>
@@ -266,7 +305,11 @@ export const PlacesPage = () => {
 
         {/* Pagination */}
         <div className="mt-8 flex justify-center">
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </PlacesLayout>

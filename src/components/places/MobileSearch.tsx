@@ -13,7 +13,13 @@ interface MobileSearchProps {
   filteredCities: RankedCity[];
 }
 
-export const MobileSearch = ({ searchQuery, onSearchChange, onClose, searchInputRef, filteredCities }: MobileSearchProps) => (
+export const MobileSearch = ({
+  searchQuery,
+  onSearchChange,
+  onClose,
+  searchInputRef,
+  filteredCities,
+}: MobileSearchProps) => (
   <div className="fixed inset-0 z-50 bg-background pt-16">
     <div className="flex items-center gap-2 p-4 border-b">
       <div className="relative flex-1">
@@ -35,11 +41,16 @@ export const MobileSearch = ({ searchQuery, onSearchChange, onClose, searchInput
       <ScrollArea className="h-[calc(100vh-8rem)]">
         <div className="p-4 space-y-2">
           {filteredCities.slice(0, 5).map((city) => (
-            <div key={city.name} className="flex items-center gap-3 p-2 hover:bg-accent rounded-md">
+            <div
+              key={city.name}
+              className="flex items-center gap-3 p-2 hover:bg-accent rounded-md"
+            >
               <Search className="h-4 w-4 text-muted-foreground" />
               <div>
                 <div className="font-medium">{city.name}</div>
-                <div className="text-sm text-muted-foreground">{city.country}</div>
+                <div className="text-sm text-muted-foreground">
+                  {city.country}
+                </div>
               </div>
             </div>
           ))}

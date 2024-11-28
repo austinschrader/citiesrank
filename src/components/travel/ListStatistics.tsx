@@ -8,35 +8,48 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { ListStats } from "@/types/travel";
+import { ListsResponse } from "@/pocketbase-types";
 
 interface ListStatisticsProps {
-  stats: ListStats;
+  views?: number;
+  likes?: number;
+  saves?: number;
+  shares?: number;
 }
 
-export const ListStatistics: React.FC<ListStatisticsProps> = ({ stats }) => (
+export const ListStatistics: React.FC<ListStatisticsProps> = ({
+  views = 0,
+  likes = 0,
+  saves = 0,
+  shares = 0,
+}) => (
   <Card>
     <CardContent className="p-4">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-center">
-              <p className="font-semibold">{stats.views.toLocaleString()}</p>
+              <p className="font-semibold">{views.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground">Views</p>
             </div>
             <div className="text-center">
-              <p className="font-semibold">{stats.likes.toLocaleString()}</p>
+              <p className="font-semibold">{likes.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground">Likes</p>
             </div>
             <div className="text-center">
-              <p className="font-semibold">{stats.saves.toLocaleString()}</p>
+              <p className="font-semibold">{saves.toLocaleString()}</p>
               <p className="text-xs text-muted-foreground">Saves</p>
             </div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

@@ -1,7 +1,7 @@
 import PocketBase from "pocketbase";
 import { MOCK_LISTS } from "../raw_data/lists_data.js";
 
-const pb = new PocketBase("https://api.citiesrank.com");
+const pb = new PocketBase("http://127.0.0.1:8090");
 
 // Helper functions remain the same
 function getRandomItems(arr, count) {
@@ -26,25 +26,29 @@ const listTemplates = {
     {
       name: "Hidden Gems",
       tags: ["hidden-gems", "off-beaten-path", "authentic"],
-      description: "Discover secret spots and local favorites off the tourist trail.",
+      description:
+        "Discover secret spots and local favorites off the tourist trail.",
       collection: "want-to-visit",
     },
     {
       name: "Foodie Paradise",
       tags: ["food", "culinary", "restaurants", "gastronomy"],
-      description: "A culinary journey through the best food scenes and local delicacies.",
+      description:
+        "A culinary journey through the best food scenes and local delicacies.",
       collection: "planning",
     },
     {
       name: "Cultural Journey",
       tags: ["culture", "history", "arts", "museums"],
-      description: "Immerse yourself in rich cultural heritage and artistic traditions.",
+      description:
+        "Immerse yourself in rich cultural heritage and artistic traditions.",
       collection: "favorites",
     },
     {
       name: "Adventure Seekers",
       tags: ["adventure", "outdoor", "hiking", "sports"],
-      description: "Thrilling experiences and outdoor activities for the adventurous spirit.",
+      description:
+        "Thrilling experiences and outdoor activities for the adventurous spirit.",
       collection: "visited",
     },
   ],
@@ -72,7 +76,8 @@ const listTemplates = {
       citySlug: "porto-portugal",
       name: "Porto",
       country: "Portugal",
-      description: "Historic port city known for its stunning bridges and port wine cellars.",
+      description:
+        "Historic port city known for its stunning bridges and port wine cellars.",
       highlight: "Ribeira District and Port Wine Cellars",
       rating: 4.8,
       reviews: 2345,
@@ -85,7 +90,8 @@ const listTemplates = {
       citySlug: "ljubljana-slovenia",
       name: "Ljubljana",
       country: "Slovenia",
-      description: "Charming capital with beautiful architecture and vibrant cafe culture.",
+      description:
+        "Charming capital with beautiful architecture and vibrant cafe culture.",
       highlight: "Ljubljana Castle and Triple Bridge",
       rating: 4.7,
       reviews: 1876,
@@ -115,35 +121,20 @@ function generatePlaceDetails(city) {
   };
 }
 
-function generateRelatedLists(theme, excluded_id) {
-  return [
-    {
-      id: `${createSlug(theme.name)}-${Math.random().toString(36).substr(2, 9)}`,
-      title: `Best of ${theme.name} in Europe`,
-      places: randomNumber(5, 12),
-      author: listTemplates.authors[randomNumber(0, listTemplates.authors.length - 1)].name,
-      imageUrl: `${listTemplates.cities[randomNumber(0, listTemplates.cities.length - 1)].citySlug}-1`,
-    },
-    {
-      id: `${createSlug(theme.name)}-${Math.random().toString(36).substr(2, 9)}`,
-      title: `${theme.name} for Beginners`,
-      places: randomNumber(5, 12),
-      author: listTemplates.authors[randomNumber(0, listTemplates.authors.length - 1)].name,
-      imageUrl: `${listTemplates.cities[randomNumber(0, listTemplates.cities.length - 1)].citySlug}-1`,
-    },
-  ];
-}
-
 function generateAdditionalLists(count) {
   const newLists = [];
   const baseDate = new Date("2024-01-01");
+  const listIds = Array.from({ length: count }, (_, i) => `generated_${i + 1}`);
 
   for (let i = 0; i < count; i++) {
     const theme = listTemplates.themes[i % listTemplates.themes.length];
     const author = listTemplates.authors[i % listTemplates.authors.length];
-    const selectedCities = getRandomItems(listTemplates.cities, randomNumber(3, 6));
+    const selectedCities = getRandomItems(
+      listTemplates.cities,
+      randomNumber(3, 6)
+    );
     const createdDate = new Date(baseDate.getTime() + i * 24 * 60 * 60 * 1000);
-    const isDraft = Math.random() > 0.8; // 20% chance of being a draft
+    const isDraft = Math.random() > 0.8;
 
     const newList = {
       id: `generated_${i + 1}`,
@@ -157,12 +148,10 @@ function generateAdditionalLists(count) {
         bio: author.bio,
       },
       places: selectedCities.map((city) => generatePlaceDetails(city)),
-      stats: {
-        views: randomNumber(5000, 50000),
-        likes: randomNumber(100, 3000),
-        saves: randomNumber(100, 1000),
-        shares: randomNumber(50, 500),
-      },
+      views: randomNumber(5000, 50000),
+      likes: randomNumber(100, 3000),
+      saves: randomNumber(100, 1000),
+      shares: randomNumber(50, 500),
       metadata: {
         createdAt: createdDate.toISOString(),
         updatedAt: new Date().toISOString(),
@@ -170,12 +159,12 @@ function generateAdditionalLists(count) {
         category: theme.name,
       },
       tags: [...theme.tags, "europe", selectedCities[0].country.toLowerCase()],
-      relatedLists: generateRelatedLists(theme, `generated_${i + 1}`),
       totalPlaces: selectedCities.length,
-      // New fields
       status: isDraft ? "draft" : "published",
       collection: isDraft ? null : theme.collection,
-      privacy: isDraft ? "private" : listTemplates.privacyOptions[randomNumber(0, 2)],
+      privacy: isDraft
+        ? "private"
+        : listTemplates.privacyOptions[randomNumber(0, 2)],
     };
 
     newLists.push(newList);
@@ -189,61 +178,81 @@ async function migrateTravelLists(generateCount = 20) {
     const additionalLists = generateAdditionalLists(generateCount);
     const allLists = [...MOCK_LISTS, ...additionalLists];
 
-    console.log("Deleting existing travel list records...");
-    const existingRecords = await pb.collection("lists").getFullList();
-    for (const record of existingRecords) {
-      try {
-        await pb.collection("lists").delete(record.id);
-        console.log(`Deleted list: ${record.title}`);
-      } catch (error) {
-        console.error(`Error deleting list ${record.title}:`, error.message);
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
+    // Clean up existing records
+    console.log("Cleaning up existing records...");
+    await pb
+      .collection("lists")
+      .getFullList()
+      .then((records) =>
+        Promise.all(records.map((r) => pb.collection("lists").delete(r.id)))
+      );
 
-    console.log("\nAdding new travel list records...");
+    const cities = await pb.collection("cities").getFullList();
+    const cityMap = new Map(
+      cities.map((city) => [city.normalizedName.toLowerCase(), city.id])
+    );
+
+    console.log(`\nProcessing ${allLists.length} lists...`);
     let successCount = 0;
     let errorCount = 0;
 
     for (const list of allLists) {
       try {
+        const cityIds = list.places
+          .map((place) => {
+            const normalizedName = place.name
+              .toLowerCase()
+              .replace(/[^a-z0-9 ]/g, "");
+            const cityId = cityMap.get(normalizedName);
+            if (!cityId) {
+              console.error(
+                `City not found: ${place.name} (normalized: ${normalizedName})`
+              );
+            }
+            return cityId;
+          })
+          .filter((id) => id);
+
+        if (cityIds.length !== list.places.length) {
+          throw new Error(`Some cities were not found for list: ${list.title}`);
+        }
+
         const listData = {
           title: list.title,
           description: list.description,
-          author: JSON.stringify(list.author),
-          places: JSON.stringify(list.places),
-          stats: JSON.stringify(list.stats),
+          author: "j15y616adiaeazx",
+          places: JSON.stringify(cityIds), // Store city IDs directly in the places column
           metadata: JSON.stringify(list.metadata),
           tags: JSON.stringify(list.tags),
-          relatedLists: JSON.stringify(list.relatedLists),
-          likes: list.stats.likes,
-          shares: list.stats.shares,
-          saves: list.stats.saves,
-          totalPlaces: list.totalPlaces,
-          // New fields
+          likes: list.likes,
+          shares: list.shares,
+          saves: list.saves,
+          totalPlaces: cityIds.length,
+          category: list.metadata.category || "Uncategorized",
           status: list.status || "published",
-          collection: list.collection || null,
+          collection: list.collection || "want-to-visit",
           privacy: list.privacy || "public",
         };
 
         await pb.collection("lists").create(listData);
-        console.log(`Successfully added list: ${list.title} (${list.status})`);
+        console.log(
+          `✓ Created list: ${list.title} with ${cityIds.length} places`
+        );
         successCount++;
       } catch (error) {
-        console.error(`Error adding list ${list.title}:`, error.message);
-        console.error("Data:", list);
+        console.error(`✗ Failed to create list: ${list.title}`);
+        console.error("Error:", error.response?.data || error.message);
         errorCount++;
       }
-      await new Promise((resolve) => setTimeout(resolve, 250));
     }
 
-    console.log("\nMigration complete!");
-    console.log(`Successfully added: ${successCount} lists`);
-    console.log(`Failed to add: ${errorCount} lists`);
+    console.log(`\n=== Migration Complete ===`);
+    console.log(`Succeeded: ${successCount} lists`);
+    console.log(`Failed: ${errorCount} lists`);
   } catch (error) {
-    console.error("Migration failed:", error);
+    console.error("\n=== Migration Failed ===");
+    console.error("Error:", error.message);
   }
 }
 
-// Run the migration
-migrateTravelLists(20);
+migrateTravelLists(5);
