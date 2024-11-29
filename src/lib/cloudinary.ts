@@ -13,25 +13,50 @@ const cld = new Cloudinary({
   },
 });
 
-type ImageSize = "thumbnail" | "standard" | "large" | "wide";
+type ImageSize =
+  | "thumbnail"
+  | "standard"
+  | "large"
+  | "wide"
+  | "mobile"
+  | "tablet"
+  | "desktop"
+  | "fullscreen";
 
-const SIZES: Record<ImageSize, { width: number; height: number; quality: number }> = {
+const SIZES: Record<
+  ImageSize,
+  { width: number; height: number; quality: number }
+> = {
   thumbnail: { width: 400, height: 300, quality: 70 },
   standard: { width: 800, height: 600, quality: 80 },
   large: { width: 1600, height: 1200, quality: 85 },
   wide: { width: 2400, height: 1600, quality: 90 },
+  mobile: { width: 400, height: 300, quality: 70 },
+  tablet: { width: 800, height: 600, quality: 80 },
+  desktop: { width: 1600, height: 1200, quality: 100 },
+  fullscreen: { width: 2400, height: 1600, quality: 90 },
 };
 
 export const getImageUrl = (path: string, size: ImageSize = "standard") => {
   const { width, height } = SIZES[size];
 
-  return cld.image(path).resize(thumbnail().width(width).height(height).gravity(autoGravity())).adjust(improve()).toURL();
+  return cld
+    .image(path)
+    .resize(thumbnail().width(width).height(height).gravity(autoGravity()))
+    .adjust(improve())
+    .toURL();
 };
 
-export const getCityImage = (citySlug: string, size: ImageSize = "standard") => {
+export const getCityImage = (
+  citySlug: string,
+  size: ImageSize = "standard"
+) => {
   return getImageUrl(citySlug, size);
 };
 
-export const getAttractionImage = (attractionSlug: string, size: ImageSize = "standard") => {
+export const getAttractionImage = (
+  attractionSlug: string,
+  size: ImageSize = "standard"
+) => {
   return getImageUrl(attractionSlug, size);
 };
