@@ -63,6 +63,12 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown, Check, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  CitiesRecord,
+  FavoritesRecord,
+  CitiesResponse,
+} from "@/pocketbase-types";
+import { CityCard } from "@/components/CityCard";
 
 interface UserStats {
   placesVisited: number;
@@ -129,18 +135,102 @@ const achievements: Achievement[] = [
   },
   {
     name: "Capital Collector",
-    description: "Visited 12 capital cities",
+    description: "Visited 12 out of 196 capital cities",
     progress: 12,
-    total: 50,
+    total: 196,
     icon: <Star className="h-4 w-4" />,
   },
   {
     name: "UNESCO Heritage Explorer",
-    description: "Discovered 8 World Heritage sites",
-    progress: 8,
-    total: 100,
+    description: "Discovered 3 out of 1,223 UNESCO heritage sites",
+    progress: 3,
+    total: 1223,
     icon: <Landmark className="h-4 w-4" />,
   },
+  // {
+  //   name: "Altitude Master",
+  //   description: "Conquered 2 out of 10 peaks above 5000m",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <MapPin className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Trans-Continental Explorer",
+  //   description: "Completed 1 out of 4 legendary train journeys",
+  //   progress: 1,
+  //   total: 4,
+  //   icon: <Train className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Culinary Anthropologist",
+  //   description: "Mastered 3 out of 10 traditional dishes",
+  //   progress: 3,
+  //   total: 10,
+  //   icon: <ForkKnife className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Dawn Chaser",
+  //   description: "Witnessed 2 out of 10 spectacular sunrises",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <Sun className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Language Navigator",
+  //   description: "Mastered 2 out of 10 language families",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <Languages className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Ancient Civilization Scholar",
+  //   description: "Explored 3 out of 10 ancient civilizations",
+  //   progress: 3,
+  //   total: 10,
+  //   icon: <Castle className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Migration Witness",
+  //   description: "Witnessed 2 out of 10 animal migrations",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <Bird className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Desert Nomad",
+  //   description: "Explored 2 out of 10 remarkable deserts",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <TreePalm className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Maritime Explorer",
+  //   description: "Navigated 2 out of 5 great oceans",
+  //   progress: 2,
+  //   total: 5,
+  //   icon: <Ship className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Climate Zones",
+  //   description: "Experienced 2 out of 5 climate zones",
+  //   progress: 2,
+  //   total: 5,
+  //   icon: <Thermometer className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Festival Pilgrim",
+  //   description: "Participated in 2 out of 10 cultural festivals",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <PartyPopper className="h-4 w-4" />,
+  // },
+  // {
+  //   name: "Remote Places",
+  //   description: "Visited 2 out of 10 isolated inhabited places",
+  //   progress: 2,
+  //   total: 10,
+  //   icon: <ThermometerSun className="h-4 w-4" />,
+  // },
 ];
 
 const recentActivity: Activity[] = [
@@ -400,7 +490,11 @@ const achievementDetails: AchievementDetails = {
   },
 };
 
-const AchievementCard = ({ achievement }: { achievement: Achievement }) => {
+interface AchievementCardProps {
+  achievement: Achievement;
+}
+
+const AchievementCard = ({ achievement }: AchievementCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const details = achievementDetails[achievement.name];
   const percentage = Math.round(
@@ -810,6 +904,59 @@ export const ProfilePage = () => {
     return <div>Please log in to view your profile.</div>;
   }
 
+  const [favoriteCities, setFavoriteCities] = useState<CitiesResponse[]>([]);
+  const [isFavoritesLoading, setIsFavoritesLoading] = useState(true);
+
+  // Fetch favorite cities
+  useEffect(() => {
+    let isSubscribed = true;
+
+    async function fetchFavorites() {
+      if (!user) return;
+
+      setIsFavoritesLoading(true);
+      try {
+        const favorites = await pb.collection("favorites").getFullList({
+          filter: `user = "${user.id}"`,
+          expand: "city",
+          $autoCancel: false,
+        });
+
+        if (isSubscribed) {
+          const favoritedCities = favorites
+            .map((favorite) => favorite.expand?.city)
+            .filter(Boolean);
+
+          setFavoriteCities(favoritedCities);
+        }
+      } catch (error) {
+        // Only show error if component is still mounted and error is not a cancellation
+        if (
+          isSubscribed &&
+          error instanceof Error &&
+          error.name !== "AbortError"
+        ) {
+          console.error("Error fetching favorites:", error);
+          toast({
+            title: "Error loading favorites",
+            description: "Please try again later",
+            variant: "destructive",
+          });
+        }
+      } finally {
+        if (isSubscribed) {
+          setIsFavoritesLoading(false);
+        }
+      }
+    }
+
+    fetchFavorites();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [user]);
+
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="container max-w-6xl mx-auto px-4 py-8">
@@ -1100,20 +1247,20 @@ export const ProfilePage = () => {
             <div className="bg-background sticky top-16 z-10 -mx-4 px-4 border-b">
               <TabsList className="w-full justify-start">
                 <TabsTrigger value="overview" className="gap-2">
-                  <Trophy className="h-4 w-4" />
+                  <Globe className="h-4 w-4" />
                   Overview
                 </TabsTrigger>
-                <TabsTrigger value="lists" className="gap-2">
-                  <List className="h-4 w-4" />
-                  Lists
-                </TabsTrigger>
-                <TabsTrigger value="reviews" className="gap-2">
+                <TabsTrigger value="favorites" className="gap-2">
                   <Star className="h-4 w-4" />
-                  Reviews
+                  Favorites
                 </TabsTrigger>
-                <TabsTrigger value="photos" className="gap-2">
-                  <Camera className="h-4 w-4" />
-                  Photos
+                <TabsTrigger value="achievements" className="gap-2">
+                  <Trophy className="h-4 w-4" />
+                  Achievements
+                </TabsTrigger>
+                <TabsTrigger value="activity" className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Activity
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -1206,59 +1353,130 @@ export const ProfilePage = () => {
               </div>
             </TabsContent>
 
+            {/* Favorites Tab */}
+            <TabsContent value="favorites" className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-semibold tracking-tight">
+                      Favorite Cities
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Cities you've marked as favorites
+                    </p>
+                  </div>
+                </div>
+
+                {isFavoritesLoading ? (
+                  <div className="flex items-center justify-center h-48">
+                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+                  </div>
+                ) : favoriteCities.length === 0 ? (
+                  <Card>
+                    <CardContent className="flex flex-col items-center justify-center h-48 text-center">
+                      <Star className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                      <h3 className="font-semibold text-lg mb-2">
+                        No Favorite Cities Yet
+                      </h3>
+                      <p className="text-sm text-muted-foreground max-w-sm">
+                        Start exploring cities and click the star icon to add
+                        them to your favorites!
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {favoriteCities.map((city) => (
+                      <CityCard key={city.id} city={city} variant="basic" />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
             {/* Other tab contents remain similar but with improved styling */}
-            <TabsContent value="lists">
+            <TabsContent value="achievements">
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle>Lists</CardTitle>
+                      <CardTitle>Achievements</CardTitle>
                       <CardDescription>
-                        Collections and guides you've created
+                        Milestones and badges earned through your travels
                       </CardDescription>
                     </div>
                     <Button className="gap-2">
-                      <List className="h-4 w-4" />
-                      Create List
+                      <Trophy className="h-4 w-4" />
+                      View All
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground text-center py-8">
-                    Your lists will appear here
-                  </p>
+                  <div className="grid gap-6">
+                    {achievements.map((achievement) => (
+                      <AchievementCard
+                        key={achievement.name}
+                        achievement={achievement}
+                      />
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="reviews">
+            <TabsContent value="activity">
               <Card>
                 <CardHeader>
-                  <CardTitle>Reviews</CardTitle>
+                  <CardTitle>Recent Activity</CardTitle>
                   <CardDescription>
-                    Your thoughts and ratings on places you've visited
+                    Your latest contributions and interactions
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground text-center py-8">
-                    Your reviews will appear here
-                  </p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="photos">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Travel Photos</CardTitle>
-                  <CardDescription>
-                    Pictures from your adventures
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground text-center py-8">
-                    Your photos will appear here
-                  </p>
+                  <div className="space-y-6">
+                    {recentActivity.map((activity, index) => (
+                      <div key={index} className="flex items-start gap-4">
+                        <div className="rounded-lg bg-muted p-2">
+                          {activity.type === "list" ? (
+                            <List className="h-4 w-4" />
+                          ) : (
+                            <Star className="h-4 w-4" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-medium">{activity.title}</h4>
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(activity.date).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-1"
+                              >
+                                <Heart className="h-4 w-4" />
+                                {activity.likes}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-1"
+                              >
+                                <MessageCircle className="h-4 w-4" />
+                                {activity.comments}
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

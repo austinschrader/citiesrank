@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import PocketBase from "pocketbase";
 import { getApiUrl } from "@/appConfig";
+import { ReviewSummary } from "@/types";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -34,7 +35,7 @@ const createSlug = (text: string): string => {
     .replace(/--+/g, "-"); // Replace multiple - with single -
 };
 
-export const CityCard: React.FC<CityCardProps> = ({ city }) => {
+export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
   const navigate = useNavigate();
   const { user, signInWithGoogle } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -148,15 +149,19 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
           />
 
           <div className="absolute top-2 left-2 z-20">
-            <div
-              className={cn(
-                "px-2 py-1 rounded-full text-xs font-medium",
-                "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
-                getMatchColor(city.matchScore)
-              )}
-            >
-              {Math.round(city.matchScore)}% match
-            </div>
+            {variant === "ranked" && "matchScore" in city && (
+              <div
+                className={cn(
+                  "px-2 py-1 rounded-full text-xs font-medium",
+                  "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
+                  getMatchColor(city.matchScore)
+                )}
+              >
+                {typeof city.matchScore === "number"
+                  ? `${Math.round(city.matchScore)}% match`
+                  : null}
+              </div>
+            )}
           </div>
 
           <button
@@ -192,16 +197,14 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
               </p>
             </div>
 
-            {city.reviews && (
-              <div className="text-right">
-                <div className="text-lg font-semibold text-foreground mb-1">
-                  {city.reviews.averageRating.toFixed(1)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {city.reviews.totalReviews} reviews
-                </div>
+            <div className="text-right">
+              <div className="text-lg font-semibold text-foreground mb-1">
+                {(city.reviews as ReviewSummary).averageRating.toFixed(1)}
               </div>
-            )}
+              <div className="text-xs text-muted-foreground">
+                {(city.reviews as ReviewSummary).totalReviews} reviews
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center text-sm text-muted-foreground">
