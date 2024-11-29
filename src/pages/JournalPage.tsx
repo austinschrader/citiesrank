@@ -18,7 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getCityImage } from "@/lib/cloudinary";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 
 // Types
 interface JournalEntry {
@@ -114,12 +119,17 @@ const MOCK_ENTRIES: JournalEntry[] = [
     publishedAt: "2024-03-14",
     featured: true,
     categories: ["Family Travel", "Nature"],
-    relatedPlaces: ["Manuel Antonio Park", "Playa Biesanz", "Rainmaker Reserve"],
+    relatedPlaces: [
+      "Manuel Antonio Park",
+      "Playa Biesanz",
+      "Rainmaker Reserve",
+    ],
   },
   {
     id: "3",
     title: "48 Hours in Porto: A Food Lover's Itinerary",
-    excerpt: "From dawn pastries to late-night port tastings, experiencing Portugal's culinary capital one meal at a time.",
+    excerpt:
+      "From dawn pastries to late-night port tastings, experiencing Portugal's culinary capital one meal at a time.",
     content: "...",
     coverImage: "porto-portugal-1",
     author: {
@@ -149,7 +159,8 @@ const MOCK_ENTRIES: JournalEntry[] = [
   {
     id: "4",
     title: "Solo Hiking the Tour du Mont Blanc",
-    excerpt: "A personal journey through three countries, challenging weather, and breathtaking Alpine scenery.",
+    excerpt:
+      "A personal journey through three countries, challenging weather, and breathtaking Alpine scenery.",
     content: "...",
     coverImage: "mont-blanc-france-1",
     author: {
@@ -204,8 +215,12 @@ const FeaturedStoryCard = ({ entry }: { entry: JournalEntry }) => {
               </div>
             </div>
           </div>
-          <h3 className="text-2xl font-bold mb-2 line-clamp-2">{entry.title}</h3>
-          <p className="text-sm text-white/80 line-clamp-2 mb-3">{entry.excerpt}</p>
+          <h3 className="text-2xl font-bold mb-2 line-clamp-2">
+            {entry.title}
+          </h3>
+          <p className="text-sm text-white/80 line-clamp-2 mb-3">
+            {entry.excerpt}
+          </p>
           <div className="flex items-center gap-4 text-sm text-white/80">
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-1" />
@@ -249,13 +264,19 @@ const JournalEntryCard = ({ entry }: { entry: JournalEntry }) => {
                 <AvatarImage src={entry.author.avatar} />
                 <AvatarFallback>{entry.author.name[0]}</AvatarFallback>
               </Avatar>
-              <span className="text-sm text-muted-foreground">{entry.author.name}</span>
+              <span className="text-sm text-muted-foreground">
+                {entry.author.name}
+              </span>
             </div>
           </CardHeader>
 
           <CardContent className="p-0">
-            <h3 className="text-lg font-semibold mb-2 line-clamp-2">{entry.title}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{entry.excerpt}</p>
+            <h3 className="text-lg font-semibold mb-2 line-clamp-2">
+              {entry.title}
+            </h3>
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+              {entry.excerpt}
+            </p>
 
             <div className="flex flex-wrap gap-2 mb-4">
               {entry.tags.map((tag) => (
@@ -269,20 +290,36 @@ const JournalEntryCard = ({ entry }: { entry: JournalEntry }) => {
           <CardFooter className="p-0 mt-auto">
             <div className="w-full flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Button variant="ghost" size="sm" className="flex items-center gap-1 px-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 px-2"
+                >
                   <Heart className="h-4 w-4" />
                   {entry.stats.likes}
                 </Button>
-                <Button variant="ghost" size="sm" className="flex items-center gap-1 px-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 px-2"
+                >
                   <MessageSquare className="h-4 w-4" />
                   {entry.stats.comments}
                 </Button>
-                <Button variant="ghost" size="sm" className="flex items-center gap-1 px-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-1 px-2"
+                >
                   <Share2 className="h-4 w-4" />
                   {entry.stats.shares}
                 </Button>
               </div>
-              <Button variant="ghost" size="sm" className="flex items-center gap-1 px-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-1 px-2"
+              >
                 <Bookmark className="h-4 w-4" />
               </Button>
             </div>
@@ -298,13 +335,14 @@ export const JournalPage = () => {
   const latestEntries = MOCK_ENTRIES.filter((entry) => !entry.featured);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] pb-20 md:pb-0">
+    <div className="pb-20 md:pb-0">
       <div className="mx-8 2xl:mx-16 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">Journal</h1>
             <p className="text-muted-foreground max-w-2xl">
-              Stories, guides, and insights from travelers around the world. Share your journey and inspire others.
+              Stories, guides, and insights from travelers around the world.
+              Share your journey and inspire others.
             </p>
           </div>
           <Button size="lg" className="gap-2">

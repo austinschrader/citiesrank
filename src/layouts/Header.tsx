@@ -235,21 +235,24 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* Mobile navigation bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
-        <nav className="mx-8 2xl:mx-16 h-16">
-          <div className="grid h-full grid-cols-4">
+      {/* Mobile Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background md:hidden z-50">
+        <nav className="container h-full">
+          <div className="grid h-full grid-cols-4 items-stretch">
             {navItems
               .filter((item) => !item.mobileOnly)
               .map((item) => (
-                <Link key={item.to} to={item.to} className="h-full">
-                  <Button
-                    variant="ghost"
-                    className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center"
-                  >
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="flex items-center justify-center"
+                >
+                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
                     <item.icon className="h-5 w-5" />
-                    <span className="text-xs">{item.label}</span>
-                  </Button>
+                    <span className="text-[10px] font-medium">
+                      {item.label}
+                    </span>
+                  </div>
                 </Link>
               ))}
           </div>
