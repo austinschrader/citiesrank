@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { LucideIcon } from "lucide-react";
+import { CitiesResponse } from "./pocketbase-types";
 
 // Image-related types
 export interface ImageSource {
@@ -42,6 +43,7 @@ export interface CityData {
 }
 
 export interface RankedCity extends CityData {
+  id: any;
   name: string;
   matchScore: number;
   attributeMatches: {
@@ -53,6 +55,12 @@ export interface RankedCity extends CityData {
     accessibility: number;
   };
 }
+
+export interface FavoriteCity extends RankedCity {
+  favoriteId: string;
+  notes?: string;
+}
+
 // User preference types
 export interface UserPreferences {
   budget: number;
@@ -64,7 +72,12 @@ export interface UserPreferences {
 }
 
 // Highlight-related types
-export type HighlightCategoryType = "historic" | "architecture" | "nature" | "dining" | "cultural";
+export type HighlightCategoryType =
+  | "historic"
+  | "architecture"
+  | "nature"
+  | "dining"
+  | "cultural";
 
 export interface HighlightCategory {
   type: HighlightCategoryType;
@@ -82,9 +95,21 @@ export interface HighlightLinkProps {
 }
 
 // Component Props
-export interface CityCardProps {
+export interface BaseCityCardProps {
+  variant: "ranked" | "basic";
+}
+
+export interface RankedCityCardProps extends BaseCityCardProps {
+  variant: "ranked";
   city: RankedCity;
 }
+
+export interface BasicCityCardProps extends BaseCityCardProps {
+  variant: "basic";
+  city: CitiesResponse;
+}
+
+export type CityCardProps = RankedCityCardProps | BasicCityCardProps;
 
 export interface PreferencesCardProps {
   preferences: UserPreferences;

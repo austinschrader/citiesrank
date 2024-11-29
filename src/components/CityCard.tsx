@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import {
   MapPin,
@@ -22,6 +22,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import PocketBase from "pocketbase";
+import { getApiUrl } from "@/appConfig";
+import { ReviewSummary } from "@/types";
+import { useToast } from "@/hooks/use-toast";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -32,12 +36,37 @@ const createSlug = (text: string): string => {
     .replace(/--+/g, "-"); // Replace multiple - with single -
 };
 
-export const CityCard: React.FC<CityCardProps> = ({ city }) => {
+export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
   const navigate = useNavigate();
   const { user, signInWithGoogle } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const pb = new PocketBase(getApiUrl());
+
+  // Check if city is favorited on mount and when user changes
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!user) {
+        setIsFavorite(false);
+        return;
+      }
+
+      try {
+        const records = await pb.collection("favorites").getFullList({
+          filter: `user = "${user.id}" && city = "${city.id}"`,
+        });
+        setIsFavorite(records.length > 0);
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [user, city.id]);
 
   const getMatchColor = (score: number) => {
     if (score >= 90) return "bg-green-50 text-green-700";
@@ -59,7 +88,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
     });
   };
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click from triggering
 
     if (!user) {
@@ -67,8 +96,45 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
       return;
     }
 
-    setIsFavorite(!isFavorite);
-    // Add your favorite logic here
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+      if (isFavorite) {
+        // Find and delete the favorite record
+        const records = await pb.collection("favorites").getFullList({
+          filter: `user = "${user.id}" && city = "${city.id}"`,
+        });
+        if (records.length > 0) {
+          await pb.collection("favorites").delete(records[0].id);
+        }
+        toast({
+          title: "City Removed",
+          description: `${city.name} has been removed from your favorites`,
+        });
+      } else {
+        // Create new favorite record
+        await pb.collection("favorites").create({
+          user: user.id,
+          city: city.id,
+          field: "", // Optional notes field, can be empty
+        });
+        toast({
+          title: "City Saved",
+          description: `${city.name} has been added to your favorites`,
+        });
+      }
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update favorites. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignIn = async () => {
@@ -98,15 +164,19 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
           />
 
           <div className="absolute top-2 left-2 z-20">
-            <div
-              className={cn(
-                "px-2 py-1 rounded-full text-xs font-medium",
-                "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
-                getMatchColor(city.matchScore)
-              )}
-            >
-              {Math.round(city.matchScore)}% match
-            </div>
+            {variant === "ranked" && "matchScore" in city && (
+              <div
+                className={cn(
+                  "px-2 py-1 rounded-full text-xs font-medium",
+                  "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
+                  getMatchColor(city.matchScore)
+                )}
+              >
+                {typeof city.matchScore === "number"
+                  ? `${Math.round(city.matchScore)}% match`
+                  : null}
+              </div>
+            )}
           </div>
 
           <button
@@ -142,16 +212,14 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
               </p>
             </div>
 
-            {city.reviews && (
-              <div className="text-right">
-                <div className="text-lg font-semibold text-foreground mb-1">
-                  {city.reviews.averageRating.toFixed(1)}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {city.reviews.totalReviews} reviews
-                </div>
+            <div className="text-right">
+              <div className="text-lg font-semibold text-foreground mb-1">
+                {(city.reviews as ReviewSummary).averageRating.toFixed(1)}
               </div>
-            )}
+              <div className="text-xs text-muted-foreground">
+                {(city.reviews as ReviewSummary).totalReviews} reviews
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center text-sm text-muted-foreground">
