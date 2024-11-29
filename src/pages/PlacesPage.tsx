@@ -14,7 +14,6 @@ import { filterOptions } from "@/components/places/constants";
 import { getApiUrl } from "@/appConfig";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { CitiesResponse } from "@/pocketbase-types";
-import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
@@ -32,7 +31,6 @@ export const PlacesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
 
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
