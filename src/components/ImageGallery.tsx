@@ -145,12 +145,18 @@ export const ImageGallery = ({
               e.stopPropagation();
               onImageClick();
             }}
-            className="bg-white/90 hover:bg-white rounded-full p-3 
-                      transition-all hover:scale-105 shadow-lg
-                      focus:outline-none focus:ring-2 focus:ring-white"
+            className={cn(
+              "bg-white/90 hover:bg-white rounded-full transition-all hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-white",
+              variant === "hero" ? "p-2 sm:p-3" : "p-1.5 sm:p-2"
+            )}
             aria-label="Open gallery"
           >
-            <ImagePlus className="h-6 w-6 text-gray-800" />
+            <ImagePlus
+              className={cn(
+                "text-gray-800",
+                variant === "hero" ? "h-4 w-4 sm:h-5 sm:w-5" : "h-4 w-4"
+              )}
+            />
           </button>
         </div>
       )}
