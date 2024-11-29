@@ -12,11 +12,7 @@ export interface ImageSource {
 export interface GalleryImageType {
   type: "city" | "attraction";
   title: string;
-  sources: {
-    mobile: string;
-    tablet: string;
-    desktop: string;
-  };
+  sources: ImageSource;
 }
 
 // Match score calculation types
@@ -74,38 +70,22 @@ export interface UserPreferences {
   accessibility: number;
 }
 
-// Highlight-related types
-export type HighlightCategoryType =
-  | "historic"
-  | "architecture"
-  | "nature"
-  | "dining"
-  | "cultural";
-
-export interface HighlightCategory {
-  type: HighlightCategoryType;
-  icon: ReactNode;
-  className: string;
-  label: string;
-  description: string;
-}
-
-export interface HighlightLinkProps {
-  highlight: string;
-  cityName: string;
-  country: string;
-  onClick?: (e: React.MouseEvent) => void;
-}
-
 // Component Props
 export interface BaseCityCardProps {
   variant: "ranked" | "basic";
+}
+
+export interface RankedCityCardProps extends BaseCityCardProps {
+  variant: "ranked";
+  city: CitiesResponse & MatchScoreResult;
 }
 
 export interface BasicCityCardProps extends BaseCityCardProps {
   variant: "basic";
   city: CitiesResponse;
 }
+
+export type CityCardProps = RankedCityCardProps | BasicCityCardProps;
 
 export interface PreferencesCardProps {
   preferences: UserPreferences;
@@ -146,6 +126,7 @@ export interface ReviewSectionProps {
   reviews: ReviewData[];
 }
 
+// Gallery and Highlight types
 export interface ImageGalleryProps {
   cityName: string;
   country: string;
@@ -155,10 +136,25 @@ export interface ImageGalleryProps {
   onImagesLoaded?: (images: Set<string>) => void;
 }
 
+export interface HighlightLinkProps {
+  highlight: string;
+  cityName: string;
+  country: string;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
 export interface HighlightLinkSectionProps {
   highlights: string[];
   cityName: string;
   country: string;
   onHighlightClick?: (e: React.MouseEvent) => void;
   availableImages?: Set<string>;
+}
+
+export interface HighlightCategory {
+  type: string;
+  icon: ReactNode;
+  className: string;
+  label: string;
+  description: string;
 }
