@@ -31,6 +31,17 @@ import {
   Building2,
   Map,
   Landmark,
+  Train,
+  ForkKnife,
+  Sun,
+  Languages,
+  Castle,
+  Bird,
+  ThermometerSun,
+  Ship,
+  Thermometer,
+  PartyPopper,
+  TreePalm,
 } from "lucide-react";
 import { UsersResponse } from "@/pocketbase-types";
 import PocketBase from "pocketbase";
@@ -44,6 +55,14 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronDown, Check, Circle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface UserStats {
   placesVisited: number;
@@ -59,6 +78,14 @@ interface Achievement {
   progress: number;
   total: number;
   icon: React.ReactNode;
+}
+
+interface AchievementDetails {
+  [key: string]: {
+    completed: string[];
+    remaining: string[];
+    description: string;
+  };
 }
 
 interface Activity {
@@ -139,6 +166,12 @@ interface StatCardProps {
   icon: any;
 }
 
+type SimpleCity = {
+  id: string;
+  name: string;
+  country: string;
+};
+
 const StatCard = ({ label, value, icon }: StatCardProps) => (
   <div className="bg-card/50 p-4">
     <div className="flex items-center gap-2 text-muted-foreground mb-1">
@@ -149,11 +182,305 @@ const StatCard = ({ label, value, icon }: StatCardProps) => (
   </div>
 );
 
-// Simple type for city data we need
-type SimpleCity = {
-  id: string;
-  name: string;
-  country: string;
+const achievementDetails: AchievementDetails = {
+  "Global Explorer": {
+    completed: ["France", "Spain", "Italy"],
+    remaining: ["Germany", "Japan", "Brazil", "Australia"],
+    description:
+      "Track your journey across different nations. Each country visited adds to your global exploration score.",
+  },
+  "City Conqueror": {
+    completed: ["Paris", "Barcelona", "Rome", "London"],
+    remaining: ["Tokyo", "New York", "Sydney", "Dubai"],
+    description:
+      "Discover major cities around the world. Each city has unique attractions and experiences to offer.",
+  },
+  "Continental Coverage": {
+    completed: ["Europe", "North America", "Asia"],
+    remaining: ["South America", "Africa", "Australia", "Antarctica"],
+    description:
+      "Experience the diversity of each continent. From the warmth of Africa to the chill of Antarctica.",
+  },
+  "Capital Collector": {
+    completed: [
+      "Paris (France)",
+      "Rome (Italy)",
+      "London (UK)",
+      "Madrid (Spain)",
+      "Berlin (Germany)",
+      "Tokyo (Japan)",
+      "Beijing (China)",
+      "Moscow (Russia)",
+      "Washington D.C. (USA)",
+      "Ottawa (Canada)",
+      "Canberra (Australia)",
+      "Wellington (New Zealand)",
+    ],
+    remaining: [
+      "Brasília (Brazil)",
+      "Buenos Aires (Argentina)",
+      "Cairo (Egypt)",
+    ],
+    description:
+      "Visit the seats of government and cultural centers of nations. Each capital city tells the story of its country.",
+  },
+  "UNESCO Heritage Explorer": {
+    completed: [
+      "Taj Mahal (India)",
+      "Great Wall (China)",
+      "Machu Picchu (Peru)",
+    ],
+    remaining: [
+      "Pyramids of Giza (Egypt)",
+      "Petra (Jordan)",
+      "Angkor Wat (Cambodia)",
+    ],
+    description:
+      "Explore humanity's most precious cultural and natural sites. Each UNESCO site represents exceptional universal value.",
+  },
+  "Altitude Master": {
+    completed: ["Mount Kilimanjaro (5,895m)", "Mount Toubkal (4,167m)"],
+    remaining: [
+      "Mount Everest Base Camp (5,364m)",
+      "Mount Kala Patthar (5,644m)",
+      "Annapurna Circuit (5,416m)",
+      "Mount Kenya (5,199m)",
+      "Cotopaxi (5,897m)",
+      "Huayna Potosí (6,088m)",
+      "Mount Ararat (5,137m)",
+      "Mount Damavand (5,610m)",
+    ],
+    description:
+      "Conquer the world's most breathtaking peaks above 5000m. Each ascent is a testament to human endurance and determination.",
+  },
+  "Trans-Continental Explorer": {
+    completed: ["Orient Express (Paris-Istanbul)"],
+    remaining: [
+      "Trans-Siberian Railway (Moscow-Vladivostok)",
+      "Blue Train (Pretoria-Cape Town)",
+      "Indian Pacific (Sydney-Perth)",
+      "Rocky Mountaineer (Vancouver-Banff)",
+    ],
+    description:
+      "Experience the romance of rail travel on the world's most legendary train journeys.",
+  },
+  "Culinary Anthropologist": {
+    completed: ["Sushi in Japan", "Pasta in Italy", "Paella in Spain"],
+    remaining: [
+      "Pad Thai in Thailand",
+      "Pho in Vietnam",
+      "Mole in Mexico",
+      "Curry in India",
+      "Dim Sum in Hong Kong",
+      "Couscous in Morocco",
+      "Feijoada in Brazil",
+    ],
+    description:
+      "Master traditional dishes in their countries of origin, understanding the cultural significance of each recipe.",
+  },
+  "Dawn Chaser": {
+    completed: ["Mount Fuji", "Angkor Wat"],
+    remaining: [
+      "Machu Picchu",
+      "Taj Mahal",
+      "Haleakala Summit",
+      "Uluru",
+      "Borobudur Temple",
+      "Cappadocia",
+      "Salar de Uyuni",
+      "Mesa Arch",
+    ],
+    description:
+      "Witness the world's most spectacular sunrises at iconic locations around the globe.",
+  },
+  "Language Navigator": {
+    completed: ["Indo-European (English, Spanish)", "Sino-Tibetan (Mandarin)"],
+    remaining: [
+      "Austronesian (Indonesian)",
+      "Afroasiatic (Arabic)",
+      "Niger-Congo (Swahili)",
+      "Dravidian (Tamil)",
+      "Uralic (Finnish)",
+      "Japonic (Japanese)",
+    ],
+    description:
+      "Master basic conversations across the world's major language families, bridging cultural gaps through communication.",
+  },
+  "Ancient Civilization Scholar": {
+    completed: [
+      "Maya (Chichen Itza)",
+      "Roman (Colosseum)",
+      "Greek (Acropolis)",
+    ],
+    remaining: [
+      "Inca (Machu Picchu)",
+      "Egyptian (Pyramids)",
+      "Khmer (Angkor)",
+      "Aztec (Teotihuacan)",
+      "Persian (Persepolis)",
+      "Indus Valley (Mohenjo-daro)",
+      "Mesopotamian (Babylon)",
+      "Chinese (Xi'an)",
+      "Nabataean (Petra)",
+    ],
+    description:
+      "Explore the remnants of humanity's greatest civilizations, understanding their contributions to modern society.",
+  },
+  "Migration Witness": {
+    completed: ["Serengeti wildebeest (Tanzania)", "Humpback whales (Hawaii)"],
+    remaining: [
+      "Monarch butterflies (Mexico)",
+      "Arctic terns (Arctic Circle)",
+      "Salmon runs (Alaska)",
+      "Caribou (Arctic)",
+      "Christmas Island red crabs",
+      "Sandhill cranes (Nebraska)",
+    ],
+    description:
+      "Witness nature's most spectacular animal migrations, from land to sea to air.",
+  },
+  "Desert Nomad": {
+    completed: ["Sahara (Morocco)", "Arabian (UAE)"],
+    remaining: [
+      "Atacama (Chile)",
+      "Namib (Namibia)",
+      "Gobi (Mongolia)",
+      "Mojave (USA)",
+      "Kalahari (Botswana)",
+      "Great Victoria (Australia)",
+      "Thar (India)",
+      "Simpson (Australia)",
+    ],
+    description:
+      "Experience the stark beauty and silence of the world's most remarkable deserts.",
+  },
+  "Maritime Explorer": {
+    completed: ["Pacific (Hawaii-Japan)", "Atlantic (UK-USA)"],
+    remaining: [
+      "Indian (Maldives-Seychelles)",
+      "Southern (Antarctica)",
+      "Arctic (Greenland)",
+    ],
+    description:
+      "Navigate the world's great oceans, experiencing their unique characteristics and marine life.",
+  },
+  "Climate Zones": {
+    completed: ["Tropical (Bali)", "Temperate (Paris)"],
+    remaining: ["Dry (Dubai)", "Continental (Moscow)", "Polar (Svalbard)"],
+    description:
+      "Experience all major Köppen climate classifications, understanding Earth's climatic diversity.",
+  },
+  "Festival Pilgrim": {
+    completed: ["Carnival in Rio", "Oktoberfest in Germany"],
+    remaining: [
+      "Diwali in India",
+      "Songkran in Thailand",
+      "Day of the Dead in Mexico",
+      "Holi in India",
+      "Chinese New Year in China",
+      "La Tomatina in Spain",
+      "Running of the Bulls in Spain",
+      "Lantern Festival in Taiwan",
+    ],
+    description:
+      "Participate in the world's most vibrant cultural festivals and celebrations.",
+  },
+  "Remote Places": {
+    completed: ["Easter Island (Chile)", "Svalbard (Norway)"],
+    remaining: [
+      "Pitcairn Islands",
+      "Tristan da Cunha",
+      "Socotra",
+      "Kerguelen Islands",
+      "St. Helena",
+      "Palmerston Island",
+    ],
+    description:
+      "Visit Earth's most isolated inhabited places, experiencing unique cultures preserved by distance.",
+  },
+};
+
+const AchievementCard = ({ achievement }: { achievement: Achievement }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const details = achievementDetails[achievement.name];
+  const percentage = Math.round(
+    (achievement.progress / achievement.total) * 100
+  );
+
+  return (
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      className="rounded-lg border bg-card text-card-foreground"
+    >
+      <CollapsibleTrigger className="flex w-full items-center gap-4 p-4 hover:bg-accent/50 transition-colors">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
+          {achievement.icon}
+        </div>
+        <div className="flex-1 space-y-1">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <p className="text-sm font-medium">{achievement.name}</p>
+              <p className="text-xs text-muted-foreground">
+                {achievement.description}
+              </p>
+            </div>
+            <span className="text-sm text-muted-foreground">{percentage}%</span>
+          </div>
+          <Progress value={percentage} className="h-1" />
+        </div>
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-muted-foreground transition-transform",
+            isOpen && "rotate-180"
+          )}
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="space-y-4 p-4 pt-0">
+          <p className="text-sm text-muted-foreground">{details.description}</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">
+                Completed ({details.completed.length})
+              </h4>
+              <ScrollArea className="h-[120px] rounded border p-2">
+                <div className="space-y-1">
+                  {details.completed.map((item) => (
+                    <div
+                      key={item}
+                      className="text-sm flex items-center gap-2 text-muted-foreground"
+                    >
+                      <Check className="h-3 w-3 text-green-500" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">
+                Next to Explore ({details.remaining.length})
+              </h4>
+              <ScrollArea className="h-[120px] rounded border p-2">
+                <div className="space-y-1">
+                  {details.remaining.map((item) => (
+                    <div
+                      key={item}
+                      className="text-sm flex items-center gap-2 text-muted-foreground"
+                    >
+                      <Circle className="h-3 w-3" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
 };
 
 export const ProfilePage = () => {
@@ -246,42 +573,103 @@ export const ProfilePage = () => {
     },
     {
       name: "Capital Collector",
-      description: "Visited 12 capital cities",
+      description: "Visited 12 out of 196 capital cities",
       progress: 12,
-      total: 50,
+      total: 196,
       icon: <Star className="h-4 w-4" />,
     },
     {
       name: "UNESCO Heritage Explorer",
-      description: "Discovered 8 World Heritage sites",
-      progress: 8,
-      total: 100,
+      description: "Discovered 3 out of 1,223 UNESCO heritage sites",
+      progress: 3,
+      total: 1223,
       icon: <Landmark className="h-4 w-4" />,
     },
+    // {
+    //   name: "Altitude Master",
+    //   description: "Conquered 2 out of 10 peaks above 5000m",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <MapPin className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Trans-Continental Explorer",
+    //   description: "Completed 1 out of 4 legendary train journeys",
+    //   progress: 1,
+    //   total: 4,
+    //   icon: <Train className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Culinary Anthropologist",
+    //   description: "Mastered 3 out of 10 traditional dishes",
+    //   progress: 3,
+    //   total: 10,
+    //   icon: <ForkKnife className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Dawn Chaser",
+    //   description: "Witnessed 2 out of 10 spectacular sunrises",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <Sun className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Language Navigator",
+    //   description: "Mastered 2 out of 10 language families",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <Languages className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Ancient Civilization Scholar",
+    //   description: "Explored 3 out of 10 ancient civilizations",
+    //   progress: 3,
+    //   total: 10,
+    //   icon: <Castle className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Migration Witness",
+    //   description: "Witnessed 2 out of 10 animal migrations",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <Bird className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Desert Nomad",
+    //   description: "Explored 2 out of 10 remarkable deserts",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <TreePalm className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Maritime Explorer",
+    //   description: "Navigated 2 out of 5 great oceans",
+    //   progress: 2,
+    //   total: 5,
+    //   icon: <Ship className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Climate Zones",
+    //   description: "Experienced 2 out of 5 climate zones",
+    //   progress: 2,
+    //   total: 5,
+    //   icon: <Thermometer className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Festival Pilgrim",
+    //   description: "Participated in 2 out of 10 cultural festivals",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <PartyPopper className="h-4 w-4" />,
+    // },
+    // {
+    //   name: "Remote Places",
+    //   description: "Visited 2 out of 10 isolated inhabited places",
+    //   progress: 2,
+    //   total: 10,
+    //   icon: <ThermometerSun className="h-4 w-4" />,
+    // },
   ];
-
-  const AchievementCard = ({ achievement }: { achievement: Achievement }) => (
-    <div className="flex items-center gap-4 rounded-lg border p-4">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
-        {achievement.icon}
-      </div>
-      <div className="flex-1 space-y-1">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">{achievement.name}</p>
-          <span className="text-sm text-muted-foreground">
-            {Math.round((achievement.progress / achievement.total) * 100)}%
-          </span>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {achievement.description}
-        </p>
-        <Progress
-          value={(achievement.progress / achievement.total) * 100}
-          className="h-1"
-        />
-      </div>
-    </div>
-  );
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0] || !user) return;
