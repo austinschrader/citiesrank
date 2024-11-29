@@ -13,6 +13,7 @@ import { MobileFilters } from "@/components/places/MobileFilters";
 import { filterOptions } from "@/components/places/constants";
 import { CitiesResponse } from "@/pocketbase-types";
 import { getApiUrl } from "@/appConfig";
+import { useMatchScores } from "@/hooks/useMatchScores";
 
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
@@ -46,28 +47,21 @@ const transformResponseToCity = (record: CitiesResponse): RankedCity => {
     recommendedStay: record.recommendedStay,
     bestSeason: record.bestSeason,
     accessibility: record.accessibility,
-    matchScore: 0,
+    matchScore: -1,
     attributeMatches: {
-      budget: 0,
-      crowds: 0,
-      tripLength: 0,
-      season: 0,
-      transit: 0,
-      accessibility: 0,
+      budget: -1,
+      crowds: -1,
+      tripLength: -1,
+      season: -1,
+      transit: -1,
+      accessibility: -1,
     },
   };
 };
 
 export const PlacesPage = () => {
-  const [preferences, setPreferences] = useState<UserPreferences>({
-    budget: 50,
-    crowds: 50,
-    tripLength: 50,
-    season: 50,
-    transit: 50,
-    accessibility: 50,
-  });
-
+  const { preferences, setPreferences, calculateMatchForCity } =
+    useMatchScores();
   const [sortOrder, setSortOrder] = useState("match");
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -150,40 +144,6 @@ export const PlacesPage = () => {
     loadCityData();
   }, []);
 
-  const calculateMatch = (
-    cityAttributes: RankedCity,
-    userPreferences: UserPreferences
-  ) => {
-    const matches = {
-      budget: 100 - Math.abs(cityAttributes.cost - userPreferences.budget),
-      crowds:
-        100 - Math.abs(cityAttributes.crowdLevel - userPreferences.crowds),
-      tripLength:
-        100 -
-        Math.abs(cityAttributes.recommendedStay - userPreferences.tripLength),
-      season:
-        100 - Math.abs(cityAttributes.bestSeason - userPreferences.season),
-      transit: 100 - Math.abs(cityAttributes.transit - userPreferences.transit),
-      accessibility:
-        100 -
-        Math.abs(cityAttributes.accessibility - userPreferences.accessibility),
-    };
-
-    const weightedMatch =
-      (matches.budget * 1.2 +
-        matches.crowds * 1.0 +
-        matches.tripLength * 0.8 +
-        matches.season * 1.1 +
-        matches.transit * 1.0 +
-        matches.accessibility * 0.9) /
-      6;
-
-    return {
-      matchScore: weightedMatch,
-      attributeMatches: matches,
-    };
-  };
-
   // Debounced search
   const debouncedSearch = debounce((value: string) => {
     setSearchQuery(value);
@@ -213,7 +173,7 @@ export const PlacesPage = () => {
       })
       .map(([, data]) => ({
         ...data,
-        ...calculateMatch(data, prefs),
+        ...calculateMatchForCity(data),
       }))
       .sort((a, b) => {
         switch (sortOrder) {

@@ -19,6 +19,28 @@ export interface GalleryImageType {
   };
 }
 
+// Match score calculation types
+export interface MatchScoreResult {
+  matchScore: number;
+  attributeMatches: {
+    budget: number;
+    crowds: number;
+    tripLength: number;
+    season: number;
+    transit: number;
+    accessibility: number;
+  };
+}
+
+export interface MatchScoreInput {
+  cost: number;
+  crowdLevel: number;
+  recommendedStay: number;
+  bestSeason: number;
+  transit: number;
+  accessibility: number;
+}
+
 // City-related types
 export interface ReviewSummary {
   averageRating: number;
