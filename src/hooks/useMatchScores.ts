@@ -1,6 +1,23 @@
 import { useState, useCallback } from "react";
 import { UserPreferences, MatchScoreInput, MatchScoreResult } from "@/types";
 
+// Define the shape of our context value
+export interface MatchScoreContextValue {
+  preferences: UserPreferences;
+  setPreferences: (prefs: UserPreferences) => void;
+  updatePreference: (key: keyof UserPreferences, value: number) => void;
+  calculateMatchForCity: (cityAttributes: MatchScoreInput) => MatchScoreResult;
+}
+
+const DEFAULT_PREFERENCES: UserPreferences = {
+  budget: 50,
+  crowds: 50,
+  tripLength: 50,
+  season: 50,
+  transit: 50,
+  accessibility: 50,
+};
+
 const calculateMatchScores = (
   cityAttributes: MatchScoreInput,
   userPreferences: UserPreferences
@@ -34,15 +51,10 @@ const calculateMatchScores = (
 };
 
 export const useMatchScores = (
-  initialPreferences?: Partial<UserPreferences>
-) => {
+  initialPreferences: Partial<UserPreferences> = {}
+): MatchScoreContextValue => {
   const [preferences, setPreferences] = useState<UserPreferences>({
-    budget: 50,
-    crowds: 50,
-    tripLength: 50,
-    season: 50,
-    transit: 50,
-    accessibility: 50,
+    ...DEFAULT_PREFERENCES,
     ...initialPreferences,
   });
 

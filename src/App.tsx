@@ -14,26 +14,32 @@ import { SettingsPage } from "@/pages/SettingsPage"; // You'll need to create th
 import { ProfilePage } from "@/pages/ProfilePage"; // You'll need to create this
 import { Toaster } from "@/components/ui/toaster"; // Add this import
 import { CityDetailsPage } from "@/pages/CityDetailsPage"; // Add this import
+import { PreferencesProvider } from "@/contexts/PreferencesContext";
 
 function App() {
   return (
     <AuthProvider>
-      <RootLayout>
-        <Routes>
-          <Route path="/" element={<PlacesPage />} />
-          <Route path="/lists" element={<ListsPage />} />
-          <Route path="/lists/:id" element={<ViewListPage />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/journal" element={<JournalPage />} />
-          <Route path="/saved" element={<SavedPage />} />
-          <Route path="/add" element={<AddPlacePage />} />
-          <Route path="/create-list" element={<CreateListPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/cities/:country/:city" element={<CityDetailsPage />} />
-        </Routes>
-      </RootLayout>
-      <Toaster />
+      <PreferencesProvider>
+        <RootLayout>
+          <Routes>
+            <Route path="/" element={<PlacesPage />} />
+            <Route path="/lists" element={<ListsPage />} />
+            <Route path="/lists/:id" element={<ViewListPage />} />
+            <Route path="/members" element={<MembersPage />} />
+            <Route path="/journal" element={<JournalPage />} />
+            <Route path="/saved" element={<SavedPage />} />
+            <Route path="/add" element={<AddPlacePage />} />
+            <Route path="/create-list" element={<CreateListPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route
+              path="/cities/:country/:city"
+              element={<CityDetailsPage />}
+            />
+          </Routes>
+        </RootLayout>
+        <Toaster />
+      </PreferencesProvider>
     </AuthProvider>
   );
 }

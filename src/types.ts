@@ -64,25 +64,6 @@ export interface CityData {
   accessibility: number; // 0-100 (remote to well-connected)
 }
 
-export interface RankedCity extends CityData {
-  id: any;
-  name: string;
-  matchScore: number;
-  attributeMatches: {
-    budget: number;
-    crowds: number;
-    tripLength: number;
-    season: number;
-    transit: number;
-    accessibility: number;
-  };
-}
-
-export interface FavoriteCity extends RankedCity {
-  favoriteId: string;
-  notes?: string;
-}
-
 // User preference types
 export interface UserPreferences {
   budget: number;
@@ -121,17 +102,10 @@ export interface BaseCityCardProps {
   variant: "ranked" | "basic";
 }
 
-export interface RankedCityCardProps extends BaseCityCardProps {
-  variant: "ranked";
-  city: RankedCity;
-}
-
 export interface BasicCityCardProps extends BaseCityCardProps {
   variant: "basic";
   city: CitiesResponse;
 }
-
-export type CityCardProps = RankedCityCardProps | BasicCityCardProps;
 
 export interface PreferencesCardProps {
   preferences: UserPreferences;
