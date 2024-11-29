@@ -384,38 +384,40 @@ export const ListsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] pb-20 md:pb-0">
-      <div className="mx-8 2xl:mx-16 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    <div className="pb-20 md:pb-0">
+      <div className="px-4 md:mx-8 2xl:mx-16 py-4 md:py-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Lists</h1>
-            <p className="text-muted-foreground max-w-2xl">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Lists</h1>
+            <p className="text-muted-foreground max-w-2xl text-sm md:text-base">
               Discover curated collections of amazing places and create your own
               lists to share with the community.
             </p>
           </div>
-          <Link to="/create-list">
-            <Button size="lg" className="md:self-start">
+          <Link to="/create-list" className="w-full md:w-auto">
+            <Button size="lg" className="w-full md:w-auto">
               <Plus className="mr-2 h-5 w-5" /> Create List
             </Button>
           </Link>
         </div>
 
         {/* Quick Create Templates */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Start Your Own List</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="mb-6 md:mb-8">
+          <CardContent className="p-4 md:p-6">
+            <h2 className="text-lg md:text-xl font-semibold mb-4">
+              Start Your Own List
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {LIST_TEMPLATES.map((template) => (
                 <Card
                   key={template.title}
                   className="group cursor-pointer hover:shadow-lg transition-all"
                   onClick={() => navigate("/create-list")}
                 >
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 md:p-6">
                     <div className="flex items-center gap-4">
                       <div
-                        className={`p-3 rounded-lg ${template.bgClass} ${template.textClass}`}
+                        className={`p-3 rounded-lg ${template.bgClass} ${template.textClass} relative`}
                       >
                         <template.icon className="h-6 w-6" />
                       </div>
@@ -433,9 +435,9 @@ export const ListsPage: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="popular" className="space-y-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <TabsList>
+        <Tabs defaultValue="popular" className="space-y-6 md:space-y-8">
+          <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+            <TabsList className="w-full sm:w-auto overflow-x-auto">
               <TabsTrigger value="popular">Popular</TabsTrigger>
               <TabsTrigger value="recent">Recent</TabsTrigger>
               <TabsTrigger value="trending">Trending</TabsTrigger>
@@ -443,11 +445,11 @@ export const ListsPage: React.FC = () => {
               <TabsTrigger value="following">Following</TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center gap-2">
-              <div className="relative w-[200px]">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-[200px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  className="pl-9"
+                  className="pl-9 w-full"
                   placeholder="Search lists..."
                   onChange={handleSearchChange}
                   value={searchInputValue}
@@ -455,7 +457,7 @@ export const ListsPage: React.FC = () => {
               </div>
 
               <Select defaultValue="this-week">
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue placeholder="Time period" />
                 </SelectTrigger>
                 <SelectContent>

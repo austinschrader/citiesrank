@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Search,
-  Menu,
   X,
   Globe,
   BookOpen,
@@ -18,7 +17,6 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,8 +27,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SignInButton } from "@/components/auth/SignInButton";
 import { useAuth } from "@/lib/auth/AuthContext";
@@ -64,7 +68,10 @@ export const Header = () => {
         className="pl-9 pr-4 h-11 w-full bg-muted/40 focus:bg-background"
       />
       {searchQuery && (
-        <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 transform -translate-y-1/2">
+        <button
+          onClick={() => setSearchQuery("")}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2"
+        >
           <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
         </button>
       )}
@@ -79,34 +86,18 @@ export const Header = () => {
           <div className="h-16 flex items-center justify-between gap-4">
             {/* Logo section */}
             <div className="flex items-center gap-6">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left">
-                  <SheetHeader className="mb-4">
-                    <SheetTitle>Menu</SheetTitle>
-                  </SheetHeader>
-                  <ScrollArea className="h-[calc(100vh-8rem)]">
-                    <div className="flex flex-col gap-2">
-                      {navItems.map((item) => (
-                        <Link key={item.to} to={item.to}>
-                          <Button variant="ghost" className="justify-start gap-2 w-full">
-                            <item.icon className="h-4 w-4" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </SheetContent>
-              </Sheet>
-
-              <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                <img src="/favicon.svg" alt="WanderLog Logo" className="w-9 h-9" />
-                <span className="font-bold text-xl hidden sm:inline">WanderLog</span>
+              <Link
+                to="/"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
+                <img
+                  src="/favicon.svg"
+                  alt="WanderLog Logo"
+                  className="w-9 h-9"
+                />
+                <span className="font-bold text-xl hidden sm:inline">
+                  WanderLog
+                </span>
                 <span className="font-bold text-xl sm:hidden">WL</span>
               </Link>
             </div>
@@ -129,14 +120,20 @@ export const Header = () => {
             <div className="flex items-center gap-3">
               <Dialog open={isSearchActive} onOpenChange={setIsSearchActive}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden h-11 w-11">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="md:hidden h-11 w-11"
+                  >
                     <Search className="h-5 w-5" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="top-4 gap-0 p-0">
                   <DialogHeader className="px-4 pt-5 pb-4">
                     <DialogTitle>Search</DialogTitle>
-                    <DialogDescription>Find places, lists, and more</DialogDescription>
+                    <DialogDescription>
+                      Find places, lists, and more
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="px-4 pb-4">
                     <SearchBar />
@@ -155,18 +152,28 @@ export const Header = () => {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="relative h-11 w-11 rounded-full">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="relative h-11 w-11 rounded-full"
+                    >
                       <Avatar className="h-9 w-9">
                         <AvatarImage src={user.avatar} alt={user.name ?? ""} />
-                        <AvatarFallback>{user.name?.[0] ?? user.email?.[0].toUpperCase()}</AvatarFallback>
+                        <AvatarFallback>
+                          {user.name?.[0] ?? user.email?.[0].toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-64" align="end">
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        <p className="text-sm font-medium leading-none">
+                          {user.name}
+                        </p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {user.email}
+                        </p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -199,12 +206,20 @@ export const Header = () => {
 
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
-                        <a href="https://docs.citiesrank.com" target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                        <a
+                          href="https://docs.citiesrank.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="cursor-pointer"
+                        >
                           <LifeBuoy className="mr-2 h-5 w-5" />
                           Help & Support
                         </a>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleSignOut} className="text-red-600 focus:text-red-600 cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={handleSignOut}
+                        className="text-red-600 focus:text-red-600 cursor-pointer"
+                      >
                         <LogOut className="mr-2 h-5 w-5" />
                         Sign out
                         <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
@@ -220,18 +235,24 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* Mobile navigation bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background z-50">
-        <nav className="mx-8 2xl:mx-16 h-16">
-          <div className="grid h-full grid-cols-4">
+      {/* Mobile Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background md:hidden z-50">
+        <nav className="container h-full">
+          <div className="grid h-full grid-cols-4 items-stretch">
             {navItems
               .filter((item) => !item.mobileOnly)
               .map((item) => (
-                <Link key={item.to} to={item.to} className="h-full">
-                  <Button variant="ghost" className="h-full w-full rounded-none flex flex-col gap-1 items-center justify-center">
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="flex items-center justify-center"
+                >
+                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
                     <item.icon className="h-5 w-5" />
-                    <span className="text-xs">{item.label}</span>
-                  </Button>
+                    <span className="text-[10px] font-medium">
+                      {item.label}
+                    </span>
+                  </div>
                 </Link>
               ))}
           </div>
