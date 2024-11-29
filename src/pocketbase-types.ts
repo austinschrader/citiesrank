@@ -108,7 +108,12 @@ export type ListsRecord<Ttags = unknown> = {
 
 export type UsersRecord = {
 	avatar?: string
+	bio?: string
+	isPrivate?: boolean
+	lists_count?: number
+	location?: string
 	name?: string
+	places_visited?: RecordIdString[]
 }
 
 // Response types include system fields and match responses from the PocketBase API

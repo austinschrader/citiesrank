@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Search,
   MapPin,
@@ -13,229 +13,153 @@ import {
   Filter,
   ListFilter,
   GlobeIcon,
+  Check,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import PocketBase from "pocketbase";
+import { UsersResponse, UsersRecord } from "@/pocketbase-types";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 // Types
 interface MemberProfile {
   id: string;
   name: string;
   username: string;
-  avatar: string;
-  location: string;
-  bio: string;
-  joinDate: string;
-  stats: {
-    lists: number;
-    followers: number;
-    following: number;
-    placesVisited: number;
-    contributions: number;
-    reviews: number;
-  };
-  badges: string[];
-  socialLinks: {
-    twitter?: string;
-    instagram?: string;
-    blog?: string;
-  };
-  topDestinations: string[];
-  recentActivity: {
-    type: "review" | "list" | "visited";
-    content: string;
-    date: string;
-  }[];
-  expertise: string[];
+  avatar?: string;
+  location?: string;
+  bio?: string;
+  created: string;
+  lists_count?: number;
+  places_visited?: string[];
   verified: boolean;
 }
-
-// Mock Data
-const MOCK_MEMBERS: MemberProfile[] = [
-  {
-    id: "1",
-    name: "Elena Rodriguez",
-    username: "wanderlust_elena",
-    avatar: "/avatars/elena.jpg",
-    location: "Barcelona, Spain",
-    bio: "Full-time nomad, part-time photographer. Exploring hidden gems across Europe.",
-    joinDate: "2023-01-15",
-    stats: {
-      lists: 45,
-      followers: 12400,
-      following: 892,
-      placesVisited: 78,
-      contributions: 234,
-      reviews: 156,
-    },
-    badges: ["Top Contributor", "Photography Expert", "Local Guide"],
-    socialLinks: {
-      twitter: "@wanderlust_elena",
-      instagram: "@elena.travels",
-      blog: "elenaexplores.com",
-    },
-    topDestinations: ["Paris", "Rome", "Amsterdam"],
-    recentActivity: [
-      { type: "list", content: "Hidden Cafes of Barcelona", date: "2024-03-17" },
-      { type: "review", content: "Sagrada Familia", date: "2024-03-15" },
-    ],
-    expertise: ["Street Photography", "Food & Wine", "Architecture"],
-    verified: true,
-  },
-  {
-    id: "2",
-    name: "James Chen",
-    username: "foodie_james",
-    avatar: "/avatars/james.jpg",
-    location: "Portland, OR",
-    bio: "Food critic and cultural explorer. Always seeking the next great meal.",
-    joinDate: "2023-05-20",
-    stats: {
-      lists: 67,
-      followers: 8900,
-      following: 445,
-      placesVisited: 45,
-      contributions: 567,
-      reviews: 289,
-    },
-    badges: ["Food Expert", "Culture Buff", "Rising Star"],
-    socialLinks: {
-      instagram: "@pdx_foodie_james",
-    },
-    topDestinations: ["Tokyo", "Singapore", "Bangkok"],
-    recentActivity: [
-      { type: "list", content: "Best Ramen Shops in Portland", date: "2024-03-16" },
-      { type: "review", content: "Hat Yai Restaurant", date: "2024-03-14" },
-    ],
-    expertise: ["Restaurant Reviews", "Street Food", "Culinary Tours"],
-    verified: true,
-  },
-  {
-    id: "3",
-    name: "Sarah Johnson",
-    username: "family_travels",
-    avatar: "/avatars/sarah.jpg",
-    location: "London, UK",
-    bio: "Family travel expert. Making memories with kids in tow.",
-    joinDate: "2023-08-10",
-    stats: {
-      lists: 34,
-      followers: 5600,
-      following: 328,
-      placesVisited: 32,
-      contributions: 145,
-      reviews: 89,
-    },
-    badges: ["Family Expert", "Budget Master"],
-    socialLinks: {
-      instagram: "@johnson_family_travels",
-      blog: "familyadventures.blog",
-    },
-    topDestinations: ["Copenhagen", "Munich", "Edinburgh"],
-    recentActivity: [
-      { type: "list", content: "Kid-Friendly Museums in London", date: "2024-03-15" },
-      { type: "visited", content: "Legoland Windsor", date: "2024-03-10" },
-    ],
-    expertise: ["Family Travel", "Educational Tours", "Budget Planning"],
-    verified: false,
-  },
-];
 
 const MemberCard = ({ member }: { member: MemberProfile }) => {
   return (
     <Card className="group hover:shadow-lg transition-all">
-      <CardHeader className="space-y-4">
+      <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={member.avatar} />
+              <AvatarImage src={member.avatar || "/default-avatar.png"} />
               <AvatarFallback>{member.name[0]}</AvatarFallback>
             </Avatar>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">{member.name}</h3>
-                {/* 
-                TODO: fix spacing issue
                 {member.verified && (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="h-5">
+                    <Check className="h-3 w-3 mr-1" />
                     Verified
                   </Badge>
-                )} */}
+                )}
               </div>
-              <p className="text-sm text-muted-foreground">@{member.username}</p>
-              <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                <MapPin className="h-3 w-3" />
-                <span>{member.location}</span>
-              </div>
+              <p className="text-sm text-muted-foreground">
+                @{member.username}
+              </p>
+              {member.location && (
+                <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                  <MapPin className="h-3 w-3" />
+                  <span>{member.location}</span>
+                </div>
+              )}
             </div>
           </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <UserPlus className="h-4 w-4" />
-            Follow
-          </Button>
         </div>
-        <p className="text-sm">{member.bio}</p>
       </CardHeader>
-
       <CardContent>
-        <div className="grid grid-cols-3 gap-4 text-center mb-4">
+        {member.bio && (
+          <p className="text-sm text-muted-foreground mb-4">{member.bio}</p>
+        )}
+        <div className="flex justify-between text-center">
           <div>
-            <p className="font-semibold">{member.stats.lists}</p>
+            <p className="font-semibold">{member.lists_count || 0}</p>
             <p className="text-xs text-muted-foreground">Lists</p>
           </div>
           <div>
-            <p className="font-semibold">{member.stats.followers.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">Followers</p>
+            <p className="font-semibold">
+              {member.places_visited?.length || 0}
+            </p>
+            <p className="text-xs text-muted-foreground">Places Visited</p>
           </div>
           <div>
-            <p className="font-semibold">{member.stats.placesVisited}</p>
-            <p className="text-xs text-muted-foreground">Places</p>
+            <p className="font-semibold">
+              {new Date(member.created).toLocaleDateString()}
+            </p>
+            <p className="text-xs text-muted-foreground">Joined</p>
           </div>
         </div>
-
-        <div className="flex flex-wrap gap-2">
-          {member.badges.map((badge) => (
-            <Badge key={badge} variant="secondary" className="text-xs">
-              {badge}
-            </Badge>
-          ))}
-        </div>
       </CardContent>
-
-      <CardFooter className="flex justify-between border-t pt-4">
-        <div className="flex gap-2">
-          {member.socialLinks.twitter && (
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Twitter className="h-4 w-4" />
-            </Button>
-          )}
-          {member.socialLinks.instagram && (
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Instagram className="h-4 w-4" />
-            </Button>
-          )}
-          {member.socialLinks.blog && (
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Globe className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <MessageCircle className="h-4 w-4" />
-          Message
+      <CardFooter className="pt-1">
+        <Button variant="secondary" className="w-full">
+          <UserPlus className="h-4 w-4 mr-2" />
+          Follow
         </Button>
       </CardFooter>
     </Card>
   );
 };
 
-export const MembersPage = () => {
+export function MembersPage() {
+  const { pb } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("popular");
+  const [sortBy, setSortBy] = useState("recent");
+  const [filterLocation, setFilterLocation] = useState("");
+  const [users, setUsers] = useState<Array<UsersResponse>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Helper function to get avatar URL
+  const getAvatarUrl = (user: UsersResponse) => {
+    if (!user?.avatar) return "";
+    return pb.files.getUrl(user, user.avatar);
+  };
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        setIsLoading(true);
+        const resultList = await pb
+          .collection("users")
+          .getList<UsersResponse>(1, 50, {
+            sort: sortBy === "recent" ? "-created" : "-username",
+            filter: searchQuery
+              ? `name ~ "${searchQuery}" || username ~ "${searchQuery}"`
+              : "",
+          });
+        setUsers(resultList.items);
+        setError(null);
+      } catch (err) {
+        setError("Failed to load users");
+        console.error("Error fetching users:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchUsers();
+  }, [searchQuery, sortBy, pb]);
+
+  const filteredMembers = users.filter((user) => {
+    if (!filterLocation) return true;
+    return user.location?.toLowerCase().includes(filterLocation.toLowerCase());
+  });
 
   return (
     <div className="min-h-[calc(100vh-4rem)] pb-20 md:pb-0">
@@ -244,7 +168,8 @@ export const MembersPage = () => {
           <div>
             <h1 className="text-4xl font-bold mb-2">Members</h1>
             <p className="text-muted-foreground max-w-2xl">
-              Connect with passionate travelers, local experts, and culture enthusiasts from around the world.
+              Connect with passionate travelers, local experts, and culture
+              enthusiasts from around the world.
             </p>
           </div>
         </div>
@@ -254,30 +179,38 @@ export const MembersPage = () => {
             <div className="sticky top-24 space-y-6">
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search members" className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                <Input
+                  placeholder="Search members"
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
 
               <div>
                 <h3 className="font-semibold mb-2">Browse By</h3>
                 <div className="space-y-1">
                   <Button
-                    variant={selectedFilter === "popular" ? "secondary" : "ghost"}
+                    variant={sortBy === "popular" ? "secondary" : "ghost"}
                     className="w-full justify-start"
-                    onClick={() => setSelectedFilter("popular")}>
+                    onClick={() => setSortBy("popular")}
+                  >
                     <Trophy className="h-4 w-4 mr-2" />
                     Popular Members
                   </Button>
                   <Button
-                    variant={selectedFilter === "recent" ? "secondary" : "ghost"}
+                    variant={sortBy === "recent" ? "secondary" : "ghost"}
                     className="w-full justify-start"
-                    onClick={() => setSelectedFilter("recent")}>
+                    onClick={() => setSortBy("recent")}
+                  >
                     <Calendar className="h-4 w-4 mr-2" />
                     Recent Joiners
                   </Button>
                   <Button
-                    variant={selectedFilter === "active" ? "secondary" : "ghost"}
+                    variant={sortBy === "active" ? "secondary" : "ghost"}
                     className="w-full justify-start"
-                    onClick={() => setSelectedFilter("active")}>
+                    onClick={() => setSortBy("active")}
+                  >
                     <Users className="h-4 w-4 mr-2" />
                     Most Active
                   </Button>
@@ -320,7 +253,11 @@ export const MembersPage = () => {
           <div className="flex-1">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                Showing <span className="font-medium text-foreground">{MOCK_MEMBERS.length}</span> members
+                Showing{" "}
+                <span className="font-medium text-foreground">
+                  {filteredMembers.length}
+                </span>{" "}
+                members
               </p>
               <Select defaultValue="recent">
                 <SelectTrigger className="w-[180px]">
@@ -330,19 +267,43 @@ export const MembersPage = () => {
                 <SelectContent>
                   <SelectItem value="recent">Recently Active</SelectItem>
                   <SelectItem value="followers">Most Followers</SelectItem>
-                  <SelectItem value="contributions">Top Contributors</SelectItem>
+                  <SelectItem value="contributions">
+                    Top Contributors
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {MOCK_MEMBERS.map((member) => (
-                <MemberCard key={member.id} member={member} />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center items-center min-h-[200px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+              </div>
+            ) : error ? (
+              <div className="text-red-500 text-center py-8">{error}</div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredMembers.map((user) => (
+                  <MemberCard
+                    key={user.id}
+                    member={{
+                      id: user.id,
+                      name: user.name || user.username,
+                      username: user.username,
+                      avatar: getAvatarUrl(user),
+                      location: user.location,
+                      bio: user.bio,
+                      created: user.created,
+                      lists_count: user.lists_count,
+                      places_visited: user.places_visited,
+                      verified: user.verified,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
