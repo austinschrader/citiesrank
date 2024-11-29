@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import PocketBase from "pocketbase";
 import { getApiUrl } from "@/appConfig";
 import { ReviewSummary } from "@/types";
+import { useToast } from "@/hooks/use-toast";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -42,6 +43,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
   const [showControls, setShowControls] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const pb = new PocketBase(getApiUrl());
 
@@ -106,6 +108,10 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
         if (records.length > 0) {
           await pb.collection("favorites").delete(records[0].id);
         }
+        toast({
+          title: "City Removed",
+          description: `${city.name} has been removed from your favorites`,
+        });
       } else {
         // Create new favorite record
         await pb.collection("favorites").create({
@@ -113,10 +119,19 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
           city: city.id,
           field: "", // Optional notes field, can be empty
         });
+        toast({
+          title: "City Saved",
+          description: `${city.name} has been added to your favorites`,
+        });
       }
       setIsFavorite(!isFavorite);
     } catch (error) {
       console.error("Error toggling favorite:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update favorites. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
