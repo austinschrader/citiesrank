@@ -42,6 +42,7 @@ export interface CityData {
 }
 
 export interface RankedCity extends CityData {
+  id: any;
   name: string;
   matchScore: number;
   attributeMatches: {

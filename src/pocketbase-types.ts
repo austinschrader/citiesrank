@@ -8,6 +8,7 @@ import type { RecordService } from 'pocketbase'
 export enum Collections {
 	Cities = "cities",
 	Countries = "countries",
+	Favorites = "favorites",
 	Lists = "lists",
 	Users = "users",
 }
@@ -70,6 +71,12 @@ export type CountriesRecord = {
 	population: number
 }
 
+export type FavoritesRecord = {
+	city: RecordIdString
+	field?: string
+	user: RecordIdString
+}
+
 export enum ListsStatusOptions {
 	"published" = "published",
 	"draft" = "draft",
@@ -119,6 +126,7 @@ export type UsersRecord = {
 // Response types include system fields and match responses from the PocketBase API
 export type CitiesResponse<Tcoordinates = unknown, TdestinationTypes = unknown, Thighlights = unknown, Treviews = unknown, Texpand = unknown> = Required<CitiesRecord<Tcoordinates, TdestinationTypes, Thighlights, Treviews>> & BaseSystemFields<Texpand>
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
+export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
 export type ListsResponse<Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Ttags>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
@@ -127,6 +135,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 export type CollectionRecords = {
 	cities: CitiesRecord
 	countries: CountriesRecord
+	favorites: FavoritesRecord
 	lists: ListsRecord
 	users: UsersRecord
 }
@@ -134,6 +143,7 @@ export type CollectionRecords = {
 export type CollectionResponses = {
 	cities: CitiesResponse
 	countries: CountriesResponse
+	favorites: FavoritesResponse
 	lists: ListsResponse
 	users: UsersResponse
 }
@@ -144,6 +154,7 @@ export type CollectionResponses = {
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'cities'): RecordService<CitiesResponse>
 	collection(idOrName: 'countries'): RecordService<CountriesResponse>
+	collection(idOrName: 'favorites'): RecordService<FavoritesResponse>
 	collection(idOrName: 'lists'): RecordService<ListsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

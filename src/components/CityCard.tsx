@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import {
   MapPin,
@@ -22,6 +22,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import PocketBase from "pocketbase";
+import { getApiUrl } from "@/appConfig";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -38,6 +40,30 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const pb = new PocketBase(getApiUrl());
+
+  // Check if city is favorited on mount and when user changes
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!user) {
+        setIsFavorite(false);
+        return;
+      }
+
+      try {
+        const records = await pb.collection("favorites").getFullList({
+          filter: `user = "${user.id}" && city = "${city.id}"`,
+        });
+        setIsFavorite(records.length > 0);
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [user, city.id]);
 
   const getMatchColor = (score: number) => {
     if (score >= 90) return "bg-green-50 text-green-700";
@@ -59,7 +85,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
     });
   };
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click from triggering
 
     if (!user) {
@@ -67,8 +93,32 @@ export const CityCard: React.FC<CityCardProps> = ({ city }) => {
       return;
     }
 
-    setIsFavorite(!isFavorite);
-    // Add your favorite logic here
+    if (isLoading) return;
+    setIsLoading(true);
+
+    try {
+      if (isFavorite) {
+        // Find and delete the favorite record
+        const records = await pb.collection("favorites").getFullList({
+          filter: `user = "${user.id}" && city = "${city.id}"`,
+        });
+        if (records.length > 0) {
+          await pb.collection("favorites").delete(records[0].id);
+        }
+      } else {
+        // Create new favorite record
+        await pb.collection("favorites").create({
+          user: user.id,
+          city: city.id,
+          field: "", // Optional notes field, can be empty
+        });
+      }
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignIn = async () => {
