@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
-import { DestinationFilter } from "@/components/DestinationFilter";
+import { DestinationFilter } from "@/components/places/components/DestinationFilter";
 import { PreferencesCard } from "@/components/ui/PreferencesCard";
 import { CitiesResponse } from "@/pocketbase-types";
 import { UserPreferences, MatchScoreResult } from "@/types";

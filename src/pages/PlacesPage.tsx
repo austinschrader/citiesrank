@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { CityCard } from "@/components/CityCard";
+import { CityCard } from "@/components/places/components/CityCard";
 import { Pagination } from "@/components/ui/Pagination";
 import { UserPreferences, MatchScoreResult } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";

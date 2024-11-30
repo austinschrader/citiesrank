@@ -68,7 +68,7 @@ import {
   FavoritesRecord,
   CitiesResponse,
 } from "@/pocketbase-types";
-import { CityCard } from "@/components/CityCard";
+import { CityCard } from "@/components/places/components/CityCard";
 
 interface UserStats {
   placesVisited: number;

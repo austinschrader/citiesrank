@@ -136,21 +136,6 @@ export interface ImageGalleryProps {
   onImagesLoaded?: (images: Set<string>) => void;
 }
 
-export interface HighlightLinkProps {
-  highlight: string;
-  cityName: string;
-  country: string;
-  onClick?: (e: React.MouseEvent) => void;
-}
-
-export interface HighlightLinkSectionProps {
-  highlights: string[];
-  cityName: string;
-  country: string;
-  onHighlightClick?: (e: React.MouseEvent) => void;
-  availableImages?: Set<string>;
-}
-
 export interface HighlightCategory {
   type: string;
   icon: ReactNode;

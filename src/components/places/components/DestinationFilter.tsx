@@ -8,7 +8,10 @@ interface DestinationFilterProps {
   onFilterSelect: (filter: string) => void;
 }
 
-export const DestinationFilter = ({ selectedFilter, onFilterSelect }: DestinationFilterProps) => {
+export const DestinationFilter = ({
+  selectedFilter,
+  onFilterSelect,
+}: DestinationFilterProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -32,7 +35,10 @@ export const DestinationFilter = ({ selectedFilter, onFilterSelect }: Destinatio
     const currentScroll = scrollRef.current.scrollLeft;
 
     scrollRef.current.scrollTo({
-      left: direction === "left" ? currentScroll - scrollAmount : currentScroll + scrollAmount,
+      left:
+        direction === "left"
+          ? currentScroll - scrollAmount
+          : currentScroll + scrollAmount,
       behavior: "smooth",
     });
   };
@@ -68,9 +74,15 @@ export const DestinationFilter = ({ selectedFilter, onFilterSelect }: Destinatio
           "absolute left-0 top-0 bottom-0 flex items-center z-10",
           "transition-opacity duration-200",
           showLeftArrow ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}>
+        )}
+      >
         <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent" />
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 ml-2" onClick={() => handleScroll("left")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative h-8 w-8 ml-2"
+          onClick={() => handleScroll("left")}
+        >
           <ChevronLeft className="h-4 w-4" />
         </Button>
       </div>
@@ -81,14 +93,23 @@ export const DestinationFilter = ({ selectedFilter, onFilterSelect }: Destinatio
           "absolute right-0 top-0 bottom-0 flex items-center z-10",
           "transition-opacity duration-200",
           showRightArrow ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}>
+        )}
+      >
         <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent" />
-        <Button variant="ghost" size="icon" className="relative h-8 w-8 mr-2" onClick={() => handleScroll("right")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative h-8 w-8 mr-2"
+          onClick={() => handleScroll("right")}
+        >
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
 
-      <div ref={scrollRef} className="overflow-x-auto px-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto px-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
         <div className="flex gap-6 min-w-max py-3">
           <div className="flex gap-4 min-w-max py-2">
             {filterOptions.map((option) => (
@@ -103,7 +124,8 @@ export const DestinationFilter = ({ selectedFilter, onFilterSelect }: Destinatio
                   selectedFilter === option.id
                     ? "bg-primary text-primary-foreground shadow hover:bg-primary/90"
                     : "hover:bg-accent hover:text-accent-foreground"
-                )}>
+                )}
+              >
                 {option.label}
               </button>
             ))}
