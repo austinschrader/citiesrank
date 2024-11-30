@@ -28,7 +28,7 @@ interface AuthContextType {
   signOut: () => void;
 }
 
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);

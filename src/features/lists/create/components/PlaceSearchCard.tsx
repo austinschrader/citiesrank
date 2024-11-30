@@ -2,12 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { Search, X, Loader2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import PocketBase from "pocketbase";
 import { useToast } from "@/hooks/use-toast";
 import debounce from "lodash/debounce";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
@@ -29,7 +35,10 @@ interface PlaceSearchCardProps {
   onClose: () => void;
 }
 
-export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, onClose }) => {
+export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
+  onAddPlace,
+  onClose,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [places, setPlaces] = useState<Place[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,7 +54,11 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
   const isLoadingRef = useRef(false);
 
   // Function to load places with pagination and search
-  const loadPlaces = async (searchTerm: string, pageNum: number, append: boolean = false) => {
+  const loadPlaces = async (
+    searchTerm: string,
+    pageNum: number,
+    append: boolean = false
+  ) => {
     try {
       // Cancel any ongoing request
       if (abortControllerRef.current) {
@@ -61,13 +74,17 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
 
       isLoadingRef.current = true;
 
-      const filter = searchTerm ? `name ~ "${searchTerm}" || country ~ "${searchTerm}"` : "";
+      const filter = searchTerm
+        ? `name ~ "${searchTerm}" || country ~ "${searchTerm}"`
+        : "";
 
-      const resultList = await pb.collection("cities_list").getList(pageNum, ITEMS_PER_PAGE, {
-        sort: "-interesting",
-        filter,
-        $autoCancel: false, // Disable PocketBase's auto-cancellation
-      });
+      const resultList = await pb
+        .collection("cities_list")
+        .getList(pageNum, ITEMS_PER_PAGE, {
+          sort: "-interesting",
+          filter,
+          $autoCancel: false, // Disable PocketBase's auto-cancellation
+        });
 
       if (abortControllerRef.current.signal.aborted) {
         return;
@@ -90,7 +107,9 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
         })
       );
 
-      setPlaces((prev) => (append ? [...prev, ...transformedPlaces] : transformedPlaces));
+      setPlaces((prev) =>
+        append ? [...prev, ...transformedPlaces] : transformedPlaces
+      );
       setTotalItems(resultList.totalItems);
       setHasMore(resultList.items.length === ITEMS_PER_PAGE);
     } catch (error) {
@@ -145,7 +164,12 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
   // Handle infinite scroll with debounce
   const handleScroll = debounce(async (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollHeight - scrollTop <= clientHeight * 1.5 && !isLoadingMore && hasMore && !isLoadingRef.current) {
+    if (
+      scrollHeight - scrollTop <= clientHeight * 1.5 &&
+      !isLoadingMore &&
+      hasMore &&
+      !isLoadingRef.current
+    ) {
       setIsLoadingMore(true);
       const nextPage = page + 1;
       setPage(nextPage);
@@ -169,8 +193,13 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
       key={place.id}
       onClick={() => handlePlaceClick(place)}
       className={`p-3 rounded-lg cursor-pointer transition-all hover:bg-secondary
-        ${selectedPlace?.id === place.id ? "ring-2 ring-primary bg-secondary" : ""}
-      `}>
+        ${
+          selectedPlace?.id === place.id
+            ? "ring-2 ring-primary bg-secondary"
+            : ""
+        }
+      `}
+    >
       <div className="flex justify-between items-start">
         <div>
           <h3 className="font-medium">{place.name}</h3>
@@ -178,7 +207,10 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
           {place.destinationTypes && place.destinationTypes.length > 0 && (
             <div className="flex gap-1 mt-1 flex-wrap">
               {place.destinationTypes.slice(0, 3).map((type) => (
-                <span key={type} className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
+                <span
+                  key={type}
+                  className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs"
+                >
                   {type}
                 </span>
               ))}
@@ -212,7 +244,13 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
         </div>
         <div className="relative">
           <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search cities..." className="pl-8" value={searchQuery} onChange={handleSearchChange} autoFocus />
+          <Input
+            placeholder="Search cities..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            autoFocus
+          />
         </div>
       </CardHeader>
 
@@ -224,7 +262,9 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
         ) : places.length === 0 ? (
           <div className="h-[400px] flex flex-col items-center justify-center text-center">
             <MapPin className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-muted-foreground">No places found matching your search</p>
+            <p className="text-muted-foreground">
+              No places found matching your search
+            </p>
           </div>
         ) : (
           <ScrollArea className="h-[400px] pr-4" onScrollCapture={handleScroll}>
@@ -242,8 +282,13 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({ onAddPlace, on
 
       <CardFooter className="border-t bg-muted/50">
         <div className="flex justify-between items-center w-full">
-          <p className="text-sm text-muted-foreground">{totalItems} places available</p>
-          <Button onClick={handleAddPlace} disabled={!selectedPlace || isLoading}>
+          <p className="text-sm text-muted-foreground">
+            {totalItems} places available
+          </p>
+          <Button
+            onClick={handleAddPlace}
+            disabled={!selectedPlace || isLoading}
+          >
             Add Selected Place
           </Button>
         </div>

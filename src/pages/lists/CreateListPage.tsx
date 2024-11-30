@@ -21,7 +21,7 @@ import type {
   Place,
 } from "@/features/lists/create/types";
 
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PocketBase from "pocketbase";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
@@ -12,7 +12,10 @@ interface UseInsightActionsReturn {
   error: Error | null;
 }
 
-export const useInsightActions = (cityId: string, onSuccess: () => Promise<void>): UseInsightActionsReturn => {
+export const useInsightActions = (
+  cityId: string,
+  onSuccess: () => Promise<void>
+): UseInsightActionsReturn => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 

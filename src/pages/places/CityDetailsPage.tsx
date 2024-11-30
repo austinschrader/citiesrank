@@ -17,7 +17,7 @@ import { NeighborhoodExplorer } from "@/features/places/detail/neighborhoods/Nei
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { CitiesRecord, CitiesResponse } from "@/pocketbase-types";
 import PocketBase from "pocketbase";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);

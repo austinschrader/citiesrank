@@ -12,7 +12,7 @@ import { MobileSearch } from "@/features/places/MobileSearch";
 import { DesktopFilters } from "@/features/places/DesktopFilters";
 import { MobileFilters } from "@/features/places/MobileFilters";
 import { filterOptions } from "@/features/places/constants";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { CitiesResponse } from "@/pocketbase-types";
 

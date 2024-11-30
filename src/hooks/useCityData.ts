@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { CityInsight } from "@/features/places/detail/types";
 import { CityData } from "@/features/places/types";
 import PocketBase from "pocketbase";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);

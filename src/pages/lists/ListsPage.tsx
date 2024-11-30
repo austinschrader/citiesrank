@@ -51,7 +51,7 @@ import {
 } from "@/pocketbase-types";
 import { Collections } from "@/pocketbase-types";
 
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);

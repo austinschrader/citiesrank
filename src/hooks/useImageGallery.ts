@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { GalleryImageType } from "@/types";
+import type { GalleryImageType } from "@/lib/types/types";
 import { checkImageExists } from "@/lib/imageUtils";
 
 interface UseImageGalleryProps {
@@ -8,7 +8,11 @@ interface UseImageGalleryProps {
   initialHighlight?: string | null;
 }
 
-export const useImageGallery = ({ images, onHighlightChange, initialHighlight }: UseImageGalleryProps) => {
+export const useImageGallery = ({
+  images,
+  onHighlightChange,
+  initialHighlight,
+}: UseImageGalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadedImages, setLoadedImages] = useState<GalleryImageType[]>([]);
@@ -34,7 +38,9 @@ export const useImageGallery = ({ images, onHighlightChange, initialHighlight }:
 
   useEffect(() => {
     if (initialHighlight && loadedImages.length > 0) {
-      const index = loadedImages.findIndex((img) => img.title === initialHighlight);
+      const index = loadedImages.findIndex(
+        (img) => img.title === initialHighlight
+      );
       if (index !== -1) {
         setCurrentIndex(index);
       }
@@ -48,10 +54,13 @@ export const useImageGallery = ({ images, onHighlightChange, initialHighlight }:
   const navigate = useCallback(
     (direction: number) => {
       setCurrentIndex((current) => {
-        const newIndex = (current + direction + loadedImages.length) % loadedImages.length;
+        const newIndex =
+          (current + direction + loadedImages.length) % loadedImages.length;
         const newImage = loadedImages[newIndex];
         if (onHighlightChange) {
-          onHighlightChange(newImage.type === "attraction" ? newImage.title : null);
+          onHighlightChange(
+            newImage.type === "attraction" ? newImage.title : null
+          );
         }
         return newIndex;
       });

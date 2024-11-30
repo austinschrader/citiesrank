@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import PocketBase from "pocketbase";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 import { useToast } from "@/hooks/use-toast";
 
 // Add this utility function at the top
