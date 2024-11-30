@@ -3,14 +3,14 @@ import { Pagination } from "@/components/ui/Pagination";
 import { getApiUrl } from "@/config/appConfig";
 import { CitiesSection } from "@/features/places/components/CitiesSection";
 import { CityCard } from "@/features/places/components/CityCard";
+import { usePopularCities } from "@/features/places/hooks/usePopularCities";
+import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
 import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
-import { filterOptions } from "@/features/places/constants";
-import { usePopularCities } from "@/features/places/hooks/usePopularCities";
-import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
+import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
-import { MatchScore, UserPreferences } from "@/features/preferences/types";
+import { MatchScore } from "@/features/preferences/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import debounce from "lodash/debounce";
@@ -25,14 +25,23 @@ const pb = new PocketBase(apiUrl);
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } =
     usePreferences();
-  const [sortOrder, setSortOrder] = useState("match");
+  const {
+    isFilterSheetOpen,
+    setIsFilterSheetOpen,
+    selectedFilter,
+    setSelectedFilter,
+    sortOrder,
+    setSortOrder,
+    filterOptions,
+    handleFilterSelect,
+    getFilteredCities,
+  } = useSearchFilters(preferences);
+
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
-  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [seasonalCities, setSeasonalCities] = useState<CitiesResponse[]>([]);
   const [popularCities, setPopularCities] = useState<CitiesResponse[]>([]);
@@ -129,55 +138,16 @@ export const PlacesPage = () => {
     };
   }, [debouncedSearch]);
 
-  const getFilteredCities = (
-    prefs: UserPreferences
-  ): (CitiesResponse & MatchScore)[] => {
-    return Object.entries(cityData)
-      .filter(([name, data]) => {
-        const matchesFilter =
-          !selectedFilter ||
-          (data.destinationTypes &&
-            Array.isArray(data.destinationTypes) &&
-            data.destinationTypes.includes(selectedFilter));
-        const matchesSearch =
-          !searchQuery ||
-          name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          data.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          data.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesFilter && matchesSearch;
-      })
-      .map(([, data]) => {
-        const matchScores = calculateMatchForCity(data);
-        return {
-          ...data,
-          ...matchScores,
-        };
-      })
-      .sort((a, b) => {
-        switch (sortOrder) {
-          case "cost-low":
-            return a.cost - b.cost;
-          case "cost-high":
-            return b.cost - a.cost;
-          case "popular":
-            return b.crowdLevel - a.crowdLevel;
-          default:
-            return b.matchScore - a.matchScore;
-        }
-      });
-  };
-
-  const filteredAndRankedCities = getFilteredCities(preferences);
+  const filteredAndRankedCities = getFilteredCities(
+    cityData,
+    searchQuery,
+    calculateMatchForCity
+  );
   const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
   const paginatedCities = filteredAndRankedCities.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
-
-  const handleFilterSelect = (filter: string) => {
-    setSelectedFilter(selectedFilter === filter ? null : filter);
-    setCurrentPage(1);
-  };
 
   if (isLoading) {
     return (
