@@ -1,10 +1,4 @@
-import {
-  ArrowLeft,
-  BookmarkPlus,
-  Share2,
-  MapPin,
-  ChevronDown,
-} from "lucide-react";
+import { ArrowLeft, BookmarkPlus, Share2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { CitiesRecord } from "@/pocketbase-types";
