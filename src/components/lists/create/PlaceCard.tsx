@@ -1,7 +1,7 @@
 import { GripVertical, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import type { Place } from "./types";
+import type { Place } from "../../../types/lists-create";
 
 interface PlaceCardProps {
   place: Place;
@@ -24,7 +24,12 @@ export function PlaceCard({ place, onRemove, isDragging }: PlaceCardProps) {
               <p className="text-sm text-muted-foreground">{place.country}</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => onRemove(place.id)} className="text-muted-foreground hover:text-destructive">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onRemove(place.id)}
+            className="text-muted-foreground hover:text-destructive"
+          >
             <X className="h-4 w-4" />
           </Button>
         </div>

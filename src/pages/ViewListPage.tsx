@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ListHero } from "@/components/lists/ListHero";
-import { PlaceCard } from "@/components/lists/PlaceCard";
-import { ListStatistics } from "@/components/lists/ListStatistics";
-import { PlaceDetails } from "@/components/lists/PlaceDetails";
-import { RelatedLists } from "@/components/lists/RelatedLists";
-import { CommentsSection } from "@/components/lists/CommentsSection";
+import { ListHero } from "@/components/lists/view/ListHero";
+import { PlaceCard } from "@/components/lists/components/PlaceCard";
+import { ListStatistics } from "@/components/lists/view/ListStatistics";
+import { PlaceDetails } from "@/components/lists/components/PlaceDetails";
+import { RelatedLists } from "@/components/lists/view/RelatedLists";
+import { CommentsSection } from "@/components/lists/view/CommentsSection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trash2, Loader2 } from "lucide-react";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
-import { Tags } from "@/components/lists/Tags";
+import { Tags } from "@/components/lists/components/Tags";
 import PocketBase from "pocketbase";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
