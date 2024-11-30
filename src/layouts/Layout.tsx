@@ -18,7 +18,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Legend } from "@/components/ui/Legend";
 import { UserPreferences } from "@/types";
-import { PreferencesCard } from "@/components/ui/PreferencesCard";
+import { PreferencesCard } from "@/components/PreferencesCard";
 
 interface LayoutProps {
   children: React.ReactNode;

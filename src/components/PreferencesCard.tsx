@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Euro, Users, Clock, Thermometer, Train, Car } from "lucide-react";
 import { UserPreferences } from "../../types";
-import { PreferenceSlider } from "@/components/ui/PreferenceSlider";
+import { PreferenceSlider } from "@/components/PreferenceSlider";
 
 interface PreferencesCardProps {
   preferences: UserPreferences;

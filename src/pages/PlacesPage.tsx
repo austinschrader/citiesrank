@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CityCard } from "@/features/places/components/CityCard";
-import { Pagination } from "@/components/ui/Pagination";
+import { Pagination } from "@/components/Pagination";
 import { UserPreferences, MatchScoreResult } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { Input } from "@/components/ui/input";
