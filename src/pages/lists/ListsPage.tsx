@@ -131,7 +131,6 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        console.log(list.places[0]);
         // Fetch city data if we have a first place
         if (list.places?.[0]) {
           const cityRecord = await pb
@@ -167,8 +166,6 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
     e.stopPropagation();
     console.log(`${action} clicked for list ${list.id}`);
   };
-
-  console.log(coverCity);
 
   const coverImage = coverCity?.imageUrl
     ? getCityImage(coverCity.imageUrl, "thumbnail")
