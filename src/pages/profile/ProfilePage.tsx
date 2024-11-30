@@ -1,4 +1,5 @@
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,45 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { useState, useEffect, useMemo } from "react";
 import {
-  MapPin,
-  Settings,
-  PenLine,
-  Trophy,
-  Calendar,
-  Globe,
-  List,
-  Star,
-  Camera,
-  BookOpen,
-  Heart,
-  MessageCircle,
-  Share2,
-  Building2,
-  Map,
-  Landmark,
-  Train,
-  ForkKnife,
-  Sun,
-  Languages,
-  Castle,
-  Bird,
-  ThermometerSun,
-  Ship,
-  Thermometer,
-  PartyPopper,
-  TreePalm,
-} from "lucide-react";
-import { UsersResponse } from "@/lib/types/pocketbase-types";
-import PocketBase from "pocketbase";
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -54,21 +25,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { CityCard } from "@/features/places/components/CityCard";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronDown, Check, Circle } from "lucide-react";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import {
-  CitiesRecord,
-  FavoritesRecord,
-  CitiesResponse,
-} from "@/lib/types/pocketbase-types";
-import { CityCard } from "@/features/places/components/CityCard";
+  BookOpen,
+  Building2,
+  Check,
+  ChevronDown,
+  Circle,
+  Globe,
+  Heart,
+  Landmark,
+  List,
+  Map,
+  MapPin,
+  MessageCircle,
+  PenLine,
+  Settings,
+  Share2,
+  Star,
+  Trophy,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 interface UserStats {
   placesVisited: number;

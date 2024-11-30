@@ -1,9 +1,9 @@
 // components/Review.tsx
-import React from "react";
-import { Star, ThumbsUp } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Star, ThumbsUp } from "lucide-react";
+import React from "react";
 
 interface ReviewData {
   author: string;

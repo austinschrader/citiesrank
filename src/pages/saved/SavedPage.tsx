@@ -1,26 +1,12 @@
-import React, { useState } from "react";
-import {
-  BookmarkCheck,
-  MapPin,
-  ListChecks,
-  BookOpen,
-  Grid,
-  List as ListIcon,
-  Search,
-  Filter,
-  Calendar,
-  Star,
-  Clock,
-  Share2,
-  FolderPlus,
-  MoreHorizontal,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +15,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCityImage } from "@/lib/cloudinary";
+import {
+  BookmarkCheck,
+  BookOpen,
+  Calendar,
+  Clock,
+  Filter,
+  FolderPlus,
+  Grid,
+  ListChecks,
+  List as ListIcon,
+  MapPin,
+  MoreHorizontal,
+  Search,
+  Share2,
+  Star,
+} from "lucide-react";
+import { useState } from "react";
 
 // Types
 interface SavedItem {
@@ -61,7 +66,8 @@ const MOCK_SAVED_ITEMS: SavedItem[] = [
     id: "1",
     type: "place",
     title: "Amalfi Coast",
-    description: "Stunning coastal towns, Mediterranean beaches, and clifftop villages.",
+    description:
+      "Stunning coastal towns, Mediterranean beaches, and clifftop villages.",
     imageUrl: "amalfi-1",
     savedAt: "2024-03-15",
     metadata: {
@@ -77,7 +83,8 @@ const MOCK_SAVED_ITEMS: SavedItem[] = [
     id: "2",
     type: "list",
     title: "Hidden Gems of Japan",
-    description: "Off-the-beaten-path destinations in Japan, from rural onsen to secret temples.",
+    description:
+      "Off-the-beaten-path destinations in Japan, from rural onsen to secret temples.",
     imageUrl: "japan-temple-1",
     savedAt: "2024-03-14",
     author: {
@@ -96,7 +103,8 @@ const MOCK_SAVED_ITEMS: SavedItem[] = [
     id: "3",
     type: "story",
     title: "A Week in the Scottish Highlands",
-    description: "Solo hiking adventure through Scotland's most dramatic landscapes.",
+    description:
+      "Solo hiking adventure through Scotland's most dramatic landscapes.",
     imageUrl: "scottish-highlands-1",
     savedAt: "2024-03-13",
     author: {
@@ -116,7 +124,8 @@ const MOCK_SAVED_ITEMS: SavedItem[] = [
     id: "4",
     type: "guide",
     title: "Ultimate Paris Food Guide",
-    description: "From classic bistros to hidden gems, the best places to eat in Paris.",
+    description:
+      "From classic bistros to hidden gems, the best places to eat in Paris.",
     imageUrl: "paris-food-1",
     savedAt: "2024-03-12",
     author: {
@@ -154,7 +163,9 @@ const SavedItemCard = ({ item }: { item: SavedItem }) => {
             </Badge>
           </div>
           <div className="absolute bottom-4 left-4 right-4">
-            <h3 className="text-lg font-semibold text-white mb-1">{item.title}</h3>
+            <h3 className="text-lg font-semibold text-white mb-1">
+              {item.title}
+            </h3>
             {item.metadata.location && (
               <div className="flex items-center text-white/80 text-sm">
                 <MapPin className="h-4 w-4 mr-1" />
@@ -173,10 +184,14 @@ const SavedItemCard = ({ item }: { item: SavedItem }) => {
                 <AvatarImage src={item.author.avatar} />
                 <AvatarFallback>{item.author.name[0]}</AvatarFallback>
               </Avatar>
-              <span className="text-sm text-muted-foreground">{item.author.name}</span>
+              <span className="text-sm text-muted-foreground">
+                {item.author.name}
+              </span>
             </div>
           )}
-          <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {item.description}
+          </p>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -255,7 +270,8 @@ export const SavedPage = () => {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Saved Items</h1>
         <p className="text-muted-foreground max-w-2xl">
-          Your personal collection of inspiring destinations, curated lists, and travel stories. Organize and plan your future adventures.
+          Your personal collection of inspiring destinations, curated lists, and
+          travel stories. Organize and plan your future adventures.
         </p>
       </div>
 
@@ -283,7 +299,10 @@ export const SavedPage = () => {
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search saved items" className="pl-8 w-[200px]" />
+              <Input
+                placeholder="Search saved items"
+                className="pl-8 w-[200px]"
+              />
             </div>
 
             <Button variant="outline" size="icon">
@@ -295,14 +314,16 @@ export const SavedPage = () => {
                 variant={viewMode === "grid" ? "secondary" : "ghost"}
                 size="icon"
                 className="rounded-r-none"
-                onClick={() => setViewMode("grid")}>
+                onClick={() => setViewMode("grid")}
+              >
                 <Grid className="h-4 w-4" />
               </Button>
               <Button
                 variant={viewMode === "list" ? "secondary" : "ghost"}
                 size="icon"
                 className="rounded-l-none border-l"
-                onClick={() => setViewMode("list")}>
+                onClick={() => setViewMode("list")}
+              >
                 <ListIcon className="h-4 w-4" />
               </Button>
             </div>

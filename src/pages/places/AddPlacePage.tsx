@@ -1,16 +1,17 @@
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus } from "lucide-react";
 
 export const AddPlacePage = () => {
   return (
     <div className="container max-w-3xl py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Add a Place</h1>
-        <p className="text-muted-foreground">Share a new destination with the community.</p>
+        <p className="text-muted-foreground">
+          Share a new destination with the community.
+        </p>
       </div>
 
       <Card className="p-6">
@@ -30,7 +31,11 @@ export const AddPlacePage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" placeholder="Tell us about this place..." className="min-h-[100px]" />
+              <Textarea
+                id="description"
+                placeholder="Tell us about this place..."
+                className="min-h-[100px]"
+              />
             </div>
 
             <div className="space-y-2">
@@ -51,7 +56,9 @@ export const AddPlacePage = () => {
                     <Plus className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Drop photos here or click to upload</p>
+                    <p className="text-sm text-muted-foreground">
+                      Drop photos here or click to upload
+                    </p>
                   </div>
                 </div>
               </div>

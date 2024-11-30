@@ -1,8 +1,8 @@
 // src/lib/cloudinary.ts
 import { Cloudinary } from "@cloudinary/url-gen";
 import { improve } from "@cloudinary/url-gen/actions/adjust";
-import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 
 const cld = new Cloudinary({
   cloud: {

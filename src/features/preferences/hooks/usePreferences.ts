@@ -1,6 +1,6 @@
-import { useContext } from "react";
 import { PreferencesContext } from "@/features/preferences/context/PreferencesContext";
 import { MatchScoreContextValue } from "@/features/preferences/types";
+import { useContext } from "react";
 
 export const usePreferences = (): MatchScoreContextValue => {
   const context = useContext(PreferencesContext);

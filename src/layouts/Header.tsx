@@ -1,32 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  Search,
-  X,
-  Globe,
-  BookOpen,
-  Map,
-  Heart,
-  Users,
-  Settings,
-  BellDot,
-  UserCircle,
-  LifeBuoy,
-  LogOut,
-  Bookmark,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-  DropdownMenuGroup,
-} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -35,9 +8,36 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import {
+  BellDot,
+  Bookmark,
+  BookOpen,
+  Globe,
+  Heart,
+  LifeBuoy,
+  LogOut,
+  Map,
+  Search,
+  Settings,
+  UserCircle,
+  Users,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const { user, signOut } = useAuth();

@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Coffee, MessageCircle, Hash } from "lucide-react";
+import { Coffee, Hash, MessageCircle, TrendingUp } from "lucide-react";
 
 interface InsightFiltersProps {
   activeFilter: string;
   onFilterChange: (filter: string) => void;
 }
 
-export const InsightFilters: React.FC<InsightFiltersProps> = ({ activeFilter, onFilterChange }) => {
+export const InsightFilters: React.FC<InsightFiltersProps> = ({
+  activeFilter,
+  onFilterChange,
+}) => {
   const filters = [
     { id: "trending", label: "Trending", icon: TrendingUp },
     { id: "local-tips", label: "Local Tips", icon: Coffee },
@@ -21,7 +24,8 @@ export const InsightFilters: React.FC<InsightFiltersProps> = ({ activeFilter, on
           key={filter.id}
           variant={activeFilter === filter.id ? "default" : "outline"}
           className="gap-2 whitespace-nowrap"
-          onClick={() => onFilterChange(filter.id)}>
+          onClick={() => onFilterChange(filter.id)}
+        >
           <filter.icon className="h-4 w-4" />
           {filter.label}
         </Button>

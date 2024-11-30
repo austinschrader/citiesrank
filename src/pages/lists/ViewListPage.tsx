@@ -1,12 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ListHero } from "@/features/lists/view/components/ListHero";
-import { PlaceCard } from "@/features/lists/components/PlaceCard";
-import { ListStatistics } from "@/features/lists/view/components/ListStatistics";
-import { PlaceDetails } from "@/features/lists/components/PlaceDetails";
-import { RelatedLists } from "@/features/lists/view/components/RelatedLists";
-import { CommentsSection } from "@/features/lists/view/components/CommentsSection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,19 +9,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { getApiUrl } from "@/config/appConfig";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { PlaceCard } from "@/features/lists/components/PlaceCard";
+import { PlaceDetails } from "@/features/lists/components/PlaceDetails";
+import { Tags } from "@/features/lists/components/Tags";
+import { CommentsSection } from "@/features/lists/view/components/CommentsSection";
+import { ListHero } from "@/features/lists/view/components/ListHero";
+import { ListStatistics } from "@/features/lists/view/components/ListStatistics";
+import { RelatedLists } from "@/features/lists/view/components/RelatedLists";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Loader2 } from "lucide-react";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
-import { Tags } from "@/features/lists/components/Tags";
-import PocketBase from "pocketbase";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
-  ListsResponse,
   CitiesResponse,
+  ListsResponse,
   UsersResponse,
 } from "@/lib/types/pocketbase-types";
-import { getApiUrl } from "@/config/appConfig";
+import { Loader2, Trash2 } from "lucide-react";
+import PocketBase from "pocketbase";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);

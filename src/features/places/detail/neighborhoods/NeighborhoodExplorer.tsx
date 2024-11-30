@@ -1,52 +1,80 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, Users, Train, Wallet, Heart, MapPin, Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Building2,
+  Heart,
+  MapPin,
+  Star,
+  Train,
+  Users,
+  Wallet,
+} from "lucide-react";
+import React, { useState } from "react";
 
 // This would be fetched from your API in reality
 const neighborhoods = [
   {
     id: 1,
     name: "Le Marais",
-    description: "Historic district with medieval architecture, trendy boutiques, and vibrant Jewish and LGBTQ+ communities",
+    description:
+      "Historic district with medieval architecture, trendy boutiques, and vibrant Jewish and LGBTQ+ communities",
     category: "Historic & Trendy",
     vibeScore: 92,
     averageRent: "€€€",
     transitScore: 95,
     safetyScore: 88,
-    knownFor: ["Fashion boutiques", "Art galleries", "Jewish cuisine", "LGBTQ+ nightlife"],
+    knownFor: [
+      "Fashion boutiques",
+      "Art galleries",
+      "Jewish cuisine",
+      "LGBTQ+ nightlife",
+    ],
     bestFor: ["Young professionals", "Art lovers", "Fashion enthusiasts"],
     highlights: [
       {
         title: "Place des Vosges",
         type: "landmark",
-        description: "Paris's oldest planned square, surrounded by elegant architecture",
+        description:
+          "Paris's oldest planned square, surrounded by elegant architecture",
       },
       {
         title: "Rue des Rosiers",
         type: "street",
-        description: "Historic Jewish quarter with amazing falafel and boutiques",
+        description:
+          "Historic Jewish quarter with amazing falafel and boutiques",
       },
     ],
-    pros: ["Central location", "Rich history", "Amazing food scene", "Great shopping"],
+    pros: [
+      "Central location",
+      "Rich history",
+      "Amazing food scene",
+      "Great shopping",
+    ],
     cons: ["Tourist crowds", "Expensive housing", "Limited green spaces"],
   },
   {
     id: 2,
     name: "Saint-Germain-des-Prés",
-    description: "Intellectual and artistic hub with historic cafes, luxury boutiques, and literary heritage",
+    description:
+      "Intellectual and artistic hub with historic cafes, luxury boutiques, and literary heritage",
     category: "Upscale & Cultural",
     vibeScore: 90,
     averageRent: "€€€€",
     transitScore: 90,
     safetyScore: 92,
-    knownFor: ["Historic cafes", "Designer shopping", "Art galleries", "Literary history"],
+    knownFor: [
+      "Historic cafes",
+      "Designer shopping",
+      "Art galleries",
+      "Literary history",
+    ],
     bestFor: ["Intellectuals", "Luxury shoppers", "Culture enthusiasts"],
     highlights: [
       {
         title: "Café de Flore",
         type: "cafe",
-        description: "Historic cafe frequented by famous writers and philosophers",
+        description:
+          "Historic cafe frequented by famous writers and philosophers",
       },
       {
         title: "Abbey of Saint-Germain-des-Prés",
@@ -54,13 +82,19 @@ const neighborhoods = [
         description: "Oldest church in Paris, dating back to the 6th century",
       },
     ],
-    pros: ["Rich cultural heritage", "Excellent dining", "High-end shopping", "Beautiful architecture"],
+    pros: [
+      "Rich cultural heritage",
+      "Excellent dining",
+      "High-end shopping",
+      "Beautiful architecture",
+    ],
     cons: ["Very expensive", "Crowded with tourists", "Can feel pretentious"],
   },
   {
     id: 3,
     name: "Montmartre",
-    description: "Artistic hilltop village with cobblestone streets, the Sacré-Cœur basilica, and vibrant arts scene",
+    description:
+      "Artistic hilltop village with cobblestone streets, the Sacré-Cœur basilica, and vibrant arts scene",
     category: "Artistic & Historic",
     vibeScore: 88,
     averageRent: "€€",
@@ -77,16 +111,28 @@ const neighborhoods = [
       {
         title: "Place du Tertre",
         type: "square",
-        description: "Historic square filled with artists and portrait painters",
+        description:
+          "Historic square filled with artists and portrait painters",
       },
     ],
-    pros: ["Village atmosphere", "Stunning views", "Artistic heritage", "Charming streets"],
-    cons: ["Very hilly", "Tourist traps", "Distance from center", "Pickpockets"],
+    pros: [
+      "Village atmosphere",
+      "Stunning views",
+      "Artistic heritage",
+      "Charming streets",
+    ],
+    cons: [
+      "Very hilly",
+      "Tourist traps",
+      "Distance from center",
+      "Pickpockets",
+    ],
   },
   {
     id: 4,
     name: "Le Latin Quarter",
-    description: "Historic academic district with medieval streets, universities, and lively student life",
+    description:
+      "Historic academic district with medieval streets, universities, and lively student life",
     category: "Academic & Historic",
     vibeScore: 86,
     averageRent: "€€",
@@ -103,16 +149,23 @@ const neighborhoods = [
       {
         title: "Panthéon",
         type: "landmark",
-        description: "Neoclassical mausoleum housing remains of notable French figures",
+        description:
+          "Neoclassical mausoleum housing remains of notable French figures",
       },
     ],
-    pros: ["Rich academic history", "Affordable dining", "Lively atmosphere", "Central location"],
+    pros: [
+      "Rich academic history",
+      "Affordable dining",
+      "Lively atmosphere",
+      "Central location",
+    ],
     cons: ["Noisy at night", "Small apartments", "Tourist crowds"],
   },
   {
     id: 5,
     name: "Canal Saint-Martin",
-    description: "Trendy area with waterfront cafes, boutiques, and hipster culture",
+    description:
+      "Trendy area with waterfront cafes, boutiques, and hipster culture",
     category: "Hip & Contemporary",
     vibeScore: 85,
     averageRent: "€€",
@@ -124,12 +177,14 @@ const neighborhoods = [
       {
         title: "Hôtel du Nord",
         type: "landmark",
-        description: "Historic hotel and restaurant made famous by French cinema",
+        description:
+          "Historic hotel and restaurant made famous by French cinema",
       },
       {
         title: "Du Pain et des Idées",
         type: "bakery",
-        description: "Acclaimed artisanal bakery known for exceptional pastries",
+        description:
+          "Acclaimed artisanal bakery known for exceptional pastries",
       },
     ],
     pros: ["Cool vibe", "Great cafes", "Less touristy", "Beautiful canal"],
@@ -138,7 +193,8 @@ const neighborhoods = [
   {
     id: 6,
     name: "Champs-Élysées",
-    description: "World-famous avenue with luxury shopping, dining, and entertainment",
+    description:
+      "World-famous avenue with luxury shopping, dining, and entertainment",
     category: "Luxury & Tourist",
     vibeScore: 82,
     averageRent: "€€€€",
@@ -158,13 +214,24 @@ const neighborhoods = [
         description: "Famous cabaret venue with spectacular shows",
       },
     ],
-    pros: ["Prestigious address", "Excellent transport", "World-class shopping", "Entertainment"],
-    cons: ["Very expensive", "Extremely touristy", "Lacks local feel", "Chain stores"],
+    pros: [
+      "Prestigious address",
+      "Excellent transport",
+      "World-class shopping",
+      "Entertainment",
+    ],
+    cons: [
+      "Very expensive",
+      "Extremely touristy",
+      "Lacks local feel",
+      "Chain stores",
+    ],
   },
   {
     id: 7,
     name: "Belleville",
-    description: "Multicultural neighborhood with vibrant art scene and authentic character",
+    description:
+      "Multicultural neighborhood with vibrant art scene and authentic character",
     category: "Diverse & Artistic",
     vibeScore: 80,
     averageRent: "€",
@@ -181,7 +248,8 @@ const neighborhoods = [
       {
         title: "Rue Denoyez",
         type: "street",
-        description: "Famous street art corridor with constantly changing murals",
+        description:
+          "Famous street art corridor with constantly changing murals",
       },
     ],
     pros: ["Affordable", "Authentic", "Cultural diversity", "Artistic energy"],
@@ -190,13 +258,19 @@ const neighborhoods = [
   {
     id: 8,
     name: "Le Marché aux Puces",
-    description: "World's largest flea market district with antiques and vintage treasures",
+    description:
+      "World's largest flea market district with antiques and vintage treasures",
     category: "Vintage & Eclectic",
     vibeScore: 78,
     averageRent: "€",
     transitScore: 70,
     safetyScore: 72,
-    knownFor: ["Antique markets", "Vintage shopping", "Street performers", "Eccentric atmosphere"],
+    knownFor: [
+      "Antique markets",
+      "Vintage shopping",
+      "Street performers",
+      "Eccentric atmosphere",
+    ],
     bestFor: ["Antiquers", "Collectors", "Bargain hunters"],
     highlights: [
       {
@@ -207,22 +281,39 @@ const neighborhoods = [
       {
         title: "Marché Vernaison",
         type: "market",
-        description: "Maze-like market known for vintage clothing and curiosities",
+        description:
+          "Maze-like market known for vintage clothing and curiosities",
       },
     ],
-    pros: ["Unique finds", "Authentic atmosphere", "Bargaining culture", "Character"],
-    cons: ["Remote location", "Can be sketchy", "Overwhelming", "Limited hours"],
+    pros: [
+      "Unique finds",
+      "Authentic atmosphere",
+      "Bargaining culture",
+      "Character",
+    ],
+    cons: [
+      "Remote location",
+      "Can be sketchy",
+      "Overwhelming",
+      "Limited hours",
+    ],
   },
   {
     id: 9,
     name: "Batignolles",
-    description: "Former village turned trendy residential area with local charm",
+    description:
+      "Former village turned trendy residential area with local charm",
     category: "Residential & Trendy",
     vibeScore: 83,
     averageRent: "€€",
     transitScore: 78,
     safetyScore: 88,
-    knownFor: ["Organic markets", "Village atmosphere", "Garden squares", "Neo-bistros"],
+    knownFor: [
+      "Organic markets",
+      "Village atmosphere",
+      "Garden squares",
+      "Neo-bistros",
+    ],
     bestFor: ["Families", "Young couples", "Food lovers"],
     highlights: [
       {
@@ -242,7 +333,8 @@ const neighborhoods = [
   {
     id: 10,
     name: "Palais Royal",
-    description: "Elegant historic district with covered passages and refined culture",
+    description:
+      "Elegant historic district with covered passages and refined culture",
     category: "Historic & Elegant",
     vibeScore: 87,
     averageRent: "€€€",
@@ -262,13 +354,19 @@ const neighborhoods = [
         description: "Beautiful covered passage with upscale boutiques",
       },
     ],
-    pros: ["Central location", "Architectural beauty", "Cultural institutions", "Elegant atmosphere"],
+    pros: [
+      "Central location",
+      "Architectural beauty",
+      "Cultural institutions",
+      "Elegant atmosphere",
+    ],
     cons: ["Expensive", "Formal atmosphere", "Limited residential options"],
   },
 ];
 
 export const NeighborhoodExplorer = () => {
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState<Neighborhood | null>(null);
+  const [selectedNeighborhood, setSelectedNeighborhood] =
+    useState<Neighborhood | null>(null);
   const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'map'
 
   const ViewToggle = () => {
@@ -278,7 +376,8 @@ export const NeighborhoodExplorer = () => {
           variant={viewMode === "grid" ? "default" : "outline"}
           size="sm"
           onClick={() => setViewMode("grid")}
-          className="whitespace-nowrap">
+          className="whitespace-nowrap"
+        >
           <Building2 className="w-4 h-4 mr-2" />
           Grid View
         </Button>
@@ -286,7 +385,8 @@ export const NeighborhoodExplorer = () => {
           variant={viewMode === "map" ? "default" : "outline"}
           size="sm"
           onClick={() => setViewMode("map")}
-          className="whitespace-nowrap">
+          className="whitespace-nowrap"
+        >
           <MapPin className="w-4 h-4 mr-2" />
           Map View
         </Button>
@@ -297,16 +397,24 @@ export const NeighborhoodExplorer = () => {
   const VibeIndicator = ({ score }: { score: number }) => (
     <div className="flex items-center gap-2">
       <div className="w-full h-2 bg-gray-200 rounded-full">
-        <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500" style={{ width: `${score}%` }} />
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+          style={{ width: `${score}%` }}
+        />
       </div>
       <span className="text-sm font-medium">{score}</span>
     </div>
   );
 
-  const NeighborhoodCard = ({ neighborhood }: { neighborhood: Neighborhood }) => (
+  const NeighborhoodCard = ({
+    neighborhood,
+  }: {
+    neighborhood: Neighborhood;
+  }) => (
     <Card
       className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden"
-      onClick={() => setSelectedNeighborhood(neighborhood)}>
+      onClick={() => setSelectedNeighborhood(neighborhood)}
+    >
       <div className="relative aspect-[16/9]">
         <img
           src="/api/placeholder/800/450"
@@ -315,13 +423,17 @@ export const NeighborhoodExplorer = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4">
-          <h3 className="text-xl font-semibold text-white mb-1">{neighborhood.name}</h3>
+          <h3 className="text-xl font-semibold text-white mb-1">
+            {neighborhood.name}
+          </h3>
           <p className="text-white/90 text-sm">{neighborhood.category}</p>
         </div>
       </div>
       <CardContent className="p-4">
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground line-clamp-2">{neighborhood.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {neighborhood.description}
+          </p>
 
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div>
@@ -355,14 +467,20 @@ export const NeighborhoodExplorer = () => {
                     | string
                     | number
                     | boolean
-                    | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                    | React.ReactElement<
+                        unknown,
+                        string | React.JSXElementConstructor<unknown>
+                      >
                     | Iterable<React.ReactNode>
                     | React.ReactPortal
                     | null
                     | undefined,
                   i: React.Key | null | undefined
                 ) => (
-                  <span key={i} className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs">
+                  <span
+                    key={i}
+                    className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs"
+                  >
                     {feature}
                   </span>
                 )
@@ -389,17 +507,31 @@ export const NeighborhoodExplorer = () => {
     cons: string[];
   }
 
-  const NeighborhoodDetail = ({ neighborhood }: { neighborhood: Neighborhood }) => (
+  const NeighborhoodDetail = ({
+    neighborhood,
+  }: {
+    neighborhood: Neighborhood;
+  }) => (
     <div className="space-y-6">
-      <Button variant="ghost" className="mb-4" onClick={() => setSelectedNeighborhood(null)}>
+      <Button
+        variant="ghost"
+        className="mb-4"
+        onClick={() => setSelectedNeighborhood(null)}
+      >
         ← Back to all neighborhoods
       </Button>
 
       <div className="relative aspect-[21/9] rounded-xl overflow-hidden">
-        <img src="/api/placeholder/1200/600" alt={neighborhood.name} className="w-full h-full object-cover" />
+        <img
+          src="/api/placeholder/1200/600"
+          alt={neighborhood.name}
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-6 left-6 right-6">
-          <h2 className="text-3xl font-bold text-white mb-2">{neighborhood.name}</h2>
+          <h2 className="text-3xl font-bold text-white mb-2">
+            {neighborhood.name}
+          </h2>
           <p className="text-white/90 text-lg">{neighborhood.category}</p>
         </div>
       </div>
@@ -408,8 +540,12 @@ export const NeighborhoodExplorer = () => {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4">About this neighborhood</h3>
-              <p className="text-muted-foreground">{neighborhood.description}</p>
+              <h3 className="text-xl font-semibold mb-4">
+                About this neighborhood
+              </h3>
+              <p className="text-muted-foreground">
+                {neighborhood.description}
+              </p>
 
               <div className="grid grid-cols-2 gap-8 mt-6">
                 <div>
@@ -421,7 +557,10 @@ export const NeighborhoodExplorer = () => {
                           | string
                           | number
                           | boolean
-                          | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                          | React.ReactElement<
+                              unknown,
+                              string | React.JSXElementConstructor<unknown>
+                            >
                           | Iterable<React.ReactNode>
                           | React.ReactPortal
                           | null
@@ -445,7 +584,10 @@ export const NeighborhoodExplorer = () => {
                           | string
                           | number
                           | boolean
-                          | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                          | React.ReactElement<
+                              unknown,
+                              string | React.JSXElementConstructor<unknown>
+                            >
                           | Iterable<React.ReactNode>
                           | React.ReactPortal
                           | null
@@ -475,7 +617,10 @@ export const NeighborhoodExplorer = () => {
                         | string
                         | number
                         | boolean
-                        | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                        | React.ReactElement<
+                            unknown,
+                            string | React.JSXElementConstructor<unknown>
+                          >
                         | Iterable<React.ReactNode>
                         | React.ReactPortal
                         | null
@@ -502,7 +647,10 @@ export const NeighborhoodExplorer = () => {
                         | string
                         | number
                         | boolean
-                        | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                        | React.ReactElement<
+                            unknown,
+                            string | React.JSXElementConstructor<unknown>
+                          >
                         | Iterable<React.ReactNode>
                         | React.ReactPortal
                         | null
@@ -531,7 +679,10 @@ export const NeighborhoodExplorer = () => {
                         | string
                         | number
                         | boolean
-                        | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                        | React.ReactElement<
+                            unknown,
+                            string | React.JSXElementConstructor<unknown>
+                          >
                         | Iterable<React.ReactNode>
                         | null
                         | undefined;
@@ -539,7 +690,10 @@ export const NeighborhoodExplorer = () => {
                         | string
                         | number
                         | boolean
-                        | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+                        | React.ReactElement<
+                            unknown,
+                            string | React.JSXElementConstructor<unknown>
+                          >
                         | Iterable<React.ReactNode>
                         | React.ReactPortal
                         | null
@@ -549,11 +703,16 @@ export const NeighborhoodExplorer = () => {
                   ) => (
                     <div key={i} className="flex items-start gap-4">
                       <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0">
-                        <img src="/api/placeholder/64/64" className="w-full h-full object-cover" />
+                        <img
+                          src="/api/placeholder/64/64"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div>
                         <h4 className="font-medium mb-1">{highlight.title}</h4>
-                        <p className="text-sm text-muted-foreground">{highlight.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {highlight.description}
+                        </p>
                       </div>
                     </div>
                   )
@@ -571,7 +730,9 @@ export const NeighborhoodExplorer = () => {
               <div>
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span className="text-muted-foreground">Overall vibe</span>
-                  <span className="font-medium">{neighborhood.vibeScore}/100</span>
+                  <span className="font-medium">
+                    {neighborhood.vibeScore}/100
+                  </span>
                 </div>
                 <VibeIndicator score={neighborhood.vibeScore} />
               </div>
@@ -579,7 +740,9 @@ export const NeighborhoodExplorer = () => {
               <div>
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span className="text-muted-foreground">Transit access</span>
-                  <span className="font-medium">{neighborhood.transitScore}/100</span>
+                  <span className="font-medium">
+                    {neighborhood.transitScore}/100
+                  </span>
                 </div>
                 <VibeIndicator score={neighborhood.transitScore} />
               </div>
@@ -587,7 +750,9 @@ export const NeighborhoodExplorer = () => {
               <div>
                 <div className="flex items-center justify-between text-sm mb-1">
                   <span className="text-muted-foreground">Safety score</span>
-                  <span className="font-medium">{neighborhood.safetyScore}/100</span>
+                  <span className="font-medium">
+                    {neighborhood.safetyScore}/100
+                  </span>
                 </div>
                 <VibeIndicator score={neighborhood.safetyScore} />
               </div>
@@ -625,7 +790,10 @@ export const NeighborhoodExplorer = () => {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {neighborhoods.map((neighborhood) => (
-            <NeighborhoodCard key={neighborhood.id} neighborhood={neighborhood} />
+            <NeighborhoodCard
+              key={neighborhood.id}
+              neighborhood={neighborhood}
+            />
           ))}
         </div>
       )}

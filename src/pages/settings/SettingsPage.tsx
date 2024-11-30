@@ -1,11 +1,7 @@
 // src/pages/SettingsPage.tsx
-import { useState } from "react";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -14,24 +10,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Bell,
+  BellRing,
+  Eye,
+  Facebook,
+  Github,
+  Globe,
+  Instagram,
+  Lock,
   Mail,
   Shield,
   Smartphone,
-  Globe,
-  Users,
   Twitter,
-  Instagram,
-  Github,
-  Facebook,
-  Lock,
-  Eye,
-  BellRing,
   Upload,
+  Users,
 } from "lucide-react";
+import { useState } from "react";
 
 export function SettingsPage() {
   const { user } = useAuth();

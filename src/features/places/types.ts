@@ -1,5 +1,5 @@
-import type { CitiesResponse } from "@/lib/types/pocketbase-types";
 import type { MatchScore } from "@/features/preferences/types";
+import type { CitiesResponse } from "@/lib/types/pocketbase-types";
 
 export interface BaseCityCardProps {
   variant: "ranked" | "basic";

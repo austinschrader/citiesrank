@@ -1,20 +1,20 @@
-import "@/lib/styles/App.css";
-import { PlacesPage } from "@/pages/places/PlacesPage";
-import { ListsPage } from "@/pages/lists/ListsPage";
-import { MembersPage } from "@/pages/members/MembersPage";
-import { JournalPage } from "@/pages/journal/JournalPage";
-import { SavedPage } from "@/pages/saved/SavedPage";
-import { AddPlacePage } from "@/pages/places/AddPlacePage";
-import { Routes, Route } from "react-router-dom";
-import { RootLayout } from "@/layouts/RootLayout";
-import { CreateListPage } from "@/pages/lists/CreateListPage";
-import { ViewListPage } from "@/pages/lists/ViewListPage";
-import { AuthProvider } from "@/features/auth/context/AuthContext";
-import { SettingsPage } from "@/pages/settings/SettingsPage"; // You'll need to create this
-import { ProfilePage } from "@/pages/profile/ProfilePage"; // You'll need to create this
 import { Toaster } from "@/components/ui/toaster"; // Add this import
-import { CityDetailsPage } from "@/pages/places/CityDetailsPage"; // Add this import
+import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
+import { RootLayout } from "@/layouts/RootLayout";
+import "@/lib/styles/App.css";
+import { JournalPage } from "@/pages/journal/JournalPage";
+import { CreateListPage } from "@/pages/lists/CreateListPage";
+import { ListsPage } from "@/pages/lists/ListsPage";
+import { ViewListPage } from "@/pages/lists/ViewListPage";
+import { MembersPage } from "@/pages/members/MembersPage";
+import { AddPlacePage } from "@/pages/places/AddPlacePage";
+import { CityDetailsPage } from "@/pages/places/CityDetailsPage"; // Add this import
+import { PlacesPage } from "@/pages/places/PlacesPage";
+import { ProfilePage } from "@/pages/profile/ProfilePage"; // You'll need to create this
+import { SavedPage } from "@/pages/saved/SavedPage";
+import { SettingsPage } from "@/pages/settings/SettingsPage"; // You'll need to create this
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (

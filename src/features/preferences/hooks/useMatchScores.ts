@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react";
 import {
-  UserPreferences,
-  MatchScoreInput,
   MatchScore,
   MatchScoreContextValue,
+  MatchScoreInput,
+  UserPreferences,
 } from "@/features/preferences/types";
+import { useCallback, useState } from "react";
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   budget: 50,

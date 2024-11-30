@@ -1,6 +1,6 @@
-import { CitiesRecord } from "@/lib/types/pocketbase-types";
-import { MapPin, Users, Globe, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CitiesRecord } from "@/lib/types/pocketbase-types";
+import { Globe, MapPin, Sparkles, Users } from "lucide-react";
 
 interface AboutProps {
   city: CitiesRecord;

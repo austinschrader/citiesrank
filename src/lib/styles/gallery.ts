@@ -42,7 +42,8 @@ export const galleryStyles = {
     "transition-all",
     "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
   ].join(" "),
-  caption: "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6",
+  caption:
+    "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6",
   captionText: "text-white text-base font-medium",
 } as const;
 

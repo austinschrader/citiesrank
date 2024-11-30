@@ -1,6 +1,6 @@
-import { createContext, useContext, ReactNode } from "react";
 import { useMatchScores } from "@/features/preferences/hooks/useMatchScores";
 import { MatchScoreContextValue } from "@/features/preferences/types";
+import { createContext, ReactNode } from "react";
 
 export const PreferencesContext = createContext<MatchScoreContextValue | null>(
   null

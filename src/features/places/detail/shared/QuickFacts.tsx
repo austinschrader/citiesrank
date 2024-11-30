@@ -1,13 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { CitiesRecord } from "@/lib/types/pocketbase-types";
 import {
-  Sun,
   Clock,
   DollarSign,
-  Shield,
   Footprints,
+  Shield,
+  Sun,
   Train,
 } from "lucide-react";
-import { CitiesRecord } from "@/lib/types/pocketbase-types";
 
 interface QuickFactsProps {
   city: CitiesRecord;

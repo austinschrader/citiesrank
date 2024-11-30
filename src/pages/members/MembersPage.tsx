@@ -1,30 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-  Search,
-  MapPin,
-  Users,
-  Calendar,
-  Globe,
-  Twitter,
-  Instagram,
-  Trophy,
-  MessageCircle,
-  UserPlus,
-  Filter,
-  ListFilter,
-  GlobeIcon,
-  Check,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardFooter,
+  CardHeader,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -32,9 +15,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import PocketBase from "pocketbase";
-import { UsersResponse, UsersRecord } from "@/lib/types/pocketbase-types";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { UsersResponse } from "@/lib/types/pocketbase-types";
+import {
+  Calendar,
+  Check,
+  Filter,
+  GlobeIcon,
+  ListFilter,
+  MapPin,
+  Search,
+  Trophy,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 // Types
 interface MemberProfile {
   id: string;
