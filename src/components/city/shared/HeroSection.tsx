@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { CitiesRecord } from "@/pocketbase-types";
 import { useState, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ImageGallery } from "@/components/ImageGallery";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {

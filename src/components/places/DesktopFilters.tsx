@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import { DestinationFilter } from "@/components/DestinationFilter";
-import { PreferencesCard } from "@/components/PreferencesCard";
+import { PreferencesCard } from "@/components/ui/PreferencesCard";
 import { CitiesResponse } from "@/pocketbase-types";
 import { UserPreferences, MatchScoreResult } from "@/types";
 

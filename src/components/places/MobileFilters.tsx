@@ -1,10 +1,24 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SlidersHorizontal, X } from "lucide-react";
-import { PreferencesCard } from "@/components/PreferencesCard";
+import { PreferencesCard } from "@/components/ui/PreferencesCard";
 import { UserPreferences } from "@/types";
 
 interface MobileFiltersProps {
@@ -30,7 +44,9 @@ export const MobileFilters = ({
   setSortOrder,
   filterOptions,
 }: MobileFiltersProps) => {
-  const activeFilterCount = Object.values(preferences).filter((value) => value !== 50).length;
+  const activeFilterCount = Object.values(preferences).filter(
+    (value) => value !== 50
+  ).length;
 
   return (
     <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur pt-2 pb-4 overflow-hidden">
@@ -38,7 +54,11 @@ export const MobileFilters = ({
         <div className="flex items-center gap-2 px-4 min-w-max">
           <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 px-3 gap-2 whitespace-nowrap">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 px-3 gap-2 whitespace-nowrap"
+              >
                 <SlidersHorizontal className="h-4 w-4" />
                 Filters
                 {activeFilterCount > 0 && (
@@ -58,19 +78,24 @@ export const MobileFilters = ({
                       size="icon"
                       className="h-8 w-8 rounded-full"
                       onClick={() => setIsFilterSheetOpen(false)}
-                      aria-label="Close filters">
+                      aria-label="Close filters"
+                    >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                   {activeFilterCount > 0 && (
                     <p className="text-sm text-muted-foreground mt-1">
-                      {activeFilterCount} active filter{activeFilterCount !== 1 ? "s" : ""}
+                      {activeFilterCount} active filter
+                      {activeFilterCount !== 1 ? "s" : ""}
                     </p>
                   )}
                 </SheetHeader>
 
                 <ScrollArea className="flex-1 px-4 py-4">
-                  <PreferencesCard preferences={preferences} onPreferencesChange={setPreferences} />
+                  <PreferencesCard
+                    preferences={preferences}
+                    onPreferencesChange={setPreferences}
+                  />
                 </ScrollArea>
 
                 <div className="flex-shrink-0 border-t p-4 space-y-3">
@@ -88,11 +113,15 @@ export const MobileFilters = ({
                           transit: 50,
                           accessibility: 50,
                         });
-                      }}>
+                      }}
+                    >
                       Reset all filters
                     </Button>
                   )}
-                  <Button className="w-full" onClick={() => setIsFilterSheetOpen(false)}>
+                  <Button
+                    className="w-full"
+                    onClick={() => setIsFilterSheetOpen(false)}
+                  >
                     Apply filters
                   </Button>
                 </div>
@@ -122,7 +151,8 @@ export const MobileFilters = ({
                 variant={selectedFilter === option.id ? "default" : "outline"}
                 size="sm"
                 className="h-9 whitespace-nowrap"
-                onClick={() => onFilterSelect(option.id)}>
+                onClick={() => onFilterSelect(option.id)}
+              >
                 {option.label}
               </Button>
             ))}
