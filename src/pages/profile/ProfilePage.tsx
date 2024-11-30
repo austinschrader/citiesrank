@@ -1,19 +1,12 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { AchievementsList } from "@/features/profile/components/AchievementsList";
+import { AchievementsListCard } from "@/features/profile/components/AchievementsListCard";
 import { ProfileActivity } from "@/features/profile/components/ProfileActivity";
 import { ProfileFavorites } from "@/features/profile/components/ProfileFavorites";
 import { ProfileHeader } from "@/features/profile/components/ProfileHeader";
 import { ProfileOverview } from "@/features/profile/components/ProfileOverview";
 import { ProfileTabs } from "@/features/profile/components/ProfileTabs";
-import { Trophy } from "lucide-react";
 
 export const ProfilePage = () => {
   const { user } = useAuth();
@@ -38,22 +31,8 @@ export const ProfilePage = () => {
             <TabsContent value="overview" className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Achievements Card */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-primary" />
-                      Achievements
-                    </CardTitle>
-                    <CardDescription>
-                      Milestones and badges earned through your travels
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-6">
-                      <AchievementsList />
-                    </div>
-                  </CardContent>
-                </Card>
+
+                <AchievementsListCard />
 
                 {/* Recent Activity Card */}
                 <Card>
@@ -70,7 +49,7 @@ export const ProfilePage = () => {
             {/* Achievements Tab */}
             <TabsContent value="achievements" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <AchievementsList />
+                <AchievementsListCard />
               </div>
             </TabsContent>
 
