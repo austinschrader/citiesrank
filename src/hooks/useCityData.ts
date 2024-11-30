@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { CityInsight } from "@/components/city/types";
-import { CityData } from "@/types";
+import { CityInsight } from "@/features/places/detail/types";
+import { CityData } from "@/features/places/types";
 import PocketBase from "pocketbase";
-import { getApiUrl } from "@/appConfig";
+import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
@@ -15,8 +15,14 @@ interface UseCityDataReturn {
   refetchInsights: () => Promise<void>;
 }
 
-export const useCityData = (city: string, country: string, initialData?: CityData): UseCityDataReturn => {
-  const [cityData, setCityData] = useState<CityData | null>(initialData || null);
+export const useCityData = (
+  city: string,
+  country: string,
+  initialData?: CityData
+): UseCityDataReturn => {
+  const [cityData, setCityData] = useState<CityData | null>(
+    initialData || null
+  );
   const [insights, setInsights] = useState<CityInsight[]>([]);
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<Error | null>(null);
@@ -45,11 +51,13 @@ export const useCityData = (city: string, country: string, initialData?: CityDat
 
   const refetchInsights = async () => {
     try {
-      const insightRecords = await pb.collection("city_insights").getList(1, 20, {
-        filter: `city = "${city}"`,
-        sort: "-votes,-created",
-        expand: "author",
-      });
+      const insightRecords = await pb
+        .collection("city_insights")
+        .getList(1, 20, {
+          filter: `city = "${city}"`,
+          sort: "-votes,-created",
+          expand: "author",
+        });
 
       setInsights(insightRecords.items as unknown as CityInsight[]);
     } catch (err) {
