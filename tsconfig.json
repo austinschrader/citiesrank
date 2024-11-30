@@ -24,6 +24,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "pixabay/process-images.js"],
+  "include": ["src", "src/lib/data/pixabay/process-images.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

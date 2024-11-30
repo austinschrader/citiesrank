@@ -35,7 +35,8 @@ yarn-error.log*
 *.sw?
 
 # add pixabay/downloads to gitignore
-pixabay/downloads
+src/lib/data/pixabay/downloads
+
 
 # Testing
 coverage
