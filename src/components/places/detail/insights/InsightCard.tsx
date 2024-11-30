@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CityInsight } from "@/components/city/types";
+import { CityInsight } from "@/components/places/detail/types";
 import { formatTimeAgo } from "@/lib/utils/formatters";
 
 interface InsightCardProps {
@@ -11,12 +11,20 @@ interface InsightCardProps {
   onVote: (id: string) => void;
 }
 
-export const InsightCard: React.FC<InsightCardProps> = ({ insight, onVote }) => (
+export const InsightCard: React.FC<InsightCardProps> = ({
+  insight,
+  onVote,
+}) => (
   <Card className="group">
     <CardContent className="p-4">
       <div className="flex gap-4">
         <div className="flex flex-col items-center gap-1">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => onVote(insight.id)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0"
+            onClick={() => onVote(insight.id)}
+          >
             <TrendingUp className="h-4 w-4" />
           </Button>
           <span className="text-sm font-medium">{insight.votes}</span>
@@ -34,12 +42,18 @@ export const InsightCard: React.FC<InsightCardProps> = ({ insight, onVote }) => 
                 Local
               </Badge>
             )}
-            <span className="text-xs text-muted-foreground">{formatTimeAgo(insight.createdAt)}</span>
+            <span className="text-xs text-muted-foreground">
+              {formatTimeAgo(insight.createdAt)}
+            </span>
           </div>
 
-          <h3 className="font-semibold group-hover:text-primary">{insight.title}</h3>
+          <h3 className="font-semibold group-hover:text-primary">
+            {insight.title}
+          </h3>
 
-          <p className="text-sm text-muted-foreground line-clamp-2">{insight.content}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {insight.content}
+          </p>
 
           <div className="flex flex-wrap gap-2">
             {insight.tags.map((tag) => (

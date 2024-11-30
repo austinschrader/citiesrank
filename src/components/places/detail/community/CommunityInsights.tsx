@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { InsightFilters } from "@/components/city/insights/InsightFilters";
-import { InsightInput } from "@/components/city/insights/InsightInput";
-import { InsightCard } from "@/components/city/insights/InsightCard";
-import { CityInsight } from "@/components/city/types";
+import { InsightFilters } from "@/components/places/detail/insights/InsightFilters";
+import { InsightInput } from "@/components/places/detail/insights/InsightInput";
+import { InsightCard } from "@/components/places/detail/insights/InsightCard";
+import { CityInsight } from "@/components/places/detail/types";
 
 interface CommunityInsightsProps {
   insights: CityInsight[];
@@ -10,7 +10,11 @@ interface CommunityInsightsProps {
   onInsightVote: (id: string) => void;
 }
 
-export const CommunityInsights: React.FC<CommunityInsightsProps> = ({ insights, onInsightSubmit, onInsightVote }) => {
+export const CommunityInsights: React.FC<CommunityInsightsProps> = ({
+  insights,
+  onInsightSubmit,
+  onInsightVote,
+}) => {
   const [activeFilter, setActiveFilter] = useState("trending");
 
   const filteredInsights = insights.filter((insight) => {
@@ -28,11 +32,18 @@ export const CommunityInsights: React.FC<CommunityInsightsProps> = ({ insights, 
 
   return (
     <div className="space-y-6">
-      <InsightFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+      <InsightFilters
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      />
       <InsightInput onSubmit={onInsightSubmit} />
       <div className="space-y-4">
         {filteredInsights.map((insight) => (
-          <InsightCard key={insight.id} insight={insight} onVote={onInsightVote} />
+          <InsightCard
+            key={insight.id}
+            insight={insight}
+            onVote={onInsightVote}
+          />
         ))}
       </div>
     </div>

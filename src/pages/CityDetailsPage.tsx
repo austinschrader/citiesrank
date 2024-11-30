@@ -3,17 +3,17 @@ import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 import { Building, Coffee, Users, Sparkles } from "lucide-react";
-import { HeroSection } from "@/components/city/shared/HeroSection";
-import { QuickFacts } from "@/components/city/shared/QuickFacts";
-import { LocalEvents } from "@/components/city/local-scene/LocalEvents";
-import { About } from "@/components/city/overview/About";
-import { BestTimeToVisit } from "@/components/city/overview/BestTimeToVisit";
-import { PopularLists } from "@/components/city/shared/PopularLists";
-import { TopExperiences } from "@/components/city/community/TopExperiences";
-import { CommunityHeader } from "@/components/city/community/CommunityHeader";
-import { InsightsList } from "@/components/city/community/InsightsList";
-import { CommunitySidebar } from "@/components/city/community/CommunitySidebar";
-import { NeighborhoodExplorer } from "@/components/city/neighborhoods/NeighborhoodExplorer";
+import { HeroSection } from "@/components/places/detail/shared/HeroSection";
+import { QuickFacts } from "@/components/places/detail/shared/QuickFacts";
+import { LocalEvents } from "@/components/places/detail/local-scene/LocalEvents";
+import { About } from "@/components/places/detail/overview/About";
+import { BestTimeToVisit } from "@/components/places/detail/overview/BestTimeToVisit";
+import { PopularLists } from "@/components/places/detail/shared/PopularLists";
+import { TopExperiences } from "@/components/places/detail/community/TopExperiences";
+import { CommunityHeader } from "@/components/places/detail/community/CommunityHeader";
+import { InsightsList } from "@/components/places/detail/community/InsightsList";
+import { CommunitySidebar } from "@/components/places/detail/community/CommunitySidebar";
+import { NeighborhoodExplorer } from "@/components/places/detail/neighborhoods/NeighborhoodExplorer";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { CitiesRecord, CitiesResponse } from "@/pocketbase-types";
 import PocketBase from "pocketbase";
@@ -28,7 +28,9 @@ interface CityDetailsPageProps {
 
 export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
   const { country, city } = useParams();
-  const [cityData, setCityData] = useState<CitiesRecord | null>(initialData || null);
+  const [cityData, setCityData] = useState<CitiesRecord | null>(
+    initialData || null
+  );
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,7 +54,9 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
 
         console.log("Searching for city:", decodedCity);
 
-        const record = await pb.collection("cities").getFirstListItem(`name = "${decodedCity}"`);
+        const record = await pb
+          .collection("cities")
+          .getFirstListItem(`name = "${decodedCity}"`);
 
         if (isSubscribed) {
           setCityData(record as CitiesResponse);
@@ -112,7 +116,8 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
                       <TabsTrigger
                         key={value}
                         value={value}
-                        className="flex-1 sm:flex-initial gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                        className="flex-1 sm:flex-initial gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      >
                         <Icon className="h-4 w-4" />
                         <span className="hidden sm:inline">{label}</span>
                         <span className="sm:hidden">{label}</span>
