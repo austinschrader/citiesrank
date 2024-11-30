@@ -29,7 +29,7 @@ import {
   ListsResponse,
   CitiesResponse,
   UsersResponse,
-} from "@/pocketbase-types";
+} from "@/lib/types/pocketbase-types";
 import { getApiUrl } from "@/config/appConfig";
 
 const apiUrl = getApiUrl();

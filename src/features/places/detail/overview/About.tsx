@@ -1,4 +1,4 @@
-import { CitiesRecord } from "@/pocketbase-types";
+import { CitiesRecord } from "@/lib/types/pocketbase-types";
 import { MapPin, Users, Globe, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -9,7 +9,9 @@ interface AboutProps {
 // Utility function to format destination types for display
 const formatDestinationTypes = (types: unknown) => {
   if (!Array.isArray(types)) return [];
-  return types.map((type) => (typeof type === "string" ? type.charAt(0).toUpperCase() + type.slice(1) : ""));
+  return types.map((type) =>
+    typeof type === "string" ? type.charAt(0).toUpperCase() + type.slice(1) : ""
+  );
 };
 
 export const About = ({ city }: AboutProps) => {
@@ -33,7 +35,9 @@ export const About = ({ city }: AboutProps) => {
           <div className="flex items-center gap-2 text-muted-foreground">
             <Sparkles className="h-4 w-4" />
             <span>{city.averageRating.toFixed(1)}/10 rating</span>
-            {city.totalReviews && <span className="text-sm">({city.totalReviews} reviews)</span>}
+            {city.totalReviews && (
+              <span className="text-sm">({city.totalReviews} reviews)</span>
+            )}
           </div>
         )}
       </div>
@@ -74,8 +78,13 @@ export const About = ({ city }: AboutProps) => {
         <div className="mt-6 p-4 bg-muted rounded-lg">
           <h3 className="font-medium mb-2">Recommended Stay</h3>
           <p className="text-sm text-muted-foreground">
-            We recommend spending {city.recommendedStay} days to fully experience {city.name}
-            {destinationTypes.length > 0 && ` and explore its ${destinationTypes.join(", ").toLowerCase()} attractions`}.
+            We recommend spending {city.recommendedStay} days to fully
+            experience {city.name}
+            {destinationTypes.length > 0 &&
+              ` and explore its ${destinationTypes
+                .join(", ")
+                .toLowerCase()} attractions`}
+            .
           </p>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { ArrowLeft, BookmarkPlus, Share2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { CitiesRecord } from "@/pocketbase-types";
+import { CitiesRecord } from "@/lib/types/pocketbase-types";
 import { useState, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ImageGallery } from "@/features/gallery/ImageGallery";

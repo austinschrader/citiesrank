@@ -14,7 +14,7 @@ import { MobileFilters } from "@/features/places/MobileFilters";
 import { filterOptions } from "@/features/places/constants";
 import { getApiUrl } from "@/config/appConfig";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
-import { CitiesResponse } from "@/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();

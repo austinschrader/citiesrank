@@ -1,4 +1,4 @@
-import type { CitiesResponse } from "@/pocketbase-types";
+import type { CitiesResponse } from "@/lib/types/pocketbase-types";
 import type { MatchScore } from "@/features/preferences/types";
 
 export interface BaseCityCardProps {

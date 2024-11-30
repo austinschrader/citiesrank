@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search, X } from "lucide-react";
-import { CitiesResponse } from "@/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { MatchScore } from "@/features/preferences/types";
 
 interface MobileSearchProps {

@@ -5,7 +5,7 @@ import {
   ListsResponse,
   UsersResponse,
   CitiesResponse,
-} from "@/pocketbase-types";
+} from "@/lib/types/pocketbase-types";
 
 // Reuse the same expanded type definition as before
 interface ExpandedListResponse extends ListsResponse {

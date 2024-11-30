@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ListsResponse } from "@/pocketbase-types";
+import { ListsResponse } from "@/lib/types/pocketbase-types";
 
 interface TagsProps {
   tags: ListsResponse["tags"];

@@ -5,7 +5,7 @@ import {
   ListsResponse,
   CitiesResponse,
   UsersResponse,
-} from "@/pocketbase-types";
+} from "@/lib/types/pocketbase-types";
 import { getCityImage } from "@/lib/cloudinary";
 
 interface ExpandedListResponse extends ListsResponse {

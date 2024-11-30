@@ -15,7 +15,7 @@ import { InsightsList } from "@/features/places/detail/community/InsightsList";
 import { CommunitySidebar } from "@/features/places/detail/community/CommunitySidebar";
 import { NeighborhoodExplorer } from "@/features/places/detail/neighborhoods/NeighborhoodExplorer";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { CitiesRecord, CitiesResponse } from "@/pocketbase-types";
+import { CitiesRecord, CitiesResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
 import { getApiUrl } from "@/config/appConfig";
 

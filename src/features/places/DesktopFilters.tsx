@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import { DestinationFilter } from "@/features/places/components/DestinationFilter";
 import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
-import { CitiesResponse } from "@/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { MatchScore } from "@/features/preferences/types";
 import { UserPreferences } from "@/features/preferences/types";
 

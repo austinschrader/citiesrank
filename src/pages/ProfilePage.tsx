@@ -43,7 +43,7 @@ import {
   PartyPopper,
   TreePalm,
 } from "lucide-react";
-import { UsersResponse } from "@/pocketbase-types";
+import { UsersResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -67,7 +67,7 @@ import {
   CitiesRecord,
   FavoritesRecord,
   CitiesResponse,
-} from "@/pocketbase-types";
+} from "@/lib/types/pocketbase-types";
 import { CityCard } from "@/features/places/components/CityCard";
 
 interface UserStats {

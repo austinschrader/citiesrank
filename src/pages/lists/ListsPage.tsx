@@ -48,8 +48,8 @@ import {
   ListsStatusOptions,
   ListsCollectionOptions,
   ListsPrivacyOptions,
-} from "@/pocketbase-types";
-import { Collections } from "@/pocketbase-types";
+} from "@/lib/types/pocketbase-types";
+import { Collections } from "@/lib/types/pocketbase-types";
 
 import { getApiUrl } from "@/config/appConfig";
 

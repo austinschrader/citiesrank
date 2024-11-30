@@ -2,7 +2,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getCityImage } from "@/lib/cloudinary";
-import { CitiesResponse } from "@/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 
 interface PlaceCardProps {
   place: CitiesResponse;

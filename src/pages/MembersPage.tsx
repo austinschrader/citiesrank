@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import PocketBase from "pocketbase";
-import { UsersResponse, UsersRecord } from "@/pocketbase-types";
+import { UsersResponse, UsersRecord } from "@/lib/types/pocketbase-types";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 // Types
 interface MemberProfile {

@@ -1,4 +1,4 @@
-import "./App.css";
+import "@/lib/styles/App.css";
 import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ListsPage } from "@/pages/lists/ListsPage";
 import { MembersPage } from "@/pages/MembersPage";

@@ -1,6 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Sun, Clock, DollarSign, Shield, Footprints, Train } from "lucide-react";
-import { CitiesRecord } from "@/pocketbase-types";
+import {
+  Sun,
+  Clock,
+  DollarSign,
+  Shield,
+  Footprints,
+  Train,
+} from "lucide-react";
+import { CitiesRecord } from "@/lib/types/pocketbase-types";
 
 interface QuickFactsProps {
   city: CitiesRecord;
@@ -35,7 +42,9 @@ const formatCrowdLevel = (level: number): { value: string; trend: string } => {
   };
 };
 
-const formatAccessibility = (score: number): { value: string; trend: string } => {
+const formatAccessibility = (
+  score: number
+): { value: string; trend: string } => {
   const trends = ["Remote", "Accessible", "Well Connected", "Very Accessible"];
   const index = Math.min(Math.floor(score / 25), 3);
   return {
@@ -78,7 +87,9 @@ export const QuickFacts = ({ city }: QuickFactsProps) => {
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <fact.icon className="h-4 w-4 text-primary" />
-              <span className="text-sm text-muted-foreground">{fact.label}</span>
+              <span className="text-sm text-muted-foreground">
+                {fact.label}
+              </span>
             </div>
             <div className="text-2xl font-bold mb-1">{fact.value}</div>
             <div className="text-sm text-muted-foreground">{fact.trend}</div>
