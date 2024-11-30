@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { PopularList } from "./types";
+import type { PopularList } from "../types";
 
 interface PopularListCardProps {
   list: PopularList;

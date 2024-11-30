@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import type { TravelList } from "@/features/lists/lists";
-import { DEFAULT_TRAVEL_LIST } from "@/features/lists/lists";
+import type { TravelList } from "@/features/lists/types";
+import { DEFAULT_TRAVEL_LIST } from "@/features/lists/types";
 import { getCityImage } from "@/lib/cloudinary";
 
 import { Card, CardContent } from "@/components/ui/card";

@@ -4,16 +4,16 @@ import { Plus, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { TemplateCard } from "@/features/lists/create/TemplateCard";
-import { PopularListCard } from "@/features/lists/create/PopularListCard";
-import { ListHeader } from "@/features/lists/create/ListHeader";
-import { PlaceSearchCard } from "@/features/lists/create/PlaceSearchCard";
-import { DraggablePlaceCard } from "@/features/lists/create/DraggablePlaceCard";
-import { PreviewCard } from "@/features/lists/create/PreviewCard";
+import { TemplateCard } from "@/features/lists/create/components/TemplateCard";
+import { PopularListCard } from "@/features/lists/create/components/PopularListCard";
+import { ListHeader } from "@/features/lists/create/components/ListHeader";
+import { PlaceSearchCard } from "@/features/lists/create/components/PlaceSearchCard";
+import { DraggablePlaceCard } from "@/features/lists/create/components/DraggablePlaceCard";
+import { PreviewCard } from "@/features/lists/create/components/PreviewCard";
 import {
   LIST_TEMPLATES,
   POPULAR_LISTS,
-} from "@/features/lists/create/templates";
+} from "@/features/lists/create/utils/templates";
 import PocketBase from "pocketbase";
 import type {
   Template,

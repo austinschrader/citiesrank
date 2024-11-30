@@ -39,7 +39,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PocketBase, { RecordModel } from "pocketbase";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { EmptyListsState } from "@/features/lists/create/EmptyListsState";
+import { EmptyListsState } from "@/features/lists/create/components/EmptyListsState";
 import debounce from "lodash/debounce";
 import {
   ListsResponse,

@@ -1,11 +1,18 @@
-import { Heart, Share2, Globe, Lock, PenLine, Tag as TagIcon } from "lucide-react";
+import {
+  Heart,
+  Share2,
+  Globe,
+  Lock,
+  PenLine,
+  Tag as TagIcon,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import type { Place } from "./types";
+import type { Place } from "../types";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 
@@ -24,7 +31,14 @@ interface PreviewCardProps {
   onPrivacyChange?: (isPrivate: boolean) => void;
 }
 
-export function PreviewCard({ template, places, userName, userAvatar, onTagsChange, onPrivacyChange }: PreviewCardProps) {
+export function PreviewCard({
+  template,
+  places,
+  userName,
+  userAvatar,
+  onTagsChange,
+  onPrivacyChange,
+}: PreviewCardProps) {
   const [isPrivate, setIsPrivate] = useState(false);
   const [isEditingTags, setIsEditingTags] = useState(false);
   const [newTag, setNewTag] = useState("");
@@ -70,7 +84,9 @@ export function PreviewCard({ template, places, userName, userAvatar, onTagsChan
           )}
           <div className="absolute inset-0 bg-black/30" />
           <div className="absolute bottom-4 left-4 right-4">
-            <h2 className="text-xl font-semibold text-white mb-2">{template.title}</h2>
+            <h2 className="text-xl font-semibold text-white mb-2">
+              {template.title}
+            </h2>
             <p className="text-sm text-white/90">{template.description}</p>
           </div>
         </div>
@@ -87,7 +103,11 @@ export function PreviewCard({ template, places, userName, userAvatar, onTagsChan
             </div>
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" onClick={handlePrivacyToggle}>
-                {isPrivate ? <Lock className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
+                {isPrivate ? (
+                  <Lock className="h-4 w-4" />
+                ) : (
+                  <Globe className="h-4 w-4" />
+                )}
               </Button>
               <Button variant="ghost" size="sm">
                 <Heart className="h-4 w-4" />
@@ -103,13 +123,22 @@ export function PreviewCard({ template, places, userName, userAvatar, onTagsChan
             <div className="space-y-2">
               <div className="space-y-2">
                 {places.map((place) => (
-                  <div key={place.id} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
+                  <div
+                    key={place.id}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-muted/50"
+                  >
                     <div className="h-10 w-10 rounded-md overflow-hidden">
-                      <img src={getPlaceImage(place.name, place.country)} alt={place.name} className="w-full h-full object-cover" />
+                      <img
+                        src={getPlaceImage(place.name, place.country)}
+                        alt={place.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <p className="text-sm font-medium">{place.name}</p>
-                      <p className="text-xs text-muted-foreground">{place.country}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {place.country}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -124,7 +153,11 @@ export function PreviewCard({ template, places, userName, userAvatar, onTagsChan
                 <TagIcon className="h-4 w-4" />
                 <span>Tags</span>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => setIsEditingTags(!isEditingTags)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditingTags(!isEditingTags)}
+              >
                 <PenLine className="h-4 w-4" />
               </Button>
             </div>
@@ -134,7 +167,10 @@ export function PreviewCard({ template, places, userName, userAvatar, onTagsChan
                 <Badge key={tag} variant="secondary" className="group">
                   {tag}
                   {isEditingTags && (
-                    <button className="ml-1 opacity-0 group-hover:opacity-100" onClick={() => handleRemoveTag(tag)}>
+                    <button
+                      className="ml-1 opacity-0 group-hover:opacity-100"
+                      onClick={() => handleRemoveTag(tag)}
+                    >
                       ×
                     </button>
                   )}

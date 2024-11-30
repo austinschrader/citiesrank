@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ListHero } from "@/features/lists/view/ListHero";
+import { ListHero } from "@/features/lists/view/components/ListHero";
 import { PlaceCard } from "@/features/lists/components/PlaceCard";
-import { ListStatistics } from "@/features/lists/view/ListStatistics";
+import { ListStatistics } from "@/features/lists/view/components/ListStatistics";
 import { PlaceDetails } from "@/features/lists/components/PlaceDetails";
-import { RelatedLists } from "@/features/lists/view/RelatedLists";
-import { CommentsSection } from "@/features/lists/view/CommentsSection";
+import { RelatedLists } from "@/features/lists/view/components/RelatedLists";
+import { CommentsSection } from "@/features/lists/view/components/CommentsSection";
 import {
   AlertDialog,
   AlertDialogAction,
