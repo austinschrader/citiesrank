@@ -8,7 +8,7 @@ import { TemplateCard } from "@/components/lists/create/TemplateCard";
 import { PopularListCard } from "@/components/lists/create/PopularListCard";
 import { ListHeader } from "@/components/lists/create/ListHeader";
 import { PlaceSearchCard } from "@/components/lists/create/PlaceSearchCard";
-import { PlaceCard } from "@/components/lists/create/PlaceCard";
+import { DraggablePlaceCard } from "@/components/lists/create/DraggablePlaceCard";
 import { PreviewCard } from "@/components/lists/create/PreviewCard";
 import {
   LIST_TEMPLATES,
@@ -234,7 +234,7 @@ export function CreateListPage() {
           ) : (
             <div className="space-y-2">
               {places.map((place) => (
-                <PlaceCard
+                <DraggablePlaceCard
                   key={place.id}
                   place={place}
                   onRemove={handleRemovePlace}

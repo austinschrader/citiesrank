@@ -9,7 +9,11 @@ interface PlaceCardProps {
   isDragging?: boolean;
 }
 
-export function PlaceCard({ place, onRemove, isDragging }: PlaceCardProps) {
+export function DraggablePlaceCard({
+  place,
+  onRemove,
+  isDragging,
+}: PlaceCardProps) {
   return (
     <Card className={isDragging ? "opacity-50" : ""}>
       <CardContent className="p-4">
