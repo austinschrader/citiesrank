@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CityCard } from "@/components/CityCard";
 import { Pagination } from "@/components/Pagination";
-import { UserPreferences, RankedCity } from "@/types";
+import { UserPreferences, MatchScoreResult } from "@/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
@@ -11,69 +11,23 @@ import { MobileSearch } from "@/components/places/MobileSearch";
 import { DesktopFilters } from "@/components/places/DesktopFilters";
 import { MobileFilters } from "@/components/places/MobileFilters";
 import { filterOptions } from "@/components/places/constants";
-import { CitiesResponse } from "@/pocketbase-types";
 import { getApiUrl } from "@/appConfig";
+import { usePreferences } from "@/contexts/PreferencesContext";
+import { CitiesResponse } from "@/pocketbase-types";
 
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
 
-const transformResponseToCity = (record: CitiesResponse): RankedCity => {
-  return {
-    id: record.id,
-    name: record.name,
-    country: record.country,
-    cost: record.cost,
-    interesting: record.interesting,
-    transit: record.transit,
-    description: record.description,
-    population: record.population,
-    highlights: Array.isArray(record.highlights) ? record.highlights : [],
-    reviews: record.reviews
-      ? {
-          averageRating: 0,
-          totalReviews: 0,
-          ...record.reviews,
-        }
-      : {
-          averageRating: 0,
-          totalReviews: 0,
-        },
-    destinationTypes: Array.isArray(record.destinationTypes)
-      ? record.destinationTypes
-      : [],
-    crowdLevel: record.crowdLevel,
-    recommendedStay: record.recommendedStay,
-    bestSeason: record.bestSeason,
-    accessibility: record.accessibility,
-    matchScore: 0,
-    attributeMatches: {
-      budget: 0,
-      crowds: 0,
-      tripLength: 0,
-      season: 0,
-      transit: 0,
-      accessibility: 0,
-    },
-  };
-};
-
 export const PlacesPage = () => {
-  const [preferences, setPreferences] = useState<UserPreferences>({
-    budget: 50,
-    crowds: 50,
-    tripLength: 50,
-    season: 50,
-    transit: 50,
-    accessibility: 50,
-  });
-
+  const { preferences, setPreferences, calculateMatchForCity } =
+    usePreferences();
   const [sortOrder, setSortOrder] = useState("match");
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [cityData, setCityData] = useState<Record<string, RankedCity>>({});
+  const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,17 +41,16 @@ export const PlacesPage = () => {
     }
   }, [isMobileSearchActive]);
 
-  const handleCitySelect = (city: RankedCity) => {
+  const handleCitySelect = (city: CitiesResponse & MatchScoreResult) => {
     setSearchQuery(city.name); // Update search query to show what was selected
 
     // Create a slug from the city name for the ID
     const citySlug = city.name
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/--+/g, "-");
+      .replace(/\s+/g, "-");
 
-    // Clear any existing filters to show all results
+    // Create a slug from the country name
     setSelectedFilter(null);
 
     // Find and scroll to the city card
@@ -124,14 +77,11 @@ export const PlacesPage = () => {
           .getFullList<CitiesResponse>();
 
         if (currentRequestIdRef.current === requestId) {
-          const transformedData: Record<string, RankedCity> = records.reduce(
-            (acc, record) => {
-              acc[record.name] = transformResponseToCity(record);
+          const transformedData: Record<string, CitiesResponse> =
+            records.reduce((acc, record) => {
+              acc[record.name] = record;
               return acc;
-            },
-            {} as Record<string, RankedCity>
-          );
-
+            }, {} as Record<string, CitiesResponse>);
           setCityData(transformedData);
         }
       } catch (error) {
@@ -150,40 +100,6 @@ export const PlacesPage = () => {
     loadCityData();
   }, []);
 
-  const calculateMatch = (
-    cityAttributes: RankedCity,
-    userPreferences: UserPreferences
-  ) => {
-    const matches = {
-      budget: 100 - Math.abs(cityAttributes.cost - userPreferences.budget),
-      crowds:
-        100 - Math.abs(cityAttributes.crowdLevel - userPreferences.crowds),
-      tripLength:
-        100 -
-        Math.abs(cityAttributes.recommendedStay - userPreferences.tripLength),
-      season:
-        100 - Math.abs(cityAttributes.bestSeason - userPreferences.season),
-      transit: 100 - Math.abs(cityAttributes.transit - userPreferences.transit),
-      accessibility:
-        100 -
-        Math.abs(cityAttributes.accessibility - userPreferences.accessibility),
-    };
-
-    const weightedMatch =
-      (matches.budget * 1.2 +
-        matches.crowds * 1.0 +
-        matches.tripLength * 0.8 +
-        matches.season * 1.1 +
-        matches.transit * 1.0 +
-        matches.accessibility * 0.9) /
-      6;
-
-    return {
-      matchScore: weightedMatch,
-      attributeMatches: matches,
-    };
-  };
-
   // Debounced search
   const debouncedSearch = debounce((value: string) => {
     setSearchQuery(value);
@@ -199,11 +115,16 @@ export const PlacesPage = () => {
     };
   }, [debouncedSearch]);
 
-  const getFilteredCities = (prefs: UserPreferences): RankedCity[] => {
+  const getFilteredCities = (
+    prefs: UserPreferences
+  ): (CitiesResponse & MatchScoreResult)[] => {
     return Object.entries(cityData)
       .filter(([name, data]) => {
         const matchesFilter =
-          !selectedFilter || data.destinationTypes.includes(selectedFilter);
+          !selectedFilter ||
+          (data.destinationTypes &&
+            Array.isArray(data.destinationTypes) &&
+            data.destinationTypes.includes(selectedFilter));
         const matchesSearch =
           !searchQuery ||
           name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -211,10 +132,13 @@ export const PlacesPage = () => {
           data.description.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesFilter && matchesSearch;
       })
-      .map(([, data]) => ({
-        ...data,
-        ...calculateMatch(data, prefs),
-      }))
+      .map(([, data]) => {
+        const matchScores = calculateMatchForCity(data);
+        return {
+          ...data,
+          ...matchScores,
+        };
+      })
       .sort((a, b) => {
         switch (sortOrder) {
           case "cost-low":

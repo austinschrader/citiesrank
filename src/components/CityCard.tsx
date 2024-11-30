@@ -9,7 +9,7 @@ import {
   Camera,
   Users,
 } from "lucide-react";
-import { CityCardProps } from "@/types";
+import { CityCardProps, ReviewSummary } from "@/types";
 import { cn } from "@/lib/utils";
 import { ImageGallery } from "@/components/ImageGallery";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,6 @@ import {
 import { Button } from "@/components/ui/button";
 import PocketBase from "pocketbase";
 import { getApiUrl } from "@/appConfig";
-import { ReviewSummary } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
 // Add this utility function at the top

@@ -12,11 +12,29 @@ export interface ImageSource {
 export interface GalleryImageType {
   type: "city" | "attraction";
   title: string;
-  sources: {
-    mobile: string;
-    tablet: string;
-    desktop: string;
+  sources: ImageSource;
+}
+
+// Match score calculation types
+export interface MatchScoreResult {
+  matchScore: number;
+  attributeMatches: {
+    budget: number;
+    crowds: number;
+    tripLength: number;
+    season: number;
+    transit: number;
+    accessibility: number;
   };
+}
+
+export interface MatchScoreInput {
+  cost: number;
+  crowdLevel: number;
+  recommendedStay: number;
+  bestSeason: number;
+  transit: number;
+  accessibility: number;
 }
 
 // City-related types
@@ -42,25 +60,6 @@ export interface CityData {
   accessibility: number; // 0-100 (remote to well-connected)
 }
 
-export interface RankedCity extends CityData {
-  id: any;
-  name: string;
-  matchScore: number;
-  attributeMatches: {
-    budget: number;
-    crowds: number;
-    tripLength: number;
-    season: number;
-    transit: number;
-    accessibility: number;
-  };
-}
-
-export interface FavoriteCity extends RankedCity {
-  favoriteId: string;
-  notes?: string;
-}
-
 // User preference types
 export interface UserPreferences {
   budget: number;
@@ -71,29 +70,6 @@ export interface UserPreferences {
   accessibility: number;
 }
 
-// Highlight-related types
-export type HighlightCategoryType =
-  | "historic"
-  | "architecture"
-  | "nature"
-  | "dining"
-  | "cultural";
-
-export interface HighlightCategory {
-  type: HighlightCategoryType;
-  icon: ReactNode;
-  className: string;
-  label: string;
-  description: string;
-}
-
-export interface HighlightLinkProps {
-  highlight: string;
-  cityName: string;
-  country: string;
-  onClick?: (e: React.MouseEvent) => void;
-}
-
 // Component Props
 export interface BaseCityCardProps {
   variant: "ranked" | "basic";
@@ -101,7 +77,7 @@ export interface BaseCityCardProps {
 
 export interface RankedCityCardProps extends BaseCityCardProps {
   variant: "ranked";
-  city: RankedCity;
+  city: CitiesResponse & MatchScoreResult;
 }
 
 export interface BasicCityCardProps extends BaseCityCardProps {
@@ -150,6 +126,7 @@ export interface ReviewSectionProps {
   reviews: ReviewData[];
 }
 
+// Gallery and Highlight types
 export interface ImageGalleryProps {
   cityName: string;
   country: string;
@@ -159,10 +136,25 @@ export interface ImageGalleryProps {
   onImagesLoaded?: (images: Set<string>) => void;
 }
 
+export interface HighlightLinkProps {
+  highlight: string;
+  cityName: string;
+  country: string;
+  onClick?: (e: React.MouseEvent) => void;
+}
+
 export interface HighlightLinkSectionProps {
   highlights: string[];
   cityName: string;
   country: string;
   onHighlightClick?: (e: React.MouseEvent) => void;
   availableImages?: Set<string>;
+}
+
+export interface HighlightCategory {
+  type: string;
+  icon: ReactNode;
+  className: string;
+  label: string;
+  description: string;
 }
