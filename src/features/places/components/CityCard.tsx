@@ -1,30 +1,23 @@
-import React, { useState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  MapPin,
-  Star,
-  Heart,
-  LogIn,
-  Compass,
-  Camera,
-  Users,
-} from "lucide-react";
-import { CityCardProps, ReviewSummary } from "@/features/places/types";
-import { cn } from "@/lib/utils";
-import { ImageGallery } from "@/features/gallery/ImageGallery";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import PocketBase from "pocketbase";
 import { getApiUrl } from "@/config/appConfig";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { ImageGallery } from "@/features/gallery/ImageGallery";
+import { CityCardProps, ReviewSummary } from "@/features/places/types";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { Camera, Compass, Heart, LogIn, MapPin, Users } from "lucide-react";
+import PocketBase from "pocketbase";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -45,6 +38,13 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
   const { toast } = useToast();
 
   const pb = new PocketBase(getApiUrl());
+
+  // Safely convert destination types
+  const safeDestinationTypes = Array.isArray(city.destinationTypes)
+    ? city.destinationTypes.filter(
+        (type): type is string => typeof type === "string"
+      )
+    : [];
 
   // Check if city is favorited on mount and when user changes
   useEffect(() => {
@@ -182,18 +182,37 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
             )}
           </div>
 
+          {safeDestinationTypes.length > 0 && (
+            <div className="absolute bottom-2 left-2 right-2 z-20">
+              <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+                {safeDestinationTypes.slice(0, 4).map((type, index) => (
+                  <Badge
+                    key={`${type}-${index}`}
+                    variant="secondary"
+                    className="bg-black/50 hover:bg-black/60 text-white border-none backdrop-blur-sm transition-all duration-300 whitespace-nowrap text-xs font-medium px-2 py-0.5"
+                  >
+                    {type}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add a gradient overlay to ensure badge readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+
           <button
             onClick={handleFavoriteClick}
-            className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 hover:bg-white transition-all hover:scale-110 active:scale-95 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.16)]"
-            aria-label={
-              isFavorite ? "Remove from favorites" : "Save to favorites"
-            }
+            disabled={isLoading}
+            className={cn(
+              "absolute top-2 right-2 z-20 p-2 rounded-full transition-all duration-300",
+              isFavorite
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900"
+            )}
           >
-            <Star
-              className={cn(
-                "w-4 h-4",
-                isFavorite && "fill-primary text-primary"
-              )}
+            <Heart
+              className={cn("w-4 h-4", isFavorite ? "fill-current" : "")}
             />
           </button>
         </div>

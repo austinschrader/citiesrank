@@ -1,32 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Plus,
-  Grid,
-  List as ListIcon,
-  Heart,
-  Share2,
-  BookmarkPlus,
-  Users2,
-  Calendar,
-  MapPin,
-  Search,
-  Globe,
-  Camera,
-  Compass,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -34,22 +8,47 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { getCityImage } from "@/lib/cloudinary";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import PocketBase, { RecordModel } from "pocketbase";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { EmptyListsState } from "@/features/lists/create/components/EmptyListsState";
-import debounce from "lodash/debounce";
+import { getCityImage } from "@/lib/cloudinary";
 import {
-  ListsResponse,
   CitiesResponse,
-  UsersResponse,
-  ListsStatusOptions,
+  Collections,
   ListsCollectionOptions,
   ListsPrivacyOptions,
+  ListsResponse,
+  ListsStatusOptions,
+  UsersResponse,
 } from "@/lib/types/pocketbase-types";
-import { Collections } from "@/lib/types/pocketbase-types";
+import debounce from "lodash/debounce";
+import {
+  BookmarkPlus,
+  Calendar,
+  Camera,
+  Compass,
+  Globe,
+  Grid,
+  Heart,
+  List as ListIcon,
+  MapPin,
+  Plus,
+  Search,
+  Share2,
+  Sparkles,
+  Users2,
+  type LucideIcon,
+} from "lucide-react";
+import PocketBase, { RecordModel } from "pocketbase";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { getApiUrl } from "@/config/appConfig";
 

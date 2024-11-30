@@ -1,29 +1,28 @@
-import React from "react";
-import {
-  Plus,
-  Heart,
-  MessageSquare,
-  Share2,
-  Bookmark,
-  Calendar,
-  MapPin,
-  Clock,
-  ChevronRight,
-  Camera,
-  Compass,
-  Tag,
-  UserCircle2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { getCityImage } from "@/lib/cloudinary";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { getCityImage } from "@/lib/cloudinary";
+import {
+  Bookmark,
+  Calendar,
+  Camera,
+  ChevronRight,
+  Clock,
+  Compass,
+  Heart,
+  MapPin,
+  MessageSquare,
+  Plus,
+  Share2,
+  Tag,
+  UserCircle2,
+} from "lucide-react";
 
 // Types
 interface JournalEntry {

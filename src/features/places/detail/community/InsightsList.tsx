@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Share2, MessageCircle, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { MessageCircle, Share2, TrendingUp } from "lucide-react";
 
 export function InsightsList() {
   return (
@@ -11,7 +11,8 @@ export function InsightsList() {
           title: "Best time to visit the Louvre?",
           author: "Maria S.",
           type: "Question",
-          content: "Planning my first visit to the Louvre. When's the best time to avoid crowds?",
+          content:
+            "Planning my first visit to the Louvre. When's the best time to avoid crowds?",
           votes: 34,
           responses: 12,
           tags: ["museums", "planning"],
@@ -20,7 +21,8 @@ export function InsightsList() {
           title: "Hidden Gem Alert: Secret Garden",
           author: "Lucas P.",
           type: "Local Tip",
-          content: "Just discovered this amazing hidden garden behind Musée Carnavalet. Perfect spot for a quiet afternoon.",
+          content:
+            "Just discovered this amazing hidden garden behind Musée Carnavalet. Perfect spot for a quiet afternoon.",
           votes: 89,
           responses: 15,
           tags: ["hidden-gems", "parks"],
@@ -39,9 +41,13 @@ export function InsightsList() {
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2">
                   <Badge>{post.type}</Badge>
-                  <span className="text-sm text-muted-foreground">by {post.author}</span>
+                  <span className="text-sm text-muted-foreground">
+                    by {post.author}
+                  </span>
                 </div>
-                <h3 className="font-semibold group-hover:text-primary">{post.title}</h3>
+                <h3 className="font-semibold group-hover:text-primary">
+                  {post.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">{post.content}</p>
                 <div className="flex flex-wrap gap-2">
                   {post.tags.map((tag) => (

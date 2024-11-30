@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import type { GalleryImageType } from "@/lib/types/types";
 import { checkImageExists } from "@/lib/imageUtils";
+import type { GalleryImageType } from "@/lib/types/types";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseImageGalleryProps {
   images: GalleryImageType[];

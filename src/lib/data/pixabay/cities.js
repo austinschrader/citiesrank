@@ -24,7 +24,6 @@ const cities = [
   { city: "Saint-Émilion", country: "France" },
   { city: "Biarritz", country: "France" },
 
-
   { city: "Arcachon", country: "France" },
   { city: "La Rochelle", country: "France" },
   { city: "Cognac", country: "France" },
@@ -34,7 +33,6 @@ const cities = [
   { city: "Quimper", country: "France" },
   { city: "Dinan", country: "France" },
   { city: "Vannes", country: "France" },
-
 
   { city: "Concarneau", country: "France" },
   { city: "Rouen", country: "France" },
@@ -88,7 +86,6 @@ const cities = [
   { city: "Sorrento", country: "Italy" },
   { city: "Positano", country: "Italy" },
   { city: "Pompeii", country: "Italy" },
-
 
   { city: "Ravenna", country: "Italy" },
   { city: "Parma", country: "Italy" },
@@ -197,7 +194,6 @@ const cities = [
   { city: "Wollongong", country: "Australia" },
   { city: "Bowral", country: "Australia" },
 
-
   { city: "Apollo Bay", country: "Australia" },
   { city: "Lorne", country: "Australia" },
   { city: "Daylesford", country: "Australia" },
@@ -266,13 +262,6 @@ const cities = [
   { city: "Vimmerby", country: "Sweden" },
   { city: "Kalmar", country: "Sweden" },
 
-
-
-
-
-
-
-  
   { city: "Mora", country: "Sweden" },
   { city: "Fjällbacka", country: "Sweden" },
   { city: "Zurich", country: "Switzerland" },

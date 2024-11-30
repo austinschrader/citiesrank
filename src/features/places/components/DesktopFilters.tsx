@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,12 +7,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
 import { DestinationFilter } from "@/features/places/components/DestinationFilter";
 import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
+import { MatchScore, UserPreferences } from "@/features/preferences/types";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { MatchScore } from "@/features/preferences/types";
-import { UserPreferences } from "@/features/preferences/types";
+import { Filter, Search } from "lucide-react";
+import React, { useState } from "react";
 
 interface DesktopFiltersProps {
   searchQuery: string;

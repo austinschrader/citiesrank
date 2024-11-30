@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 
-export const useGalleryKeyboard = (isFullscreen: boolean, toggleFullscreen: () => void, navigate: (direction: number) => void) => {
+export const useGalleryKeyboard = (
+  isFullscreen: boolean,
+  toggleFullscreen: () => void,
+  navigate: (direction: number) => void
+) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFullscreen) {

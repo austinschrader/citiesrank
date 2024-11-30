@@ -1,8 +1,14 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, TrendingUp, Users, MessageCircle, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Calendar,
+  MessageCircle,
+  Share2,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 
 interface Event {
   id: string;
@@ -61,7 +67,9 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
                       <Calendar className="h-6 w-6 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold mb-1 group-hover:text-primary">{event.title}</h3>
+                      <h3 className="font-semibold mb-1 group-hover:text-primary">
+                        {event.title}
+                      </h3>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <span>{event.date}</span>
                         <span>•</span>
@@ -71,7 +79,9 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
                       </div>
                       <div className="mt-2 flex items-center gap-2">
                         <Badge variant="secondary">{event.category}</Badge>
-                        <Badge variant="outline">{event.attendees} attending</Badge>
+                        <Badge variant="outline">
+                          {event.attendees} attending
+                        </Badge>
                       </div>
                     </div>
                   </div>
@@ -89,7 +99,8 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
                 title: "Hidden Art Gallery",
                 author: "Marie D.",
                 type: "Culture",
-                content: "Don't miss this intimate gallery in the 11th. Amazing rotating exhibitions of local artists.",
+                content:
+                  "Don't miss this intimate gallery in the 11th. Amazing rotating exhibitions of local artists.",
                 votes: 45,
                 responses: 12,
               },
@@ -97,7 +108,8 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
                 title: "Best Croissants in Paris",
                 author: "Jean-Pierre L.",
                 type: "Food",
-                content: "This tiny bakery in Montmartre opens at 6am. Get there early - they sell out by 9am!",
+                content:
+                  "This tiny bakery in Montmartre opens at 6am. Get there early - they sell out by 9am!",
                 votes: 89,
                 responses: 23,
               },
@@ -105,7 +117,8 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
                 title: "Secret Rooftop View",
                 author: "Sophie M.",
                 type: "Photography",
-                content: "Skip the crowds at Sacré-Cœur and head to this hidden rooftop cafe instead.",
+                content:
+                  "Skip the crowds at Sacré-Cœur and head to this hidden rooftop cafe instead.",
                 votes: 67,
                 responses: 15,
               },
@@ -122,10 +135,16 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{rec.type}</Badge>
-                        <span className="text-sm text-muted-foreground">by {rec.author}</span>
+                        <span className="text-sm text-muted-foreground">
+                          by {rec.author}
+                        </span>
                       </div>
-                      <h3 className="font-semibold group-hover:text-primary">{rec.title}</h3>
-                      <p className="text-sm text-muted-foreground">{rec.content}</p>
+                      <h3 className="font-semibold group-hover:text-primary">
+                        {rec.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {rec.content}
+                      </p>
                       <div className="flex items-center gap-4">
                         <Button variant="ghost" size="sm" className="gap-2">
                           <MessageCircle className="h-4 w-4" />
@@ -171,7 +190,9 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
             ].map((meetup) => (
               <Card key={meetup.title} className="group cursor-pointer">
                 <CardContent className="p-4">
-                  <h4 className="font-semibold mb-2 group-hover:text-primary">{meetup.title}</h4>
+                  <h4 className="font-semibold mb-2 group-hover:text-primary">
+                    {meetup.title}
+                  </h4>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Users className="h-4 w-4" />
                     <span>{meetup.members} members</span>
@@ -195,7 +216,11 @@ export const LocalEvents: React.FC<LocalEventsProps> = () => (
               { tag: "Accommodations", count: "2.7k posts" },
               { tag: "Shopping", count: "1.5k posts" },
             ].map((topic) => (
-              <Button key={topic.tag} variant="outline" className="w-full justify-between">
+              <Button
+                key={topic.tag}
+                variant="outline"
+                className="w-full justify-between"
+              >
                 <span>{topic.tag}</span>
                 <Badge variant="secondary">{topic.count}</Badge>
               </Button>

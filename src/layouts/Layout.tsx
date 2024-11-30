@@ -1,24 +1,23 @@
-import React from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, ChevronDown } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-  SheetHeader,
-} from "@/components/ui/sheet";
+import { Legend } from "@/components/ui/Legend";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Legend } from "@/components/ui/Legend";
-import { UserPreferences } from "@/features/preferences/types";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
+import { UserPreferences } from "@/features/preferences/types";
+import { ChevronDown, Filter, Search } from "lucide-react";
+import React from "react";
 
 interface LayoutProps {
   children: React.ReactNode;

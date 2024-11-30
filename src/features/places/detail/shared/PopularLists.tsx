@@ -19,7 +19,9 @@ export const PopularLists: React.FC<PopularListsProps> = ({ cityName }) => {
         ].map((list) => (
           <Card key={list.title} className="group cursor-pointer">
             <CardContent className="p-4">
-              <h4 className="font-semibold mb-2 group-hover:text-primary">{list.title}</h4>
+              <h4 className="font-semibold mb-2 group-hover:text-primary">
+                {list.title}
+              </h4>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <BookmarkPlus className="h-4 w-4" />

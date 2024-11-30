@@ -1,25 +1,25 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Plus, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { TemplateCard } from "@/features/lists/create/components/TemplateCard";
-import { PopularListCard } from "@/features/lists/create/components/PopularListCard";
+import { DraggablePlaceCard } from "@/features/lists/create/components/DraggablePlaceCard";
 import { ListHeader } from "@/features/lists/create/components/ListHeader";
 import { PlaceSearchCard } from "@/features/lists/create/components/PlaceSearchCard";
-import { DraggablePlaceCard } from "@/features/lists/create/components/DraggablePlaceCard";
+import { PopularListCard } from "@/features/lists/create/components/PopularListCard";
 import { PreviewCard } from "@/features/lists/create/components/PreviewCard";
+import { TemplateCard } from "@/features/lists/create/components/TemplateCard";
+import type {
+  Place,
+  PopularList,
+  Template,
+} from "@/features/lists/create/types";
 import {
   LIST_TEMPLATES,
   POPULAR_LISTS,
 } from "@/features/lists/create/utils/templates";
+import { useToast } from "@/hooks/use-toast";
+import { Globe, Plus } from "lucide-react";
 import PocketBase from "pocketbase";
-import type {
-  Template,
-  PopularList,
-  Place,
-} from "@/features/lists/create/types";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { getApiUrl } from "@/config/appConfig";
 

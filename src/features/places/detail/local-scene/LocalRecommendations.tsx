@@ -1,7 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, MessageCircle, Share2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { MessageCircle, Share2, TrendingUp } from "lucide-react";
 
 export function LocalRecommendations() {
   const recommendations = [
@@ -9,7 +9,8 @@ export function LocalRecommendations() {
       title: "Hidden Art Gallery",
       author: "Marie D.",
       type: "Culture",
-      content: "Don't miss this intimate gallery in the 11th. Amazing rotating exhibitions of local artists.",
+      content:
+        "Don't miss this intimate gallery in the 11th. Amazing rotating exhibitions of local artists.",
       votes: 45,
       responses: 12,
     },
@@ -17,7 +18,8 @@ export function LocalRecommendations() {
       title: "Best Croissants in Paris",
       author: "Jean-Pierre L.",
       type: "Food",
-      content: "This tiny bakery in Montmartre opens at 6am. Get there early - they sell out by 9am!",
+      content:
+        "This tiny bakery in Montmartre opens at 6am. Get there early - they sell out by 9am!",
       votes: 89,
       responses: 23,
     },
@@ -25,7 +27,8 @@ export function LocalRecommendations() {
       title: "Secret Rooftop View",
       author: "Sophie M.",
       type: "Photography",
-      content: "Skip the crowds at Sacré-Cœur and head to this hidden rooftop cafe instead.",
+      content:
+        "Skip the crowds at Sacré-Cœur and head to this hidden rooftop cafe instead.",
       votes: 67,
       responses: 15,
     },
@@ -48,9 +51,13 @@ export function LocalRecommendations() {
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">{rec.type}</Badge>
-                    <span className="text-sm text-muted-foreground">by {rec.author}</span>
+                    <span className="text-sm text-muted-foreground">
+                      by {rec.author}
+                    </span>
                   </div>
-                  <h3 className="font-semibold group-hover:text-primary">{rec.title}</h3>
+                  <h3 className="font-semibold group-hover:text-primary">
+                    {rec.title}
+                  </h3>
                   <p className="text-sm text-muted-foreground">{rec.content}</p>
                   <div className="flex items-center gap-4">
                     <Button variant="ghost" size="sm" className="gap-2">

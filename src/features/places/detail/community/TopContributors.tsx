@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Users } from "lucide-react";
 
 export function TopContributors() {
   return (
@@ -18,14 +18,18 @@ export function TopContributors() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-semibold group-hover:text-primary">{contributor.name}</h4>
+                    <h4 className="font-semibold group-hover:text-primary">
+                      {contributor.name}
+                    </h4>
                     <div className="flex items-center gap-2">
                       {contributor.local && (
                         <Badge variant="secondary" className="text-xs">
                           Local Expert
                         </Badge>
                       )}
-                      <span className="text-sm text-muted-foreground">{contributor.posts} posts</span>
+                      <span className="text-sm text-muted-foreground">
+                        {contributor.posts} posts
+                      </span>
                     </div>
                   </div>
                   <Button variant="ghost" size="sm">

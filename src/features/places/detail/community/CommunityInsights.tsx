@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { InsightCard } from "@/features/places/detail/insights/InsightCard";
 import { InsightFilters } from "@/features/places/detail/insights/InsightFilters";
 import { InsightInput } from "@/features/places/detail/insights/InsightInput";
-import { InsightCard } from "@/features/places/detail/insights/InsightCard";
 import { CityInsight } from "@/features/places/detail/types";
+import { useState } from "react";
 
 interface CommunityInsightsProps {
   insights: CityInsight[];

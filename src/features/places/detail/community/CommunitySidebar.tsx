@@ -1,4 +1,3 @@
-import React from "react";
 import { CommunityStats } from "@/features/places/detail/community/CommunityStats";
 import { TopContributors } from "@/features/places/detail/community/TopContributors";
 
