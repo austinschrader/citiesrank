@@ -22,9 +22,6 @@ export const useSeasonalCities = (cities: CitiesResponse[]) => {
 
   const filteredCities = cities
     .filter((city) => {
-      // Debug logging
-      console.log("City:", city.name, "Tags:", city.destinationTypes);
-
       // Check if destinationTypes exists and is an array
       if (!city.destinationTypes || !Array.isArray(city.destinationTypes)) {
         return false;
@@ -32,9 +29,6 @@ export const useSeasonalCities = (cities: CitiesResponse[]) => {
 
       return city.destinationTypes.some((destinationType: string) => {
         const match = seasonalTags.includes(destinationType);
-        if (match) {
-          console.log("Match found:", city.name, destinationType);
-        }
         return match;
       });
     })
