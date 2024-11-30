@@ -24,16 +24,19 @@ export const useSeasonalCities = (cities: CitiesResponse[]) => {
     .filter((city) => {
       // Debug logging
       console.log("City:", city.name, "Tags:", city.destinationTypes);
-      const hasMatch =
-        city.destinationTypes &&
-        city.destinationTypes.some((destinationType: string) => {
-          const match = seasonalTags.includes(destinationType);
-          if (match) {
-            console.log("Match found:", city.name, destinationType);
-          }
-          return match;
-        });
-      return hasMatch;
+
+      // Check if destinationTypes exists and is an array
+      if (!city.destinationTypes || !Array.isArray(city.destinationTypes)) {
+        return false;
+      }
+
+      return city.destinationTypes.some((destinationType: string) => {
+        const match = seasonalTags.includes(destinationType);
+        if (match) {
+          console.log("Match found:", city.name, destinationType);
+        }
+        return match;
+      });
     })
     .slice(0, 6);
 
