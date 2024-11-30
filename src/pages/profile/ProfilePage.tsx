@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,16 +13,7 @@ import { ProfileFavorites } from "@/features/profile/components/ProfileFavorites
 import { ProfileHeader } from "@/features/profile/components/ProfileHeader";
 import { ProfileOverview } from "@/features/profile/components/ProfileOverview";
 import { ProfileTabs } from "@/features/profile/components/ProfileTabs";
-import { recentActivity } from "@/lib/data/profile/recentActivity";
-import {
-  BookOpen,
-  Heart,
-  List,
-  MessageCircle,
-  Share2,
-  Star,
-  Trophy,
-} from "lucide-react";
+import { BookOpen, Trophy } from "lucide-react";
 
 export const ProfilePage = () => {
   const { user } = useAuth();
@@ -76,54 +66,7 @@ export const ProfilePage = () => {
                       Your latest contributions and interactions
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      {recentActivity.map((activity, index) => (
-                        <div key={index} className="flex items-start gap-4">
-                          <div className="rounded-lg bg-muted p-2">
-                            {activity.type === "list" ? (
-                              <List className="h-4 w-4" />
-                            ) : (
-                              <Star className="h-4 w-4" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h4 className="font-medium">
-                                  {activity.title}
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
-                                  {new Date(activity.date).toLocaleDateString()}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="gap-1"
-                                >
-                                  <Heart className="h-4 w-4" />
-                                  {activity.likes}
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="gap-1"
-                                >
-                                  <MessageCircle className="h-4 w-4" />
-                                  {activity.comments}
-                                </Button>
-                                <Button variant="ghost" size="sm">
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
+                  <ProfileActivity />
                 </Card>
               </div>
             </TabsContent>
