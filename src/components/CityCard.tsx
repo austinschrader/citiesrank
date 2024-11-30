@@ -57,6 +57,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
       try {
         const records = await pb.collection("favorites").getFullList({
           filter: `user = "${user.id}" && city = "${city.id}"`,
+          $autoCancel: false,
         });
         setIsFavorite(records.length > 0);
       } catch (error) {
@@ -103,6 +104,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
         // Find and delete the favorite record
         const records = await pb.collection("favorites").getFullList({
           filter: `user = "${user.id}" && city = "${city.id}"`,
+          $autoCancel: false,
         });
         if (records.length > 0) {
           await pb.collection("favorites").delete(records[0].id);
