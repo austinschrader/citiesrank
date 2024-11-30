@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { TemplateCard } from "@/features/lists/create/TemplateCard";
 import { PopularListCard } from "@/features/lists/create/PopularListCard";
@@ -15,7 +15,11 @@ import {
   POPULAR_LISTS,
 } from "@/features/lists/create/templates";
 import PocketBase from "pocketbase";
-import type { Template, PopularList, Place } from "@/types/lists-create";
+import type {
+  Template,
+  PopularList,
+  Place,
+} from "@/features/lists/create/types";
 
 import { getApiUrl } from "@/appConfig";
 

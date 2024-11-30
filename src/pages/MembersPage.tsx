@@ -34,8 +34,7 @@ import {
 } from "@/components/ui/select";
 import PocketBase from "pocketbase";
 import { UsersResponse, UsersRecord } from "@/pocketbase-types";
-import { useAuth } from "@/features/auth/context/AuthContext";
-
+import { useAuth } from "@/features/auth/hooks/useAuth";
 // Types
 interface MemberProfile {
   id: string;

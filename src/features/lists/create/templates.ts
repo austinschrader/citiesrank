@@ -1,5 +1,5 @@
 import { Compass, Utensils, Camera, Mountain } from "lucide-react";
-import type { Template, PopularList } from "./types";
+import type { Template, PopularList } from "@/features/lists/create/types";
 
 export const LIST_TEMPLATES: Template[] = [
   {

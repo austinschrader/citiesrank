@@ -14,7 +14,7 @@ import { SettingsPage } from "@/pages/SettingsPage"; // You'll need to create th
 import { ProfilePage } from "@/pages/ProfilePage"; // You'll need to create this
 import { Toaster } from "@/components/ui/toaster"; // Add this import
 import { CityDetailsPage } from "@/pages/CityDetailsPage"; // Add this import
-import { PreferencesProvider } from "@/contexts/PreferencesContext";
+import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 
 function App() {
   return (

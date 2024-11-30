@@ -4,15 +4,15 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search, X } from "lucide-react";
 import { CitiesResponse } from "@/pocketbase-types";
-import { MatchScoreResult } from "@/types";
+import { MatchScore } from "@/features/preferences/types";
 
 interface MobileSearchProps {
   searchQuery: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
   searchInputRef: React.RefObject<HTMLInputElement>;
-  filteredCities: (CitiesResponse & MatchScoreResult)[];
-  onCitySelect: (city: CitiesResponse & MatchScoreResult) => void;
+  filteredCities: (CitiesResponse & MatchScore)[];
+  onCitySelect: (city: CitiesResponse & MatchScore) => void;
 }
 
 export const MobileSearch = ({

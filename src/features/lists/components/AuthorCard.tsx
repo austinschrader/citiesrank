@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import type { Author } from "@/types/lists";
+import type { Author } from "@/features/lists/lists";
 import { getCityImage } from "@/lib/cloudinary";
 
 interface AuthorCardProps {

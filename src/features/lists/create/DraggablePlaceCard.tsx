@@ -1,7 +1,7 @@
 import { GripVertical, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import type { Place } from "../../../types/lists-create";
+import type { Place } from "@/features/lists/create/types";
 
 interface PlaceCardProps {
   place: Place;

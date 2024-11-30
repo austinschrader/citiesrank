@@ -34,11 +34,6 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(city);
-  console.log(country);
-
-  console.log(initialData);
-
   useEffect(() => {
     let isSubscribed = true; // Add subscription flag
 
@@ -51,8 +46,6 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
         const decodedCity = decodeURIComponent(city)
           .replace(/-/g, " ") // Replace hyphens with spaces
           .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
-
-        console.log("Searching for city:", decodedCity);
 
         const record = await pb
           .collection("cities")
@@ -85,8 +78,6 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
       isSubscribed = false;
     };
   }, [city, country, initialData]);
-
-  console.log(cityData);
 
   const tabs = [
     { value: "overview", label: "Overview", icon: Sparkles },

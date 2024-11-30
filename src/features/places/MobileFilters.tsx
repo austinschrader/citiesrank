@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SlidersHorizontal, X } from "lucide-react";
-import { PreferencesCard } from "@/features/preferences/PreferencesCard";
-import { UserPreferences } from "@/types";
+import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
+import { UserPreferences } from "@/features/preferences/types";
 
 interface MobileFiltersProps {
   isFilterSheetOpen: boolean;

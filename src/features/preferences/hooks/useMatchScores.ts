@@ -1,13 +1,10 @@
 import { useState, useCallback } from "react";
-import { UserPreferences, MatchScoreInput, MatchScoreResult } from "@/types";
-
-// Define the shape of our context value
-export interface MatchScoreContextValue {
-  preferences: UserPreferences;
-  setPreferences: (prefs: UserPreferences) => void;
-  updatePreference: (key: keyof UserPreferences, value: number) => void;
-  calculateMatchForCity: (cityAttributes: MatchScoreInput) => MatchScoreResult;
-}
+import {
+  UserPreferences,
+  MatchScoreInput,
+  MatchScore,
+  MatchScoreContextValue,
+} from "@/features/preferences/types";
 
 const DEFAULT_PREFERENCES: UserPreferences = {
   budget: 50,
@@ -21,7 +18,7 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 const calculateMatchScores = (
   cityAttributes: MatchScoreInput,
   userPreferences: UserPreferences
-): MatchScoreResult => {
+): MatchScore => {
   const matches = {
     budget: 100 - Math.abs(cityAttributes.cost - userPreferences.budget),
     crowds: 100 - Math.abs(cityAttributes.crowdLevel - userPreferences.crowds),

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CityCard } from "@/features/places/components/CityCard";
 import { Pagination } from "@/components/ui/Pagination";
-import { UserPreferences, MatchScoreResult } from "@/types";
+import { UserPreferences } from "@/features/preferences/types";
+import { MatchScore } from "@/features/preferences/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
@@ -12,7 +13,7 @@ import { DesktopFilters } from "@/features/places/DesktopFilters";
 import { MobileFilters } from "@/features/places/MobileFilters";
 import { filterOptions } from "@/features/places/constants";
 import { getApiUrl } from "@/appConfig";
-import { usePreferences } from "@/contexts/PreferencesContext";
+import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { CitiesResponse } from "@/pocketbase-types";
 
 const ITEMS_PER_PAGE = 20;
@@ -41,7 +42,7 @@ export const PlacesPage = () => {
     }
   }, [isMobileSearchActive]);
 
-  const handleCitySelect = (city: CitiesResponse & MatchScoreResult) => {
+  const handleCitySelect = (city: CitiesResponse & MatchScore) => {
     setSearchQuery(city.name); // Update search query to show what was selected
 
     // Create a slug from the city name for the ID
@@ -117,7 +118,7 @@ export const PlacesPage = () => {
 
   const getFilteredCities = (
     prefs: UserPreferences
-  ): (CitiesResponse & MatchScoreResult)[] => {
+  ): (CitiesResponse & MatchScore)[] => {
     return Object.entries(cityData)
       .filter(([name, data]) => {
         const matchesFilter =
@@ -259,9 +260,25 @@ export const PlacesPage = () => {
 
         {/* Results Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-          {paginatedCities.map((city) => (
-            <CityCard key={city.name} city={city} variant="ranked" />
-          ))}
+          {paginatedCities.map((city) => {
+            const matchScore = calculateMatchForCity({
+              cost: city.cost,
+              crowdLevel: city.crowdLevel,
+              recommendedStay: city.recommendedStay,
+              bestSeason: city.bestSeason,
+              transit: city.transit,
+              accessibility: city.accessibility,
+            });
+
+            return (
+              <CityCard
+                key={city.name}
+                city={city}
+                variant="ranked"
+                matchScore={matchScore}
+              />
+            );
+          })}
         </div>
 
         {/* Pagination */}

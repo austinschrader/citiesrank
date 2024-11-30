@@ -24,7 +24,7 @@ import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 import { Tags } from "@/features/lists/components/Tags";
 import PocketBase from "pocketbase";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   ListsResponse,
   CitiesResponse,

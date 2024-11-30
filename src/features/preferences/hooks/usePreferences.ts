@@ -1,0 +1,11 @@
+import { useContext } from "react";
+import { PreferencesContext } from "@/features/preferences/context/PreferencesContext";
+import { MatchScoreContextValue } from "@/features/preferences/types";
+
+export const usePreferences = (): MatchScoreContextValue => {
+  const context = useContext(PreferencesContext);
+  if (!context) {
+    throw new Error("usePreferences must be used within a PreferencesProvider");
+  }
+  return context;
+};

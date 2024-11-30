@@ -10,9 +10,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import { DestinationFilter } from "@/features/places/components/DestinationFilter";
-import { PreferencesCard } from "@/features/preferences/PreferencesCard";
+import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
 import { CitiesResponse } from "@/pocketbase-types";
-import { UserPreferences, MatchScoreResult } from "@/types";
+import { MatchScore } from "@/features/preferences/types";
+import { UserPreferences } from "@/features/preferences/types";
 
 interface DesktopFiltersProps {
   searchQuery: string;
@@ -21,7 +22,7 @@ interface DesktopFiltersProps {
   onFilterSelect: (filter: string) => void;
   preferences: UserPreferences;
   setPreferences: (preferences: UserPreferences) => void;
-  filteredCities: (CitiesResponse & MatchScoreResult)[];
+  filteredCities: (CitiesResponse & MatchScore)[];
 }
 
 export const DesktopFilters: React.FC<DesktopFiltersProps> = ({

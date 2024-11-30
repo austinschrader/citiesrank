@@ -9,11 +9,11 @@ import {
   Camera,
   Users,
 } from "lucide-react";
-import { CityCardProps, ReviewSummary } from "@/types";
+import { CityCardProps, ReviewSummary } from "@/features/places/types";
 import { cn } from "@/lib/utils";
 import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Dialog,
   DialogContent,
@@ -170,7 +170,9 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
                 className={cn(
                   "px-2 py-1 rounded-full text-xs font-medium",
                   "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
-                  getMatchColor(city.matchScore)
+                  getMatchColor(
+                    typeof city.matchScore === "number" ? city.matchScore : 0
+                  )
                 )}
               >
                 {typeof city.matchScore === "number"

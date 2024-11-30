@@ -1,19 +1,27 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import type { TravelList } from "@/types/lists";
-import { DEFAULT_TRAVEL_LIST } from "@/types/lists";
+import type { TravelList } from "@/features/lists/lists";
+import { DEFAULT_TRAVEL_LIST } from "@/features/lists/lists";
 import { getCityImage } from "@/lib/cloudinary";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Select, SelectTrigger, SelectItem, SelectValue, SelectContent } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectItem,
+  SelectValue,
+  SelectContent,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 interface CommentsAndFollowUpProps {
   data?: TravelList;
 }
 
-export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollowUpProps) {
+export function CommentsSection({
+  data = DEFAULT_TRAVEL_LIST,
+}: CommentsAndFollowUpProps) {
   return (
     <div>
       <div className="container max-w-screen-xl mx-auto px-4 py-8 border-t">
@@ -43,7 +51,10 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
                       <AvatarFallback>YA</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <Textarea placeholder="Share your thoughts about this list..." className="mb-3 resize-none" />
+                      <Textarea
+                        placeholder="Share your thoughts about this list..."
+                        className="mb-3 resize-none"
+                      />
                       <Button>Post Comment</Button>
                     </div>
                   </div>
@@ -83,13 +94,19 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
                       <div className="flex gap-4">
                         <Avatar>
                           <AvatarImage src={comment.author.avatar} />
-                          <AvatarFallback>{comment.author.name[0]}</AvatarFallback>
+                          <AvatarFallback>
+                            {comment.author.name[0]}
+                          </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <p className="font-medium">{comment.author.name}</p>
-                              <p className="text-sm text-muted-foreground">{new Date(comment.date).toLocaleDateString()}</p>
+                              <p className="font-medium">
+                                {comment.author.name}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {new Date(comment.date).toLocaleDateString()}
+                              </p>
                             </div>
                             <Button variant="ghost" size="sm">
                               •••
@@ -98,7 +115,12 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
                           <p className="text-sm mb-3">{comment.content}</p>
                           <div className="flex items-center gap-4 text-sm">
                             <Button variant="ghost" size="sm" className="gap-2">
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -109,7 +131,12 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
                               {comment.likes}
                             </Button>
                             <Button variant="ghost" size="sm" className="gap-2">
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
@@ -138,8 +165,12 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
                     <AvatarImage src={data.author.avatar} />
                     <AvatarFallback>{data.author.name[0]}</AvatarFallback>
                   </Avatar>
-                  <h3 className="font-semibold text-lg mb-1">{data.author.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">{data.author.location}</p>
+                  <h3 className="font-semibold text-lg mb-1">
+                    {data.author.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {data.author.location}
+                  </p>
                   <p className="text-sm">{data.author.bio}</p>
                 </div>
                 <div className="flex justify-center gap-2">
@@ -152,7 +183,9 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
             {/* More from Author */}
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">More from {data.author.name}</h3>
+                <h3 className="font-semibold mb-4">
+                  More from {data.author.name}
+                </h3>
                 <div className="space-y-4">
                   {[
                     {
@@ -170,11 +203,17 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
                   ].map((list) => (
                     <div key={list.id} className="flex gap-3 items-center">
                       <div className="w-16 h-16 bg-muted rounded-md overflow-hidden">
-                        <img src={getCityImage(list.imageUrl ?? "", "thumbnail")} alt={list.title} className="w-full h-full object-cover" />
+                        <img
+                          src={getCityImage(list.imageUrl ?? "", "thumbnail")}
+                          alt={list.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div>
                         <p className="font-medium line-clamp-1">{list.title}</p>
-                        <p className="text-sm text-muted-foreground">{list.places} places</p>
+                        <p className="text-sm text-muted-foreground">
+                          {list.places} places
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -189,15 +228,35 @@ export function CommentsSection({ data = DEFAULT_TRAVEL_LIST }: CommentsAndFollo
       <div className="container max-w-screen-xl mx-auto px-4 py-8 border-t">
         <div className="flex items-center justify-between">
           <Button variant="ghost" className="gap-2">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Previous List
           </Button>
           <Button variant="ghost" className="gap-2">
             Next List
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </Button>
         </div>

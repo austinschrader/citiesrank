@@ -1,7 +1,10 @@
 import { createContext, useContext, ReactNode } from "react";
-import { useMatchScores, MatchScoreContextValue } from "@/hooks/useMatchScores";
+import { useMatchScores } from "@/features/preferences/hooks/useMatchScores";
+import { MatchScoreContextValue } from "@/features/preferences/types";
 
-const PreferencesContext = createContext<MatchScoreContextValue | null>(null);
+export const PreferencesContext = createContext<MatchScoreContextValue | null>(
+  null
+);
 
 interface PreferencesProviderProps {
   children: ReactNode;
@@ -19,12 +22,4 @@ export const PreferencesProvider = ({
       {children}
     </PreferencesContext.Provider>
   );
-};
-
-export const usePreferences = (): MatchScoreContextValue => {
-  const context = useContext(PreferencesContext);
-  if (!context) {
-    throw new Error("usePreferences must be used within a PreferencesProvider");
-  }
-  return context;
 };

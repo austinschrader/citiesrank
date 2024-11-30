@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import type { Template } from "./types";
+import type { Template } from "@/features/lists/create/types";
 
 interface TemplateCardProps {
   template: Template;
@@ -8,7 +8,10 @@ interface TemplateCardProps {
 
 export function TemplateCard({ template, onClick }: TemplateCardProps) {
   return (
-    <Card className="group cursor-pointer hover:shadow-lg transition-all" onClick={() => onClick(template)}>
+    <Card
+      className="group cursor-pointer hover:shadow-lg transition-all"
+      onClick={() => onClick(template)}
+    >
       <CardContent className="p-6">
         <div className="flex items-center gap-4">
           <div className="p-3 rounded-lg bg-primary/10 text-primary">
@@ -16,7 +19,9 @@ export function TemplateCard({ template, onClick }: TemplateCardProps) {
           </div>
           <div>
             <h3 className="font-semibold mb-1">{template.title}</h3>
-            <p className="text-sm text-muted-foreground">{template.description}</p>
+            <p className="text-sm text-muted-foreground">
+              {template.description}
+            </p>
           </div>
         </div>
       </CardContent>

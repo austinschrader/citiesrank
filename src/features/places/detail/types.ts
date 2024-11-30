@@ -1,4 +1,4 @@
-import { CityData } from "@/types";
+import { CityData } from "@/features/places/types";
 
 export interface CityInsight {
   id: string;

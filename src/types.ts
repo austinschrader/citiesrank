@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import { LucideIcon } from "lucide-react";
-import { CitiesResponse } from "./pocketbase-types";
 
 // Image-related types
 export interface ImageSource {
@@ -15,99 +13,6 @@ export interface GalleryImageType {
   sources: ImageSource;
 }
 
-// Match score calculation types
-export interface MatchScoreResult {
-  matchScore: number;
-  attributeMatches: {
-    budget: number;
-    crowds: number;
-    tripLength: number;
-    season: number;
-    transit: number;
-    accessibility: number;
-  };
-}
-
-export interface MatchScoreInput {
-  cost: number;
-  crowdLevel: number;
-  recommendedStay: number;
-  bestSeason: number;
-  transit: number;
-  accessibility: number;
-}
-
-// City-related types
-export interface ReviewSummary {
-  averageRating: number;
-  totalReviews: number;
-}
-
-export interface CityData {
-  country: string;
-  name: string;
-  cost: number; // 0-100 (low to high)
-  interesting: number; // 0-100 (based on combined factors)
-  transit: number; // 0-100 (poor to excellent)
-  description: string;
-  population: string;
-  highlights: string[];
-  reviews?: ReviewSummary;
-  destinationTypes: string[];
-  crowdLevel: number; // 0-100 (quiet to very touristy)
-  recommendedStay: number; // 0-100 (short to long stay)
-  bestSeason: number; // 0-100 (winter to summer)
-  accessibility: number; // 0-100 (remote to well-connected)
-}
-
-// User preference types
-export interface UserPreferences {
-  budget: number;
-  crowds: number;
-  tripLength: number;
-  season: number;
-  transit: number;
-  accessibility: number;
-}
-
-// Component Props
-export interface BaseCityCardProps {
-  variant: "ranked" | "basic";
-}
-
-export interface RankedCityCardProps extends BaseCityCardProps {
-  variant: "ranked";
-  city: CitiesResponse & MatchScoreResult;
-}
-
-export interface BasicCityCardProps extends BaseCityCardProps {
-  variant: "basic";
-  city: CitiesResponse;
-}
-
-export type CityCardProps = RankedCityCardProps | BasicCityCardProps;
-
-export interface PreferencesCardProps {
-  preferences: UserPreferences;
-  onPreferencesChange: (preferences: UserPreferences) => void;
-}
-
-export interface PreferenceSliderProps {
-  icon: LucideIcon;
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  labels: string[];
-  getCurrentLabel: (value: number) => string;
-  hint: string;
-}
-
-export interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
-
 // Review types
 export interface ReviewData {
   author: string;
@@ -116,14 +21,6 @@ export interface ReviewData {
   date: string;
   helpful: number;
   isVerified?: boolean;
-}
-
-export interface ReviewProps {
-  review: ReviewData;
-}
-
-export interface ReviewSectionProps {
-  reviews: ReviewData[];
 }
 
 // Gallery and Highlight types
