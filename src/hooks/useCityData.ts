@@ -1,4 +1,5 @@
 import { getApiUrl } from "@/config/appConfig";
+import { usePlaces } from "@/features/places/context/PlacesContext";
 import { CityInsight } from "@/features/places/detail/types";
 import { CityData } from "@/features/places/types";
 import PocketBase from "pocketbase";
@@ -20,6 +21,7 @@ export const useCityData = (
   country: string,
   initialData?: CityData
 ): UseCityDataReturn => {
+  const { places, status } = usePlaces();
   const [cityData, setCityData] = useState<CityData | null>(
     initialData || null
   );
@@ -27,27 +29,17 @@ export const useCityData = (
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-
-      if (!cityData) {
-        const records = await pb.collection("cities_list").getList(1, 1, {
-          filter: `name ~ "${city}" && country ~ "${country}"`,
-        });
-
-        if (records.items.length > 0) {
-          setCityData(records.items[0] as unknown as CityData);
-        }
+  // Find city data from PlacesContext
+  useEffect(() => {
+    if (!cityData && !status.loading) {
+      const foundCity = places.cities.find(
+        (c) => c.name === city && c.country === country
+      );
+      if (foundCity) {
+        setCityData(foundCity as unknown as CityData);
       }
-
-      await refetchInsights();
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [city, country, places.cities, status.loading, cityData]);
 
   const refetchInsights = async () => {
     try {
@@ -66,14 +58,25 @@ export const useCityData = (
   };
 
   useEffect(() => {
-    fetchData();
-  }, [city, country]);
+    const fetchInsights = async () => {
+      setIsLoading(true);
+      try {
+        await refetchInsights();
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInsights();
+  }, [city]);
 
   return {
     cityData,
     insights,
-    isLoading,
-    error,
+    isLoading: isLoading || status.loading,
+    error: error || (status.error ? new Error(status.error) : null),
     refetchInsights,
   };
 };
