@@ -20,23 +20,19 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { CityCard } from "@/features/places/components/CityCard";
-import { AchievementCard } from "@/features/profile/components/AchievementCard";
+import { AchievementsList } from "@/features/profile/components/AchievementsList";
 import { StatCard } from "@/features/profile/components/StatCard";
-import { Achievement } from "@/features/profile/types";
 import { useToast } from "@/hooks/use-toast";
 import { recentActivity } from "@/lib/data/profile/recentActivity";
-import { userStats } from "@/lib/data/profile/userStats";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import {
   BookOpen,
-  Building2,
   Globe,
   Heart,
-  Landmark,
   List,
-  Map,
   MapPin,
   MessageCircle,
   PenLine,
@@ -45,129 +41,11 @@ import {
   Star,
   Trophy,
 } from "lucide-react";
+import PocketBase from "pocketbase";
 import { useEffect, useMemo, useState } from "react";
 
-const achievements: Achievement[] = [
-  {
-    name: "Global Explorer",
-    description: `Visited ${userStats.placesVisited} out of ${userStats.placesVisited} countries`,
-    progress: userStats.placesVisited,
-    total: userStats.placesVisited,
-    icon: <Globe className="h-4 w-4" />,
-  },
-  {
-    name: "City Conqueror",
-    description: `Explored ${userStats.placesVisited} out of ${userStats.placesVisited} major cities`,
-    progress: userStats.placesVisited,
-    total: userStats.placesVisited,
-    icon: <Building2 className="h-4 w-4" />,
-  },
-  {
-    name: "Continental Coverage",
-    description: "Visited 3 out of 7 continents",
-    progress: 3,
-    total: 7,
-    icon: <Map className="h-4 w-4" />,
-  },
-  {
-    name: "Capital Collector",
-    description: "Visited 12 out of 196 capital cities",
-    progress: 12,
-    total: 196,
-    icon: <Star className="h-4 w-4" />,
-  },
-  {
-    name: "UNESCO Heritage Explorer",
-    description: "Discovered 3 out of 1,223 UNESCO heritage sites",
-    progress: 3,
-    total: 1223,
-    icon: <Landmark className="h-4 w-4" />,
-  },
-  // {
-  //   name: "Altitude Master",
-  //   description: "Conquered 2 out of 10 peaks above 5000m",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <MapPin className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Trans-Continental Explorer",
-  //   description: "Completed 1 out of 4 legendary train journeys",
-  //   progress: 1,
-  //   total: 4,
-  //   icon: <Train className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Culinary Anthropologist",
-  //   description: "Mastered 3 out of 10 traditional dishes",
-  //   progress: 3,
-  //   total: 10,
-  //   icon: <ForkKnife className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Dawn Chaser",
-  //   description: "Witnessed 2 out of 10 spectacular sunrises",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <Sun className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Language Navigator",
-  //   description: "Mastered 2 out of 10 language families",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <Languages className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Ancient Civilization Scholar",
-  //   description: "Explored 3 out of 10 ancient civilizations",
-  //   progress: 3,
-  //   total: 10,
-  //   icon: <Castle className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Migration Witness",
-  //   description: "Witnessed 2 out of 10 animal migrations",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <Bird className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Desert Nomad",
-  //   description: "Explored 2 out of 10 remarkable deserts",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <TreePalm className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Maritime Explorer",
-  //   description: "Navigated 2 out of 5 great oceans",
-  //   progress: 2,
-  //   total: 5,
-  //   icon: <Ship className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Climate Zones",
-  //   description: "Experienced 2 out of 5 climate zones",
-  //   progress: 2,
-  //   total: 5,
-  //   icon: <Thermometer className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Festival Pilgrim",
-  //   description: "Participated in 2 out of 10 cultural festivals",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <PartyPopper className="h-4 w-4" />,
-  // },
-  // {
-  //   name: "Remote Places",
-  //   description: "Visited 2 out of 10 isolated inhabited places",
-  //   progress: 2,
-  //   total: 10,
-  //   icon: <ThermometerSun className="h-4 w-4" />,
-  // },
-];
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 type SimpleCity = {
   id: string;
@@ -729,12 +607,7 @@ export const ProfilePage = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-6">
-                      {achievements.map((achievement) => (
-                        <AchievementCard
-                          key={achievement.name}
-                          achievement={achievement}
-                        />
-                      ))}
+                      <AchievementsList />
                     </div>
                   </CardContent>
                 </Card>
@@ -843,34 +716,11 @@ export const ProfilePage = () => {
               </div>
             </TabsContent>
 
-            {/* Other tab contents remain similar but with improved styling */}
-            <TabsContent value="achievements">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle>Achievements</CardTitle>
-                      <CardDescription>
-                        Milestones and badges earned through your travels
-                      </CardDescription>
-                    </div>
-                    <Button className="gap-2">
-                      <Trophy className="h-4 w-4" />
-                      View All
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-6">
-                    {achievements.map((achievement) => (
-                      <AchievementCard
-                        key={achievement.name}
-                        achievement={achievement}
-                      />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Achievements Tab */}
+            <TabsContent value="achievements" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <AchievementsList />
+              </div>
             </TabsContent>
 
             <TabsContent value="activity">
