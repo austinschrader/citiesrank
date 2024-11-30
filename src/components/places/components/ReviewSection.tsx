@@ -34,19 +34,30 @@ const Review: React.FC<ReviewProps> = ({ review }) => {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-sm font-medium text-primary">{review.author.charAt(0).toUpperCase()}</span>
+            <span className="text-sm font-medium text-primary">
+              {review.author.charAt(0).toUpperCase()}
+            </span>
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-medium">{review.author}</span>
-              {review.isVerified && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Verified visit</span>}
+              {review.isVerified && (
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                  Verified visit
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={cn("w-4 h-4", i < review.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200")}
+                    className={cn(
+                      "w-4 h-4",
+                      i < review.rating
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "fill-gray-200 text-gray-200"
+                    )}
                   />
                 ))}
               </div>
@@ -62,9 +73,13 @@ const Review: React.FC<ReviewProps> = ({ review }) => {
       <Button
         variant="outline"
         size="sm"
-        className={cn("gap-2 text-sm", isHelpful && "bg-primary/5 border-primary/10")}
+        className={cn(
+          "gap-2 text-sm",
+          isHelpful && "bg-primary/5 border-primary/10"
+        )}
         onClick={handleHelpfulClick}
-        disabled={isHelpful}>
+        disabled={isHelpful}
+      >
         <ThumbsUp className={cn("w-4 h-4", isHelpful && "fill-primary")} />
         Helpful · {helpfulCount}
       </Button>
@@ -86,10 +101,15 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ reviews }) => {
           <div className="flex items-center gap-2">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <Star
+                  key={i}
+                  className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                />
               ))}
             </div>
-            <span className="text-sm text-muted-foreground">{reviews.length} reviews</span>
+            <span className="text-sm text-muted-foreground">
+              {reviews.length} reviews
+            </span>
           </div>
         </div>
         {reviews.map((review, index) => (

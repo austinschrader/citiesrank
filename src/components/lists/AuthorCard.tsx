@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import type { Author } from "@/types/travel";
+import type { Author } from "@/types/lists";
 import { getCityImage } from "@/lib/cloudinary";
 
 interface AuthorCardProps {
@@ -19,7 +19,9 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => (
             <AvatarFallback>{author.name[0]}</AvatarFallback>
           </Avatar>
           <h3 className="font-semibold text-lg mb-1">{author.name}</h3>
-          <p className="text-sm text-muted-foreground mb-3">{author.location}</p>
+          <p className="text-sm text-muted-foreground mb-3">
+            {author.location}
+          </p>
           <p className="text-sm">{author.bio}</p>
         </div>
         <div className="flex justify-center gap-2">
@@ -50,11 +52,17 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => (
           ].map((list) => (
             <div key={list.id} className="flex gap-3 items-center">
               <div className="w-16 h-16 bg-muted rounded-md overflow-hidden">
-                <img src={getCityImage(list.imageUrl ?? "", "thumbnail")} alt={list.title} className="w-full h-full object-cover" />
+                <img
+                  src={getCityImage(list.imageUrl ?? "", "thumbnail")}
+                  alt={list.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <p className="font-medium line-clamp-1">{list.title}</p>
-                <p className="text-sm text-muted-foreground">{list.places} places</p>
+                <p className="text-sm text-muted-foreground">
+                  {list.places} places
+                </p>
               </div>
             </div>
           ))}

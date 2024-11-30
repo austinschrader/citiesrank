@@ -1,4 +1,4 @@
-import type { TravelList, Place, RelatedList } from "@/types/travel";
+import type { TravelList, Place, RelatedList } from "@/types/lists";
 
 // Helper function to create a full place object from basic place data
 const createDetailedPlace = (basicPlace: { citySlug: string; name: string; country: string }): Place => {

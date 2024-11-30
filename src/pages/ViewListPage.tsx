@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ListHero } from "@/components/travel/ListHero";
-import { PlaceCard } from "@/components/travel/PlaceCard";
-import { ListStatistics } from "@/components/travel/ListStatistics";
-import { PlaceDetails } from "@/components/travel/PlaceDetails";
-import { RelatedLists } from "@/components/travel/RelatedLists";
-import { CommentsSection } from "@/components/travel/CommentsSection";
+import { ListHero } from "@/components/lists/ListHero";
+import { PlaceCard } from "@/components/lists/PlaceCard";
+import { ListStatistics } from "@/components/lists/ListStatistics";
+import { PlaceDetails } from "@/components/lists/PlaceDetails";
+import { RelatedLists } from "@/components/lists/RelatedLists";
+import { CommentsSection } from "@/components/lists/CommentsSection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trash2, Loader2 } from "lucide-react";
 import { getCityImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
-import { Tags } from "@/components/travel/Tags";
+import { Tags } from "@/components/lists/Tags";
 import PocketBase from "pocketbase";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
