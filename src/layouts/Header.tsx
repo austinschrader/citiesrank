@@ -36,8 +36,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SignInButton } from "@/features/auth/SignInButton";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { SignInButton } from "@/features/auth/components/SignInButton";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 export const Header = () => {
   const { user, signOut } = useAuth();

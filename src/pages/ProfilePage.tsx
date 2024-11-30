@@ -1,4 +1,4 @@
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,

@@ -1,5 +1,11 @@
 // src/lib/auth/AuthContext.tsx
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import PocketBase from "pocketbase";
 import { useNavigate } from "react-router-dom";
 import type { RecordAuthResponse, AuthModel } from "pocketbase";
@@ -27,10 +33,12 @@ import { getApiUrl } from "@/appConfig";
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
 
-const AuthContext = createContext<AuthContextType | null>(null);
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserModel | null>(pb.authStore.model as UserModel | null);
+  const [user, setUser] = useState<UserModel | null>(
+    pb.authStore.model as UserModel | null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -77,16 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         signInWithGoogle,
         signOut,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 }

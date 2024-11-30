@@ -13,7 +13,7 @@ import { CityCardProps, ReviewSummary } from "@/types";
 import { cn } from "@/lib/utils";
 import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import {
   Dialog,
   DialogContent,

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useState } from "react";
 import { LogIn } from "lucide-react";
 
@@ -20,7 +20,13 @@ export function SignInButton() {
   };
 
   return (
-    <Button onClick={handleSignIn} disabled={isLoading} variant="outline" size="sm" className="gap-2 whitespace-nowrap">
+    <Button
+      onClick={handleSignIn}
+      disabled={isLoading}
+      variant="outline"
+      size="sm"
+      className="gap-2 whitespace-nowrap"
+    >
       {isLoading ? (
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       ) : (

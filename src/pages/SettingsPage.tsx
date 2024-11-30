@@ -1,12 +1,19 @@
 // src/pages/SettingsPage.tsx
 import { useState } from "react";
-import { useAuth } from "@/lib/auth/AuthContext";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -41,7 +48,9 @@ export function SettingsPage() {
     <div className="container max-w-6xl py-8 px-4 mx-auto">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Settings</h1>
-        <p className="text-muted-foreground">Manage your account preferences and settings.</p>
+        <p className="text-muted-foreground">
+          Manage your account preferences and settings.
+        </p>
       </div>
 
       <Tabs defaultValue="account" className="space-y-8">
@@ -50,7 +59,10 @@ export function SettingsPage() {
             <Shield className="h-4 w-4" />
             Account
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex gap-2 items-center">
+          <TabsTrigger
+            value="notifications"
+            className="flex gap-2 items-center"
+          >
             <Bell className="h-4 w-4" />
             Notifications
           </TabsTrigger>
@@ -70,7 +82,9 @@ export function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
-                <CardDescription>Update your personal information and profile photo.</CardDescription>
+                <CardDescription>
+                  Update your personal information and profile photo.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">
                 {/* Profile Photo */}
@@ -102,12 +116,19 @@ export function SettingsPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="username">Username</Label>
-                      <Input id="username" defaultValue={user?.username ?? ""} />
+                      <Input
+                        id="username"
+                        defaultValue={user?.username ?? ""}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" type="email" defaultValue={user?.email ?? ""} />
+                    <Input
+                      id="email"
+                      type="email"
+                      defaultValue={user?.email ?? ""}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="bio">Bio</Label>
@@ -126,7 +147,9 @@ export function SettingsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Account Security</CardTitle>
-                <CardDescription>Manage your password and security settings.</CardDescription>
+                <CardDescription>
+                  Manage your password and security settings.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -139,7 +162,9 @@ export function SettingsPage() {
                     <Input id="new-password" type="password" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Label htmlFor="confirm-password">
+                      Confirm New Password
+                    </Label>
                     <Input id="confirm-password" type="password" />
                   </div>
                 </div>
@@ -157,14 +182,17 @@ export function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Choose how you want to be notified about activity.</CardDescription>
+              <CardDescription>
+                Choose how you want to be notified about activity.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-6">
                 {[
                   {
                     title: "Comments and Reactions",
-                    description: "When someone comments on your lists or reacts to your content",
+                    description:
+                      "When someone comments on your lists or reacts to your content",
                     icon: BellRing,
                   },
                   {
@@ -174,7 +202,8 @@ export function SettingsPage() {
                   },
                   {
                     title: "List Updates",
-                    description: "When places you've saved or listed are updated",
+                    description:
+                      "When places you've saved or listed are updated",
                     icon: Mail,
                   },
                   {
@@ -187,12 +216,20 @@ export function SettingsPage() {
                     <item.icon className="h-5 w-5 mt-0.5 text-muted-foreground" />
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor={`notify-${index}`} className="font-medium">
+                        <Label
+                          htmlFor={`notify-${index}`}
+                          className="font-medium"
+                        >
                           {item.title}
                         </Label>
-                        <Switch id={`notify-${index}`} defaultChecked={index < 2} />
+                        <Switch
+                          id={`notify-${index}`}
+                          defaultChecked={index < 2}
+                        />
                       </div>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.description}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -226,7 +263,9 @@ export function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Privacy Settings</CardTitle>
-              <CardDescription>Control your profile visibility and data preferences.</CardDescription>
+              <CardDescription>
+                Control your profile visibility and data preferences.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-6">
@@ -249,12 +288,18 @@ export function SettingsPage() {
                       <setting.icon className="h-5 w-5 text-muted-foreground" />
                       <div>
                         <h4 className="font-medium">{setting.title}</h4>
-                        <p className="text-sm text-muted-foreground">{setting.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {setting.description}
+                        </p>
                       </div>
                     </div>
                     <div className="flex gap-2">
                       {setting.options.map((option) => (
-                        <Button key={option} variant={option === "Public" ? "default" : "outline"} size="sm">
+                        <Button
+                          key={option}
+                          variant={option === "Public" ? "default" : "outline"}
+                          size="sm"
+                        >
                           {option}
                         </Button>
                       ))}
@@ -271,9 +316,15 @@ export function SettingsPage() {
                       "Share my lists with search engines",
                       "Allow data collection for personalization",
                     ].map((pref, index) => (
-                      <div key={index} className="flex items-center justify-between">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between"
+                      >
                         <Label htmlFor={`pref-${index}`}>{pref}</Label>
-                        <Switch id={`pref-${index}`} defaultChecked={index < 2} />
+                        <Switch
+                          id={`pref-${index}`}
+                          defaultChecked={index < 2}
+                        />
                       </div>
                     ))}
                   </div>
@@ -288,7 +339,9 @@ export function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Connected Accounts</CardTitle>
-              <CardDescription>Manage your connected social media accounts and services.</CardDescription>
+              <CardDescription>
+                Manage your connected social media accounts and services.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6">
@@ -299,15 +352,23 @@ export function SettingsPage() {
                   { name: "Facebook", icon: Facebook, connected: false },
                   { name: "Github", icon: Github, connected: false },
                 ].map((account) => (
-                  <div key={account.name} className="flex items-center justify-between">
+                  <div
+                    key={account.name}
+                    className="flex items-center justify-between"
+                  >
                     <div className="flex items-center gap-4">
                       <account.icon className="h-5 w-5 text-muted-foreground" />
                       <div>
                         <h4 className="font-medium">{account.name}</h4>
-                        <p className="text-sm text-muted-foreground">{account.connected ? "Connected" : "Not connected"}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {account.connected ? "Connected" : "Not connected"}
+                        </p>
                       </div>
                     </div>
-                    <Button variant={account.connected ? "outline" : "default"} size="sm">
+                    <Button
+                      variant={account.connected ? "outline" : "default"}
+                      size="sm"
+                    >
                       {account.connected ? "Disconnect" : "Connect"}
                     </Button>
                   </div>
@@ -316,7 +377,8 @@ export function SettingsPage() {
 
               <Alert className="mt-6">
                 <AlertDescription>
-                  Connecting accounts helps us provide better recommendations and lets you share your travel experiences across platforms.
+                  Connecting accounts helps us provide better recommendations
+                  and lets you share your travel experiences across platforms.
                 </AlertDescription>
               </Alert>
             </CardContent>
