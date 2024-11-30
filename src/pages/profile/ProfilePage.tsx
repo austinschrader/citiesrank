@@ -13,7 +13,7 @@ import { ProfileFavorites } from "@/features/profile/components/ProfileFavorites
 import { ProfileHeader } from "@/features/profile/components/ProfileHeader";
 import { ProfileOverview } from "@/features/profile/components/ProfileOverview";
 import { ProfileTabs } from "@/features/profile/components/ProfileTabs";
-import { BookOpen, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 
 export const ProfilePage = () => {
   const { user } = useAuth();
@@ -57,15 +57,6 @@ export const ProfilePage = () => {
 
                 {/* Recent Activity Card */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5 text-primary" />
-                      Recent Activity
-                    </CardTitle>
-                    <CardDescription>
-                      Your latest contributions and interactions
-                    </CardDescription>
-                  </CardHeader>
                   <ProfileActivity />
                 </Card>
               </div>
