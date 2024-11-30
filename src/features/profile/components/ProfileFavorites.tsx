@@ -8,31 +8,7 @@ import { useEffect, useState } from "react";
 
 export const ProfileFavorites = () => {
   const { user, pb } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0] || !user) return;
-
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("avatar", file);
-
-    try {
-      setIsLoading(true);
-      await pb.collection("users").update(user.id, formData);
-
-      // Force auth refresh and get the new avatar URL
-      const updatedUser = await pb.collection("users").authRefresh();
-
-      // Log to check what we're getting
-      console.log("Updated user:", updatedUser);
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (!user) {
     return <div>Please log in to view your profile.</div>;
