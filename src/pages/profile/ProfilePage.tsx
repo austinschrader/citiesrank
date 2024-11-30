@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { CityCard } from "@/features/places/components/CityCard";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { AchievementsList } from "@/features/profile/components/AchievementsList";
+import { ProfileFavorites } from "@/features/profile/components/ProfileFavorites";
 import { ProfileHeader } from "@/features/profile/components/ProfileHeader";
 import { ProfileOverview } from "@/features/profile/components/ProfileOverview";
 import { useToast } from "@/hooks/use-toast";
@@ -241,43 +241,7 @@ export const ProfilePage = () => {
 
             {/* Favorites Tab */}
             <TabsContent value="favorites" className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-semibold tracking-tight">
-                      Favorite Cities
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      Cities you've marked as favorites
-                    </p>
-                  </div>
-                </div>
-
-                {isFavoritesLoading ? (
-                  <div className="flex items-center justify-center h-48">
-                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-                  </div>
-                ) : favoriteCities.length === 0 ? (
-                  <Card>
-                    <CardContent className="flex flex-col items-center justify-center h-48 text-center">
-                      <Star className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                      <h3 className="font-semibold text-lg mb-2">
-                        No Favorite Cities Yet
-                      </h3>
-                      <p className="text-sm text-muted-foreground max-w-sm">
-                        Start exploring cities and click the star icon to add
-                        them to your favorites!
-                      </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {favoriteCities.map((city) => (
-                      <CityCard key={city.id} city={city} variant="basic" />
-                    ))}
-                  </div>
-                )}
-              </div>
+              <ProfileFavorites />
             </TabsContent>
 
             {/* Achievements Tab */}
