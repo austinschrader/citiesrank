@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CityInsight } from "@/components/places/detail/types";
+import { CityInsight } from "@/features/places/detail/types";
 import { CityData } from "@/types";
 import PocketBase from "pocketbase";
 import { getApiUrl } from "@/appConfig";
