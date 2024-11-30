@@ -1,54 +1,16 @@
-import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { usePlaces } from "@/features/places/context/PlacesContext";
 import { AchievementCard } from "@/features/profile/components/AchievementCard";
 import { Achievement } from "@/features/profile/types";
 import { Building2, Globe, Landmark, Map, Star } from "lucide-react";
-import PocketBase from "pocketbase";
-import { useEffect, useState } from "react";
-
-const apiUrl = getApiUrl();
-const pb = new PocketBase(apiUrl);
-
-type SimpleCity = {
-  id: string;
-  name: string;
-  country: string;
-};
 
 export const AchievementsList = () => {
   const { user } = useAuth();
-  const [totalCities, setTotalCities] = useState(0);
-  const [totalCountries, setTotalCountries] = useState(0);
-  const [cities, setCities] = useState<SimpleCity[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [citiesResult, countriesResult, citiesData] = await Promise.all([
-          pb.collection("cities").getList(1, 1, {}),
-          pb.collection("countries").getList(1, 1, {}),
-          pb.collection("cities").getFullList<SimpleCity>(),
-        ]);
-
-        setTotalCities(citiesResult.totalItems);
-        setTotalCountries(countriesResult.totalItems);
-
-        const simpleCities: SimpleCity[] = citiesData.map((city) => ({
-          id: city.id,
-          name: city.name,
-          country: city.country,
-        }));
-        setCities(simpleCities);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-    fetchData();
-  }, []);
+  const { places, stats, status } = usePlaces();
 
   const visitedCitiesCount = user?.places_visited?.length || 0;
   const visitedCountries = new Set(
-    cities
+    places.cities
       .filter((city) => user?.places_visited?.includes(city.id))
       .map((city) => city.country)
   ).size;
@@ -56,16 +18,16 @@ export const AchievementsList = () => {
   const achievements: Achievement[] = [
     {
       name: "Global Explorer",
-      description: `Visited ${visitedCountries} out of ${totalCountries} countries`,
+      description: `Visited ${visitedCountries} out of ${stats.totalCountries} countries`,
       progress: visitedCountries,
-      total: totalCountries,
+      total: stats.totalCountries,
       icon: <Globe className="h-4 w-4" />,
     },
     {
       name: "City Conqueror",
-      description: `Explored ${visitedCitiesCount} out of ${totalCities} major cities`,
+      description: `Explored ${visitedCitiesCount} out of ${stats.totalCities} major cities`,
       progress: visitedCitiesCount,
-      total: totalCities,
+      total: stats.totalCities,
       icon: <Building2 className="h-4 w-4" />,
     },
     {
@@ -90,6 +52,10 @@ export const AchievementsList = () => {
       icon: <Landmark className="h-4 w-4" />,
     },
   ];
+
+  if (status.loading) return <div>Loading achievements...</div>;
+  if (status.error)
+    return <div>Error loading achievements: {status.error}</div>;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

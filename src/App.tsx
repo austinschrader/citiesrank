@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster"; // Add this import
 import { AuthProvider } from "@/features/auth/context/AuthContext";
+import { PlacesProvider } from "@/features/places/context/PlacesContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
@@ -18,29 +19,31 @@ import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <AuthProvider>
-      <PreferencesProvider>
-        <RootLayout>
-          <Routes>
-            <Route path="/" element={<PlacesPage />} />
-            <Route path="/lists" element={<ListsPage />} />
-            <Route path="/lists/:id" element={<ViewListPage />} />
-            <Route path="/members" element={<MembersPage />} />
-            <Route path="/journal" element={<JournalPage />} />
-            <Route path="/saved" element={<SavedPage />} />
-            <Route path="/add" element={<AddPlacePage />} />
-            <Route path="/create-list" element={<CreateListPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route
-              path="/cities/:country/:city"
-              element={<CityDetailsPage />}
-            />
-          </Routes>
-        </RootLayout>
-        <Toaster />
-      </PreferencesProvider>
-    </AuthProvider>
+    <PlacesProvider>
+      <AuthProvider>
+        <PreferencesProvider>
+          <RootLayout>
+            <Routes>
+              <Route path="/" element={<PlacesPage />} />
+              <Route path="/lists" element={<ListsPage />} />
+              <Route path="/lists/:id" element={<ViewListPage />} />
+              <Route path="/members" element={<MembersPage />} />
+              <Route path="/journal" element={<JournalPage />} />
+              <Route path="/saved" element={<SavedPage />} />
+              <Route path="/add" element={<AddPlacePage />} />
+              <Route path="/create-list" element={<CreateListPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route
+                path="/cities/:country/:city"
+                element={<CityDetailsPage />}
+              />
+            </Routes>
+          </RootLayout>
+          <Toaster />
+        </PreferencesProvider>
+      </AuthProvider>
+    </PlacesProvider>
   );
 }
 
