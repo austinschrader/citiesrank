@@ -1,11 +1,14 @@
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
 import { getApiUrl } from "@/config/appConfig";
+import { CitiesSection } from "@/features/places/components/CitiesSection";
 import { CityCard } from "@/features/places/components/CityCard";
-import { DesktopFilters } from "@/features/places/components/DesktopFilters";
-import { MobileFilters } from "@/features/places/components/MobileFilters";
-import { MobileSearch } from "@/features/places/components/MobileSearch";
+import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
+import { MobileFilters } from "@/features/places/search/components/MobileFilters";
+import { MobileSearch } from "@/features/places/search/components/MobileSearch";
 import { filterOptions } from "@/features/places/constants";
+import { usePopularCities } from "@/features/places/hooks/usePopularCities";
+import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
@@ -31,6 +34,8 @@ export const PlacesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [seasonalCities, setSeasonalCities] = useState<CitiesResponse[]>([]);
+  const [popularCities, setPopularCities] = useState<CitiesResponse[]>([]);
 
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
@@ -82,7 +87,16 @@ export const PlacesPage = () => {
               acc[record.name] = record;
               return acc;
             }, {} as Record<string, CitiesResponse>);
+
           setCityData(transformedData);
+
+          // Set seasonal cities using the new hook - no preference matching for MVP
+          const seasonal = useSeasonalCities(records);
+          setSeasonalCities(seasonal);
+
+          // Set popular cities using the new hook - no preference matching for MVP
+          const popular = await usePopularCities();
+          setPopularCities(popular);
         }
       } catch (error) {
         if (currentRequestIdRef.current === requestId) {
@@ -256,6 +270,12 @@ export const PlacesPage = () => {
           setSortOrder={setSortOrder}
           filterOptions={filterOptions}
         />
+
+        {/* Featured and Popular Sections */}
+        <div className="space-y-8">
+          <CitiesSection title="Featured This Season" cities={seasonalCities} />
+          <CitiesSection title="Popular Right Now" cities={popularCities} />
+        </div>
 
         {/* Results Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
