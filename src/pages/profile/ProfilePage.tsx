@@ -24,6 +24,7 @@ import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { CityCard } from "@/features/places/components/CityCard";
 import { AchievementsList } from "@/features/profile/components/AchievementsList";
+import { ProfileHeader } from "@/features/profile/components/ProfileHeader";
 import { StatCard } from "@/features/profile/components/StatCard";
 import { SimpleCity } from "@/features/profile/types";
 import { useToast } from "@/hooks/use-toast";
@@ -283,13 +284,7 @@ export const ProfilePage = () => {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Profile</h1>
-          <p className="text-muted-foreground">
-            View and manage your personal profile, contributions, and
-            achievements.
-          </p>
-        </div>
+        <ProfileHeader />
 
         <div className="grid gap-8">
           {/* Profile Overview Card */}
