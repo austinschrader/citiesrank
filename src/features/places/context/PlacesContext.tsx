@@ -1,5 +1,5 @@
 import { getApiUrl } from "@/config/appConfig";
-import { SimpleCity } from "@/lib/api/types";
+import { SimpleCity } from "@/features/profile/types";
 import PocketBase from "pocketbase";
 import {
   createContext,

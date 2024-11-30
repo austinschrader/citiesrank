@@ -25,6 +25,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { CityCard } from "@/features/places/components/CityCard";
 import { AchievementsList } from "@/features/profile/components/AchievementsList";
 import { StatCard } from "@/features/profile/components/StatCard";
+import { SimpleCity } from "@/features/profile/types";
 import { useToast } from "@/hooks/use-toast";
 import { recentActivity } from "@/lib/data/profile/recentActivity";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
@@ -46,12 +47,6 @@ import { useEffect, useMemo, useState } from "react";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
-
-type SimpleCity = {
-  id: string;
-  name: string;
-  country: string;
-};
 
 export const ProfilePage = () => {
   const { user, pb } = useAuth();
