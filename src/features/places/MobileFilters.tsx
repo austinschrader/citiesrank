@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SlidersHorizontal, X } from "lucide-react";
-import { PreferencesCard } from "@/components/PreferencesCard";
+import { PreferencesCard } from "@/features/preferences/PreferencesCard";
 import { UserPreferences } from "@/types";
 
 interface MobileFiltersProps {

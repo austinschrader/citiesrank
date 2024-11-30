@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { CityCardProps, ReviewSummary } from "@/types";
 import { cn } from "@/lib/utils";
-import { ImageGallery } from "@/components/ImageGallery";
+import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
