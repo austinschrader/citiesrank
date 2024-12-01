@@ -36,7 +36,7 @@ export const PlacesPage = () => {
     getFilteredCities,
   } = useSearchFilters(preferences);
   const { getAllCities } = useCitiesActions();
-  const { getSeasonalCities } = useSeasonalCities();
+  const getSeasonalCities = useSeasonalCities();
   const getPopular = usePopularCities();
 
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
@@ -100,7 +100,8 @@ export const PlacesPage = () => {
           setCityData(transformedData);
 
           // Set seasonal cities
-          setSeasonalCities(getSeasonalCities(records));
+          const seasonal = await getSeasonalCities();
+          setSeasonalCities(seasonal);
 
           // Set popular cities
           const popular = await getPopular();
