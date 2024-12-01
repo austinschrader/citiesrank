@@ -46,10 +46,14 @@ const CitiesActionsContext = createContext<{
     queryParams?: QueryParams
   ) => Promise<any>;
   getCityByName: (cityName: string) => Promise<CitiesResponse>;
+  getAllCities: () => Promise<CitiesResponse[]>;
 }>({
   refreshCities: async () => {},
   fetchCitiesPaginated: async () => {},
   getCityByName: async () => {
+    throw new Error("Not implemented");
+  },
+  getAllCities: async () => {
     throw new Error("Not implemented");
   },
 });
@@ -164,6 +168,11 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     return result.items[0] as CitiesResponse;
   };
 
+  const getAllCities = async () => {
+    const records = await pb.collection("cities").getFullList<CitiesResponse>();
+    return records;
+  };
+
   useEffect(() => {
     refreshCities();
   }, []);
@@ -171,7 +180,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   return (
     <CitiesContext.Provider value={state}>
       <CitiesActionsContext.Provider
-        value={{ refreshCities, fetchCitiesPaginated, getCityByName }}
+        value={{
+          refreshCities,
+          fetchCitiesPaginated,
+          getCityByName,
+          getAllCities,
+        }}
       >
         {children}
       </CitiesActionsContext.Provider>

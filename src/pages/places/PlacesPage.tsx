@@ -3,6 +3,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { getApiUrl } from "@/config/appConfig";
 import { CitiesSection } from "@/features/places/components/CitiesSection";
 import { CityCard } from "@/features/places/components/CityCard";
+import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePopularCities } from "@/features/places/hooks/usePopularCities";
 import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
 import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
@@ -15,12 +16,10 @@ import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import debounce from "lodash/debounce";
 import { Search, X } from "lucide-react";
-import PocketBase from "pocketbase";
 import React, { useEffect, useRef, useState } from "react";
 
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
-const pb = new PocketBase(apiUrl);
 
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } =
@@ -36,6 +35,9 @@ export const PlacesPage = () => {
     handleFilterSelect,
     getFilteredCities,
   } = useSearchFilters(preferences);
+  const { getAllCities } = useCitiesActions();
+  const { getSeasonalCities } = useSeasonalCities();
+  const getPopular = usePopularCities();
 
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -86,9 +88,7 @@ export const PlacesPage = () => {
       setIsLoading(true);
 
       try {
-        const records = await pb
-          .collection("cities")
-          .getFullList<CitiesResponse>();
+        const records = await getAllCities();
 
         if (currentRequestIdRef.current === requestId) {
           const transformedData: Record<string, CitiesResponse> =
@@ -99,12 +99,11 @@ export const PlacesPage = () => {
 
           setCityData(transformedData);
 
-          // Set seasonal cities using the new hook - no preference matching for MVP
-          const seasonal = useSeasonalCities(records);
-          setSeasonalCities(seasonal);
+          // Set seasonal cities
+          setSeasonalCities(getSeasonalCities(records));
 
-          // Set popular cities using the new hook - no preference matching for MVP
-          const popular = await usePopularCities();
+          // Set popular cities
+          const popular = await getPopular();
           setPopularCities(popular);
         }
       } catch (error) {
@@ -121,7 +120,7 @@ export const PlacesPage = () => {
     };
 
     loadCityData();
-  }, []);
+  }, [getAllCities, getSeasonalCities, getPopular]);
 
   // Debounced search
   const debouncedSearch = debounce((value: string) => {
