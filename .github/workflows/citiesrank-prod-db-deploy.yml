@@ -1,0 +1,72 @@
+name: Deploy migrations to CitiesRank Production DB
+
+on:
+  # For now, we will only automatically trigger ppe deploys when code is pushed to main.
+  # Prod releases will need to be manually triggered. This can be changed to automatically deploy on push if we want.
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+  # This enables manual triggering
+  # You can optionally add inputs here if you need to parameterize the workflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SSH_PRIVATE_KEY: ${{secrets.AZ_CITIESRANK_PROD_VM_KEY}}
+      SSH_KEY_PATH: ~/.ssh
+      SSH_KEY_NAME: citiesrank-prod-key
+      VM_DOMAIN: api.citiesrank.com
+      VM_ADMIN: citiesrankadmin
+      MAX_HEALTH_CHECK_RETRIES: 30
+      HEALTH_CHECK_INTERVAL: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}}
+          sudo chmod 600 ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}}
+          ssh-keyscan -H ${{env.VM_DOMAIN}} > ${{env.SSH_KEY_PATH}}/known_hosts
+        shell: bash
+
+      - name: Copy migrations to VM
+        run: |
+          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}} 'mkdir -p ~/pb/pb_migrations'
+          scp -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} -r pocketbase/pb_migrations/* ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}}:~/pb/pb_migrations/
+          # Restart the pocketbase service to apply the migrations
+          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}} 'sudo systemctl restart pocketbase'
+          # Allow pocketbase to bind to port 443
+          ssh -i ${{env.SSH_KEY_PATH}}/${{env.SSH_KEY_NAME}} ${{env.VM_ADMIN}}@${{env.VM_DOMAIN}} 'sudo setcap cap_net_bind_service=+ep ~/pb/pocketbase'
+      - name: Wait for service to be healthy
+        run: |
+          retries=0
+          echo "Starting health checks for https://${{env.VM_DOMAIN}}/_/"
+
+          while [ $retries -lt ${{env.MAX_HEALTH_CHECK_RETRIES}} ]; do
+            echo "Attempt $((retries + 1)) of ${{env.MAX_HEALTH_CHECK_RETRIES}}"
+            
+            response=$(curl -s https://${{env.VM_DOMAIN}}/_/)
+            status_code=$?
+            
+            echo "Curl exit code: $status_code"
+            echo "Response: $response"
+            
+            if [[ "$status_code" -eq 0 ]] && [[ ! -z "$response" ]]; then
+              echo "Service is healthy!"
+              exit 0
+            fi
+            
+            echo "Service not healthy yet. Waiting ${{env.HEALTH_CHECK_INTERVAL}} seconds before next attempt..."
+            sleep ${{env.HEALTH_CHECK_INTERVAL}}
+            retries=$((retries + 1))
+          done
+            
+            echo "ERROR: Service did not become healthy within $((MAX_HEALTH_CHECK_RETRIES * HEALTH_CHECK_INTERVAL)) seconds"
+            echo "Last response: $response"
+            echo "Making a verbose request for debugging:"
+            curl -v https://${{env.VM_DOMAIN}}/_/
+            exit 1
