@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,15 +14,10 @@ import { EmptyListsState } from "@/features/lists/create/components/EmptyListsSt
 import { useLists } from "@/features/lists/hooks/useLists";
 import { LIST_TEMPLATES } from "@/lib/data/lists/listTemplate";
 import { Grid, List as ListIcon, Plus, Search, Users2 } from "lucide-react";
-import PocketBase from "pocketbase";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { getApiUrl } from "@/config/appConfig";
 import { ListCard } from "@/features/lists/components/ListCard";
-
-const apiUrl = getApiUrl();
-const pb = new PocketBase(apiUrl);
 
 const LoadingSpinner = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
