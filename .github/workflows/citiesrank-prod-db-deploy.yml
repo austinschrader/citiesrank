@@ -18,7 +18,7 @@ jobs:
       SSH_KEY_PATH: ~/.ssh
       SSH_KEY_NAME: citiesrank-prod-key
       VM_DOMAIN: api.citiesrank.com
-      VM_ADMIN: justin # TODO: This could be updated to citiesrank-prod-admin
+      VM_ADMIN: citiesrankadmin
       MAX_HEALTH_CHECK_RETRIES: 30
       HEALTH_CHECK_INTERVAL: 10
     steps:
