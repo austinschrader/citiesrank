@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useTags } from "../hooks/useTags";
 
 interface DestinationFilterProps {
   selectedFilter: string | null;
@@ -15,19 +16,7 @@ export const DestinationFilter = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
-
-  const filterOptions = [
-    { id: "metropolis", label: "Major Cities" },
-    { id: "coastal", label: "Coastal Cities" },
-    { id: "mountain", label: "Mountain Towns" },
-    { id: "historic", label: "Historic Sites" },
-    { id: "cultural", label: "Cultural Hubs" },
-    { id: "culinary", label: "Food & Wine" },
-    { id: "tropical", label: "Tropical" },
-    { id: "adventure", label: "Adventure" },
-    { id: "wellness", label: "Wellness" },
-    { id: "village", label: "Small Towns" },
-  ];
+  const { filterOptions, isLoading, error } = useTags();
 
   const handleScroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;

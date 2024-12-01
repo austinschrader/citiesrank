@@ -29,7 +29,7 @@ export interface CityData {
   population: string;
   highlights: string[];
   reviews?: ReviewSummary;
-  destinationTypes: string[];
+  tags: string[];
   crowdLevel: number;
   recommendedStay: number;
   bestSeason: number;

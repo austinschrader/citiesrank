@@ -1,8 +1,8 @@
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getCityImage } from "@/lib/cloudinary";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import React from "react";
 
 interface PlaceCardProps {
   place: CitiesResponse;
@@ -54,8 +54,8 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
             <p className="text-muted-foreground mb-3">{place.country}</p>
             <p className="text-sm line-clamp-2 mb-3">{place.description}</p>
             <div className="flex flex-wrap gap-2">
-              {Array.isArray(place.destinationTypes) &&
-                place.destinationTypes.map((tag: string) => (
+              {Array.isArray(place.tags) &&
+                place.tags.map((tag: string) => (
                   <Badge key={tag} variant="secondary" className="text-xs">
                     {tag}
                   </Badge>

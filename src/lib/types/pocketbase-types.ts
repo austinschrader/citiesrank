@@ -10,6 +10,7 @@ export enum Collections {
 	Countries = "countries",
 	Favorites = "favorites",
 	Lists = "lists",
+	Tags = "tags",
 	Users = "users",
 }
 
@@ -37,7 +38,7 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Thighlights = unknown, Treviews = unknown> = {
+export type CitiesRecord<Tcoordinates = unknown, Thighlights = unknown> = {
 	accessibility: number
 	averageRating?: number
 	bestSeason: number
@@ -47,7 +48,6 @@ export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Th
 	country: string
 	crowdLevel: number
 	description: string
-	destinationTypes: null | TdestinationTypes
 	highlights: null | Thighlights
 	imageUrl?: string
 	interesting: number
@@ -55,9 +55,9 @@ export type CitiesRecord<Tcoordinates = unknown, TdestinationTypes = unknown, Th
 	normalizedName: string
 	population: string
 	recommendedStay: number
-	reviews: null | Treviews
 	safetyScore: number
 	slug: string
+	tags?: RecordIdString[]
 	totalReviews?: number
 	transit: number
 	transitScore: number
@@ -113,6 +113,13 @@ export type ListsRecord<Ttags = unknown> = {
 	views?: number
 }
 
+export type TagsRecord = {
+	active?: boolean
+	identifier: string
+	label: string
+	order?: number
+}
+
 export type UsersRecord = {
 	avatar?: string
 	bio?: string
@@ -124,10 +131,11 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type CitiesResponse<Tcoordinates = unknown, TdestinationTypes = unknown, Thighlights = unknown, Treviews = unknown, Texpand = unknown> = Required<CitiesRecord<Tcoordinates, TdestinationTypes, Thighlights, Treviews>> & BaseSystemFields<Texpand>
+export type CitiesResponse<Tcoordinates = unknown, Thighlights = unknown, Texpand = unknown> = Required<CitiesRecord<Tcoordinates, Thighlights>> & BaseSystemFields<Texpand>
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
 export type ListsResponse<Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Ttags>> & BaseSystemFields<Texpand>
+export type TagsResponse<Texpand = unknown> = Required<TagsRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -137,6 +145,7 @@ export type CollectionRecords = {
 	countries: CountriesRecord
 	favorites: FavoritesRecord
 	lists: ListsRecord
+	tags: TagsRecord
 	users: UsersRecord
 }
 
@@ -145,6 +154,7 @@ export type CollectionResponses = {
 	countries: CountriesResponse
 	favorites: FavoritesResponse
 	lists: ListsResponse
+	tags: TagsResponse
 	users: UsersResponse
 }
 
@@ -156,5 +166,6 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'favorites'): RecordService<FavoritesResponse>
 	collection(idOrName: 'lists'): RecordService<ListsResponse>
+	collection(idOrName: 'tags'): RecordService<TagsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

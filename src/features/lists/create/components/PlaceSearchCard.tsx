@@ -112,27 +112,26 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
         <div>
           <h3 className="font-medium">{place.name}</h3>
           <p className="text-sm text-muted-foreground">{place.country}</p>
-          {Array.isArray(place.destinationTypes) &&
-            place.destinationTypes.length > 0 && (
-              <div className="flex gap-1 mt-1 flex-wrap">
-                {place.destinationTypes
-                  .filter((type): type is string => typeof type === "string")
-                  .slice(0, 3)
-                  .map((type) => (
-                    <span
-                      key={type}
-                      className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs"
-                    >
-                      {type}
-                    </span>
-                  ))}
-                {place.destinationTypes.length > 3 && (
-                  <span className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
-                    +{place.destinationTypes.length - 3}
+          {Array.isArray(place.tags) && place.tags.length > 0 && (
+            <div className="flex gap-1 mt-1 flex-wrap">
+              {place.tags
+                .filter((type): type is string => typeof type === "string")
+                .slice(0, 3)
+                .map((type) => (
+                  <span
+                    key={type}
+                    className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs"
+                  >
+                    {type}
                   </span>
-                )}
-              </div>
-            )}
+                ))}
+              {place.tags.length > 3 && (
+                <span className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
+                  +{place.tags.length - 3}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* {place.reviews &&

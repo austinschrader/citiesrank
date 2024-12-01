@@ -1,6 +1,6 @@
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import React from "react";
 
 interface PlaceDetailsProps {
   place: CitiesResponse;
