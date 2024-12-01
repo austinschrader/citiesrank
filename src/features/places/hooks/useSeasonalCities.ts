@@ -34,11 +34,11 @@ export const useSeasonalCities = () => {
 
       return cities
         .filter((city) => {
-          if (!city.destinationTypes || !Array.isArray(city.destinationTypes)) {
+          if (!city.tags || !Array.isArray(city.tags)) {
             return false;
           }
 
-          return city.destinationTypes.some((destinationType: string) => {
+          return city.tags.some((destinationType: string) => {
             return seasonalTags.includes(destinationType);
           });
         })

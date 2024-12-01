@@ -7,7 +7,7 @@ interface AboutProps {
 }
 
 // Utility function to format destination types for display
-const formatDestinationTypes = (types: unknown) => {
+const formatTags = (types: unknown) => {
   if (!Array.isArray(types)) return [];
   return types.map((type) =>
     typeof type === "string" ? type.charAt(0).toUpperCase() + type.slice(1) : ""
@@ -15,7 +15,7 @@ const formatDestinationTypes = (types: unknown) => {
 };
 
 export const About = ({ city }: AboutProps) => {
-  const destinationTypes = formatDestinationTypes(city.destinationTypes);
+  const tags = formatTags(city.tags);
 
   return (
     <div>
@@ -43,9 +43,9 @@ export const About = ({ city }: AboutProps) => {
       </div>
 
       {/* Destination Types */}
-      {destinationTypes.length > 0 && (
+      {tags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          {destinationTypes.map((type, index) => (
+          {tags.map((type, index) => (
             <Badge key={index} variant="secondary">
               {type}
             </Badge>
@@ -80,10 +80,8 @@ export const About = ({ city }: AboutProps) => {
           <p className="text-sm text-muted-foreground">
             We recommend spending {city.recommendedStay} days to fully
             experience {city.name}
-            {destinationTypes.length > 0 &&
-              ` and explore its ${destinationTypes
-                .join(", ")
-                .toLowerCase()} attractions`}
+            {tags.length > 0 &&
+              ` and explore its ${tags.join(", ").toLowerCase()} attractions`}
             .
           </p>
         </div>

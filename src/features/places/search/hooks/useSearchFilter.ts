@@ -1,4 +1,4 @@
-import { filterOptions } from "@/features/places/constants";
+import { useTags } from "@/features/places/hooks/useTags";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { useCallback, useState } from "react";
@@ -25,6 +25,7 @@ export const useSearchFilters = (
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState("match");
+  const { filterOptions } = useTags();
 
   const handleFilterSelect = useCallback(
     (filter: string) => {
@@ -39,13 +40,17 @@ export const useSearchFilters = (
       searchQuery: string,
       calculateMatchForCity: (city: CitiesResponse) => MatchScore
     ): (CitiesResponse & MatchScore)[] => {
+      if (!cityData) {
+        return [];
+      }
+
       return Object.entries(cityData)
         .filter(([name, data]) => {
           const matchesFilter =
             !selectedFilter ||
-            (data.destinationTypes &&
-              Array.isArray(data.destinationTypes) &&
-              data.destinationTypes.includes(selectedFilter));
+            (data.tags &&
+              Array.isArray(data.tags) &&
+              data.tags.includes(selectedFilter));
           const matchesSearch =
             !searchQuery ||
             name.toLowerCase().includes(searchQuery.toLowerCase()) ||

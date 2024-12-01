@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "process-images": "node process-images.js",
-    "generate-types": "npx pocketbase-typegen@1.2.1 --db ./pocketbase/pb_data/data.db --out src/pocketbase-types.ts"
+    "generate-types": "npx pocketbase-typegen@1.2.1 --db ./pocketbase/pb_data/data.db --out src/lib/types/pocketbase-types.ts"
   },
   "dependencies": {
     "@cloudinary/react": "^1.13.1",

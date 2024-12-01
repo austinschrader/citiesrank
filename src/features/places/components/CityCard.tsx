@@ -11,7 +11,8 @@ import {
 import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ImageGallery } from "@/features/gallery/ImageGallery";
-import { CityCardProps, ReviewSummary } from "@/features/places/types";
+import { useTagIdentifiers } from "@/features/places/hooks/useTagIdentifiers";
+import { CityCardProps } from "@/features/places/types";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Camera, Compass, Heart, LogIn, MapPin, Users } from "lucide-react";
@@ -36,15 +37,9 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { getTagIdentifier } = useTagIdentifiers();
 
   const pb = new PocketBase(getApiUrl());
-
-  // Safely convert destination types
-  const safeDestinationTypes = Array.isArray(city.destinationTypes)
-    ? city.destinationTypes.filter(
-        (type): type is string => typeof type === "string"
-      )
-    : [];
 
   // Check if city is favorited on mount and when user changes
   useEffect(() => {
@@ -182,21 +177,19 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
             )}
           </div>
 
-          {safeDestinationTypes.length > 0 && (
-            <div className="absolute bottom-2 left-2 right-2 z-20">
-              <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
-                {safeDestinationTypes.slice(0, 4).map((type, index) => (
-                  <Badge
-                    key={`${type}-${index}`}
-                    variant="secondary"
-                    className="bg-black/50 hover:bg-black/60 text-white border-none backdrop-blur-sm transition-all duration-300 whitespace-nowrap text-xs font-medium px-2 py-0.5"
-                  >
-                    {type}
-                  </Badge>
-                ))}
-              </div>
+          <div className="absolute bottom-2 left-2 right-2 z-20">
+            <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+              {city.tags?.map((tagId, index) => (
+                <Badge
+                  key={`${tagId}-${index}`}
+                  variant="secondary"
+                  className="bg-black/50 hover:bg-black/60 text-white border-none backdrop-blur-sm transition-all duration-300 whitespace-nowrap text-xs font-medium px-2 py-0.5"
+                >
+                  {getTagIdentifier(tagId)}
+                </Badge>
+              ))}
             </div>
-          )}
+          </div>
 
           {/* Add a gradient overlay to ensure badge readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
@@ -236,10 +229,10 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
 
             <div className="text-right">
               <div className="text-lg font-semibold text-foreground mb-1">
-                {(city.reviews as ReviewSummary).averageRating.toFixed(1)}
+                {city.averageRating.toFixed(1)}
               </div>
               <div className="text-xs text-muted-foreground">
-                {(city.reviews as ReviewSummary).totalReviews} reviews
+                {city.totalReviews} reviews
               </div>
             </div>
           </div>

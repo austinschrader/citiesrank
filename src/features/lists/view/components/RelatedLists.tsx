@@ -1,11 +1,10 @@
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { getCityImage } from "@/lib/cloudinary";
 import {
+  CitiesResponse,
   ListsResponse,
   UsersResponse,
-  CitiesResponse,
 } from "@/lib/types/pocketbase-types";
+import React from "react";
 
 // Reuse the same expanded type definition as before
 interface ExpandedListResponse extends ListsResponse {
