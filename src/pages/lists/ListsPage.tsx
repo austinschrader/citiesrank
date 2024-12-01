@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { EmptyListsState } from "@/features/lists/create/components/EmptyListsState";
 import { useCities } from "@/features/places/context/CitiesContext";
+import { LIST_TEMPLATES } from "@/lib/data/lists/listTemplate";
 import {
   Collections,
   ListsCollectionOptions,
@@ -31,9 +32,6 @@ import debounce from "lodash/debounce";
 import {
   BookmarkPlus,
   Calendar,
-  Camera,
-  Compass,
-  Globe,
   Grid,
   Heart,
   List as ListIcon,
@@ -41,9 +39,7 @@ import {
   Plus,
   Search,
   Share2,
-  Sparkles,
   Users2,
-  type LucideIcon,
 } from "lucide-react";
 import PocketBase, { RecordModel } from "pocketbase";
 import React, { useEffect, useRef, useState } from "react";
@@ -54,58 +50,6 @@ import { getImageUrl } from "@/lib/cloudinary";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
-
-interface Place {
-  citySlug: string;
-  name: string;
-  country: string;
-  imageUrl: string;
-}
-
-interface ListAuthor {
-  id: string;
-  name: string;
-  avatar: string;
-}
-
-interface ListTemplate {
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  bgClass: string;
-  textClass: string;
-}
-
-const LIST_TEMPLATES: ListTemplate[] = [
-  {
-    icon: Sparkles,
-    title: "Hidden Gems",
-    description: "Share your secret spots",
-    bgClass: "bg-purple-500/10",
-    textClass: "text-purple-500",
-  },
-  {
-    icon: Camera,
-    title: "Photo Walks",
-    description: "Best photography routes",
-    bgClass: "bg-blue-500/10",
-    textClass: "text-blue-500",
-  },
-  {
-    icon: Globe,
-    title: "Local Favorites",
-    description: "Your city's best spots",
-    bgClass: "bg-green-500/10",
-    textClass: "text-green-500",
-  },
-  {
-    icon: Compass,
-    title: "Weekend Trips",
-    description: "Perfect 48-hour guides",
-    bgClass: "bg-orange-500/10",
-    textClass: "text-orange-500",
-  },
-];
 
 interface ListCardProps {
   list: ListsResponse;
