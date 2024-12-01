@@ -14,6 +14,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useCities } from "@/features/places/context/CitiesContext";
 import { StatCard } from "@/features/profile/components/StatCard";
 import { SimpleCity } from "@/features/profile/types";
 import { useToast } from "@/hooks/use-toast";
@@ -24,9 +25,8 @@ import { useEffect, useMemo, useState } from "react";
 export const ProfileOverview = () => {
   const { user, pb } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [cities, setCities] = useState<SimpleCity[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
-  const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const { sortedCities, cityStatus } = useCities();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     bio: user?.bio || "",
@@ -36,29 +36,6 @@ export const ProfileOverview = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
-  // Fetch cities for the dropdown
-  useEffect(() => {
-    async function fetchCities() {
-      setIsLoadingCities(true);
-      try {
-        const resultList = await pb.collection("cities").getList(1, 100, {
-          sort: "name",
-        });
-        // Map the records to our SimpleCity type
-        const simpleCities: SimpleCity[] = resultList.items.map((city) => ({
-          id: city.id,
-          name: city.name as string,
-          country: city.country as string,
-        }));
-        setCities(simpleCities);
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-      setIsLoadingCities(false);
-    }
-    fetchCities();
-  }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0] || !user) return;
@@ -130,9 +107,9 @@ export const ProfileOverview = () => {
 
   // Group places by country
   const visitedPlaces = useMemo(() => {
-    if (!user?.places_visited || !cities.length) return {};
+    if (!user?.places_visited || !sortedCities.length) return {};
 
-    return cities
+    return sortedCities
       .filter((city) => user.places_visited?.includes(city.id))
       .reduce((acc, city) => {
         if (!acc[city.country]) {
@@ -141,7 +118,7 @@ export const ProfileOverview = () => {
         acc[city.country].push(city);
         return acc;
       }, {} as Record<string, SimpleCity[]>);
-  }, [user?.places_visited, cities]);
+  }, [user?.places_visited, sortedCities]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -403,13 +380,13 @@ export const ProfileOverview = () => {
                     <Select
                       value={selectedCity}
                       onValueChange={setSelectedCity}
-                      disabled={isLoading || isLoadingCities}
+                      disabled={isLoading || cityStatus.loading === false}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a city" />
                       </SelectTrigger>
                       <SelectContent>
-                        {cities.map((city) => (
+                        {sortedCities.map((city) => (
                           <SelectItem key={city.id} value={city.id}>
                             {city.name}, {city.country}
                           </SelectItem>

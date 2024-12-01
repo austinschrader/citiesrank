@@ -7,12 +7,13 @@ import { Building2, Globe, Landmark, Map, Star, Trophy } from "lucide-react";
 
 export const AchievementsListCard = () => {
   const { user } = useAuth();
-  const { cities: places, totalCities, cityStatus } = useCities();
+  const { cities, totalCities, cityStatus } = useCities();
   const { countries, totalCountries, countryStatus } = useCountries();
 
   const visitedCitiesCount = user?.places_visited?.length || 0;
-  const visitedCountries = places
-    .map((place) => place.country)
+  const visitedCountries = cities
+    .filter((city) => user?.places_visited?.includes(city.id))
+    .map((city) => city.country)
     .filter(
       (country, index, countries) => countries.indexOf(country) === index
     ).length;

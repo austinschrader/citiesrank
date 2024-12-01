@@ -1,20 +1,20 @@
 import { getApiUrl } from "@/config/appConfig";
+import { CountriesResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
 
-interface Country {
-  id: string;
-  name: string;
-  isoCode: string;
-  population: number;
-  description: string;
-}
-
 interface CountriesState {
-  countries: Country[];
+  countries: CountriesResponse[];
+  sortedCountries: CountriesResponse[]; // Pre-sorted list for dropdowns
   totalCountries: number;
   countryStatus: {
     loading: boolean;
@@ -24,6 +24,7 @@ interface CountriesState {
 
 const defaultState: CountriesState = {
   countries: [],
+  sortedCountries: [],
   totalCountries: 0,
   countryStatus: {
     loading: false,
@@ -31,7 +32,7 @@ const defaultState: CountriesState = {
   },
 };
 
-const CountriesContext = createContext<CountriesState>(defaultState);
+export const CountriesContext = createContext<CountriesState>(defaultState);
 const CountriesActionsContext = createContext<{
   refreshCountries: () => Promise<void>;
   fetchCountriesPaginated: (
@@ -75,48 +76,65 @@ export function CountriesProvider({ children }: CountriesProviderProps) {
     queryParams = {}
   ) => {
     try {
-      setState((prev) => ({ ...prev, status: { loading: true, error: null } }));
+      setState((prev) => ({
+        ...prev,
+        countryStatus: { loading: true, error: null },
+      }));
       const result = await pb
         .collection("countries")
         .getList(page, perPage, queryParams);
+
+      setState((prev) => ({
+        ...prev,
+        countries: result.items as CountriesResponse[],
+        totalCountries: result.totalItems,
+        countryStatus: { loading: false, error: null },
+      }));
+
       return result;
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        status: { loading: false, error: String(error) },
+        countryStatus: { loading: false, error: String(error) },
       }));
       throw error;
-    } finally {
-      setState((prev) => ({
-        ...prev,
-        status: { loading: false, error: null },
-      }));
     }
   };
 
   const refreshCountries = async () => {
     try {
-      setState((prev) => ({ ...prev, status: { loading: true, error: null } }));
+      setState((prev) => ({
+        ...prev,
+        countryStatus: { loading: true, error: null },
+      }));
 
       const countriesData = await pb
         .collection("countries")
-        .getFullList<Country>();
+        .getFullList<CountriesResponse>();
+      const sortedCountries = [...countriesData].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
 
       setState((prev) => ({
         ...prev,
         countries: countriesData,
-        stats: {
-          totalCountries: countriesData.length,
-        },
-        status: { loading: false, error: null },
+        sortedCountries,
+        totalCountries: countriesData.length,
+        countryStatus: { loading: false, error: null },
       }));
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        status: { loading: false, error: String(error) },
+        countryStatus: { loading: false, error: String(error) },
       }));
+      throw error;
     }
   };
+
+  // Fetch initial data
+  useEffect(() => {
+    refreshCountries();
+  }, []);
 
   return (
     <CountriesContext.Provider value={state}>

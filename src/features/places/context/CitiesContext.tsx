@@ -1,14 +1,20 @@
 import { getApiUrl } from "@/config/appConfig";
-import { SimpleCity } from "@/features/profile/types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
 
 interface CitiesState {
-  cities: SimpleCity[];
-  sortedCities: SimpleCity[]; // Pre-sorted list for dropdowns
+  cities: CitiesResponse[];
+  sortedCities: CitiesResponse[]; // Pre-sorted list for dropdowns
   totalCities: number;
   cityStatus: {
     loading: boolean;
@@ -68,32 +74,41 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     queryParams = {}
   ) => {
     try {
-      setState((prev) => ({ ...prev, status: { loading: true, error: null } }));
+      setState((prev) => ({
+        ...prev,
+        cityStatus: { loading: true, error: null },
+      }));
       const result = await pb
         .collection("cities")
         .getList(page, perPage, queryParams);
+
+      setState((prev) => ({
+        ...prev,
+        cities: result.items as CitiesResponse[],
+        totalCities: result.totalItems,
+        cityStatus: { loading: false, error: null },
+      }));
+
       return result;
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        status: { loading: false, error: String(error) },
+        cityStatus: { loading: false, error: String(error) },
       }));
       throw error;
-    } finally {
-      setState((prev) => ({
-        ...prev,
-        status: { loading: false, error: null },
-      }));
     }
   };
 
   const refreshCities = async () => {
     try {
-      setState((prev) => ({ ...prev, status: { loading: true, error: null } }));
+      setState((prev) => ({
+        ...prev,
+        cityStatus: { loading: true, error: null },
+      }));
 
       const citiesData = await pb
         .collection("cities")
-        .getFullList<SimpleCity>();
+        .getFullList<CitiesResponse>();
       const sortedCities = [...citiesData].sort((a, b) =>
         a.name.localeCompare(b.name)
       );
@@ -102,18 +117,21 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         ...prev,
         cities: citiesData,
         sortedCities,
-        stats: {
-          totalCities: citiesData.length,
-        },
-        status: { loading: false, error: null },
+        totalCities: citiesData.length,
+        cityStatus: { loading: false, error: null },
       }));
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        status: { loading: false, error: String(error) },
+        cityStatus: { loading: false, error: String(error) },
       }));
+      throw error;
     }
   };
+
+  useEffect(() => {
+    refreshCities();
+  }, []);
 
   return (
     <CitiesContext.Provider value={state}>

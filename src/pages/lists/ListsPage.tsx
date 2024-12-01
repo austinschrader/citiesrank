@@ -18,9 +18,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { EmptyListsState } from "@/features/lists/create/components/EmptyListsState";
-import { getCityImage } from "@/lib/cloudinary";
+import { useCities } from "@/features/places/context/CitiesContext";
 import {
-  CitiesResponse,
   Collections,
   ListsCollectionOptions,
   ListsPrivacyOptions,
@@ -51,6 +50,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getApiUrl } from "@/config/appConfig";
+import { getImageUrl } from "@/lib/cloudinary";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
@@ -122,7 +122,7 @@ const LoadingSpinner = () => (
 
 export const ListCard: React.FC<ListCardProps> = ({ list }) => {
   const navigate = useNavigate();
-  const [coverCity, setCoverCity] = useState<CitiesResponse | null>(null);
+  const { sortedCities } = useCities();
   const [author, setAuthor] = useState<UsersResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -130,14 +130,6 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Fetch city data if we have a first place
-        if (list.places?.[0]) {
-          const cityRecord = await pb
-            .collection("cities")
-            .getOne<CitiesResponse>(list.places[0]);
-          setCoverCity(cityRecord);
-        }
-
         // Fetch author data
         if (list.author) {
           const authorRecord = await pb
@@ -153,7 +145,7 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
     };
 
     fetchData();
-  }, [list.places, list.author]);
+  }, [list.places, list.author, sortedCities]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -165,10 +157,6 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
     e.stopPropagation();
     console.log(`${action} clicked for list ${list.id}`);
   };
-
-  const coverImage = coverCity?.imageUrl
-    ? getCityImage(coverCity.imageUrl, "thumbnail")
-    : "/placeholder-image.jpg";
 
   if (isLoading) {
     return (
@@ -183,13 +171,25 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
     );
   }
 
+  const firstPlace = sortedCities.find((city) =>
+    list.places?.includes(city.id)
+  );
+
+  if (!firstPlace) {
+    return null;
+  }
+
+  if (!list) {
+    return null;
+  }
+
   return (
     <div onClick={handleCardClick} className="cursor-pointer">
       <Card className="group overflow-hidden transition-all hover:shadow-lg">
         <div className="relative h-48 overflow-hidden">
           <img
-            src={coverImage}
-            alt={coverCity?.name || "Cover image"}
+            src={getImageUrl(firstPlace.imageUrl, "thumbnail")}
+            alt="Cover image"
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -203,7 +203,7 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
               <AvatarImage src={author?.avatar} />
-              <AvatarFallback>{author?.name?.[0] || "?"}</AvatarFallback>
+              <AvatarFallback>{author?.name || "?"}</AvatarFallback>
             </Avatar>
             <span className="text-sm text-muted-foreground">
               {author?.name || "Anonymous"}
