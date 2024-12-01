@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,12 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { EmptyListsState } from "@/features/lists/create/components/EmptyListsState";
 import { useLists } from "@/features/lists/hooks/useLists";
-import { LIST_TEMPLATES } from "@/lib/data/lists/listTemplate";
 import { Grid, List as ListIcon, Plus, Search, Users2 } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { ListCard } from "@/features/lists/components/ListCard";
+import { QuickCreateTemplates } from "@/features/lists/components/QuickCreateTemplates";
 
 const LoadingSpinner = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -67,39 +66,7 @@ export const ListsPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* Quick Create Templates */}
-        <Card className="mb-6 md:mb-8">
-          <CardContent className="p-4 md:p-6">
-            <h2 className="text-lg md:text-xl font-semibold mb-4">
-              Start Your Own List
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-              {LIST_TEMPLATES.map((template) => (
-                <Card
-                  key={template.title}
-                  className="group cursor-pointer hover:shadow-lg transition-all"
-                  onClick={() => navigate("/create-list")}
-                >
-                  <CardContent className="p-4 md:p-6">
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`p-3 rounded-lg ${template.bgClass} ${template.textClass} relative`}
-                      >
-                        <template.icon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-1">{template.title}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {template.description}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <QuickCreateTemplates />
 
         <Tabs defaultValue="popular" className="space-y-6 md:space-y-8">
           <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
