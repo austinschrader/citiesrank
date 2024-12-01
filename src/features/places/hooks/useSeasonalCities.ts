@@ -1,6 +1,12 @@
+import { getApiUrl } from "@/config/appConfig";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import PocketBase from "pocketbase";
+import { useCallback } from "react";
 
-export const getSeasonalTags = (currentMonth: number): string[] => {
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
+
+const getSeasonalTags = (currentMonth: number): string[] => {
   if (currentMonth >= 11 || currentMonth <= 1) {
     // Winter
     return ["winter", "skiing", "snow", "christmas"];
@@ -16,23 +22,30 @@ export const getSeasonalTags = (currentMonth: number): string[] => {
   }
 };
 
-export const useSeasonalCities = (cities: CitiesResponse[]) => {
-  const currentMonth = new Date().getMonth();
-  const seasonalTags = getSeasonalTags(currentMonth);
+export const useSeasonalCities = () => {
+  return useCallback(async () => {
+    try {
+      const currentMonth = new Date().getMonth();
+      const seasonalTags = getSeasonalTags(currentMonth);
 
-  const filteredCities = cities
-    .filter((city) => {
-      // Check if destinationTypes exists and is an array
-      if (!city.destinationTypes || !Array.isArray(city.destinationTypes)) {
-        return false;
-      }
+      const cities = await pb
+        .collection("cities")
+        .getFullList<CitiesResponse>();
 
-      return city.destinationTypes.some((destinationType: string) => {
-        const match = seasonalTags.includes(destinationType);
-        return match;
-      });
-    })
-    .slice(0, 6);
+      return cities
+        .filter((city) => {
+          if (!city.destinationTypes || !Array.isArray(city.destinationTypes)) {
+            return false;
+          }
 
-  return filteredCities;
+          return city.destinationTypes.some((destinationType: string) => {
+            return seasonalTags.includes(destinationType);
+          });
+        })
+        .slice(0, 6);
+    } catch (error) {
+      console.error("Error fetching seasonal cities:", error);
+      return [];
+    }
+  }, []);
 };

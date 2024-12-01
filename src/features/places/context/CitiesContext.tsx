@@ -32,17 +32,30 @@ const defaultState: CitiesState = {
   },
 };
 
+interface QueryParams {
+  searchTerm?: string;
+  [key: string]: any;
+}
+
 export const CitiesContext = createContext<CitiesState>(defaultState);
 const CitiesActionsContext = createContext<{
   refreshCities: () => Promise<void>;
   fetchCitiesPaginated: (
     page: number,
     perPage: number,
-    queryParams?: any
+    queryParams?: QueryParams
   ) => Promise<any>;
+  getCityByName: (cityName: string) => Promise<CitiesResponse>;
+  getAllCities: () => Promise<CitiesResponse[]>;
 }>({
   refreshCities: async () => {},
   fetchCitiesPaginated: async () => {},
+  getCityByName: async () => {
+    throw new Error("Not implemented");
+  },
+  getAllCities: async () => {
+    throw new Error("Not implemented");
+  },
 });
 
 export function useCities() {
@@ -71,20 +84,29 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   const fetchCitiesPaginated = async (
     page: number,
     perPage: number,
-    queryParams = {}
+    queryParams: QueryParams = {}
   ) => {
     try {
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: true, error: null },
       }));
-      const result = await pb
-        .collection("cities")
-        .getList(page, perPage, queryParams);
+
+      const filter = queryParams.searchTerm
+        ? `name ~ "${queryParams.searchTerm}"`
+        : "";
+
+      const result = await pb.collection("cities").getList(page, perPage, {
+        filter,
+        sort: "-created",
+      });
 
       setState((prev) => ({
         ...prev,
-        cities: result.items as CitiesResponse[],
+        cities:
+          queryParams.searchTerm || page === 1
+            ? (result.items as CitiesResponse[])
+            : [...prev.cities, ...(result.items as CitiesResponse[])],
         totalCities: result.totalItems,
         cityStatus: { loading: false, error: null },
       }));
@@ -129,6 +151,28 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     }
   };
 
+  const getCityByName = async (cityName: string) => {
+    const decodedCity = decodeURIComponent(cityName)
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    const result = await pb.collection("cities").getList(1, 1, {
+      filter: `name = "${decodedCity}"`,
+      $autoCancel: false,
+    });
+
+    if (result.items.length === 0) {
+      throw new Error(`City not found: ${decodedCity}`);
+    }
+
+    return result.items[0] as CitiesResponse;
+  };
+
+  const getAllCities = async () => {
+    const records = await pb.collection("cities").getFullList<CitiesResponse>();
+    return records;
+  };
+
   useEffect(() => {
     refreshCities();
   }, []);
@@ -136,7 +180,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   return (
     <CitiesContext.Provider value={state}>
       <CitiesActionsContext.Provider
-        value={{ refreshCities, fetchCitiesPaginated }}
+        value={{
+          refreshCities,
+          fetchCitiesPaginated,
+          getCityByName,
+          getAllCities,
+        }}
       >
         {children}
       </CitiesActionsContext.Provider>

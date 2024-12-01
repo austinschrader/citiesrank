@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Search, X, Loader2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -9,29 +6,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import PocketBase from "pocketbase";
+import {
+  useCities,
+  useCitiesActions,
+} from "@/features/places/context/CitiesContext";
 import { useToast } from "@/hooks/use-toast";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import debounce from "lodash/debounce";
-import { getApiUrl } from "@/config/appConfig";
+import { Loader2, MapPin, Search, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-const apiUrl = getApiUrl();
-const pb = new PocketBase(apiUrl);
 const ITEMS_PER_PAGE = 20;
 
-interface Place {
-  id: string;
-  name: string;
-  country: string;
-  description: string;
-  imageUrl?: string;
-  population?: number;
-  rating?: number;
-  destinationTypes?: string[];
-}
-
 interface PlaceSearchCardProps {
-  onAddPlace: (place: Place) => void;
+  onAddPlace: (place: CitiesResponse) => void;
   onClose: () => void;
 }
 
@@ -40,119 +30,32 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
   onClose,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedPlace, setSelectedPlace] = useState<CitiesResponse | null>(
+    null
+  );
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [page, setPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
   const { toast } = useToast();
 
-  // Refs for handling cancellation
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const isLoadingRef = useRef(false);
-
-  // Function to load places with pagination and search
-  const loadPlaces = async (
-    searchTerm: string,
-    pageNum: number,
-    append: boolean = false
-  ) => {
-    try {
-      // Cancel any ongoing request
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      // Create new abort controller for this request
-      abortControllerRef.current = new AbortController();
-
-      if (isLoadingRef.current) {
-        return;
-      }
-
-      isLoadingRef.current = true;
-
-      const filter = searchTerm
-        ? `name ~ "${searchTerm}" || country ~ "${searchTerm}"`
-        : "";
-
-      const resultList = await pb
-        .collection("cities_list")
-        .getList(pageNum, ITEMS_PER_PAGE, {
-          sort: "-interesting",
-          filter,
-          $autoCancel: false, // Disable PocketBase's auto-cancellation
-        });
-
-      if (abortControllerRef.current.signal.aborted) {
-        return;
-      }
-
-      const transformedPlaces = resultList.items.map(
-        (record): Place => ({
-          id: record.id,
-          name: record.name,
-          country: record.country,
-          description: record.description,
-          imageUrl: record.imageUrl,
-          population: record.population,
-          rating: record.rating,
-          destinationTypes: record.destinationTypes
-            ? typeof record.destinationTypes === "string"
-              ? JSON.parse(record.destinationTypes)
-              : record.destinationTypes
-            : [],
-        })
-      );
-
-      setPlaces((prev) =>
-        append ? [...prev, ...transformedPlaces] : transformedPlaces
-      );
-      setTotalItems(resultList.totalItems);
-      setHasMore(resultList.items.length === ITEMS_PER_PAGE);
-    } catch (error) {
-      if (error instanceof Error && error.name !== "AbortError") {
-        console.error("Error loading places:", error);
-        toast({
-          title: "Error loading places",
-          description: "Please try again later",
-          variant: "destructive",
-        });
-      }
-    } finally {
-      isLoadingRef.current = false;
-    }
-  };
-
-  // Cleanup function
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, []);
+  const {
+    cities: places,
+    totalCities: totalItems,
+    cityStatus: { loading: isLoading },
+  } = useCities();
+  const { fetchCitiesPaginated } = useCitiesActions();
 
   // Initial load
   useEffect(() => {
-    loadPlaces("", 1).finally(() => setIsLoading(false));
+    fetchCitiesPaginated(1, ITEMS_PER_PAGE);
   }, []);
 
-  // Debounced search with cleanup
-  const debouncedSearch = debounce(async (query: string) => {
-    setIsLoading(true);
-    setPage(1);
-    await loadPlaces(query, 1);
-    setIsLoading(false);
-  }, 300);
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, []);
+  const debouncedSearch = React.useCallback(
+    debounce((query: string) => {
+      setPage(1);
+      fetchCitiesPaginated(1, ITEMS_PER_PAGE, { searchTerm: query });
+    }, 300),
+    [fetchCitiesPaginated]
+  );
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,24 +64,14 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
     debouncedSearch(query);
   };
 
-  // Handle infinite scroll with debounce
-  const handleScroll = debounce(async (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (
-      scrollHeight - scrollTop <= clientHeight * 1.5 &&
-      !isLoadingMore &&
-      hasMore &&
-      !isLoadingRef.current
-    ) {
-      setIsLoadingMore(true);
-      const nextPage = page + 1;
-      setPage(nextPage);
-      await loadPlaces(searchQuery, nextPage, true);
-      setIsLoadingMore(false);
-    }
-  }, 100);
+  // Cleanup debounced function
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
-  const handlePlaceClick = (place: Place) => {
+  const handlePlaceClick = (place: CitiesResponse) => {
     setSelectedPlace(place);
   };
 
@@ -188,7 +81,22 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
     }
   };
 
-  const renderPlace = (place: Place) => (
+  const handleLoadMore = async () => {
+    if (isLoadingMore || places.length >= totalItems || isLoading) return;
+
+    try {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      await fetchCitiesPaginated(nextPage, ITEMS_PER_PAGE, {
+        searchTerm: searchQuery || undefined,
+      });
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
+  const renderPlace = (place: CitiesResponse) => (
     <div
       key={place.id}
       onClick={() => handlePlaceClick(place)}
@@ -204,35 +112,45 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
         <div>
           <h3 className="font-medium">{place.name}</h3>
           <p className="text-sm text-muted-foreground">{place.country}</p>
-          {place.destinationTypes && place.destinationTypes.length > 0 && (
-            <div className="flex gap-1 mt-1 flex-wrap">
-              {place.destinationTypes.slice(0, 3).map((type) => (
-                <span
-                  key={type}
-                  className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs"
-                >
-                  {type}
-                </span>
-              ))}
-              {place.destinationTypes.length > 3 && (
-                <span className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
-                  +{place.destinationTypes.length - 3}
-                </span>
-              )}
-            </div>
-          )}
+          {Array.isArray(place.destinationTypes) &&
+            place.destinationTypes.length > 0 && (
+              <div className="flex gap-1 mt-1 flex-wrap">
+                {place.destinationTypes
+                  .filter((type): type is string => typeof type === "string")
+                  .slice(0, 3)
+                  .map((type) => (
+                    <span
+                      key={type}
+                      className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs"
+                    >
+                      {type}
+                    </span>
+                  ))}
+                {place.destinationTypes.length > 3 && (
+                  <span className="px-1.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs">
+                    +{place.destinationTypes.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
         </div>
-        {place.rating && (
-          <div className="flex items-center gap-1 text-sm">
-            <span className="text-yellow-500">★</span>
-            <span>{place.rating.toFixed(1)}</span>
-          </div>
-        )}
+
+        {/* {place.reviews &&
+          typeof place.reviews === "object" &&
+          (place.reviews as ReviewSummary).averageRating && (
+            <div className="flex items-center gap-1 text-sm">
+              <span className="text-yellow-500">★</span>
+              <span>
+                {Number((place.reviews as ReviewSummary).averageRating).toFixed(
+                  1
+                )}
+              </span>
+            </div>
+          )} */}
       </div>
     </div>
   );
 
-  // Rest of the render code remains the same...
   return (
     <Card className="w-full">
       <CardHeader className="space-y-1">
@@ -267,12 +185,27 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
             </p>
           </div>
         ) : (
-          <ScrollArea className="h-[400px] pr-4" onScrollCapture={handleScroll}>
+          <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-2">
               {places.map(renderPlace)}
-              {isLoadingMore && (
-                <div className="py-4 text-center">
-                  <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+              {places.length < totalItems && (
+                <div className="py-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLoadMore}
+                    disabled={isLoadingMore}
+                    className="w-[200px] transition-all hover:bg-secondary"
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Load more places"
+                    )}
+                  </Button>
                 </div>
               )}
             </div>
