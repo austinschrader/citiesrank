@@ -1,12 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -18,43 +12,18 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { EmptyListsState } from "@/features/lists/create/components/EmptyListsState";
-import { useCities } from "@/features/places/context/CitiesContext";
+import { useLists } from "@/features/lists/hooks/useLists";
 import { LIST_TEMPLATES } from "@/lib/data/lists/listTemplate";
-import {
-  Collections,
-  ListsCollectionOptions,
-  ListsPrivacyOptions,
-  ListsResponse,
-  ListsStatusOptions,
-  UsersResponse,
-} from "@/lib/types/pocketbase-types";
-import debounce from "lodash/debounce";
-import {
-  BookmarkPlus,
-  Calendar,
-  Grid,
-  Heart,
-  List as ListIcon,
-  MapPin,
-  Plus,
-  Search,
-  Share2,
-  Users2,
-} from "lucide-react";
-import PocketBase, { RecordModel } from "pocketbase";
-import React, { useEffect, useRef, useState } from "react";
+import { Grid, List as ListIcon, Plus, Search, Users2 } from "lucide-react";
+import PocketBase from "pocketbase";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { getApiUrl } from "@/config/appConfig";
 import { ListCard } from "@/features/lists/components/ListCard";
-import { getImageUrl } from "@/lib/cloudinary";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
-
-interface ListCardProps {
-  list: ListsResponse;
-}
 
 const LoadingSpinner = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
@@ -65,117 +34,18 @@ const LoadingSpinner = () => (
   </div>
 );
 
-
 export const ListsPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [lists, setLists] = useState<ListsResponse[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchInputValue, setSearchInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const currentRequestIdRef = useRef<string>("");
-  const isLoadingRef = useRef(false);
-
-  useEffect(() => {
-    const loadLists = async () => {
-      if (isLoadingRef.current) return;
-
-      const requestId = Math.random().toString(36).substring(7);
-      currentRequestIdRef.current = requestId;
-      isLoadingRef.current = true;
-
-      try {
-        const records = await pb.collection("lists").getFullList({
-          sort: "-created",
-          ...(searchQuery && {
-            filter: `title ~ "${searchQuery}" || description ~ "${searchQuery}"`,
-          }),
-          expand: "author",
-          $autoCancel: false,
-        });
-
-        // Only update state if this is still the current request
-        if (currentRequestIdRef.current === requestId) {
-          const transformedLists = records.map(
-            (record: RecordModel): ListsResponse => ({
-              id: record.id,
-              collectionId: record.collectionId,
-              collectionName: Collections.Lists, // Use the enum value
-              created: record.created,
-              updated: record.updated,
-              title: record.title,
-              description: record.description,
-              author: record.author,
-              places: record.places || [],
-              tags:
-                typeof record.tags === "string"
-                  ? JSON.parse(record.tags)
-                  : record.tags || [],
-              likes: record.likes || 0,
-              shares: record.shares || 0,
-              saves: record.saves || 0,
-              views: record.views || 0,
-              status: record.status || ListsStatusOptions.published,
-              collection:
-                record.collection || ListsCollectionOptions["want-to-visit"],
-              privacy: record.privacy || ListsPrivacyOptions.public,
-              category: record.category || "",
-              isVerified: record.isVerified || false,
-              relatedLists: record.relatedLists || [],
-              totalPlaces: record.totalPlaces || 0,
-            })
-          );
-          setLists(transformedLists);
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name !== "AbortError") {
-          console.error("Error loading lists:", error);
-        }
-      } finally {
-        if (currentRequestIdRef.current === requestId) {
-          isLoadingRef.current = false;
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadLists();
-  }, [searchQuery]);
-
-  const debouncedSearch = debounce((value: string) => {
-    setSearchQuery(value);
-  }, 300);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchInputValue(value);
-    debouncedSearch(value);
-  };
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
-
-  const getSortedLists = (
-    sortType: "popular" | "recent" | "trending"
-  ): ListsResponse[] => {
-    switch (sortType) {
-      case "popular":
-        return [...lists].sort((a, b) => b.likes - a.likes);
-      case "recent":
-        return [...lists].sort(
-          (a, b) =>
-            new Date(b.updated).getTime() - new Date(a.updated).getTime()
-        );
-      case "trending":
-        return [...lists].sort((a, b) => b.shares - a.shares);
-      default:
-        return lists;
-    }
-  };
+  const {
+    lists,
+    isLoading,
+    searchInputValue,
+    handleSearchChange,
+    getSortedLists,
+    getFilteredUserLists,
+  } = useLists();
 
   if (isLoading) {
     return (
