@@ -40,3 +40,9 @@ export interface ReviewSummary {
   averageRating: number;
   totalReviews: number;
 }
+
+export type SimpleCity = {
+  id: string;
+  name: string;
+  country: string;
+};
