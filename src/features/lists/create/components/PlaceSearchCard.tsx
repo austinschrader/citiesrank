@@ -71,27 +71,6 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
     };
   }, [debouncedSearch]);
 
-  // Handle infinite scroll with debounce
-  const handleScroll = debounce(async (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    const hasMore = places.length < totalItems;
-
-    if (
-      scrollHeight - scrollTop <= clientHeight * 1.5 &&
-      !isLoadingMore &&
-      hasMore &&
-      !isLoading
-    ) {
-      setIsLoadingMore(true);
-      const nextPage = page + 1;
-      setPage(nextPage);
-      await fetchCitiesPaginated(nextPage, ITEMS_PER_PAGE, {
-        searchTerm: searchQuery,
-      });
-      setIsLoadingMore(false);
-    }
-  }, 100);
-
   const handlePlaceClick = (place: CitiesResponse) => {
     setSelectedPlace(place);
   };
@@ -99,6 +78,21 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
   const handleAddPlace = () => {
     if (selectedPlace) {
       onAddPlace(selectedPlace);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    if (isLoadingMore || places.length >= totalItems || isLoading) return;
+
+    try {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      await fetchCitiesPaginated(nextPage, ITEMS_PER_PAGE, {
+        searchTerm: searchQuery || undefined,
+      });
+    } finally {
+      setIsLoadingMore(false);
     }
   };
 
@@ -191,12 +185,27 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
             </p>
           </div>
         ) : (
-          <ScrollArea className="h-[400px] pr-4" onScrollCapture={handleScroll}>
+          <ScrollArea className="h-[400px] pr-4">
             <div className="space-y-2">
               {places.map(renderPlace)}
-              {isLoadingMore && (
-                <div className="py-4 text-center">
-                  <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+              {places.length < totalItems && (
+                <div className="py-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLoadMore}
+                    disabled={isLoadingMore}
+                    className="w-[200px] transition-all hover:bg-secondary"
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      "Load more places"
+                    )}
+                  </Button>
                 </div>
               )}
             </div>
