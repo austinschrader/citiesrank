@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getApiUrl } from "@/config/appConfig";
+import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { CommunityHeader } from "@/features/places/detail/community/CommunityHeader";
 import { CommunitySidebar } from "@/features/places/detail/community/CommunitySidebar";
 import { InsightsList } from "@/features/places/detail/community/InsightsList";
@@ -13,14 +13,10 @@ import { BestTimeToVisit } from "@/features/places/detail/overview/BestTimeToVis
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
 import { PopularLists } from "@/features/places/detail/shared/PopularLists";
 import { QuickFacts } from "@/features/places/detail/shared/QuickFacts";
-import { CitiesRecord, CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesRecord } from "@/lib/types/pocketbase-types";
 import { Building, Coffee, Sparkles, Users } from "lucide-react";
-import PocketBase from "pocketbase";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const apiUrl = getApiUrl();
-const pb = new PocketBase(apiUrl);
 
 interface CityDetailsPageProps {
   initialData?: CitiesRecord;
@@ -33,51 +29,23 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
   );
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
+  const { getCityByName } = useCitiesActions();
 
   useEffect(() => {
-    let isSubscribed = true; // Add subscription flag
+    if (!city || initialData) return;
 
-    async function fetchCityData() {
-      if (!city || !country) return;
-
-      try {
-        setLoading(true);
-        // Decode and clean up the city name from URL
-        const decodedCity = decodeURIComponent(city)
-          .replace(/-/g, " ") // Replace hyphens with spaces
-          .replace(/\b\w/g, (l) => l.toUpperCase()); // Capitalize first letter of each word
-
-        const record = await pb
-          .collection("cities")
-          .getFirstListItem(`name = "${decodedCity}"`);
-
-        if (isSubscribed) {
-          setCityData(record as CitiesResponse);
-        }
-      } catch (err) {
-        // Only update error state if component is still mounted
-        // and if it's not a cancellation error
-        if (isSubscribed && err instanceof Error && err.name !== "AbortError") {
+    setLoading(true);
+    getCityByName(city)
+      .then(setCityData)
+      .catch((err) => {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
           setError("Failed to load city data");
-          console.error(err);
         }
-      } finally {
-        // Only update loading state if component is still mounted
-        if (isSubscribed) {
-          setLoading(false);
-        }
-      }
-    }
-
-    if (!initialData) {
-      fetchCityData();
-    }
-
-    // Cleanup function
-    return () => {
-      isSubscribed = false;
-    };
-  }, [city, country, initialData]);
+      })
+      .finally(() => setLoading(false));
+  }, [city, initialData]);
 
   const tabs = [
     { value: "overview", label: "Overview", icon: Sparkles },
