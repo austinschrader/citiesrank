@@ -237,32 +237,51 @@ export const PlacesPage = () => {
         />
 
         {/* Featured and Popular Sections */}
-        <div className="space-y-8">
-          <CitiesSection title="Featured This Season" cities={seasonalCities} />
-          <CitiesSection title="Popular Right Now" cities={popularCities} />
-        </div>
+        {!selectedFilter && !searchQuery && (
+          <div className="space-y-8">
+            <CitiesSection
+              title="Featured This Season"
+              cities={seasonalCities}
+            />
+            <CitiesSection title="Popular Right Now" cities={popularCities} />
+          </div>
+        )}
 
         {/* Results Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-          {paginatedCities.map((city) => {
-            const matchScore = calculateMatchForCity({
-              cost: city.cost,
-              crowdLevel: city.crowdLevel,
-              recommendedStay: city.recommendedStay,
-              bestSeason: city.bestSeason,
-              transit: city.transit,
-              accessibility: city.accessibility,
-            });
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl md:text-2xl font-semibold">
+              {selectedFilter
+                ? `Cities for ${
+                    filterOptions.find((f) => f.id === selectedFilter)?.label ??
+                    selectedFilter
+                  }`
+                : searchQuery
+                ? `Search Results for "${searchQuery}"`
+                : "All Cities"}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+            {paginatedCities.map((city) => {
+              const matchScore = calculateMatchForCity({
+                cost: city.cost,
+                crowdLevel: city.crowdLevel,
+                recommendedStay: city.recommendedStay,
+                bestSeason: city.bestSeason,
+                transit: city.transit,
+                accessibility: city.accessibility,
+              });
 
-            return (
-              <CityCard
-                key={city.name}
-                city={city}
-                variant="ranked"
-                matchScore={matchScore}
-              />
-            );
-          })}
+              return (
+                <CityCard
+                  key={city.name}
+                  city={city}
+                  variant="ranked"
+                  matchScore={matchScore}
+                />
+              );
+            })}
+          </div>
         </div>
 
         {/* Pagination */}

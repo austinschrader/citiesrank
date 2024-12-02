@@ -10,16 +10,16 @@ const pb = new PocketBase(apiUrl);
 const getSeasonalTags = (currentMonth: number): string[] => {
   if (currentMonth >= 11 || currentMonth <= 1) {
     // Winter
-    return ["winter", "skiing", "snow", "winter-activities"];
+    return ["winter", "skiing", "snow", "christmas"];
   } else if (currentMonth >= 2 && currentMonth <= 4) {
     // Spring
-    return ["spring", "cherry-blossoms", "spring-activities", "mild-weather"];
+    return ["spring", "cherry-blossoms", "gardens", "mild-weather"];
   } else if (currentMonth >= 5 && currentMonth <= 7) {
     // Summer
-    return ["summer", "beach", "summer-activities", "outdoor-activities"];
+    return ["summer", "beach", "beaches", "outdoor"];
   } else {
     // Fall
-    return ["fall", "autumn", "fall-activities", "wine-season"];
+    return ["fall", "autumn", "foliage", "wine"];
   }
 };
 
