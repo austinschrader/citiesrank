@@ -116,7 +116,7 @@ export const PlaceSearchCard: React.FC<PlaceSearchCardProps> = ({
             <div className="flex gap-1 mt-1 flex-wrap">
               {place.tags
                 .filter((type): type is string => typeof type === "string")
-                .slice(0, 3)
+                .slice(0, 2)
                 .map((type) => (
                   <span
                     key={type}

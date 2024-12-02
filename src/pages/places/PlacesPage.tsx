@@ -36,7 +36,7 @@ export const PlacesPage = () => {
     getFilteredCities,
   } = useSearchFilters(preferences);
   const { getAllCities } = useCitiesActions();
-  const getSeasonalCities = useSeasonalCities();
+  const seasonalCities = useSeasonalCities();
   const getPopular = usePopularCities();
 
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
@@ -45,7 +45,6 @@ export const PlacesPage = () => {
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [seasonalCities, setSeasonalCities] = useState<CitiesResponse[]>([]);
   const [popularCities, setPopularCities] = useState<CitiesResponse[]>([]);
 
   const currentRequestIdRef = useRef<string>("");
@@ -99,10 +98,6 @@ export const PlacesPage = () => {
 
           setCityData(transformedData);
 
-          // Set seasonal cities
-          const seasonal = await getSeasonalCities();
-          setSeasonalCities(seasonal);
-
           // Set popular cities
           const popular = await getPopular();
           setPopularCities(popular);
@@ -121,7 +116,7 @@ export const PlacesPage = () => {
     };
 
     loadCityData();
-  }, [getAllCities, getSeasonalCities, getPopular]);
+  }, [getAllCities, getPopular, seasonalCities]);
 
   // Debounced search
   const debouncedSearch = debounce((value: string) => {

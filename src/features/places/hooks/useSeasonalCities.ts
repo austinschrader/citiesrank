@@ -1,7 +1,8 @@
 import { getApiUrl } from "@/config/appConfig";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
-import { useCallback } from "react";
+import { useEffect, useState } from "react";
+import { useTagIdentifiers } from "./useTagIdentifiers";
 
 const apiUrl = getApiUrl();
 const pb = new PocketBase(apiUrl);
@@ -9,43 +10,50 @@ const pb = new PocketBase(apiUrl);
 const getSeasonalTags = (currentMonth: number): string[] => {
   if (currentMonth >= 11 || currentMonth <= 1) {
     // Winter
-    return ["winter", "skiing", "snow", "christmas"];
+    return ["winter", "skiing", "snow", "winter-activities"];
   } else if (currentMonth >= 2 && currentMonth <= 4) {
     // Spring
-    return ["spring", "cherry-blossoms", "gardens", "mild-weather"];
+    return ["spring", "cherry-blossoms", "spring-activities", "mild-weather"];
   } else if (currentMonth >= 5 && currentMonth <= 7) {
     // Summer
-    return ["summer", "beach", "beaches", "outdoor"];
+    return ["summer", "beach", "summer-activities", "outdoor-activities"];
   } else {
     // Fall
-    return ["fall", "autumn", "foliage", "wine"];
+    return ["fall", "autumn", "fall-activities", "wine-season"];
   }
 };
 
 export const useSeasonalCities = () => {
-  return useCallback(async () => {
-    try {
-      const currentMonth = new Date().getMonth();
-      const seasonalTags = getSeasonalTags(currentMonth);
+  const [seasonalCities, setSeasonalCities] = useState<CitiesResponse[]>([]);
+  const { tagIdToIdentifier } = useTagIdentifiers();
 
-      const cities = await pb
-        .collection("cities")
-        .getFullList<CitiesResponse>();
+  useEffect(() => {
+    const currentMonth = new Date().getMonth();
+    const seasonalTagIdentifiers = getSeasonalTags(currentMonth);
 
-      return cities
-        .filter((city) => {
-          if (!city.tags || !Array.isArray(city.tags)) {
-            return false;
-          }
+    pb.collection("cities")
+      .getFullList<CitiesResponse>()
+      .then((cities) => {
+        const filtered = cities
+          .filter((city) => {
+            if (!city.tags || !Array.isArray(city.tags)) {
+              return false;
+            }
 
-          return city.tags.some((destinationType: string) => {
-            return seasonalTags.includes(destinationType);
-          });
-        })
-        .slice(0, 6);
-    } catch (error) {
-      console.error("Error fetching seasonal cities:", error);
-      return [];
-    }
-  }, []);
+            return city.tags.some((tagId) => {
+              const identifier = tagIdToIdentifier[tagId];
+              return seasonalTagIdentifiers.includes(identifier);
+            });
+          })
+          .slice(0, 6);
+
+        setSeasonalCities(filtered);
+      })
+      .catch((error) => {
+        console.error("Error fetching seasonal cities:", error);
+        setSeasonalCities([]);
+      });
+  }, [tagIdToIdentifier]);
+
+  return seasonalCities;
 };
