@@ -1,102 +1,34 @@
 import PocketBase from "pocketbase";
+import { TAGS } from "../raw_data/tags_data.js";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
-
-const tags = [
-  {
-    identifier: "metropolis",
-    label: "Major Cities",
-    order: 1,
-    active: true,
-  },
-  {
-    identifier: "coastal",
-    label: "Coastal Cities",
-    order: 2,
-    active: true,
-  },
-  {
-    identifier: "mountain",
-    label: "Mountain Towns",
-    order: 3,
-    active: true,
-  },
-  {
-    identifier: "historic",
-    label: "Historic Sites",
-    order: 4,
-    active: true,
-  },
-  {
-    identifier: "cultural",
-    label: "Cultural Hubs",
-    order: 5,
-    active: true,
-  },
-  {
-    identifier: "culinary",
-    label: "Food & Wine",
-    order: 6,
-    active: true,
-  },
-  {
-    identifier: "tropical",
-    label: "Tropical",
-    order: 7,
-    active: true,
-  },
-  {
-    identifier: "adventure",
-    label: "Adventure",
-    order: 8,
-    active: true,
-  },
-  {
-    identifier: "wellness",
-    label: "Wellness",
-    order: 9,
-    active: true,
-  },
-  {
-    identifier: "village",
-    label: "Small Towns",
-    order: 10,
-    active: true,
-  },
-];
+// const pb = new PocketBase("http://127.0.0.1:8090");
+const pb = new PocketBase("https://citiesrank-ppe.westus2.cloudapp.azure.com");
+// const pb = new PocketBase("https://api.citiesrank.com");
 
 async function seedTags() {
   try {
-    // Clean up existing records
-    console.log("Cleaning up existing tags...");
+    console.log("Starting tags seeding...");
+
+    // First, clear existing tags
     const existingTags = await pb.collection("tags").getFullList();
-    await Promise.all(
-      existingTags.map((tag) => pb.collection("tags").delete(tag.id))
-    );
-
-    console.log("\nCreating new tags...");
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const tag of tags) {
-      try {
-        await pb.collection("tags").create(tag);
-        console.log(`✓ Created tag: ${tag.label}`);
-        successCount++;
-      } catch (error) {
-        console.error(`✗ Failed to create tag: ${tag.label}`);
-        console.error("Error:", error.response?.data || error.message);
-        errorCount++;
-      }
+    for (const tag of existingTags) {
+      console.log(`Deleting tag: ${tag.label}`);
+      await pb.collection("tags").delete(tag.id);
     }
 
-    console.log("\n=== Seeding Complete ===");
-    console.log(`Succeeded: ${successCount} tags`);
-    console.log(`Failed: ${errorCount} tags`);
+    console.log("@@@@@@@@@Existing tags deleted.@@@@@@@@");
+
+    // Create new tags
+    for (const tag of TAGS) {
+      console.log(`Creating tag: ${tag.label}`);
+      await pb.collection("tags").create(tag);
+    }
+
+    console.log("Tags seeding completed successfully!");
   } catch (error) {
-    console.error("\n=== Seeding Failed ===");
-    console.error("Error:", error.message);
+    console.error("Error seeding tags:", error);
   }
 }
 
-seedTags();
+// Run the seeding
+seedTags().catch(console.error);
