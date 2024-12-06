@@ -24,7 +24,6 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   BellDot,
   Bookmark,
-  BookOpen,
   Globe,
   Heart,
   LifeBuoy,
@@ -33,7 +32,6 @@ import {
   Search,
   Settings,
   UserCircle,
-  Users,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -53,8 +51,6 @@ export const Header = () => {
   const navItems = [
     { label: "Places", icon: Globe, to: "/" },
     { label: "Lists", icon: Map, to: "/lists" },
-    { label: "Members", icon: Users, to: "/members" },
-    { label: "Journal", icon: BookOpen, to: "/journal" },
     { label: "Saved", icon: Heart, to: "/saved", mobileOnly: true },
   ];
 

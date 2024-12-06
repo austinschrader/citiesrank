@@ -5,11 +5,9 @@ import { CountriesProvider } from "@/features/places/context/CountriesContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { JournalPage } from "@/pages/journal/JournalPage";
 import { CreateListPage } from "@/pages/lists/CreateListPage";
 import { ListsPage } from "@/pages/lists/ListsPage";
 import { ViewListPage } from "@/pages/lists/ViewListPage";
-import { MembersPage } from "@/pages/members/MembersPage";
 import { AddPlacePage } from "@/pages/places/AddPlacePage";
 import { CityDetailsPage } from "@/pages/places/CityDetailsPage"; // Add this import
 import { PlacesPage } from "@/pages/places/PlacesPage";
@@ -29,8 +27,6 @@ function App() {
                 <Route path="/" element={<PlacesPage />} />
                 <Route path="/lists" element={<ListsPage />} />
                 <Route path="/lists/:id" element={<ViewListPage />} />
-                <Route path="/members" element={<MembersPage />} />
-                <Route path="/journal" element={<JournalPage />} />
                 <Route path="/saved" element={<SavedPage />} />
                 <Route path="/add" element={<AddPlacePage />} />
                 <Route path="/create-list" element={<CreateListPage />} />
