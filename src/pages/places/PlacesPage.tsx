@@ -329,28 +329,32 @@ export const PlacesPage = () => {
         )}
 
         {/* Desktop Filters */}
-        <DesktopFilters
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          selectedFilter={selectedFilter}
-          onFilterSelect={handleFilterSelect}
-          preferences={preferences}
-          setPreferences={setPreferences}
-          filteredCities={filteredAndRankedCities}
-        />
+        {geographicLevel === "city" && (
+          <DesktopFilters
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            selectedFilter={selectedFilter}
+            onFilterSelect={handleFilterSelect}
+            preferences={preferences}
+            setPreferences={setPreferences}
+            filteredCities={filteredAndRankedCities}
+          />
+        )}
 
         {/* Mobile Filters */}
-        <MobileFilters
-          isFilterSheetOpen={isFilterSheetOpen}
-          setIsFilterSheetOpen={setIsFilterSheetOpen}
-          preferences={preferences}
-          setPreferences={setPreferences}
-          selectedFilter={selectedFilter}
-          onFilterSelect={handleFilterSelect}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          filterOptions={filterOptions}
-        />
+        {geographicLevel === "city" && (
+          <MobileFilters
+            isFilterSheetOpen={isFilterSheetOpen}
+            setIsFilterSheetOpen={setIsFilterSheetOpen}
+            preferences={preferences}
+            setPreferences={setPreferences}
+            selectedFilter={selectedFilter}
+            onFilterSelect={handleFilterSelect}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            filterOptions={filterOptions}
+          />
+        )}
 
         {/* Results Grid */}
         <div className="space-y-8">
