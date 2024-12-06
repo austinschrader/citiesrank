@@ -1,10 +1,11 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { createSlug } from "@/lib/imageUtils";
 import { getImageUrl } from "@/lib/cloudinary";
+import { createSlug } from "@/lib/imageUtils";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface ImageGalleryProps {
+  imageUrl: string;
   cityName: string;
   country: string;
   showControls?: boolean;
@@ -14,6 +15,7 @@ interface ImageGalleryProps {
 }
 
 export const ImageGallery = ({
+  imageUrl,
   cityName,
   country,
   showControls = false,
@@ -32,15 +34,14 @@ export const ImageGallery = ({
   // Generate image URLs only once
   const images = useMemo(() => {
     return Array.from({ length: 4 }, (_, i) => {
-      const baseUrl = `${citySlug}-${countrySlug}-${i + 1}`;
       return {
         title: `${cityName}, ${country} - Image ${i + 1}`,
         sources: {
-          mobile: getImageUrl(baseUrl, "mobile"),
-          tablet: getImageUrl(baseUrl, "tablet"),
-          desktop: getImageUrl(baseUrl, "wide"),
+          mobile: getImageUrl(imageUrl, "mobile"),
+          tablet: getImageUrl(imageUrl, "tablet"),
+          desktop: getImageUrl(imageUrl, "wide"),
           // Add higher quality versions for full screen
-          fullscreen: getImageUrl(baseUrl, "fullscreen"),
+          fullscreen: getImageUrl(imageUrl, "fullscreen"),
         },
       };
     });

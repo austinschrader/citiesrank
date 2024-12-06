@@ -158,6 +158,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
       >
         <div className="relative aspect-[4/3]">
           <ImageGallery
+            imageUrl={city.imageUrl}
             cityName={city.name}
             country={city.country}
             showControls={showControls}

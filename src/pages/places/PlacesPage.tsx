@@ -24,18 +24,6 @@ import { useMap } from "react-leaflet";
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
 
-// Updated map styles
-const mapStyles = {
-  height: "70vh",
-  width: "100%",
-  borderRadius: "1rem",
-  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-};
-
-// Custom map tile URL for a cleaner, more tourist-friendly style
-const MAP_TILE_URL =
-  "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png";
-
 type GeographicLevel = "country" | "region" | "city" | "neighborhood" | "sight";
 
 const GEOGRAPHIC_LEVELS: GeographicLevel[] = [
@@ -186,11 +174,38 @@ export const PlacesPage = () => {
     searchQuery,
     calculateMatchForCity
   );
-  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
-  const paginatedCities = filteredAndRankedCities.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+
+  // Get paginated data based on current level
+  const getPaginatedData = () => {
+    if (geographicLevel === "city") {
+      return filteredAndRankedCities.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+      );
+    }
+    return SAMPLE_DATA[geographicLevel].slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE
+    );
+  };
+
+  // Get total pages based on current level
+  const getTotalPages = () => {
+    if (geographicLevel === "city") {
+      return Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
+    }
+    return Math.ceil(SAMPLE_DATA[geographicLevel].length / ITEMS_PER_PAGE);
+  };
+
+  // Get current data for map view
+  const getCurrentLevelData = () => {
+    if (geographicLevel === "city") {
+      return Object.values(cityData).filter(
+        (city) => city.latitude != null && city.longitude != null
+      );
+    }
+    return SAMPLE_DATA[geographicLevel];
+  };
 
   // Update geographic level based on map zoom
   useEffect(() => {
@@ -202,20 +217,6 @@ export const PlacesPage = () => {
       else setGeographicLevel("sight");
     }
   }, [mapZoom, viewMode]);
-
-  // Get current data based on geographic level
-  const getCurrentLevelData = () => {
-    // If we're at city level, use the existing city data
-    if (geographicLevel === "city") {
-      console.log("City data:", cityData);
-      // Only return cities that have valid coordinates
-      return Object.values(cityData).filter(
-        (city) => city.latitude != null && city.longitude != null
-      );
-    }
-    // Otherwise use the sample data for other geographic levels
-    return SAMPLE_DATA[geographicLevel];
-  };
 
   if (isLoading) {
     return (
@@ -360,36 +361,35 @@ export const PlacesPage = () => {
               className="h-[70vh] w-full"
             />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {getCurrentLevelData().map((place) => (
-                <CityCard
-                  key={place.id || place.name}
-                  city={place}
-                  variant="ranked"
-                  matchScore={calculateMatchForCity({
-                    cost: place.cost,
-                    crowdLevel: place.crowdLevel,
-                    recommendedStay: place.recommendedStay,
-                    bestSeason: place.bestSeason,
-                    transit: place.transit,
-                    accessibility: place.accessibility,
-                  })}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                {getPaginatedData().map((place) => (
+                  <CityCard
+                    key={place.id || place.name}
+                    city={place}
+                    variant="ranked"
+                    matchScore={calculateMatchForCity({
+                      cost: place.cost,
+                      crowdLevel: place.crowdLevel,
+                      recommendedStay: place.recommendedStay,
+                      bestSeason: place.bestSeason,
+                      transit: place.transit,
+                      accessibility: place.accessibility,
+                    })}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-8 flex justify-center">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={getTotalPages()}
+                  onPageChange={setCurrentPage}
                 />
-              ))}
-            </div>
+              </div>
+            </>
           )}
         </div>
-
-        {/* Pagination */}
-        {viewMode === "list" && (
-          <div className="mt-8 flex justify-center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        )}
       </div>
     </PlacesLayout>
   );
