@@ -81,7 +81,7 @@ export const About = ({ city }: AboutProps) => {
             We recommend spending {city.recommendedStay} days to fully
             experience {city.name}
             {tags.length > 0 &&
-              ` and explore its ${tags.join(", ").toLowerCase()} attractions`}
+              ` and explore its ${tags.join(", ")?.toLowerCase()} attractions`}
             .
           </p>
         </div>

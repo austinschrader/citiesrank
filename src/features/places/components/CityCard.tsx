@@ -22,6 +22,10 @@ import { useNavigate } from "react-router-dom";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
+  if (!text) {
+    return "";
+  }
+
   return text
     .toLowerCase()
     .replace(/[^\w\s-]/g, "") // Remove special characters
@@ -229,7 +233,7 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
 
             <div className="text-right">
               <div className="text-lg font-semibold text-foreground mb-1">
-                {city.averageRating.toFixed(1)}
+                {city.averageRating?.toFixed(1)}
               </div>
               <div className="text-xs text-muted-foreground">
                 {city.totalReviews} reviews

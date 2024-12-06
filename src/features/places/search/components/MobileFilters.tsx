@@ -67,7 +67,10 @@ export const MobileFilters = ({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[75vh] max-h-[800px] p-0">
+            <SheetContent
+              side="bottom"
+              className="h-[75vh] max-h-[800px] p-0 z-[400]"
+            >
               <div className="flex flex-col h-full">
                 <SheetHeader className="px-4 py-3 border-b flex-shrink-0">
                   <div className="flex items-center justify-between">
