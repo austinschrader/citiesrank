@@ -243,8 +243,12 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
           </div>
 
           <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="w-4 h-4 shrink-0 mr-1" />
-            <span>{city.population} residents</span>
+            {city.population !== "0" && (
+              <>
+                <MapPin className="w-4 h-4 shrink-0 mr-1" />
+                <span>{city.population} residents</span>
+              </>
+            )}
           </div>
         </div>
       </Card>
