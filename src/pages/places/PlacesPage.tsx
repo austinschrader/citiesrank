@@ -2,11 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
 import { getApiUrl } from "@/config/appConfig";
-import { CitiesSection } from "@/features/places/components/CitiesSection";
 import { CityCard } from "@/features/places/components/CityCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
-import { usePopularCities } from "@/features/places/hooks/usePopularCities";
-import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
 import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
@@ -20,6 +17,7 @@ import debounce from "lodash/debounce";
 import { List, MapPin, Search, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
 
@@ -44,8 +42,6 @@ export const PlacesPage = () => {
     getFilteredCities,
   } = useSearchFilters(preferences);
   const { getAllCities } = useCitiesActions();
-  const seasonalCities = useSeasonalCities();
-  const getPopular = usePopularCities();
 
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
@@ -107,10 +103,6 @@ export const PlacesPage = () => {
             }, {} as Record<string, CitiesResponse>);
 
           setCityData(transformedData);
-
-          // Set popular cities
-          const popular = await getPopular();
-          setPopularCities(popular);
         }
       } catch (error) {
         if (currentRequestIdRef.current === requestId) {
@@ -126,7 +118,7 @@ export const PlacesPage = () => {
     };
 
     loadCityData();
-  }, [getAllCities, getPopular, seasonalCities]);
+  }, [getAllCities]);
 
   // Debounced search
   const debouncedSearch = debounce((value: string) => {
@@ -265,17 +257,6 @@ export const PlacesPage = () => {
           setSortOrder={setSortOrder}
           filterOptions={filterOptions}
         />
-
-        {/* Featured and Popular Sections */}
-        {!selectedFilter && !searchQuery && (
-          <div className="space-y-8">
-            <CitiesSection
-              title="Featured This Season"
-              cities={seasonalCities}
-            />
-            <CitiesSection title="Popular Right Now" cities={popularCities} />
-          </div>
-        )}
 
         {/* Results Grid */}
         <div className="space-y-8">

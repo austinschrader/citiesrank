@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useLists } from "@/features/lists/hooks/useLists";
-import { Plus } from "lucide-react";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
 import { ListsTabs } from "@/features/lists/components/ListsTabs";
 import { QuickCreateTemplates } from "@/features/lists/components/QuickCreateTemplates";
+import { useLists } from "@/features/lists/hooks/useLists";
+import { CitiesSection } from "@/features/places/components/CitiesSection";
+import { usePopularCities } from "@/features/places/hooks/usePopularCities";
+import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { Plus } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export const ListsPage: React.FC = () => {
   const { user } = useAuth();
@@ -19,6 +22,9 @@ export const ListsPage: React.FC = () => {
     getSortedLists,
     getFilteredUserLists,
   } = useLists();
+  const seasonalCities = useSeasonalCities();
+  const getPopular = usePopularCities();
+  const [popularCities, setPopularCities] = useState<CitiesResponse[]>([]);
 
   const LoadingSpinner = () => (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -28,6 +34,14 @@ export const ListsPage: React.FC = () => {
       </div>
     </div>
   );
+
+  useEffect(() => {
+    const loadPopularCities = async () => {
+      const popular = await getPopular();
+      setPopularCities(popular);
+    };
+    loadPopularCities();
+  }, [getPopular]);
 
   if (isLoading) {
     return (
@@ -56,6 +70,12 @@ export const ListsPage: React.FC = () => {
         </div>
 
         <QuickCreateTemplates />
+
+        {/* Featured and Popular Sections */}
+        <div className="space-y-8 mb-8">
+          <CitiesSection title="Featured This Season" cities={seasonalCities} />
+          <CitiesSection title="Popular Right Now" cities={popularCities} />
+        </div>
 
         <ListsTabs
           user={user}
