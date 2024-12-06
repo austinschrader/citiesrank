@@ -1,9 +1,9 @@
 // src/features/map/components/CityMap.tsx
+import { MapControls } from "@/features/map/components/MapControls";
+import { MapMarker } from "@/features/map/components/MapMarker";
+import { useMapState } from "@/features/map/hooks/useMapState";
+import { MapPlace } from "@/features/map/types";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { useMapState } from "../hooks/useMapState";
-import { MapPlace } from "../types";
-import { MapControls } from "./MapControls";
-import { MapMarker } from "./MapMarker";
 
 interface CityMapProps {
   places: MapPlace[];
