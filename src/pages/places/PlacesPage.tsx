@@ -21,7 +21,7 @@ import { List, MapPin, Search, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 10;
 const apiUrl = getApiUrl();
 
 type GeographicLevel = "country" | "region" | "city" | "neighborhood" | "sight";
