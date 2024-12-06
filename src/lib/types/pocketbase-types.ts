@@ -51,6 +51,8 @@ export type CitiesRecord<Tcoordinates = unknown, Thighlights = unknown> = {
 	highlights: null | Thighlights
 	imageUrl?: string
 	interesting: number
+	latitude?: number
+	longitude?: number
 	name: string
 	normalizedName: string
 	population: string
