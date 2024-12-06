@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
 import { getApiUrl } from "@/config/appConfig";
@@ -14,12 +15,19 @@ import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { MatchScore } from "@/features/preferences/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import "leaflet/dist/leaflet.css";
 import debounce from "lodash/debounce";
-import { Search, X } from "lucide-react";
+import { List, MapPin, Search, X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 const ITEMS_PER_PAGE = 20;
 const apiUrl = getApiUrl();
+
+const mapStyles = {
+  height: "70vh",
+  width: "100%",
+  borderRadius: "0.5rem",
+};
 
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } =
@@ -40,7 +48,9 @@ export const PlacesPage = () => {
   const getPopular = usePopularCities();
 
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const searchInputRef = useRef<HTMLInputElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -171,6 +181,26 @@ export const PlacesPage = () => {
               style.
             </p>
           </div>
+          <div className="flex items-center space-x-2 bg-muted p-1 rounded-lg">
+            <Button
+              variant={viewMode === "list" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("list")}
+              className="gap-2"
+            >
+              <List className="h-4 w-4" />
+              List
+            </Button>
+            <Button
+              variant={viewMode === "map" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("map")}
+              className="gap-2"
+            >
+              <MapPin className="h-4 w-4" />
+              Map
+            </Button>
+          </div>
         </div>
 
         {/* Mobile Search Trigger */}
@@ -261,37 +291,85 @@ export const PlacesPage = () => {
                 : "All Cities"}
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-            {paginatedCities.map((city) => {
-              const matchScore = calculateMatchForCity({
-                cost: city.cost,
-                crowdLevel: city.crowdLevel,
-                recommendedStay: city.recommendedStay,
-                bestSeason: city.bestSeason,
-                transit: city.transit,
-                accessibility: city.accessibility,
-              });
 
-              return (
-                <CityCard
-                  key={city.name}
-                  city={city}
-                  variant="ranked"
-                  matchScore={matchScore}
+          {viewMode === "list" ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+              {paginatedCities.map((city) => {
+                const matchScore = calculateMatchForCity({
+                  cost: city.cost,
+                  crowdLevel: city.crowdLevel,
+                  recommendedStay: city.recommendedStay,
+                  bestSeason: city.bestSeason,
+                  transit: city.transit,
+                  accessibility: city.accessibility,
+                });
+
+                return (
+                  <CityCard
+                    key={city.name}
+                    city={city}
+                    variant="ranked"
+                    matchScore={matchScore}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <div style={mapStyles}>
+              <MapContainer
+                center={[20, 0]}
+                zoom={2}
+                style={mapStyles}
+                scrollWheelZoom={true}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`}
                 />
-              );
-            })}
-          </div>
+                {paginatedCities.map((city) => {
+                  if (city.latitude && city.longitude) {
+                    const matchScore = calculateMatchForCity({
+                      cost: city.cost,
+                      crowdLevel: city.crowdLevel,
+                      recommendedStay: city.recommendedStay,
+                      bestSeason: city.bestSeason,
+                      transit: city.transit,
+                      accessibility: city.accessibility,
+                    });
+
+                    return (
+                      <Marker
+                        key={city.name}
+                        position={[city.latitude, city.longitude]}
+                      >
+                        <Popup>
+                          <div className="p-2">
+                            <h3 className="font-semibold">{city.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              Match Score: {matchScore.matchScore}
+                            </p>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    );
+                  }
+                  return null;
+                })}
+              </MapContainer>
+            </div>
+          )}
         </div>
 
         {/* Pagination */}
-        <div className="mt-8 flex justify-center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        </div>
+        {viewMode === "list" && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
       </div>
     </PlacesLayout>
   );
