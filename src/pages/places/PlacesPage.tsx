@@ -374,7 +374,7 @@ export const PlacesPage = () => {
           )}
 
         {/* Desktop Filters */}
-        {geographicLevel === "city" && (
+        {geographicLevel === "city" && viewMode === "list" && (
           <DesktopFilters
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
@@ -387,7 +387,7 @@ export const PlacesPage = () => {
         )}
 
         {/* Mobile Filters */}
-        {geographicLevel === "city" && (
+        {geographicLevel === "city" && viewMode === "list" && (
           <MobileFilters
             isFilterSheetOpen={isFilterSheetOpen}
             setIsFilterSheetOpen={setIsFilterSheetOpen}
