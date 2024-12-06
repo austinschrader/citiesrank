@@ -17,7 +17,15 @@ import { SAMPLE_DATA } from "@/lib/data/places/placesData";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import debounce from "lodash/debounce";
-import { List, MapPin, Search, X } from "lucide-react";
+import {
+  Building2,
+  Globe2,
+  Landmark,
+  List,
+  MapPin,
+  Search,
+  X,
+} from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
 
@@ -235,8 +243,8 @@ export const PlacesPage = () => {
     <PlacesLayout>
       <div className="py-4 md:py-6 space-y-4 md:space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
+          <div className="flex-1">
             <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">
               Discover Places
             </h1>
@@ -245,88 +253,125 @@ export const PlacesPage = () => {
               style.
             </p>
           </div>
-          <div className="flex flex-col gap-4 w-full md:w-auto">
-            {/* Update the geographic level tabs styling */}
-            <Tabs
-              value={geographicLevel}
-              onValueChange={(value) =>
-                setGeographicLevel(value as GeographicLevel)
-              }
-              className="w-full"
-            >
-              <TabsList className="grid grid-cols-5 w-full bg-background border-2 p-1 gap-1">
-                {GEOGRAPHIC_LEVELS.map((level) => (
-                  <TabsTrigger
-                    key={level}
-                    value={level}
-                    className="text-xs md:text-sm capitalize data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm transition-all duration-200"
-                  >
-                    {level}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-            <div className="flex items-center space-x-2 bg-muted p-1 rounded-lg">
-              <Button
-                variant={viewMode === "map" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("map")}
-                className="gap-2"
+
+          {/* Controls Section */}
+          <div className="flex flex-col gap-3 w-full md:w-auto">
+            {/* Geographic Levels and View Mode Controls */}
+            <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+              <Tabs
+                value={geographicLevel}
+                onValueChange={(value) =>
+                  setGeographicLevel(value as GeographicLevel)
+                }
+                className="w-full md:w-auto"
               >
-                <MapPin className="h-4 w-4" />
-                Map
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="gap-2"
-              >
-                <List className="h-4 w-4" />
-                List
-              </Button>
+                <div className="overflow-x-auto pb-2 -mb-2 md:overflow-visible md:pb-0 md:mb-0">
+                  <TabsList className="min-w-full md:min-w-0 inline-flex md:grid md:grid-cols-5 bg-background/50 backdrop-blur-sm border rounded-xl p-1.5">
+                    <TabsTrigger
+                      value="country"
+                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
+                    >
+                      <Globe2 className="h-4 w-4" />
+                      Country
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="region"
+                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
+                    >
+                      <Landmark className="h-4 w-4" />
+                      Region
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="city"
+                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
+                    >
+                      <Building2 className="h-4 w-4" />
+                      City
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="neighborhood"
+                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Neighborhood
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="sight"
+                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
+                    >
+                      <List className="h-4 w-4" />
+                      Sight
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+              </Tabs>
+
+              <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1.5 md:p-1 shadow-sm">
+                <Button
+                  variant={viewMode === "map" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("map")}
+                  className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                >
+                  <MapPin className="h-4 w-4" />
+                  Map
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                >
+                  <List className="h-4 w-4" />
+                  List
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Mobile Search Trigger */}
         {/* Mobile Search Trigger with Integrated Search */}
-        <div className="md:hidden relative">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              className="w-full pl-9 pr-10 h-12"
-              placeholder="Search destinations..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onClick={() => setIsMobileSearchActive(true)}
-              readOnly
-            />
-            {searchQuery && (
-              <button
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSearchQuery("");
-                }}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
+        {geographicLevel === "city" && viewMode === "list" && (
+          <div className="md:hidden relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                className="w-full pl-9 pr-10 h-12"
+                placeholder="Search destinations..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onClick={() => setIsMobileSearchActive(true)}
+                readOnly
+              />
+              {searchQuery && (
+                <button
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearchQuery("");
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Mobile Search Overlay */}
-        {isMobileSearchActive && (
-          <MobileSearch
-            searchQuery={searchQuery}
-            onSearchChange={handleSearchChange}
-            onClose={() => setIsMobileSearchActive(false)}
-            searchInputRef={searchInputRef}
-            filteredCities={filteredAndRankedCities}
-            onCitySelect={handleCitySelect}
-          />
-        )}
+        {isMobileSearchActive &&
+          geographicLevel === "city" &&
+          viewMode === "list" && (
+            <MobileSearch
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              onClose={() => setIsMobileSearchActive(false)}
+              searchInputRef={searchInputRef}
+              filteredCities={filteredAndRankedCities}
+              onCitySelect={handleCitySelect}
+            />
+          )}
 
         {/* Desktop Filters */}
         {geographicLevel === "city" && (
