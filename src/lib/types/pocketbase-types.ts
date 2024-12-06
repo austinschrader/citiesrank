@@ -49,7 +49,7 @@ export type CitiesRecord<Tcoordinates = unknown, Thighlights = unknown> = {
 	crowdLevel: number
 	description: string
 	highlights: null | Thighlights
-	imageUrl?: string
+	imageUrl: string
 	interesting: number
 	latitude?: number
 	longitude?: number

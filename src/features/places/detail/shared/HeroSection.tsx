@@ -39,6 +39,7 @@ export const HeroSection = ({ city }: HeroSectionProps) => {
         <ImageGallery
           cityName={city.name}
           country={city.country}
+          imageUrl={city.imageUrl}
           showControls={true}
           onImageClick={() => setIsGalleryOpen(true)}
           variant="hero"
@@ -135,6 +136,7 @@ export const HeroSection = ({ city }: HeroSectionProps) => {
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-black">
           <ImageGallery
+            imageUrl={city.imageUrl}
             cityName={city.name}
             country={city.country}
             showControls={true}
