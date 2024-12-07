@@ -15,7 +15,6 @@ import { useSearch } from "@/features/places/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
-import { SAMPLE_DATA } from "@/lib/data/places/placesData";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import {
@@ -109,8 +108,7 @@ export const PlacesPage = () => {
   const { currentPage, setCurrentPage, getPaginatedData, getTotalPages } =
     usePagination(
       geographicLevel,
-      getFilteredCities(cityData, searchQuery, calculateMatchForCity),
-      SAMPLE_DATA
+      getFilteredCities(cityData, searchQuery, calculateMatchForCity)
     );
 
   useEffect(() => {
@@ -158,12 +156,10 @@ export const PlacesPage = () => {
 
   // Get current data for map view
   const getCurrentLevelData = () => {
-    if (geographicLevel === "city") {
-      return Object.values(cityData).filter(
-        (city) => city.latitude != null && city.longitude != null
-      );
-    }
-    return SAMPLE_DATA[geographicLevel];
+    // Only return cities with valid coordinates
+    return Object.values(cityData).filter(
+      (city) => city.latitude != null && city.longitude != null
+    );
   };
 
   if (isLoading) {
