@@ -20,6 +20,12 @@ const createSlug = (name, country) => {
   });
 };
 
+// Normalize location name
+const normalizeLocationName = (name) => {
+  if (!name) return ""; // Handle null/undefined case
+  return name.toLowerCase().trim();
+};
+
 // Transform raw city data into database format
 const transformCityData = (name, data, tagsMapping) => {
   const normalizedName = normalizeString(name);
@@ -69,6 +75,7 @@ const transformCityData = (name, data, tagsMapping) => {
     safetyScore: normalizeScore(data.safetyScore),
     latitude: data.latitude,
     longitude: data.longitude,
+    parentId: getRecordId(data.country), // Use normalized lookup
   };
 
   return transformedData;
@@ -123,6 +130,7 @@ const transformRegionData = (data, tagsMapping) => {
     safetyScore: normalizeScore(data.safetyScore),
     latitude: data.latitude || 0,
     longitude: data.longitude || 0,
+    parentId: getRecordId(data.country), // Use normalized lookup
   };
 
   // Log the first region's data for debugging
@@ -184,6 +192,7 @@ const transformNeighborhoodData = (data, tagsMapping) => {
     safetyScore: normalizeScore(data.safetyScore),
     latitude: data.latitude || 0,
     longitude: data.longitude || 0,
+    parentId: getRecordId(data.city) || getRecordId(data.country), // First try to get city's ID, fallback to country's ID if city not found
   };
 
   // Log the first neighborhood's data for debugging
@@ -245,6 +254,10 @@ const transformSightData = (data, tagsMapping) => {
     safetyScore: normalizeScore(data.safetyScore),
     latitude: data.latitude || 0,
     longitude: data.longitude || 0,
+    parentId:
+      getRecordId(data.neighborhood) ||
+      getRecordId(data.city) ||
+      getRecordId(data.country), // Try neighborhood first, then city, then country as fallback
   };
 
   // Log the first sight's data for debugging
@@ -357,6 +370,15 @@ async function deleteExistingRecords() {
   return { deleted, errors };
 }
 
+const recordIdMap = new Map();
+const getRecordId = (name) => {
+  if (!name) return null; // Handle null/undefined case
+  return recordIdMap.get(normalizeLocationName(name));
+};
+const setRecordId = (name, id) => {
+  recordIdMap.set(normalizeLocationName(name), id);
+};
+
 async function migrateCityData() {
   const results = {
     deleted: 0,
@@ -383,9 +405,10 @@ async function migrateCityData() {
 
     for (const country of countryData) {
       try {
-        await pb.collection("cities_list").create(country);
+        const record = await pb.collection("cities_list").create(country);
+        setRecordId(country.name, record.id); // Store with normalized name
         results.added.countries++;
-        console.log(`Added country: ${country.name}`);
+        console.log(`Added country: ${country.name} (${record.id})`);
       } catch (error) {
         results.errors.push({
           type: "creation",
@@ -400,31 +423,6 @@ async function migrateCityData() {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    // Transform and add new city records
-    console.log("\nAdding city records...");
-    const cityData = Object.entries(cities).map(([name, data]) =>
-      transformCityData(name, data, tagsMapping)
-    );
-
-    for (const city of cityData) {
-      try {
-        await pb.collection("cities_list").create(city);
-        results.added.cities++;
-        console.log(`Added city: ${city.name}`);
-      } catch (error) {
-        results.errors.push({
-          type: "creation",
-          entity: `city: ${city.name}`,
-          error: error.message,
-          details: error.data?.data,
-        });
-        console.error(`Error adding city ${city.name}:`, error.message);
-        console.error("Validation errors:", error.data?.data);
-        console.error("Attempted data:", city);
-      }
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
     // Transform and add new region records
     console.log("\nAdding region records...");
     const regionData = regionsData.map((data) =>
@@ -433,9 +431,10 @@ async function migrateCityData() {
 
     for (const region of regionData) {
       try {
-        await pb.collection("cities_list").create(region);
+        const record = await pb.collection("cities_list").create(region);
+        setRecordId(region.name, record.id); // Store with normalized name
         results.added.regions++;
-        console.log(`Added region: ${region.name}`);
+        console.log(`Added region: ${region.name} (${record.id})`);
       } catch (error) {
         results.errors.push({
           type: "creation",
@@ -450,6 +449,32 @@ async function migrateCityData() {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
+    // Transform and add new city records
+    console.log("\nAdding city records...");
+    const cityData = Object.entries(cities).map(([name, data]) =>
+      transformCityData(name, data, tagsMapping)
+    );
+
+    for (const city of cityData) {
+      try {
+        const record = await pb.collection("cities_list").create(city);
+        setRecordId(city.name, record.id); // Store with normalized name
+        results.added.cities++;
+        console.log(`Added city: ${city.name} (${record.id})`);
+      } catch (error) {
+        results.errors.push({
+          type: "creation",
+          entity: `city: ${city.name}`,
+          error: error.message,
+          details: error.data?.data,
+        });
+        console.error(`Error adding city ${city.name}:`, error.message);
+        console.error("Validation errors:", error.data?.data);
+        console.error("Attempted data:", city);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
     // Transform and add new neighborhood records
     console.log("\nAdding neighborhood records...");
     const neighborhoodData = neighborhoodsData.map((data) =>
@@ -458,9 +483,10 @@ async function migrateCityData() {
 
     for (const neighborhood of neighborhoodData) {
       try {
-        await pb.collection("cities_list").create(neighborhood);
+        const record = await pb.collection("cities_list").create(neighborhood);
+        setRecordId(neighborhood.name, record.id); // Store with normalized name
         results.added.neighborhoods++;
-        console.log(`Added neighborhood: ${neighborhood.name}`);
+        console.log(`Added neighborhood: ${neighborhood.name} (${record.id})`);
       } catch (error) {
         results.errors.push({
           type: "creation",
@@ -486,9 +512,10 @@ async function migrateCityData() {
 
     for (const sight of sightData) {
       try {
-        await pb.collection("cities_list").create(sight);
+        const record = await pb.collection("cities_list").create(sight);
+        setRecordId(sight.name, record.id); // Store with normalized name
         results.added.sights++;
-        console.log(`Added sight: ${sight.name}`);
+        console.log(`Added sight: ${sight.name} (${record.id})`);
       } catch (error) {
         results.errors.push({
           type: "creation",

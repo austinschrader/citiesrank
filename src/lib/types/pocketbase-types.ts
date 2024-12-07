@@ -49,6 +49,7 @@ export type CitiesRecord<Thighlights = unknown> = {
 	accessibility: number
 	averageRating?: number
 	bestSeason: number
+	climate?: string
 	cost: number
 	costIndex: number
 	country: string
