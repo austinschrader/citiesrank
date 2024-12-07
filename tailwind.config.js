@@ -10,6 +10,8 @@ export default {
         pulse: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         ping: "ping 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         shimmer: "shimmer 2s infinite",
+        "heart-bounce": "heart-bounce 2s infinite ease-in-out",
+        "heart-favorite": "heart-favorite 0.5s ease-out",
       },
       keyframes: {
         pulse: {
@@ -23,6 +25,17 @@ export default {
         ping: {
           "0%, 100%": { transform: "scale(1)", opacity: 0.75 },
           "50%": { transform: "scale(1.25)", opacity: 0 },
+        },
+        "heart-bounce": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-2px)" },
+        },
+        "heart-favorite": {
+          "0%": { transform: "scale(1)" },
+          "25%": { transform: "scale(1.2) rotate(-10deg)" },
+          "50%": { transform: "scale(0.95)" },
+          "75%": { transform: "scale(1.1) rotate(10deg)" },
+          "100%": { transform: "scale(1)" },
         },
       },
       borderRadius: {

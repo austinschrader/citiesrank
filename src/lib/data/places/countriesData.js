@@ -252,7 +252,7 @@ export const countriesData = [
     name: "Portugal",
     normalizedName: "portugal",
     description: "Atlantic coastal nation known for history and wine culture",
-    imageUrl: "portugal.jpg",
+    imageUrl: "porto-portugal.jpg",
     averageRating: 4.8,
     totalReviews: 1800,
     cost: 65,

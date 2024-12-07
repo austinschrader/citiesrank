@@ -14,8 +14,21 @@ import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useTagIdentifiers } from "@/features/places/hooks/useTagIdentifiers";
 import { PlaceCardProps } from "@/features/places/types";
 import { useToast } from "@/hooks/use-toast";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { Camera, Compass, Heart, LogIn, MapPin, Users } from "lucide-react";
+import { getCountryCode } from "@/lib/utils/countryUtils";
+import * as Flags from "country-flag-icons/react/3x2";
+import {
+  Building2,
+  Camera,
+  Compass,
+  Globe2,
+  Heart,
+  Home,
+  Landmark,
+  LogIn,
+  Users,
+} from "lucide-react";
 import PocketBase from "pocketbase";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -74,11 +87,32 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
     return "bg-gray-50 text-gray-700";
   };
 
-  const getPlaceType = (place: any): string => {
-    // TODO: Implement proper type detection based on your data structure
-    // This is a temporary implementation
-    if (place.type) return place.type;
-    return "city"; // Default to city for backward compatibility
+  const getPlaceTypeInfo = (types: CitiesTypeOptions[] | undefined) => {
+    const type = types?.[0] || CitiesTypeOptions.city;
+    const typeInfo = {
+      [CitiesTypeOptions.country]: {
+        icon: Globe2,
+        color: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+      },
+      [CitiesTypeOptions.region]: {
+        icon: Compass,
+        color: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+      },
+      [CitiesTypeOptions.city]: {
+        icon: Building2,
+        color: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200",
+      },
+      [CitiesTypeOptions.neighborhood]: {
+        icon: Home,
+        color: "bg-amber-100 text-amber-700 hover:bg-amber-200",
+      },
+      [CitiesTypeOptions.sight]: {
+        icon: Landmark,
+        color: "bg-rose-100 text-rose-700 hover:bg-rose-200",
+      },
+    } as const;
+
+    return typeInfo[type];
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -159,7 +193,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
     <>
       <Card
         id={`city-${createSlug(city.name)}`}
-        className="group overflow-hidden border-none shadow-none hover:shadow-lg transition-all duration-300 cursor-pointer"
+        className="group relative overflow-hidden border-none rounded-xl shadow-sm hover:shadow-xl transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
         onClick={handleCardClick}
@@ -172,12 +206,100 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
             showControls={showControls}
           />
 
-          <div className="absolute top-2 left-2 z-20">
-            {variant === "ranked" && "matchScore" in city && (
+          {/* Base gradient overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 pointer-events-none transition-opacity duration-500 ease-out group-hover:opacity-0" />
+
+          {/* Content container with hover effect */}
+          <div className="absolute inset-0 z-20 overflow-hidden">
+            {/* Default view - City name and country */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center transform transition-transform duration-500 ease-out group-hover:translate-x-full">
+              <h3 className="text-3xl font-semibold text-white text-center mb-2 px-4 drop-shadow-lg">
+                {city.name}
+              </h3>
+              <p className="text-lg font-medium text-white/90 drop-shadow-lg">
+                {city.country}
+              </p>
+            </div>
+          </div>
+
+          {/* Country flag that changes to text on hover */}
+          <div className="absolute bottom-2 left-2 z-30">
+            <div className="relative">
+              {/* Flag */}
+              <div className="transform transition-all duration-500 ease-out group-hover:opacity-0 group-hover:scale-90">
+                {(() => {
+                  const countryCode = getCountryCode(city.country);
+                  if (countryCode && countryCode in Flags) {
+                    const FlagComponent =
+                      Flags[countryCode as keyof typeof Flags];
+                    return (
+                      <div className="h-8 w-10 rounded-lg shadow-lg overflow-hidden">
+                        <FlagComponent className="w-full h-full object-cover" />
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+              {/* Country name */}
+              <div className="absolute inset-0 flex items-center opacity-0 transform scale-95 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-100">
+                <span className="text-sm font-medium text-white bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm whitespace-nowrap">
+                  {city.country}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Type badge with improved animation */}
+          {city.type && (
+            <Badge
+              className={cn(
+                "absolute bottom-3 right-3 z-30 flex items-center gap-2 px-3 py-1.5 text-sm font-medium capitalize",
+                "transform transition-all duration-500 ease-out",
+                "shadow-lg backdrop-blur-sm",
+                "group-hover:scale-110 group-hover:translate-x-0",
+                getPlaceTypeInfo(city.type).color
+              )}
+            >
+              {React.createElement(getPlaceTypeInfo(city.type).icon, {
+                size: 16,
+                className: "shrink-0",
+              })}
+              {city.type[0]}
+            </Badge>
+          )}
+
+          {/* Favorite button with pulse animation */}
+          <button
+            onClick={handleFavoriteClick}
+            disabled={isLoading}
+            className={cn(
+              "absolute top-3 right-3 z-30 p-3 rounded-full transition-all duration-300",
+              "transform hover:scale-110 active:scale-95",
+              "shadow-lg backdrop-blur-sm",
+              isFavorite
+                ? "bg-red-500/90 text-white hover:bg-red-600"
+                : "bg-white/20 hover:bg-white/30 text-red-500 hover:text-red-600"
+            )}
+          >
+            <Heart
+              className={cn(
+                "w-6 h-6 transition-all duration-300",
+                isFavorite
+                  ? "fill-current animate-[bounce_0.5s_ease-in-out]"
+                  : "hover:scale-110 hover:fill-current"
+              )}
+            />
+          </button>
+
+          {/* Match score badge with improved design */}
+          {variant === "ranked" && "matchScore" in city && (
+            <div className="absolute top-3 left-3 z-30 transform transition-all duration-500 ease-out group-hover:scale-105">
               <div
                 className={cn(
-                  "px-2 py-1 rounded-full text-xs font-medium",
-                  "shadow-[0_2px_8px_rgba(0,0,0,0.16)]",
+                  "px-3 py-1.5 rounded-full text-sm font-semibold",
+                  "shadow-lg backdrop-blur-sm",
+                  "transform transition-all duration-300",
                   getMatchColor(
                     typeof city.matchScore === "number" ? city.matchScore : 0
                   )
@@ -187,82 +309,13 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
                   ? `${Math.round(city.matchScore)}% match`
                   : null}
               </div>
-            )}
-          </div>
-
-          <div className="absolute bottom-2 left-2 right-2 z-20">
-            <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
-              {city.tags?.map((tagId, index) => (
-                <Badge
-                  key={`${tagId}-${index}`}
-                  variant="secondary"
-                  className="bg-black/50 hover:bg-black/60 text-white border-none backdrop-blur-sm transition-all duration-300 whitespace-nowrap text-xs font-medium px-2 py-0.5"
-                >
-                  {getTagIdentifier(tagId)}
-                </Badge>
-              ))}
             </div>
-          </div>
-
-          {/* Add a gradient overlay to ensure badge readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-
-          <button
-            onClick={handleFavoriteClick}
-            disabled={isLoading}
-            className={cn(
-              "absolute top-2 right-2 z-20 p-2 rounded-full transition-all duration-300",
-              isFavorite
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900"
-            )}
-          >
-            <Heart
-              className={cn("w-4 h-4", isFavorite ? "fill-current" : "")}
-            />
-          </button>
-        </div>
-
-        <div className="p-5">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
-                  {city.name}
-                </span>
-                <span className="text-sm font-medium text-muted-foreground">
-                  {city.country}
-                </span>
-              </div>
-
-              <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2 mb-3">
-                {city.description}
-              </p>
-            </div>
-
-            <div className="text-right">
-              <div className="text-lg font-semibold text-foreground mb-1">
-                {city.averageRating?.toFixed(1)}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {city.totalReviews} reviews
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center text-sm text-muted-foreground">
-            {city.population !== "0" && (
-              <>
-                <MapPin className="w-4 h-4 shrink-0 mr-1" />
-                <span>{city.population} residents</span>
-              </>
-            )}
-          </div>
+          )}
         </div>
       </Card>
 
       <Dialog open={showSignUpDialog} onOpenChange={setShowSignUpDialog}>
-        <DialogContent className="sm:max-w-[400px] px-6 pt-8 pb-6 overflow-hidden">
+        <DialogContent className="sm:max-w-[400px] px-6 pt-8 pb-6 overflow-hidden animate-dialog-content">
           <DialogHeader className="text-center space-y-2.5 mb-6">
             <DialogTitle className="text-xl sm:text-2xl font-semibold text-foreground px-4">
               Save {city.name} to Your Lists
