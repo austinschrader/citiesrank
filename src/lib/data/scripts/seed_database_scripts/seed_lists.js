@@ -1,7 +1,8 @@
 import PocketBase from "pocketbase";
 import { MOCK_LISTS } from "../raw_data/lists_data.js";
 
-const pb = new PocketBase("http://127.0.0.1:8090");
+// const pb = new PocketBase("http://127.0.0.1:8090");
+const pb = new PocketBase("https://api.citiesrank.com");
 
 // Helper functions remain the same
 function getRandomItems(arr, count) {
@@ -73,18 +74,18 @@ const listTemplates = {
   cities: [
     // Cities remain the same
     {
-      citySlug: "porto-portugal",
-      name: "Porto",
-      country: "Portugal",
+      citySlug: "paris-france",
+      name: "Paris",
+      country: "France",
       description:
-        "Historic port city known for its stunning bridges and port wine cellars.",
-      highlight: "Ribeira District and Port Wine Cellars",
-      rating: 4.8,
-      reviews: 2345,
-      coordinates: [41.1579, -8.6291],
-      tags: ["wine", "history", "architecture"],
-      bestTime: "March-October",
-      suggestedStay: "3-4 days",
+        "City of love and art, known for its iconic Eiffel Tower and Louvre Museum.",
+      highlight: "Eiffel Tower and Louvre Museum",
+      rating: 4.9,
+      reviews: 9876,
+      coordinates: [48.8566, 2.3522],
+      tags: ["romantic", "arty", "history"],
+      bestTime: "May-October",
+      suggestedStay: "4-5 days",
     },
     {
       citySlug: "ljubljana-slovenia",
