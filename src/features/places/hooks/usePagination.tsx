@@ -7,29 +7,19 @@ type GeographicLevel = "country" | "region" | "city" | "neighborhood" | "sight";
 
 export function usePagination(
   geographicLevel: GeographicLevel,
-  filteredCities: CitiesResponse[],
-  sampleData: Record<GeographicLevel, any[]>
+  filteredCities: CitiesResponse[]
 ) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const getPaginatedData = () => {
-    if (geographicLevel === "city") {
-      return filteredCities.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-      );
-    }
-    return sampleData[geographicLevel].slice(
+    return filteredCities.slice(
       (currentPage - 1) * ITEMS_PER_PAGE,
       currentPage * ITEMS_PER_PAGE
     );
   };
 
   const getTotalPages = () => {
-    if (geographicLevel === "city") {
-      return Math.ceil(filteredCities.length / ITEMS_PER_PAGE);
-    }
-    return Math.ceil(sampleData[geographicLevel].length / ITEMS_PER_PAGE);
+    return Math.ceil(filteredCities.length / ITEMS_PER_PAGE);
   };
 
   return {
