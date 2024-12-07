@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
 import { CityMap } from "@/features/map/components/CityMap";
-import { CityCard } from "@/features/places/components/CityCard";
+import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
@@ -249,7 +249,7 @@ export const PlacesPage = () => {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                 {getPaginatedData().map((place) => (
-                  <CityCard
+                  <PlaceCard
                     key={place.id || place.name}
                     city={place}
                     variant="ranked"

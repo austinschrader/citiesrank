@@ -12,7 +12,7 @@ import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useTagIdentifiers } from "@/features/places/hooks/useTagIdentifiers";
-import { CityCardProps } from "@/features/places/types";
+import { PlaceCardProps } from "@/features/places/types";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Camera, Compass, Heart, LogIn, MapPin, Users } from "lucide-react";
@@ -33,7 +33,7 @@ const createSlug = (text: string): string => {
     .replace(/--+/g, "-"); // Replace multiple - with single -
 };
 
-export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
+export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
   const navigate = useNavigate();
   const { user, signInWithGoogle } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -346,4 +346,4 @@ export const CityCard: React.FC<CityCardProps> = ({ city, variant }) => {
   );
 };
 
-export default CityCard;
+export default PlaceCard;
