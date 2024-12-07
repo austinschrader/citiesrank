@@ -39,6 +39,7 @@ const transformCityData = (name, data, tagsMapping) => {
     name,
     normalizedName,
     slug,
+    type: "city",
     country: data.country,
     cost: data.cost,
     interesting: normalizeScore(data.interesting),
@@ -92,6 +93,7 @@ const transformRegionData = (data, tagsMapping) => {
     name: data.name,
     normalizedName,
     slug,
+    type: "region",
     country: data.country,
     cost: data.cost || 0,
     costIndex: normalizeScore(data.costIndex),
@@ -281,6 +283,7 @@ const transformCountryData = (data, tagsMapping) => {
     name: data.name,
     normalizedName,
     slug,
+    type: "country",
     // Add the country field, using the country's own name
     country: data.name,
     capital: data.capital || "",
