@@ -9,7 +9,7 @@ import { CreateListPage } from "@/pages/lists/CreateListPage";
 import { ListsPage } from "@/pages/lists/ListsPage";
 import { ViewListPage } from "@/pages/lists/ViewListPage";
 import { AddPlacePage } from "@/pages/places/AddPlacePage";
-import { CityDetailsPage } from "@/pages/places/CityDetailsPage"; // Add this import
+import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage"; // Add this import
 import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage"; // You'll need to create this
 import { SavedPage } from "@/pages/saved/SavedPage";
@@ -32,9 +32,10 @@ function App() {
                 <Route path="/create-list" element={<CreateListPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                {/* New flexible routing for all place types */}
                 <Route
-                  path="/cities/:country/:city"
-                  element={<CityDetailsPage />}
+                  path="/places/:placeType/:id"
+                  element={<PlaceDetailsPage />}
                 />
               </Routes>
             </RootLayout>

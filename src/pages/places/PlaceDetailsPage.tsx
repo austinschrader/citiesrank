@@ -18,13 +18,15 @@ import { Building, Coffee, Sparkles, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-interface CityDetailsPageProps {
-  initialData?: CitiesRecord;
+type PlaceType = "city" | "country" | "region" | "neighborhood" | "sight";
+
+interface PlaceDetailsPageProps {
+  initialData?: CitiesRecord; // TODO: Update this type to handle all place types
 }
 
-export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
-  const { country, city } = useParams();
-  const [cityData, setCityData] = useState<CitiesRecord | null>(
+export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
+  const { placeType, id } = useParams();
+  const [placeData, setPlaceData] = useState<CitiesRecord | null>(
     initialData || null
   );
   const [loading, setLoading] = useState(!initialData);
@@ -32,20 +34,33 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
   const { getCityByName } = useCitiesActions();
 
   useEffect(() => {
-    if (!city || initialData) return;
+    if (initialData) return;
 
     setLoading(true);
-    getCityByName(city)
-      .then(setCityData)
-      .catch((err) => {
+
+    if (!id) {
+      setError("No place identifier provided");
+      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const data = await getCityByName(id);
+        setPlaceData(data);
+      } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Failed to load city data");
+          setError("Failed to load place data");
         }
-      })
-      .finally(() => setLoading(false));
-  }, [city, initialData]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, initialData]);
 
   const tabs = [
     { value: "overview", label: "Overview", icon: Sparkles },
@@ -56,14 +71,14 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
-  if (!cityData) return <div>City not found</div>;
+  if (!placeData) return <div>Place not found</div>;
 
   return (
     <div className="min-h-screen bg-background pb-16 md:pb-0">
-      <HeroSection city={cityData} />
+      <HeroSection city={placeData} />
 
       <div className="container max-w-7xl mx-auto px-4 py-8">
-        <QuickFacts city={cityData} />
+        <QuickFacts city={placeData} />
 
         <Card className="mt-6">
           <CardContent className="p-0 sm:p-6">
@@ -92,7 +107,7 @@ export function CityDetailsPage({ initialData }: CityDetailsPageProps) {
                 <TabsContent value="overview" className="space-y-8 m-0">
                   <div className="grid gap-8 lg:grid-cols-3">
                     <div className="lg:col-span-2 space-y-8">
-                      <About city={cityData} />
+                      <About city={placeData} />
                       <BestTimeToVisit />
                     </div>
                     <div className="space-y-6">

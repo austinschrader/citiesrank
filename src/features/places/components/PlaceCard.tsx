@@ -74,16 +74,24 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
     return "bg-gray-50 text-gray-700";
   };
 
+  const getPlaceType = (place: any): string => {
+    // TODO: Implement proper type detection based on your data structure
+    // This is a temporary implementation
+    if (place.type) return place.type;
+    return "city"; // Default to city for backward compatibility
+  };
+
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking the favorite button
     if ((e.target as HTMLElement).closest("button")) {
       return;
     }
 
-    const citySlug = createSlug(city.name);
-    const countrySlug = createSlug(city.country);
-    navigate(`/cities/${countrySlug}/${citySlug}`, {
-      state: { cityData: city },
+    const placeSlug = createSlug(city.name);
+
+    // Use new routing pattern only
+    navigate(`/places/${city.type}/${placeSlug}`, {
+      state: { placeData: city },
     });
   };
 
