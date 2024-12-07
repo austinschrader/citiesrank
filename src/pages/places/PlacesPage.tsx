@@ -34,7 +34,6 @@ export const PlacesPage = () => {
   const { getAllCities } = useCitiesActions();
 
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [mapZoom, setMapZoom] = useState(2);
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
 
