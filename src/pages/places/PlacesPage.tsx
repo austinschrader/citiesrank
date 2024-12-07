@@ -4,19 +4,20 @@ import { Pagination } from "@/components/ui/Pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getApiUrl } from "@/config/appConfig";
 import { CityMap } from "@/features/map/components/CityMap";
+import { useGeographicLevel } from "@/features/map/hooks/useGeographicLevel";
 import { CityCard } from "@/features/places/components/CityCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
+import { usePagination } from "@/features/places/hooks/usePagination";
 import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
+import { useSearch } from "@/features/places/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
-import { MatchScore } from "@/features/preferences/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { SAMPLE_DATA } from "@/lib/data/places/placesData";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
-import debounce from "lodash/debounce";
 import {
   Building2,
   Globe2,
@@ -26,7 +27,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
 
 const ITEMS_PER_PAGE = 10;
@@ -83,47 +84,40 @@ export const PlacesPage = () => {
   } = useSearchFilters(preferences);
   const { getAllCities } = useCitiesActions();
 
-  const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [geographicLevel, setGeographicLevel] =
-    useState<GeographicLevel>("country");
-  const [mapZoom, setMapZoom] = useState(2); // 2 for countries, 5 for regions, 8 for cities, 12 for neighborhoods, 15 for sights
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const [currentPage, setCurrentPage] = useState(1);
+  const [mapZoom, setMapZoom] = useState(2);
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
+
+  // Use our new custom hooks
+  const { geographicLevel, setGeographicLevel } = useGeographicLevel(
+    viewMode,
+    mapZoom
+  );
+  const {
+    searchQuery,
+    setSearchQuery,
+    isMobileSearchActive,
+    setIsMobileSearchActive,
+    searchInputRef,
+    handleSearchChange,
+    handleCitySelect,
+  } = useSearch();
+  const { currentPage, setCurrentPage, getPaginatedData, getTotalPages } =
+    usePagination(
+      geographicLevel,
+      getFilteredCities(cityData, searchQuery, calculateMatchForCity),
+      SAMPLE_DATA
+    );
 
   useEffect(() => {
     if (isMobileSearchActive && searchInputRef.current) {
       searchInputRef.current.focus();
     }
   }, [isMobileSearchActive]);
-
-  const handleCitySelect = (city: CitiesResponse & Partial<MatchScore>) => {
-    setSearchQuery(city.name); // Update search query to show what was selected
-
-    // Create a slug from the city name for the ID
-    const citySlug = city.name
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-");
-
-    // Create a slug from the country name
-    setSelectedFilter(null);
-
-    // Find and scroll to the city card
-    const cityElement = document.getElementById(`city-${citySlug}`);
-    if (cityElement) {
-      setTimeout(() => {
-        cityElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
-    }
-  };
 
   useEffect(() => {
     const loadCityData = async () => {
@@ -162,49 +156,6 @@ export const PlacesPage = () => {
     loadCityData();
   }, [getAllCities]);
 
-  // Debounced search
-  const debouncedSearch = debounce((value: string) => {
-    setSearchQuery(value);
-  }, 300);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
-
-  const filteredAndRankedCities = getFilteredCities(
-    cityData,
-    searchQuery,
-    calculateMatchForCity
-  );
-
-  // Get paginated data based on current level
-  const getPaginatedData = () => {
-    if (geographicLevel === "city") {
-      return filteredAndRankedCities.slice(
-        (currentPage - 1) * ITEMS_PER_PAGE,
-        currentPage * ITEMS_PER_PAGE
-      );
-    }
-    return SAMPLE_DATA[geographicLevel].slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE
-    );
-  };
-
-  // Get total pages based on current level
-  const getTotalPages = () => {
-    if (geographicLevel === "city") {
-      return Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
-    }
-    return Math.ceil(SAMPLE_DATA[geographicLevel].length / ITEMS_PER_PAGE);
-  };
-
   // Get current data for map view
   const getCurrentLevelData = () => {
     if (geographicLevel === "city") {
@@ -214,17 +165,6 @@ export const PlacesPage = () => {
     }
     return SAMPLE_DATA[geographicLevel];
   };
-
-  // Update geographic level based on map zoom
-  useEffect(() => {
-    if (viewMode === "map") {
-      if (mapZoom <= 3) setGeographicLevel("country");
-      else if (mapZoom <= 6) setGeographicLevel("region");
-      else if (mapZoom <= 10) setGeographicLevel("city");
-      else if (mapZoom <= 14) setGeographicLevel("neighborhood");
-      else setGeographicLevel("sight");
-    }
-  }, [mapZoom, viewMode]);
 
   if (isLoading) {
     return (
@@ -368,7 +308,11 @@ export const PlacesPage = () => {
               onSearchChange={handleSearchChange}
               onClose={() => setIsMobileSearchActive(false)}
               searchInputRef={searchInputRef}
-              filteredCities={filteredAndRankedCities}
+              filteredCities={getFilteredCities(
+                cityData,
+                searchQuery,
+                calculateMatchForCity
+              )}
               onCitySelect={handleCitySelect}
             />
           )}
@@ -382,7 +326,11 @@ export const PlacesPage = () => {
             onFilterSelect={handleFilterSelect}
             preferences={preferences}
             setPreferences={setPreferences}
-            filteredCities={filteredAndRankedCities}
+            filteredCities={getFilteredCities(
+              cityData,
+              searchQuery,
+              calculateMatchForCity
+            )}
           />
         )}
 
