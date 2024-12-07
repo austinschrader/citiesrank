@@ -3,6 +3,7 @@ import slugify from "slugify";
 import { cities } from "../../places/citiesData.js";
 import { neighborhoodsData } from "../../places/neighborhoodsData.js";
 import { regionsData } from "../../places/regionsData.js";
+import { sightsData } from "../../places/sightsData.js";
 import { normalizeString } from "./utils.js";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
@@ -191,6 +192,67 @@ const transformNeighborhoodData = (data, tagsMapping) => {
   return transformedData;
 };
 
+// Transform raw sight data into database format
+const transformSightData = (data, tagsMapping) => {
+  const normalizedName = normalizeString(data.name);
+  const slug = createSlug(data.name, data.city);
+  const tagIds = (data.tags || [])
+    .map((type) => tagsMapping[type])
+    .filter((id) => id);
+
+  // Ensure all scores are less than 10
+  const normalizeScore = (score) => {
+    if (score === null || score === undefined) return 0;
+    // If score is greater than 10, assume it's on a 100 scale and convert
+    return score > 10 ? score / 10 : score;
+  };
+
+  const transformedData = {
+    name: data.name,
+    normalizedName,
+    slug,
+    type: "sight",
+    country: data.country,
+    city: data.city,
+    cost: data.cost || 0,
+    costIndex: normalizeScore(data.costIndex),
+    interesting: normalizeScore(data.interesting),
+    transit: normalizeScore(data.transit),
+    transitScore: normalizeScore(data.transitScore),
+    description: data.description || "",
+    population: data.population || "N/A",
+    highlights: JSON.stringify(
+      data.highlights || [
+        `Visit ${data.name}`,
+        `Learn about its history`,
+        `Take photos`,
+        `Explore the surroundings`,
+        `Experience the atmosphere`,
+      ]
+    ),
+    tags: JSON.stringify(tagIds),
+    crowdLevel: normalizeScore(data.crowdLevel),
+    recommendedStay: normalizeScore(data.recommendedStay),
+    bestSeason: normalizeScore(data.bestSeason),
+    accessibility: normalizeScore(data.accessibility),
+    imageUrl: data.imageUrl || `${slug}-1`,
+    averageRating: data.averageRating || 0,
+    totalReviews: data.totalReviews || 0,
+    walkScore: normalizeScore(data.walkScore),
+    safetyScore: normalizeScore(data.safetyScore),
+    latitude: data.latitude || 0,
+    longitude: data.longitude || 0,
+  };
+
+  // Log the first sight's data for debugging
+  if (data.name === "Eiffel Tower") {
+    console.log("\nFirst sight (Eiffel Tower) transformed data:");
+    console.log(JSON.stringify(transformedData, null, 2));
+  }
+
+  return transformedData;
+};
+
 // Get tags mapping
 async function getTagsMapping() {
   const tags = await pb.collection("tags").getFullList();
@@ -228,7 +290,7 @@ async function deleteExistingRecords() {
 async function migrateCityData() {
   const results = {
     deleted: 0,
-    added: { cities: 0, regions: 0, neighborhoods: 0 },
+    added: { cities: 0, regions: 0, neighborhoods: 0, sights: 0 },
     errors: [],
   };
 
@@ -321,17 +383,44 @@ async function migrateCityData() {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
+    // Transform and add new sight records
+    console.log("\nAdding sight records...");
+    const sightData = sightsData.map((data) =>
+      transformSightData(data, tagsMapping)
+    );
+
+    for (const sight of sightData) {
+      try {
+        await pb.collection("cities_list").create(sight);
+        results.added.sights++;
+        console.log(`Added sight: ${sight.name}`);
+      } catch (error) {
+        results.errors.push({
+          type: "creation",
+          entity: `sight: ${sight.name}`,
+          error: error.message,
+          details: error.data?.data,
+        });
+        console.error(`Error adding sight ${sight.name}:`, error.message);
+        console.error("Validation errors:", error.data?.data);
+        console.error("Attempted data:", sight);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
     // Print summary
     console.log("\nMigration Summary:");
     console.log(`Records deleted: ${results.deleted}`);
     console.log(`Cities added: ${results.added.cities}`);
     console.log(`Regions added: ${results.added.regions}`);
     console.log(`Neighborhoods added: ${results.added.neighborhoods}`);
+    console.log(`Sights added: ${results.added.sights}`);
     console.log(
       `Total records added: ${
         results.added.cities +
         results.added.regions +
-        results.added.neighborhoods
+        results.added.neighborhoods +
+        results.added.sights
       }`
     );
     console.log(`Errors: ${results.errors.length}`);
