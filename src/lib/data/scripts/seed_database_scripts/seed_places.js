@@ -1,6 +1,7 @@
 import PocketBase from "pocketbase";
 import slugify from "slugify";
 import { cities } from "../../places/citiesData.js";
+import { countriesData } from "../../places/countriesData.js";
 import { neighborhoodsData } from "../../places/neighborhoodsData.js";
 import { regionsData } from "../../places/regionsData.js";
 import { sightsData } from "../../places/sightsData.js";
@@ -253,6 +254,72 @@ const transformSightData = (data, tagsMapping) => {
   return transformedData;
 };
 
+// Transform raw country data into database format
+const transformCountryData = (data, tagsMapping) => {
+  const normalizedName = normalizeString(data.name);
+  const slug = slugify(data.name, {
+    lower: true,
+    strict: true,
+    trim: true,
+    remove: /[*+~.()'"!:@]/g,
+  });
+
+  const tagIds = (data.tags || [])
+    .map((type) => tagsMapping[type])
+    .filter((id) => id);
+
+  // Ensure all scores are less than 10
+  const normalizeScore = (score) => {
+    if (score === null || score === undefined) return 0;
+    const numScore = parseFloat(score);
+    if (isNaN(numScore)) return 0;
+    // If score is greater than 10, assume it's on a 100 scale and convert
+    return numScore > 10 ? numScore / 10 : numScore;
+  };
+
+  const transformedData = {
+    name: data.name,
+    normalizedName,
+    slug,
+    // Add the country field, using the country's own name
+    country: data.name,
+    capital: data.capital || "",
+    cost: parseFloat(data.cost || 0),
+    costIndex: normalizeScore(data.costIndex),
+    interesting: normalizeScore(data.interesting),
+    transit: normalizeScore(data.transit),
+    transitScore: normalizeScore(data.transitScore),
+    description: data.description || "",
+    population: data.population || "Unknown",
+    highlights: JSON.stringify(
+      data.highlights || [
+        `Visit ${data.name}`,
+        `Experience local culture`,
+        `Try local cuisine`,
+        `Explore major cities`,
+        `Visit historic sites`,
+      ]
+    ),
+    tags: JSON.stringify(tagIds),
+    crowdLevel: normalizeScore(data.crowdLevel),
+    recommendedStay: normalizeScore(data.recommendedStay),
+    bestSeason: normalizeScore(data.bestSeason),
+    accessibility: normalizeScore(data.accessibility),
+    imageUrl: data.imageUrl || `${slug}.jpg`,
+    averageRating: parseFloat(data.averageRating || 0),
+    totalReviews: parseInt(data.totalReviews || 0, 10),
+    walkScore: normalizeScore(data.walkScore),
+    safetyScore: normalizeScore(data.safetyScore),
+    latitude: parseFloat(data.latitude || 0),
+    longitude: parseFloat(data.longitude || 0),
+    languages: JSON.stringify(data.languages || []),
+    currency: data.currency || "Unknown",
+    timezone: data.timezone || "UTC",
+  };
+
+  return transformedData;
+};
+
 // Get tags mapping
 async function getTagsMapping() {
   const tags = await pb.collection("tags").getFullList();
@@ -290,7 +357,7 @@ async function deleteExistingRecords() {
 async function migrateCityData() {
   const results = {
     deleted: 0,
-    added: { cities: 0, regions: 0, neighborhoods: 0, sights: 0 },
+    added: { cities: 0, regions: 0, neighborhoods: 0, sights: 0, countries: 0 },
     errors: [],
   };
 
@@ -305,8 +372,33 @@ async function migrateCityData() {
     results.deleted = deleteResults.deleted;
     results.errors.push(...deleteResults.errors);
 
+    // Transform and add new country records first
+    console.log("\nAdding country records...");
+    const countryData = countriesData.map((data) =>
+      transformCountryData(data, tagsMapping)
+    );
+
+    for (const country of countryData) {
+      try {
+        await pb.collection("cities_list").create(country);
+        results.added.countries++;
+        console.log(`Added country: ${country.name}`);
+      } catch (error) {
+        results.errors.push({
+          type: "creation",
+          entity: `country: ${country.name}`,
+          error: error.message,
+          details: error.data?.data,
+        });
+        console.error(`Error adding country ${country.name}:`, error.message);
+        console.error("Validation errors:", error.data?.data);
+        console.error("Attempted data:", country);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
     // Transform and add new city records
-    console.log("Adding city records...");
+    console.log("\nAdding city records...");
     const cityData = Object.entries(cities).map(([name, data]) =>
       transformCityData(name, data, tagsMapping)
     );
@@ -411,12 +503,14 @@ async function migrateCityData() {
     // Print summary
     console.log("\nMigration Summary:");
     console.log(`Records deleted: ${results.deleted}`);
+    console.log(`Countries added: ${results.added.countries}`);
     console.log(`Cities added: ${results.added.cities}`);
     console.log(`Regions added: ${results.added.regions}`);
     console.log(`Neighborhoods added: ${results.added.neighborhoods}`);
     console.log(`Sights added: ${results.added.sights}`);
     console.log(
       `Total records added: ${
+        results.added.countries +
         results.added.cities +
         results.added.regions +
         results.added.neighborhoods +

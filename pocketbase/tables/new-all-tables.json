@@ -307,67 +307,6 @@
     "options": {}
   },
   {
-    "id": "iyo1zz4obzuvt9p",
-    "name": "favorites",
-    "type": "base",
-    "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "fqmerhfl",
-        "name": "user",
-        "type": "relation",
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "vedee07q",
-        "name": "city",
-        "type": "relation",
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "cities_list",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
-      },
-      {
-        "system": false,
-        "id": "ncudnqhd",
-        "name": "field",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": 0,
-          "max": 500,
-          "pattern": ""
-        }
-      }
-    ],
-    "indexes": [],
-    "listRule": "user.id = @request.auth.id",
-    "viewRule": "user.id = @request.auth.id",
-    "createRule": "@request.auth.id != \"\" && @request.auth.id = user",
-    "updateRule": "@request.auth.id = user",
-    "deleteRule": "@request.auth.id = user",
-    "options": {}
-  },
-  {
     "id": "_pb_users_auth_",
     "name": "users",
     "type": "auth",
@@ -496,74 +435,134 @@
       "requireEmail": false
     }
   },
-  [
-    {
-      "id": "tags",
-      "name": "tags",
-      "type": "base",
-      "system": false,
-      "schema": [
-        {
-          "system": false,
-          "id": "tags_identifier",
-          "name": "identifier",
-          "type": "text",
-          "required": true,
-          "presentable": true,
-          "unique": true,
-          "options": {
-            "min": 2,
-            "max": 50,
-            "pattern": "^[a-z0-9-]+$"
-          }
-        },
-        {
-          "system": false,
-          "id": "tags_label",
-          "name": "label",
-          "type": "text",
-          "required": true,
-          "presentable": true,
-          "unique": true,
-          "options": {
-            "min": 2,
-            "max": 50,
-            "pattern": ""
-          }
-        },
-        {
-          "system": false,
-          "id": "tags_order",
-          "name": "order",
-          "type": "number",
-          "required": false,
-          "presentable": false,
-          "unique": false,
-          "options": {
-            "min": 0,
-            "max": null
-          }
-        },
-        {
-          "system": false,
-          "id": "tags_active",
-          "name": "active",
-          "type": "bool",
-          "required": false,
-          "presentable": false,
-          "unique": false,
-          "options": {}
+  {
+    "id": "q3vyc63gx58hvfm",
+    "name": "tags",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "5ebdsgr3",
+        "name": "identifier",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 2,
+          "max": 50,
+          "pattern": "^[a-z0-9-]+$"
         }
-      ],
-      "indexes": [],
-      "listRule": "",
-      "viewRule": "",
-      "createRule": "",
-      "updateRule": "",
-      "deleteRule": "",
-      "options": {}
-    }
-  ],
+      },
+      {
+        "system": false,
+        "id": "gd0nswaj",
+        "name": "label",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 2,
+          "max": 50,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "msk2b1y7",
+        "name": "order",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "zrbsopsj",
+        "name": "active",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      }
+    ],
+    "indexes": [],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "",
+    "updateRule": "",
+    "deleteRule": "",
+    "options": {}
+  },
+  {
+    "id": "iyo1zz4obzuvt9p",
+    "name": "favorites",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "fqmerhfl",
+        "name": "user",
+        "type": "relation",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "vedee07q",
+        "name": "city",
+        "type": "relation",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "cities_list",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "ncudnqhd",
+        "name": "field",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 500,
+          "pattern": ""
+        }
+      }
+    ],
+    "indexes": [],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "",
+    "updateRule": "",
+    "deleteRule": "",
+    "options": {}
+  },
   {
     "id": "cities_list",
     "name": "cities",
@@ -696,18 +695,6 @@
       },
       {
         "system": false,
-        "id": "city_destination_types_list",
-        "name": "destinationTypes",
-        "type": "json",
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 2000000
-        }
-      },
-      {
-        "system": false,
         "id": "city_crowd_level_score",
         "name": "crowdLevel",
         "type": "number",
@@ -781,25 +768,13 @@
         "id": "city_image_url_link",
         "name": "imageUrl",
         "type": "text",
-        "required": false,
+        "required": true,
         "presentable": false,
         "unique": false,
         "options": {
           "min": null,
           "max": null,
           "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "city_coordinates_location",
-        "name": "coordinates",
-        "type": "json",
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 2000000
         }
       },
       {
@@ -884,6 +859,79 @@
           "min": 0,
           "max": 10,
           "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "xhbpsrzh",
+        "name": "tags",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "q3vyc63gx58hvfm",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": null,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "lssapqyk",
+        "name": "latitude",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "wuk8crvv",
+        "name": "longitude",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "chmttjwc",
+        "name": "type",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 5,
+          "values": ["country", "region", "city", "neighborhood", "sight"]
+        }
+      },
+      {
+        "system": false,
+        "id": "mmkfhanm",
+        "name": "parentId",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "cities_list",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
         }
       }
     ],
