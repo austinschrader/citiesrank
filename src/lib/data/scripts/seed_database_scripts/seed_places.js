@@ -1,6 +1,7 @@
 import PocketBase from "pocketbase";
 import slugify from "slugify";
 import { cities } from "../../places/citiesData.js";
+import { neighborhoodsData } from "../../places/neighborhoodsData.js";
 import { regionsData } from "../../places/regionsData.js";
 import { normalizeString } from "./utils.js";
 
@@ -129,6 +130,67 @@ const transformRegionData = (data, tagsMapping) => {
   return transformedData;
 };
 
+// Transform raw neighborhood data into database format
+const transformNeighborhoodData = (data, tagsMapping) => {
+  const normalizedName = normalizeString(data.name);
+  const slug = createSlug(data.name, data.city);
+  const tagIds = (data.tags || [])
+    .map((type) => tagsMapping[type])
+    .filter((id) => id);
+
+  // Ensure all scores are less than 10
+  const normalizeScore = (score) => {
+    if (score === null || score === undefined) return 0;
+    // If score is greater than 10, assume it's on a 100 scale and convert
+    return score > 10 ? score / 10 : score;
+  };
+
+  const transformedData = {
+    name: data.name,
+    normalizedName,
+    slug,
+    type: "neighborhood",
+    country: data.country,
+    city: data.city,
+    cost: data.cost || 0,
+    costIndex: normalizeScore(data.costIndex),
+    interesting: normalizeScore(data.interesting),
+    transit: normalizeScore(data.transit),
+    transitScore: normalizeScore(data.transitScore),
+    description: data.description || "",
+    population: data.population || "Unknown",
+    highlights: JSON.stringify(
+      data.highlights || [
+        `Explore ${data.name}`,
+        `Experience local culture`,
+        `Visit local landmarks`,
+        `Enjoy local restaurants`,
+        `Discover hidden gems`,
+      ]
+    ),
+    tags: JSON.stringify(tagIds),
+    crowdLevel: normalizeScore(data.crowdLevel),
+    recommendedStay: normalizeScore(data.recommendedStay),
+    bestSeason: normalizeScore(data.bestSeason),
+    accessibility: normalizeScore(data.accessibility),
+    imageUrl: data.imageUrl || `${slug}-1`,
+    averageRating: data.averageRating || 0,
+    totalReviews: data.totalReviews || 0,
+    walkScore: normalizeScore(data.walkScore),
+    safetyScore: normalizeScore(data.safetyScore),
+    latitude: data.latitude || 0,
+    longitude: data.longitude || 0,
+  };
+
+  // Log the first neighborhood's data for debugging
+  if (data.name === "Le Marais") {
+    console.log("\nFirst neighborhood (Le Marais) transformed data:");
+    console.log(JSON.stringify(transformedData, null, 2));
+  }
+
+  return transformedData;
+};
+
 // Get tags mapping
 async function getTagsMapping() {
   const tags = await pb.collection("tags").getFullList();
@@ -166,7 +228,7 @@ async function deleteExistingRecords() {
 async function migrateCityData() {
   const results = {
     deleted: 0,
-    added: { cities: 0, regions: 0 },
+    added: { cities: 0, regions: 0, neighborhoods: 0 },
     errors: [],
   };
 
@@ -197,8 +259,11 @@ async function migrateCityData() {
           type: "creation",
           entity: `city: ${city.name}`,
           error: error.message,
+          details: error.data?.data,
         });
         console.error(`Error adding city ${city.name}:`, error.message);
+        console.error("Validation errors:", error.data?.data);
+        console.error("Attempted data:", city);
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
@@ -211,12 +276,6 @@ async function migrateCityData() {
 
     for (const region of regionData) {
       try {
-        // Log the exact request for the first region
-        if (region.name === "Provence") {
-          console.log("\nAttempting to create Provence region with data:");
-          console.log(JSON.stringify(region, null, 2));
-        }
-
         await pb.collection("cities_list").create(region);
         results.added.regions++;
         console.log(`Added region: ${region.name}`);
@@ -227,10 +286,37 @@ async function migrateCityData() {
           error: error.message,
           details: error.data?.data,
         });
-        console.error(`\nError adding region ${region.name}:`);
-        console.error("Error message:", error.message);
+        console.error(`Error adding region ${region.name}:`, error.message);
         console.error("Validation errors:", error.data?.data);
-        console.error("Full error object:", error);
+        console.error("Attempted data:", region);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    // Transform and add new neighborhood records
+    console.log("\nAdding neighborhood records...");
+    const neighborhoodData = neighborhoodsData.map((data) =>
+      transformNeighborhoodData(data, tagsMapping)
+    );
+
+    for (const neighborhood of neighborhoodData) {
+      try {
+        await pb.collection("cities_list").create(neighborhood);
+        results.added.neighborhoods++;
+        console.log(`Added neighborhood: ${neighborhood.name}`);
+      } catch (error) {
+        results.errors.push({
+          type: "creation",
+          entity: `neighborhood: ${neighborhood.name}`,
+          error: error.message,
+          details: error.data?.data,
+        });
+        console.error(
+          `Error adding neighborhood ${neighborhood.name}:`,
+          error.message
+        );
+        console.error("Validation errors:", error.data?.data);
+        console.error("Attempted data:", neighborhood);
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
@@ -240,8 +326,13 @@ async function migrateCityData() {
     console.log(`Records deleted: ${results.deleted}`);
     console.log(`Cities added: ${results.added.cities}`);
     console.log(`Regions added: ${results.added.regions}`);
+    console.log(`Neighborhoods added: ${results.added.neighborhoods}`);
     console.log(
-      `Total records added: ${results.added.cities + results.added.regions}`
+      `Total records added: ${
+        results.added.cities +
+        results.added.regions +
+        results.added.neighborhoods
+      }`
     );
     console.log(`Errors: ${results.errors.length}`);
 
