@@ -1,6 +1,7 @@
 import PocketBase from "pocketbase";
 import slugify from "slugify";
 import { cities } from "../../places/citiesData.js";
+import { regionsData } from "../../places/regionsData.js";
 import { normalizeString } from "./utils.js";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
@@ -24,32 +25,108 @@ const transformCityData = (name, data, tagsMapping) => {
     .map((type) => tagsMapping[type])
     .filter((id) => id);
 
-  return {
+  // Ensure all scores are less than 10
+  const normalizeScore = (score) => {
+    if (score === null || score === undefined) return 0;
+    // If score is greater than 10, assume it's on a 100 scale and convert
+    return score > 10 ? score / 10 : score;
+  };
+
+  const transformedData = {
     name,
     normalizedName,
     slug,
     country: data.country,
     cost: data.cost,
-    interesting: data.interesting,
-    transit: data.transit,
+    interesting: normalizeScore(data.interesting),
+    transit: normalizeScore(data.transit),
     description: data.description,
     population: data.population,
-    highlights: JSON.stringify(data.highlights),
+    highlights: JSON.stringify(
+      data.highlights || [
+        `Explore ${name}`,
+        `Experience local culture`,
+        `Visit historic sites`,
+        `Enjoy local cuisine`,
+        `Discover natural beauty`,
+      ]
+    ),
     tags: JSON.stringify(tagIds),
-    crowdLevel: data.crowdLevel,
-    recommendedStay: data.recommendedStay,
-    bestSeason: data.bestSeason,
-    accessibility: data.accessibility,
+    crowdLevel: normalizeScore(data.crowdLevel),
+    recommendedStay: normalizeScore(data.recommendedStay),
+    bestSeason: normalizeScore(data.bestSeason),
+    accessibility: normalizeScore(data.accessibility),
     imageUrl: `${slug}-1`,
     averageRating: data.averageRating,
     totalReviews: data.totalReviews,
     costIndex: data.costIndex,
-    transitScore: data.transitScore,
-    walkScore: data.walkScore,
-    safetyScore: data.safetyScore,
+    transitScore: normalizeScore(data.transitScore),
+    walkScore: normalizeScore(data.walkScore),
+    safetyScore: normalizeScore(data.safetyScore),
     latitude: data.latitude,
     longitude: data.longitude,
   };
+
+  return transformedData;
+};
+
+// Transform raw region data into database format
+const transformRegionData = (data, tagsMapping) => {
+  const normalizedName = normalizeString(data.name);
+  const slug = createSlug(data.name, data.country);
+  const tagIds = (data.tags || [])
+    .map((type) => tagsMapping[type])
+    .filter((id) => id);
+
+  // Ensure all scores are less than 10
+  const normalizeScore = (score) => {
+    if (score === null || score === undefined) return 0;
+    // If score is greater than 10, assume it's on a 100 scale and convert
+    return score > 10 ? score / 10 : score;
+  };
+
+  const transformedData = {
+    name: data.name,
+    normalizedName,
+    slug,
+    country: data.country,
+    cost: data.cost || 0,
+    costIndex: normalizeScore(data.costIndex),
+    interesting: normalizeScore(data.interesting),
+    transit: normalizeScore(data.transit),
+    transitScore: normalizeScore(data.transitScore),
+    description: data.description || "",
+    population: data.population || "Unknown",
+    highlights: JSON.stringify(
+      data.highlights || [
+        `Explore ${data.name}`,
+        `Experience local culture`,
+        `Visit historic sites`,
+        `Enjoy local cuisine`,
+        `Discover natural beauty`,
+      ]
+    ),
+    tags: JSON.stringify(tagIds),
+    crowdLevel: normalizeScore(data.crowdLevel),
+    recommendedStay: normalizeScore(data.recommendedStay),
+    bestSeason: normalizeScore(data.bestSeason),
+    accessibility: normalizeScore(data.accessibility),
+    imageUrl: data.imageUrl || `${slug}-1`,
+    averageRating: data.averageRating || 0,
+    totalReviews: data.totalReviews || 0,
+    walkScore: normalizeScore(data.walkScore),
+    safetyScore: normalizeScore(data.safetyScore),
+    latitude: data.latitude || 0,
+    longitude: data.longitude || 0,
+  };
+
+  // Log the first region's data for debugging
+  if (data.name === "Provence") {
+    console.log("\nFirst region (Provence) transformed data:");
+    console.log(JSON.stringify(transformedData, null, 2));
+  }
+
+  return transformedData;
 };
 
 // Get tags mapping
@@ -89,7 +166,7 @@ async function deleteExistingRecords() {
 async function migrateCityData() {
   const results = {
     deleted: 0,
-    added: 0,
+    added: { cities: 0, regions: 0 },
     errors: [],
   };
 
@@ -104,8 +181,8 @@ async function migrateCityData() {
     results.deleted = deleteResults.deleted;
     results.errors.push(...deleteResults.errors);
 
-    // Transform and add new records
-    console.log("Adding new records...");
+    // Transform and add new city records
+    console.log("Adding city records...");
     const cityData = Object.entries(cities).map(([name, data]) =>
       transformCityData(name, data, tagsMapping)
     );
@@ -113,15 +190,47 @@ async function migrateCityData() {
     for (const city of cityData) {
       try {
         await pb.collection("cities_list").create(city);
-        results.added++;
-        console.log(`Added ${city.name}`);
+        results.added.cities++;
+        console.log(`Added city: ${city.name}`);
       } catch (error) {
         results.errors.push({
           type: "creation",
-          city: city.name,
+          entity: `city: ${city.name}`,
           error: error.message,
         });
-        console.error(`Error adding ${city.name}:`, error.message);
+        console.error(`Error adding city ${city.name}:`, error.message);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    // Transform and add new region records
+    console.log("\nAdding region records...");
+    const regionData = regionsData.map((data) =>
+      transformRegionData(data, tagsMapping)
+    );
+
+    for (const region of regionData) {
+      try {
+        // Log the exact request for the first region
+        if (region.name === "Provence") {
+          console.log("\nAttempting to create Provence region with data:");
+          console.log(JSON.stringify(region, null, 2));
+        }
+
+        await pb.collection("cities_list").create(region);
+        results.added.regions++;
+        console.log(`Added region: ${region.name}`);
+      } catch (error) {
+        results.errors.push({
+          type: "creation",
+          entity: `region: ${region.name}`,
+          error: error.message,
+          details: error.data?.data,
+        });
+        console.error(`\nError adding region ${region.name}:`);
+        console.error("Error message:", error.message);
+        console.error("Validation errors:", error.data?.data);
+        console.error("Full error object:", error);
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
@@ -129,13 +238,17 @@ async function migrateCityData() {
     // Print summary
     console.log("\nMigration Summary:");
     console.log(`Records deleted: ${results.deleted}`);
-    console.log(`Records added: ${results.added}`);
+    console.log(`Cities added: ${results.added.cities}`);
+    console.log(`Regions added: ${results.added.regions}`);
+    console.log(
+      `Total records added: ${results.added.cities + results.added.regions}`
+    );
     console.log(`Errors: ${results.errors.length}`);
 
     if (results.errors.length > 0) {
       console.log("\nErrors:");
       results.errors.forEach((error, i) =>
-        console.log(`${i + 1}. ${error.city}: ${error.error}`)
+        console.log(`${i + 1}. ${error.entity}: ${error.error}`)
       );
     }
   } catch (error) {
