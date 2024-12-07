@@ -1,4 +1,4 @@
-export const fallbackCityData = {
+export const cities = {
   Kalmar: {
     country: "Sweden",
     cost: 40,

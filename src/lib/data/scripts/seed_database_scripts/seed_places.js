@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 import slugify from "slugify";
-import { fallbackCityData } from "../../places/citiesData.js";
+import { cities } from "../../places/citiesData.js";
 import { normalizeString } from "./utils.js";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
@@ -106,7 +106,7 @@ async function migrateCityData() {
 
     // Transform and add new records
     console.log("Adding new records...");
-    const cityData = Object.entries(fallbackCityData).map(([name, data]) =>
+    const cityData = Object.entries(cities).map(([name, data]) =>
       transformCityData(name, data, tagsMapping)
     );
 
