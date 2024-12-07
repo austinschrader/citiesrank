@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getApiUrl } from "@/config/appConfig";
 import { CityMap } from "@/features/map/components/CityMap";
-import { useGeographicLevel } from "@/features/map/hooks/useGeographicLevel";
 import { CityCard } from "@/features/places/components/CityCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
@@ -17,55 +14,8 @@ import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
-import {
-  Building2,
-  Globe2,
-  Landmark,
-  List,
-  MapPin,
-  Search,
-  X,
-} from "lucide-react";
+import { List, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useMap } from "react-leaflet";
-
-const ITEMS_PER_PAGE = 10;
-const apiUrl = getApiUrl();
-
-type GeographicLevel = "country" | "region" | "city" | "neighborhood" | "sight";
-
-const GEOGRAPHIC_LEVELS: GeographicLevel[] = [
-  "country",
-  "region",
-  "city",
-  "neighborhood",
-  "sight",
-];
-
-function MapEventHandler({
-  onZoomChange,
-}: {
-  onZoomChange: (zoom: number) => void;
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map) return;
-
-    const handleZoomEnd = () => {
-      const newZoom = map.getZoom();
-      onZoomChange(newZoom);
-    };
-
-    map.on("zoomend", handleZoomEnd);
-
-    return () => {
-      map.off("zoomend", handleZoomEnd);
-    };
-  }, [map, onZoomChange]);
-
-  return null;
-}
 
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } =
@@ -91,11 +41,6 @@ export const PlacesPage = () => {
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
 
-  // Use our new custom hooks
-  const { geographicLevel, setGeographicLevel } = useGeographicLevel(
-    viewMode,
-    mapZoom
-  );
   const {
     searchQuery,
     setSearchQuery,
@@ -107,7 +52,6 @@ export const PlacesPage = () => {
   } = useSearch();
   const { currentPage, setCurrentPage, getPaginatedData, getTotalPages } =
     usePagination(
-      geographicLevel,
       getFilteredCities(cityData, searchQuery, calculateMatchForCity)
     );
 
@@ -192,56 +136,7 @@ export const PlacesPage = () => {
 
           {/* Controls Section */}
           <div className="flex flex-col gap-3 w-full md:w-auto">
-            {/* Geographic Levels and View Mode Controls */}
             <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-              <Tabs
-                value={geographicLevel}
-                onValueChange={(value) =>
-                  setGeographicLevel(value as GeographicLevel)
-                }
-                className="w-full md:w-auto"
-              >
-                <div className="overflow-x-auto pb-2 -mb-2 md:overflow-visible md:pb-0 md:mb-0">
-                  <TabsList className="min-w-full md:min-w-0 inline-flex md:grid md:grid-cols-5 bg-background/50 backdrop-blur-sm border rounded-xl p-1.5">
-                    <TabsTrigger
-                      value="country"
-                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
-                    >
-                      <Globe2 className="h-4 w-4" />
-                      Country
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="region"
-                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
-                    >
-                      <Landmark className="h-4 w-4" />
-                      Region
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="city"
-                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
-                    >
-                      <Building2 className="h-4 w-4" />
-                      City
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="neighborhood"
-                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
-                    >
-                      <MapPin className="h-4 w-4" />
-                      Neighborhood
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="sight"
-                      className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out data-[state=active]:bg-primary data-[state=active]:text-primary-foreground hover:bg-muted/50"
-                    >
-                      <List className="h-4 w-4" />
-                      Sight
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-              </Tabs>
-
               <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1.5 md:p-1 shadow-sm">
                 <Button
                   variant={viewMode === "map" ? "default" : "ghost"}
@@ -268,7 +163,7 @@ export const PlacesPage = () => {
 
         {/* Mobile Search Trigger */}
         {/* Mobile Search Trigger with Integrated Search */}
-        {geographicLevel === "city" && viewMode === "list" && (
+        {viewMode === "list" && (
           <div className="md:hidden relative">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -296,25 +191,23 @@ export const PlacesPage = () => {
         )}
 
         {/* Mobile Search Overlay */}
-        {isMobileSearchActive &&
-          geographicLevel === "city" &&
-          viewMode === "list" && (
-            <MobileSearch
-              searchQuery={searchQuery}
-              onSearchChange={handleSearchChange}
-              onClose={() => setIsMobileSearchActive(false)}
-              searchInputRef={searchInputRef}
-              filteredCities={getFilteredCities(
-                cityData,
-                searchQuery,
-                calculateMatchForCity
-              )}
-              onCitySelect={handleCitySelect}
-            />
-          )}
+        {isMobileSearchActive && viewMode === "list" && (
+          <MobileSearch
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            onClose={() => setIsMobileSearchActive(false)}
+            searchInputRef={searchInputRef}
+            filteredCities={getFilteredCities(
+              cityData,
+              searchQuery,
+              calculateMatchForCity
+            )}
+            onCitySelect={handleCitySelect}
+          />
+        )}
 
         {/* Desktop Filters */}
-        {geographicLevel === "city" && viewMode === "list" && (
+        {viewMode === "list" && (
           <DesktopFilters
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
@@ -331,7 +224,7 @@ export const PlacesPage = () => {
         )}
 
         {/* Mobile Filters */}
-        {geographicLevel === "city" && viewMode === "list" && (
+        {viewMode === "list" && (
           <MobileFilters
             isFilterSheetOpen={isFilterSheetOpen}
             setIsFilterSheetOpen={setIsFilterSheetOpen}

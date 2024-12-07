@@ -3,12 +3,7 @@ import { useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 
-type GeographicLevel = "country" | "region" | "city" | "neighborhood" | "sight";
-
-export function usePagination(
-  geographicLevel: GeographicLevel,
-  filteredCities: CitiesResponse[]
-) {
+export function usePagination(filteredCities: CitiesResponse[]) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const getPaginatedData = () => {
