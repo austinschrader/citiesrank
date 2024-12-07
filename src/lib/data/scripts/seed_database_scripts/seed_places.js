@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 import slugify from "slugify";
-import { fallbackCityData } from "../raw_data/cities_data.js";
+import { fallbackCityData } from "../../places/citiesData.js";
 import { normalizeString } from "./utils.js";
 
 const pb = new PocketBase("http://127.0.0.1:8090");
