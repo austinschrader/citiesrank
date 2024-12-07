@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import type { Place } from "../types";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 
 interface PreviewCardProps {
@@ -47,7 +47,7 @@ export function PreviewCard({
   const getPlaceImage = (name: string, country: string) => {
     const citySlug = createSlug(name);
     const countrySlug = createSlug(country);
-    return getCityImage(`${citySlug}-${countrySlug}-1`, "standard");
+    return getPlaceImage(`${citySlug}-${countrySlug}-1`, "standard");
   };
 
   const handlePrivacyToggle = () => {

@@ -47,7 +47,7 @@ export const getImageUrl = (path: string, size: ImageSize = "standard") => {
     .toURL();
 };
 
-export const getCityImage = (
+export const getPlaceImage = (
   citySlug: string,
   size: ImageSize = "standard"
 ) => {

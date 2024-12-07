@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 import {
   CitiesResponse,
   ListsResponse,
@@ -22,7 +22,7 @@ export const ListHero: React.FC<{ list: ExpandedListResponse }> = ({
   const author = expand?.author;
   const places = expand?.places || [];
 
-  const coverImage = getCityImage(places[0]?.imageUrl || "/placeholder.jpg");
+  const coverImage = getPlaceImage(places[0]?.imageUrl || "/placeholder.jpg");
 
   return (
     <div className="relative h-[50vh] min-h-[400px] bg-black">

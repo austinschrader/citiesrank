@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import type { TravelList } from "@/features/lists/types";
 import { DEFAULT_TRAVEL_LIST } from "@/features/lists/types";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -204,7 +204,7 @@ export function CommentsSection({
                     <div key={list.id} className="flex gap-3 items-center">
                       <div className="w-16 h-16 bg-muted rounded-md overflow-hidden">
                         <img
-                          src={getCityImage(list.imageUrl ?? "", "thumbnail")}
+                          src={getPlaceImage(list.imageUrl ?? "", "thumbnail")}
                           alt={list.title}
                           className="w-full h-full object-cover"
                         />
