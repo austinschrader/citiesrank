@@ -3,6 +3,8 @@ import { CitiesResponse, Collections } from "@/lib/types/pocketbase-types";
 type SamplePlace = Omit<CitiesResponse, "expand"> & {
   coordinates: null;
   highlights: null;
+  type: null;
+  parentId: null;
 };
 
 // Generate a random ID with specified length

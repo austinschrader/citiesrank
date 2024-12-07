@@ -38,11 +38,17 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type CitiesRecord<Tcoordinates = unknown, Thighlights = unknown> = {
+export enum CitiesTypeOptions {
+	"country" = "country",
+	"region" = "region",
+	"city" = "city",
+	"neighborhood" = "neighborhood",
+	"sight" = "sight",
+}
+export type CitiesRecord<Thighlights = unknown> = {
 	accessibility: number
 	averageRating?: number
 	bestSeason: number
-	coordinates: null | Tcoordinates
 	cost: number
 	costIndex: number
 	country: string
@@ -55,6 +61,7 @@ export type CitiesRecord<Tcoordinates = unknown, Thighlights = unknown> = {
 	longitude?: number
 	name: string
 	normalizedName: string
+	parentId?: RecordIdString
 	population: string
 	recommendedStay: number
 	safetyScore: number
@@ -63,6 +70,7 @@ export type CitiesRecord<Tcoordinates = unknown, Thighlights = unknown> = {
 	totalReviews?: number
 	transit: number
 	transitScore: number
+	type?: CitiesTypeOptions[]
 	walkScore: number
 }
 
@@ -133,7 +141,7 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type CitiesResponse<Tcoordinates = unknown, Thighlights = unknown, Texpand = unknown> = Required<CitiesRecord<Tcoordinates, Thighlights>> & BaseSystemFields<Texpand>
+export type CitiesResponse<Thighlights = unknown, Texpand = unknown> = Required<CitiesRecord<Thighlights>> & BaseSystemFields<Texpand>
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
 export type ListsResponse<Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Ttags>> & BaseSystemFields<Texpand>

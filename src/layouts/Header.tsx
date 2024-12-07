@@ -84,12 +84,6 @@ export const Header = () => {
             <div className="flex items-center gap-6">
               <Link
                 to="/"
-                onClick={(e) => {
-                  if (window.location.pathname === "/") {
-                    e.preventDefault();
-                    window.location.reload();
-                  }
-                }}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               >
                 <img
