@@ -3,28 +3,43 @@ import { MapControls } from "@/features/map/components/MapControls";
 import { MapMarker } from "@/features/map/components/MapMarker";
 import { useMapState } from "@/features/map/hooks/useMapState";
 import { MapPlace } from "@/features/map/types";
+import { useCallback, useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
-import { PlaceGeoJson } from "./PlaceGeoJson";
-import { useState, useCallback, useEffect } from "react";
 import { calculateMapBounds } from "../utils/mapUtils";
+import { PlaceGeoJson } from "./PlaceGeoJson";
 
 // Component to handle map updates
-const MapUpdater = ({ 
-  selectedPlace 
-}: { 
+const MapUpdater = ({
+  selectedPlace,
+  shouldReset,
+  defaultCenter,
+  defaultZoom,
+}: {
   selectedPlace: MapPlace | null;
+  shouldReset: boolean;
+  defaultCenter: [number, number];
+  defaultZoom: number;
 }) => {
   const map = useMap();
 
   useEffect(() => {
     if (selectedPlace) {
-      const { center, zoom } = calculateMapBounds(selectedPlace);
-      map.setView(center, zoom, {
+      const bounds = calculateMapBounds(selectedPlace);
+      map.setView(bounds.center, bounds.zoom, {
         animate: true,
-        duration: 1 // 1 second animation
+        duration: 1,
       });
     }
   }, [selectedPlace, map]);
+
+  useEffect(() => {
+    if (shouldReset) {
+      map.setView(defaultCenter, defaultZoom, {
+        animate: true,
+        duration: 1,
+      });
+    }
+  }, [shouldReset, defaultCenter, defaultZoom, map]);
 
   return null;
 };
@@ -38,28 +53,47 @@ interface CityMapProps {
 export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
   const { mapState, setZoom } = useMapState();
   const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null);
+  const [shouldReset, setShouldReset] = useState(false);
 
-  const handlePlaceSelect = useCallback((place: MapPlace) => {
-    setSelectedPlace(prev => prev?.id === place.id ? null : place);
-    onPlaceSelect?.(place);
-  }, [onPlaceSelect]);
+  const handlePlaceSelect = useCallback(
+    (place: MapPlace) => {
+      setSelectedPlace((prev) => (prev?.id === place.id ? null : place));
+      onPlaceSelect?.(place);
+    },
+    [onPlaceSelect]
+  );
+
+  const handleReset = useCallback(() => {
+    setShouldReset(true);
+    setSelectedPlace(null);
+    setZoom(3); // Set initial zoom level
+  }, [setZoom]);
+
+  useEffect(() => {
+    if (shouldReset) {
+      setShouldReset(false);
+    }
+  }, [shouldReset]);
 
   return (
     <div className={className}>
       <MapContainer
         center={mapState.center}
-        zoom={mapState.zoom}
+        zoom={3}
         scrollWheelZoom={true}
         zoomControl={false}
         className="h-full w-full rounded-xl"
-        maxBounds={[[-90, -180], [90, 180]]}
+        maxBounds={[
+          [-90, -180],
+          [90, 180],
+        ]}
         maxBoundsViscosity={1.0}
         worldCopyJump={false}
       >
         <MapControls
           onZoomChange={setZoom}
-          defaultCenter={mapState.center}
-          defaultZoom={mapState.zoom}
+          defaultCenter={[20, 0]}
+          defaultZoom={3}
         />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -68,20 +102,25 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
         {places
           .filter((place) => place.latitude && place.longitude)
           .map((place) => (
-            <MapMarker 
-              key={place.id} 
-              place={place} 
+            <MapMarker
+              key={place.id}
+              place={place}
               onSelect={handlePlaceSelect}
               isSelected={selectedPlace?.id === place.id}
             />
           ))}
         {selectedPlace && (
-          <PlaceGeoJson 
-            key={`geojson-${selectedPlace.id}`} 
-            place={selectedPlace} 
+          <PlaceGeoJson
+            key={`geojson-${selectedPlace.id}`}
+            place={selectedPlace}
           />
         )}
-        <MapUpdater selectedPlace={selectedPlace} />
+        <MapUpdater
+          selectedPlace={selectedPlace}
+          shouldReset={shouldReset}
+          defaultCenter={[20, 0]}
+          defaultZoom={2}
+        />
       </MapContainer>
     </div>
   );
