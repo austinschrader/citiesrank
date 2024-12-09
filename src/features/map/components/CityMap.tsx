@@ -3,7 +3,31 @@ import { MapControls } from "@/features/map/components/MapControls";
 import { MapMarker } from "@/features/map/components/MapMarker";
 import { useMapState } from "@/features/map/hooks/useMapState";
 import { MapPlace } from "@/features/map/types";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { PlaceGeoJson } from "./PlaceGeoJson";
+import { useState, useCallback, useEffect } from "react";
+import { calculateMapBounds } from "../utils/mapUtils";
+
+// Component to handle map updates
+const MapUpdater = ({ 
+  selectedPlace 
+}: { 
+  selectedPlace: MapPlace | null;
+}) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (selectedPlace) {
+      const { center, zoom } = calculateMapBounds(selectedPlace);
+      map.setView(center, zoom, {
+        animate: true,
+        duration: 1 // 1 second animation
+      });
+    }
+  }, [selectedPlace, map]);
+
+  return null;
+};
 
 interface CityMapProps {
   places: MapPlace[];
@@ -13,6 +37,12 @@ interface CityMapProps {
 
 export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
   const { mapState, setZoom } = useMapState();
+  const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null);
+
+  const handlePlaceSelect = useCallback((place: MapPlace) => {
+    setSelectedPlace(prev => prev?.id === place.id ? null : place);
+    onPlaceSelect?.(place);
+  }, [onPlaceSelect]);
 
   return (
     <div className={className}>
@@ -41,12 +71,17 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
             <MapMarker 
               key={place.id} 
               place={place} 
-              onSelect={onPlaceSelect ? 
-                () => onPlaceSelect(place) : 
-                undefined
-              } 
+              onSelect={handlePlaceSelect}
+              isSelected={selectedPlace?.id === place.id}
             />
           ))}
+        {selectedPlace && (
+          <PlaceGeoJson 
+            key={`geojson-${selectedPlace.id}`} 
+            place={selectedPlace} 
+          />
+        )}
+        <MapUpdater selectedPlace={selectedPlace} />
       </MapContainer>
     </div>
   );
