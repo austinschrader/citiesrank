@@ -207,45 +207,31 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
           />
 
           {/* Base gradient overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30 pointer-events-none transition-opacity duration-500 ease-out group-hover:opacity-0" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
 
           {/* Content container with hover effect */}
           <div className="absolute inset-0 z-20 overflow-hidden">
             {/* Default view - City name and country */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center transform transition-transform duration-500 ease-out group-hover:translate-x-full">
-              <h3 className="text-3xl font-semibold text-white text-center mb-2 px-4 drop-shadow-lg">
+            <div className="absolute bottom-0 left-0 right-0 p-4 transform transition-transform duration-500 ease-out">
+              <h3 className="text-2xl font-semibold text-white text-left mb-1 drop-shadow-lg">
                 {city.name}
               </h3>
-              <p className="text-lg font-medium text-white/90 drop-shadow-lg">
-                {city.country}
-              </p>
-            </div>
-          </div>
-
-          {/* Country flag that changes to text on hover */}
-          <div className="absolute bottom-2 left-2 z-30">
-            <div className="relative">
-              {/* Flag */}
-              <div className="transform transition-all duration-500 ease-out group-hover:opacity-0 group-hover:scale-90">
+              <div className="flex items-center gap-2">
                 {(() => {
                   const countryCode = getCountryCode(city.country);
                   if (countryCode && countryCode in Flags) {
-                    const FlagComponent =
-                      Flags[countryCode as keyof typeof Flags];
+                    const FlagComponent = Flags[countryCode as keyof typeof Flags];
                     return (
-                      <div className="h-8 w-10 rounded-lg shadow-lg overflow-hidden">
+                      <div className="h-4 w-5 rounded overflow-hidden">
                         <FlagComponent className="w-full h-full object-cover" />
                       </div>
                     );
                   }
                   return null;
                 })()}
-              </div>
-              {/* Country name */}
-              <div className="absolute inset-0 flex items-center opacity-0 transform scale-95 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-100">
-                <span className="text-sm font-medium text-white bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm whitespace-nowrap">
+                <p className="text-sm font-medium text-white/90 drop-shadow-lg">
                   {city.country}
-                </span>
+                </p>
               </div>
             </div>
           </div>
