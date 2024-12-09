@@ -9,8 +9,8 @@ import usAtlas from 'us-atlas/states-10m.json';
 const geoJsonCache = new Map<string, any>();
 
 // Convert TopoJSON to GeoJSON once
-const worldGeoJson = feature(worldAtlas as any, (worldAtlas as any).objects.countries);
-const usGeoJson = feature(usAtlas as any, (usAtlas as any).objects.states);
+const worldGeoJson = feature(worldAtlas as any, (worldAtlas as any).objects.countries) as unknown as { features: any[] };
+const usGeoJson = feature(usAtlas as any, (usAtlas as any).objects.states) as unknown as { features: any[] };
 
 export async function getPlaceGeoJson(place: MapPlace) {
   const cacheKey = `${place.type}-${place.id}`;
@@ -94,7 +94,7 @@ export async function getPlaceGeoJson(place: MapPlace) {
 
 function createBufferFeature(place: MapPlace, radiusKm: number) {
   const point = turf.point([place.longitude || 0, place.latitude || 0]);
-  return turf.buffer(point, radiusKm, { units: 'kilometers' });
+  return turf.buffer(point, radiusKm, { units: 'kilometers' }) as any;
 }
 
 function calculateCityRadius(population?: string): number {
