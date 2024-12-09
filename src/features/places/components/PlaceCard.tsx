@@ -189,6 +189,58 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
     }
   };
 
+  // Render compact variant
+  if (variant === "compact") {
+    const typeInfo = getPlaceTypeInfo([city.type[0]]);
+    const TypeIcon = typeInfo.icon;
+
+    return (
+      <div className="cursor-pointer space-y-2" onClick={handleCardClick}>
+        <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden mb-3">
+          <ImageGallery
+            imageUrl={city.imageUrl}
+            cityName={city.name}
+            country={city.country}
+            showControls={false}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <TypeIcon className="h-4 w-4 text-muted-foreground" />
+            <h3 className="font-semibold">{city.name}</h3>
+          </div>
+          {user && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={handleFavoriteClick}
+            >
+              <Heart
+                className={cn("h-4 w-4", {
+                  "fill-current text-red-500": isFavorite,
+                })}
+              />
+            </Button>
+          )}
+        </div>
+
+        <p className="text-sm text-muted-foreground line-clamp-2">
+          {city.description}
+        </p>
+
+        {"matchScore" in city && typeof city.matchScore === "number" && (
+          <Badge
+            variant="secondary"
+            className={cn("text-xs", getMatchColor(city.matchScore))}
+          >
+            {city.matchScore.toFixed(0)}% Match
+          </Badge>
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
       <Card
@@ -220,7 +272,8 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
                 {(() => {
                   const countryCode = getCountryCode(city.country);
                   if (countryCode && countryCode in Flags) {
-                    const FlagComponent = Flags[countryCode as keyof typeof Flags];
+                    const FlagComponent =
+                      Flags[countryCode as keyof typeof Flags];
                     return (
                       <div className="h-4 w-5 rounded overflow-hidden">
                         <FlagComponent className="w-full h-full object-cover" />
@@ -244,10 +297,10 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
                 "transform transition-all duration-500 ease-out",
                 "shadow-lg backdrop-blur-sm",
                 "group-hover:scale-110 group-hover:translate-x-0",
-                getPlaceTypeInfo(city.type).color
+                getPlaceTypeInfo([city.type[0]]).color
               )}
             >
-              {React.createElement(getPlaceTypeInfo(city.type).icon, {
+              {React.createElement(getPlaceTypeInfo([city.type[0]]).icon, {
                 size: 16,
                 className: "shrink-0",
               })}

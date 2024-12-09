@@ -2,6 +2,7 @@
 import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import { MapPlace } from "../types";
+import { PlaceCard } from "@/features/places/components/PlaceCard";
 
 interface MapMarkerProps {
   place: MapPlace;
@@ -56,16 +57,8 @@ export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
       eventHandlers={{ click: () => onSelect?.(place) }}
     >
       <Popup>
-        <div className="p-2">
-          <h3 className="font-semibold">{place.name}</h3>
-          <p className="text-sm text-muted-foreground">
-            {place.description}
-          </p>
-          {place.matchScore && (
-            <p className="text-sm text-muted-foreground">
-              Match Score: {place.matchScore}
-            </p>
-          )}
+        <div className="p-2 min-w-[300px]">
+          <PlaceCard city={place} variant="compact" />
         </div>
       </Popup>
     </Marker>
