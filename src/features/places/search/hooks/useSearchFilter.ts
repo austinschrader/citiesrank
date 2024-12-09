@@ -51,11 +51,20 @@ export const useSearchFilters = (
             (data.tags &&
               Array.isArray(data.tags) &&
               data.tags.includes(selectedFilter));
+
+          // Search across all fields that could contain relevant text
+          const searchFields = [
+            typeof name === 'string' ? name.toLowerCase() : '',
+            typeof data.country === 'string' ? data.country.toLowerCase() : '',
+            typeof data.description === 'string' ? data.description.toLowerCase() : '',
+            data.type ? String(data.type).toLowerCase() : '', // Convert enum to string
+            ...(Array.isArray(data.tags) ? data.tags.map(String).map(tag => tag.toLowerCase()) : []),
+          ].filter(Boolean); // Remove any empty strings
+
           const matchesSearch =
             !searchQuery ||
-            name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            data.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            data.description.toLowerCase().includes(searchQuery.toLowerCase());
+            searchFields.some((field) => field.includes(searchQuery.toLowerCase()));
+
           return matchesFilter && matchesSearch;
         })
         .map(([, data]) => {

@@ -99,8 +99,8 @@ export const PlacesPage = () => {
 
   // Get current data for map view
   const getCurrentLevelData = () => {
-    // Only return cities with valid coordinates
-    return Object.values(cityData).filter(
+    // Apply filters and then filter for valid coordinates
+    return getFilteredCities(cityData, searchQuery, calculateMatchForCity).filter(
       (city) => city.latitude != null && city.longitude != null
     );
   };
@@ -206,36 +206,32 @@ export const PlacesPage = () => {
         )}
 
         {/* Desktop Filters */}
-        {viewMode === "list" && (
-          <DesktopFilters
-            searchQuery={searchQuery}
-            onSearchChange={handleSearchChange}
-            selectedFilter={selectedFilter}
-            onFilterSelect={handleFilterSelect}
-            preferences={preferences}
-            setPreferences={setPreferences}
-            filteredCities={getFilteredCities(
-              cityData,
-              searchQuery,
-              calculateMatchForCity
-            )}
-          />
-        )}
+        <DesktopFilters
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          filteredCities={getFilteredCities(
+            cityData,
+            searchQuery,
+            calculateMatchForCity
+          )}
+        />
 
         {/* Mobile Filters */}
-        {viewMode === "list" && (
-          <MobileFilters
-            isFilterSheetOpen={isFilterSheetOpen}
-            setIsFilterSheetOpen={setIsFilterSheetOpen}
-            preferences={preferences}
-            setPreferences={setPreferences}
-            selectedFilter={selectedFilter}
-            onFilterSelect={handleFilterSelect}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            filterOptions={filterOptions}
-          />
-        )}
+        <MobileFilters
+          isFilterSheetOpen={isFilterSheetOpen}
+          setIsFilterSheetOpen={setIsFilterSheetOpen}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          filterOptions={filterOptions}
+        />
 
         {/* Results Grid */}
         <div className="space-y-8">
