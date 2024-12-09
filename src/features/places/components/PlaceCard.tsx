@@ -191,7 +191,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
 
   // Render compact variant
   if (variant === "compact") {
-    const typeInfo = getPlaceTypeInfo([city.type[0]]);
+    const typeInfo = getPlaceTypeInfo([city.type]);
     const TypeIcon = typeInfo.icon;
 
     return (
@@ -297,10 +297,10 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
                 "transform transition-all duration-500 ease-out",
                 "shadow-lg backdrop-blur-sm",
                 "group-hover:scale-110 group-hover:translate-x-0",
-                getPlaceTypeInfo([city.type[0]]).color
+                getPlaceTypeInfo([city.type]).color
               )}
             >
-              {React.createElement(getPlaceTypeInfo([city.type[0]]).icon, {
+              {React.createElement(getPlaceTypeInfo([city.type]).icon, {
                 size: 16,
                 className: "shrink-0",
               })}

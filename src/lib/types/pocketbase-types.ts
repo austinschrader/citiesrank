@@ -71,7 +71,7 @@ export type CitiesRecord<Thighlights = unknown> = {
 	totalReviews?: number
 	transit: number
 	transitScore: number
-	type?: CitiesTypeOptions[]
+	type?: CitiesTypeOptions
 	walkScore: number
 }
 

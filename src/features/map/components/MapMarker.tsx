@@ -10,16 +10,16 @@ interface MapMarkerProps {
 }
 
 const getMarkerColor = (rating?: number) => {
-  if (!rating) return "#6b7280"; // No rating - gray
-  if (rating >= 4.5) return "#22c55e"; // High rating - green
+  if (!rating) return "#94a3b8"; // No rating - slate
+  if (rating >= 4.5) return "#10b981"; // High rating - emerald
   if (rating >= 4.0) return "#3b82f6"; // Good rating - blue
-  if (rating >= 3.5) return "#f59e0b"; // Average rating - yellow
+  if (rating >= 3.5) return "#f59e0b"; // Average rating - amber
   if (rating >= 3.0) return "#ef4444"; // Low rating - red
-  return "#6b7280"; // Below 3.0 - gray
+  return "#94a3b8"; // Below 3.0 - slate
 };
 
 const createMarkerHtml = (size: number, color: string, rating?: number) => {
-  return `<div style="
+  return `<div class="place-marker" style="
     width: ${size}px;
     height: ${size}px;
     background-color: ${color};
@@ -30,17 +30,25 @@ const createMarkerHtml = (size: number, color: string, rating?: number) => {
     color: white;
     font-size: ${size * 0.4}px;
     font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     cursor: pointer;
-  ">${rating?.toFixed(1) || ""}</div>`;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+  ">${rating?.toFixed(1) || ""}</div>
+  <style>
+    .place-marker:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+  </style>`;
 };
 
 export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
   if (!place.latitude || !place.longitude) return null;
 
   const markerSize = place.averageRating
-    ? Math.max(30, place.averageRating * 10)
-    : 30;
+    ? Math.max(36, place.averageRating * 12)
+    : 36;
   const markerColor = getMarkerColor(place.averageRating);
 
   const icon = L.divIcon({
@@ -54,10 +62,20 @@ export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
     <Marker
       position={[place.latitude, place.longitude]}
       icon={icon}
-      eventHandlers={{ click: () => onSelect?.(place) }}
+      eventHandlers={{
+        click: () => onSelect?.(place),
+        mouseover: (e) => {
+          const el = e.target.getElement();
+          el.style.zIndex = "1000";
+        },
+        mouseout: (e) => {
+          const el = e.target.getElement();
+          el.style.zIndex = "";
+        }
+      }}
     >
       <Popup>
-        <div className="p-2 min-w-[300px]">
+        <div className="p-3 min-w-[320px]">
           <PlaceCard city={place} variant="compact" />
         </div>
       </Popup>
