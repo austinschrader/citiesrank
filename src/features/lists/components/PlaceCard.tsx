@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import React from "react";
 
@@ -16,7 +16,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({
   onClick,
 }) => {
   const coverImage =
-    getCityImage(place.imageUrl, "thumbnail") || "/placeholder.jpg";
+    getPlaceImage(place.imageUrl, "thumbnail") || "/placeholder.jpg";
 
   return (
     <Card

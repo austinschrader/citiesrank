@@ -1,22 +1,22 @@
 import type { MatchScore } from "@/features/preferences/types";
 import type { CitiesResponse } from "@/lib/types/pocketbase-types";
 
-export interface BaseCityCardProps {
+export interface BasePlaceCardProps {
   variant: "ranked" | "basic";
 }
 
-export interface RankedCityCardProps extends BaseCityCardProps {
+export interface RankedPlaceCardProps extends BasePlaceCardProps {
   variant: "ranked";
   city: CitiesResponse;
   matchScore: MatchScore;
 }
 
-export interface BasicCityCardProps extends BaseCityCardProps {
+export interface BasicPlaceCardProps extends BasePlaceCardProps {
   variant: "basic";
   city: CitiesResponse;
 }
 
-export type CityCardProps = RankedCityCardProps | BasicCityCardProps;
+export type PlaceCardProps = RankedPlaceCardProps | BasicPlaceCardProps;
 
 // City data types
 export interface CityData {

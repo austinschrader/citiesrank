@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { CityCard } from "@/features/places/components/CityCard";
+import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useToast } from "@/hooks/use-toast";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { Star } from "lucide-react";
@@ -100,7 +100,7 @@ export const ProfileFavorites = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {favoriteCities.map((city) => (
-            <CityCard key={city.id} city={city} variant="basic" />
+            <PlaceCard key={city.id} city={city} variant="basic" />
           ))}
         </div>
       )}

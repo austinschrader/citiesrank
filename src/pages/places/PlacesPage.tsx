@@ -1,25 +1,21 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
-import { getApiUrl } from "@/config/appConfig";
-import { CitiesSection } from "@/features/places/components/CitiesSection";
-import { CityCard } from "@/features/places/components/CityCard";
+import { CityMap } from "@/features/map/components/CityMap";
+import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
-import { usePopularCities } from "@/features/places/hooks/usePopularCities";
-import { useSeasonalCities } from "@/features/places/hooks/useSeasonalCities";
+import { usePagination } from "@/features/places/hooks/usePagination";
 import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
+import { useSearch } from "@/features/places/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
-import { MatchScore } from "@/features/preferences/types";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import debounce from "lodash/debounce";
-import { Search, X } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-
-const ITEMS_PER_PAGE = 20;
-const apiUrl = getApiUrl();
+import "leaflet/dist/leaflet.css";
+import { List, MapPin, Search, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } =
@@ -36,46 +32,33 @@ export const PlacesPage = () => {
     getFilteredCities,
   } = useSearchFilters(preferences);
   const { getAllCities } = useCitiesActions();
-  const seasonalCities = useSeasonalCities();
-  const getPopular = usePopularCities();
 
-  const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [popularCities, setPopularCities] = useState<CitiesResponse[]>([]);
 
   const currentRequestIdRef = useRef<string>("");
   const isLoadingRef = useRef(false);
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    isMobileSearchActive,
+    setIsMobileSearchActive,
+    searchInputRef,
+    handleSearchChange,
+    handleCitySelect,
+  } = useSearch();
+  const { currentPage, setCurrentPage, getPaginatedData, getTotalPages } =
+    usePagination(
+      getFilteredCities(cityData, searchQuery, calculateMatchForCity)
+    );
 
   useEffect(() => {
     if (isMobileSearchActive && searchInputRef.current) {
       searchInputRef.current.focus();
     }
   }, [isMobileSearchActive]);
-
-  const handleCitySelect = (city: CitiesResponse & MatchScore) => {
-    setSearchQuery(city.name); // Update search query to show what was selected
-
-    // Create a slug from the city name for the ID
-    const citySlug = city.name
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-");
-
-    // Create a slug from the country name
-    setSelectedFilter(null);
-
-    // Find and scroll to the city card
-    const cityElement = document.getElementById(`city-${citySlug}`);
-    if (cityElement) {
-      setTimeout(() => {
-        cityElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
-    }
-  };
 
   useEffect(() => {
     const loadCityData = async () => {
@@ -97,10 +80,6 @@ export const PlacesPage = () => {
             }, {} as Record<string, CitiesResponse>);
 
           setCityData(transformedData);
-
-          // Set popular cities
-          const popular = await getPopular();
-          setPopularCities(popular);
         }
       } catch (error) {
         if (currentRequestIdRef.current === requestId) {
@@ -116,33 +95,15 @@ export const PlacesPage = () => {
     };
 
     loadCityData();
-  }, [getAllCities, getPopular, seasonalCities]);
+  }, [getAllCities]);
 
-  // Debounced search
-  const debouncedSearch = debounce((value: string) => {
-    setSearchQuery(value);
-  }, 300);
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  // Get current data for map view
+  const getCurrentLevelData = () => {
+    // Only return cities with valid coordinates
+    return Object.values(cityData).filter(
+      (city) => city.latitude != null && city.longitude != null
+    );
   };
-
-  useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
-
-  const filteredAndRankedCities = getFilteredCities(
-    cityData,
-    searchQuery,
-    calculateMatchForCity
-  );
-  const totalPages = Math.ceil(filteredAndRankedCities.length / ITEMS_PER_PAGE);
-  const paginatedCities = filteredAndRankedCities.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
 
   if (isLoading) {
     return (
@@ -161,8 +122,8 @@ export const PlacesPage = () => {
     <PlacesLayout>
       <div className="py-4 md:py-6 space-y-4 md:space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
+          <div className="flex-1">
             <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">
               Discover Places
             </h1>
@@ -171,126 +132,148 @@ export const PlacesPage = () => {
               style.
             </p>
           </div>
+
+          {/* Controls Section */}
+          <div className="flex flex-col gap-3 w-full md:w-auto">
+            <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+              <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1.5 md:p-1 shadow-sm">
+                <Button
+                  variant={viewMode === "map" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("map")}
+                  className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                >
+                  <MapPin className="h-4 w-4" />
+                  Map
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                >
+                  <List className="h-4 w-4" />
+                  List
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Search Trigger */}
         {/* Mobile Search Trigger with Integrated Search */}
-        <div className="md:hidden relative">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              className="w-full pl-9 pr-10 h-12"
-              placeholder="Search destinations..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onClick={() => setIsMobileSearchActive(true)}
-              readOnly
-            />
-            {searchQuery && (
-              <button
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSearchQuery("");
-                }}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
+        {viewMode === "list" && (
+          <div className="md:hidden relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                className="w-full pl-9 pr-10 h-12"
+                placeholder="Search destinations..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onClick={() => setIsMobileSearchActive(true)}
+                readOnly
+              />
+              {searchQuery && (
+                <button
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearchQuery("");
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Mobile Search Overlay */}
-        {isMobileSearchActive && (
+        {isMobileSearchActive && viewMode === "list" && (
           <MobileSearch
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
             onClose={() => setIsMobileSearchActive(false)}
             searchInputRef={searchInputRef}
-            filteredCities={filteredAndRankedCities}
+            filteredCities={getFilteredCities(
+              cityData,
+              searchQuery,
+              calculateMatchForCity
+            )}
             onCitySelect={handleCitySelect}
           />
         )}
 
         {/* Desktop Filters */}
-        <DesktopFilters
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          selectedFilter={selectedFilter}
-          onFilterSelect={handleFilterSelect}
-          preferences={preferences}
-          setPreferences={setPreferences}
-          filteredCities={filteredAndRankedCities}
-        />
+        {viewMode === "list" && (
+          <DesktopFilters
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            selectedFilter={selectedFilter}
+            onFilterSelect={handleFilterSelect}
+            preferences={preferences}
+            setPreferences={setPreferences}
+            filteredCities={getFilteredCities(
+              cityData,
+              searchQuery,
+              calculateMatchForCity
+            )}
+          />
+        )}
 
         {/* Mobile Filters */}
-        <MobileFilters
-          isFilterSheetOpen={isFilterSheetOpen}
-          setIsFilterSheetOpen={setIsFilterSheetOpen}
-          preferences={preferences}
-          setPreferences={setPreferences}
-          selectedFilter={selectedFilter}
-          onFilterSelect={handleFilterSelect}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          filterOptions={filterOptions}
-        />
-
-        {/* Featured and Popular Sections */}
-        {!selectedFilter && !searchQuery && (
-          <div className="space-y-8">
-            <CitiesSection
-              title="Featured This Season"
-              cities={seasonalCities}
-            />
-            <CitiesSection title="Popular Right Now" cities={popularCities} />
-          </div>
+        {viewMode === "list" && (
+          <MobileFilters
+            isFilterSheetOpen={isFilterSheetOpen}
+            setIsFilterSheetOpen={setIsFilterSheetOpen}
+            preferences={preferences}
+            setPreferences={setPreferences}
+            selectedFilter={selectedFilter}
+            onFilterSelect={handleFilterSelect}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            filterOptions={filterOptions}
+          />
         )}
 
         {/* Results Grid */}
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl md:text-2xl font-semibold">
-              {selectedFilter
-                ? `Cities for ${
-                    filterOptions.find((f) => f.id === selectedFilter)?.label ??
-                    selectedFilter
-                  }`
-                : searchQuery
-                ? `Search Results for "${searchQuery}"`
-                : "All Cities"}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-            {paginatedCities.map((city) => {
-              const matchScore = calculateMatchForCity({
-                cost: city.cost,
-                crowdLevel: city.crowdLevel,
-                recommendedStay: city.recommendedStay,
-                bestSeason: city.bestSeason,
-                transit: city.transit,
-                accessibility: city.accessibility,
-              });
+          {viewMode === "map" ? (
+            <CityMap
+              places={getCurrentLevelData()}
+              onPlaceSelect={handleCitySelect}
+              className="h-[70vh] w-full"
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                {getPaginatedData().map((place) => (
+                  <PlaceCard
+                    key={place.id || place.name}
+                    city={place}
+                    variant="ranked"
+                    matchScore={calculateMatchForCity({
+                      cost: place.cost,
+                      crowdLevel: place.crowdLevel,
+                      recommendedStay: place.recommendedStay,
+                      bestSeason: place.bestSeason,
+                      transit: place.transit,
+                      accessibility: place.accessibility,
+                    })}
+                  />
+                ))}
+              </div>
 
-              return (
-                <CityCard
-                  key={city.name}
-                  city={city}
-                  variant="ranked"
-                  matchScore={matchScore}
+              <div className="mt-8 flex justify-center">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={getTotalPages()}
+                  onPageChange={setCurrentPage}
                 />
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Pagination */}
-        <div className="mt-8 flex justify-center">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </PlacesLayout>

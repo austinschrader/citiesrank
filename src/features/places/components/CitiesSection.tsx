@@ -1,5 +1,5 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { CityCard } from "@/features/places/components/CityCard";
+import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 
 interface CitiesSectionProps {
@@ -19,7 +19,7 @@ export const CitiesSection = ({ title, cities }: CitiesSectionProps) => {
         <div className="flex w-full space-x-4 overflow-x-auto">
           {cities.map((city) => (
             <div key={city.id} className="w-[280px] shrink-0">
-              <CityCard city={city} variant="basic" />
+              <PlaceCard city={city} variant="basic" />
             </div>
           ))}
         </div>

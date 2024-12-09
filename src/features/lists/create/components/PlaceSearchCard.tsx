@@ -18,7 +18,7 @@ import debounce from "lodash/debounce";
 import { Loader2, MapPin, Search, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 10;
 
 interface PlaceSearchCardProps {
   onAddPlace: (place: CitiesResponse) => void;

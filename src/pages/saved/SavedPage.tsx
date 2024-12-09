@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 import {
   BookmarkCheck,
   BookOpen,
@@ -145,7 +145,7 @@ const MOCK_SAVED_ITEMS: SavedItem[] = [
 ];
 
 const SavedItemCard = ({ item }: { item: SavedItem }) => {
-  const coverImage = getCityImage(item.imageUrl, "standard");
+  const coverImage = getPlaceImage(item.imageUrl, "standard");
 
   return (
     <Card className="group overflow-hidden">

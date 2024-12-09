@@ -20,7 +20,7 @@ import { ListHero } from "@/features/lists/view/components/ListHero";
 import { ListStatistics } from "@/features/lists/view/components/ListStatistics";
 import { RelatedLists } from "@/features/lists/view/components/RelatedLists";
 import { useToast } from "@/hooks/use-toast";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 import { createSlug } from "@/lib/imageUtils";
 import {
   CitiesResponse,
@@ -144,8 +144,8 @@ export const ViewListPage = () => {
   const citySlug = createSlug(activePlace.name);
   const countrySlug = createSlug(activePlace.country);
   const coverImage = activePlace.imageUrl
-    ? getCityImage(activePlace.imageUrl, "large")
-    : getCityImage(`${citySlug}-${countrySlug}-1`, "large");
+    ? getPlaceImage(activePlace.imageUrl, "large")
+    : getPlaceImage(`${citySlug}-${countrySlug}-1`, "large");
   const isAuthor = user?.id === data.author;
 
   return (

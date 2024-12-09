@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { Author } from "@/features/lists/types";
-import { getCityImage } from "@/lib/cloudinary";
+import { getPlaceImage } from "@/lib/cloudinary";
 
 interface AuthorCardProps {
   author: Author;
@@ -53,7 +53,7 @@ export const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => (
             <div key={list.id} className="flex gap-3 items-center">
               <div className="w-16 h-16 bg-muted rounded-md overflow-hidden">
                 <img
-                  src={getCityImage(list.imageUrl ?? "", "thumbnail")}
+                  src={getPlaceImage(list.imageUrl ?? "", "thumbnail")}
                   alt={list.title}
                   className="w-full h-full object-cover"
                 />

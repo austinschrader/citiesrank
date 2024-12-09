@@ -85,7 +85,7 @@ export const DesktopFilters: React.FC<DesktopFiltersProps> = ({
               )}
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[600px] z-[400]">
             <DialogHeader>
               <DialogTitle>Filters</DialogTitle>
             </DialogHeader>

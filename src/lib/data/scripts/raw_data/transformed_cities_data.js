@@ -28,7 +28,9 @@ export const fallbackCityData = {
     "costIndex": 4,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 56.67,
+    "longitude": 16.37
   },
   "Ljubljana": {
     "country": "Slovenia",
@@ -60,7 +62,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 46.05,
+    "longitude": 14.51
   },
   "Vimmerby": {
     "country": "Sweden",
@@ -89,7 +93,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 5
+    "transitScore": 5,
+    "latitude": 57.67,
+    "longitude": 15.85
   },
   "Bologna": {
     "country": "Italy",
@@ -121,7 +127,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 44.49,
+    "longitude": 11.34
   },
   "Valencia": {
     "country": "Spain",
@@ -153,7 +161,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 39.47,
+    "longitude": -0.38
   },
   "Ghent": {
     "country": "Belgium",
@@ -185,7 +195,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 51.05,
+    "longitude": 3.73
   },
   "Heidelberg": {
     "country": "Germany",
@@ -217,7 +229,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 49.41,
+    "longitude": 8.71
   },
   "Bruges": {
     "country": "Belgium",
@@ -248,7 +262,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 51.21,
+    "longitude": 3.22
   },
   "Cesky Krumlov": {
     "country": "Czech Republic",
@@ -311,7 +327,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 59.44,
+    "longitude": 24.75
   },
   "Innsbruck": {
     "country": "Austria",
@@ -342,7 +360,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 47.27,
+    "longitude": 11.39
   },
   "Bergen": {
     "country": "Norway",
@@ -373,7 +393,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 60.39,
+    "longitude": 5.32
   },
   "Colmar": {
     "country": "France",
@@ -403,7 +425,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 48.08,
+    "longitude": 7.36
   },
   "Sorrento": {
     "country": "Italy",
@@ -433,7 +457,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 40.63,
+    "longitude": 14.37
   },
   "Annecy": {
     "country": "France",
@@ -463,7 +489,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 45.9,
+    "longitude": 6.13
   },
   "Sintra": {
     "country": "Portugal",
@@ -494,7 +522,9 @@ export const fallbackCityData = {
     "costIndex": 4,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 38.8,
+    "longitude": -9.38
   },
   "Kotor": {
     "country": "Montenegro",
@@ -525,7 +555,9 @@ export const fallbackCityData = {
     "costIndex": 4,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 42.42,
+    "longitude": 18.77
   },
   "Zermatt": {
     "country": "Switzerland",
@@ -556,7 +588,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 46.02,
+    "longitude": 7.75
   },
   "Hallstatt": {
     "country": "Austria",
@@ -587,7 +621,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 47.56,
+    "longitude": 13.65
   },
   "Ronda": {
     "country": "Spain",
@@ -618,7 +654,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 36.74,
+    "longitude": -5.17
   },
   "Reine": {
     "country": "Norway",
@@ -649,7 +687,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 67.93,
+    "longitude": 13.09
   },
   "Alberobello": {
     "country": "Italy",
@@ -679,7 +719,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 40.79,
+    "longitude": 17.24
   },
   "Carcassonne": {
     "country": "France",
@@ -709,7 +751,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.21,
+    "longitude": 2.35
   },
   "Piran": {
     "country": "Slovenia",
@@ -740,7 +784,9 @@ export const fallbackCityData = {
     "costIndex": 4,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 45.53,
+    "longitude": 13.57
   },
   "Gjirokaster": {
     "country": "Albania",
@@ -771,7 +817,9 @@ export const fallbackCityData = {
     "costIndex": 3,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 40.08,
+    "longitude": 20.14
   },
   "Chamonix": {
     "country": "France",
@@ -801,7 +849,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 45.92,
+    "longitude": 6.87
   },
   "Bled": {
     "country": "Slovenia",
@@ -832,7 +882,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 46.37,
+    "longitude": 14.11
   },
   "Mostar": {
     "country": "Bosnia and Herzegovina",
@@ -863,7 +915,9 @@ export const fallbackCityData = {
     "costIndex": 4,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.34,
+    "longitude": 17.81
   },
   "Sighisoara": {
     "country": "Romania",
@@ -894,7 +948,9 @@ export const fallbackCityData = {
     "costIndex": 4,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 46.22,
+    "longitude": 24.79
   },
   "Nafplio": {
     "country": "Greece",
@@ -925,7 +981,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 37.57,
+    "longitude": 22.8
   },
   "Paris": {
     "country": "France",
@@ -959,7 +1017,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9.5
+    "transitScore": 9.5,
+    "latitude": 48.86,
+    "longitude": 2.35
   },
   "Rome": {
     "country": "Italy",
@@ -992,7 +1052,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 41.9,
+    "longitude": 12.49
   },
   "London": {
     "country": "United Kingdom",
@@ -1025,7 +1087,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 51.51,
+    "longitude": -0.13
   },
   "Barcelona": {
     "country": "Spain",
@@ -1058,7 +1122,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 41.38,
+    "longitude": 2.17
   },
   "Amsterdam": {
     "country": "Netherlands",
@@ -1088,7 +1154,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 52.37,
+    "longitude": 4.89
   },
   "Venice": {
     "country": "Italy",
@@ -1120,7 +1188,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 45.44,
+    "longitude": 12.32
   },
   "Prague": {
     "country": "Czech Republic",
@@ -1152,7 +1222,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 50.08,
+    "longitude": 14.42
   },
   "Florence": {
     "country": "Italy",
@@ -1184,7 +1256,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 43.77,
+    "longitude": 11.25
   },
   "Athens": {
     "country": "Greece",
@@ -1216,7 +1290,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 37.98,
+    "longitude": 23.72
   },
   "Dubrovnik": {
     "country": "Croatia",
@@ -1248,7 +1324,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 42.65,
+    "longitude": 18.09
   },
   "Berlin": {
     "country": "Germany",
@@ -1281,7 +1359,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 52.52,
+    "longitude": 13.41
   },
   "Munich": {
     "country": "Germany",
@@ -1313,7 +1393,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 48.14,
+    "longitude": 11.58
   },
   "Hamburg": {
     "country": "Germany",
@@ -1345,7 +1427,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 53.55,
+    "longitude": 10
   },
   "Cologne": {
     "country": "Germany",
@@ -1377,7 +1461,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 50.94,
+    "longitude": 6.96
   },
   "Frankfurt": {
     "country": "Germany",
@@ -1409,7 +1495,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 50.11,
+    "longitude": 8.68
   },
   "Nuremberg": {
     "country": "Germany",
@@ -1441,7 +1529,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 49.45,
+    "longitude": 11.08
   },
   "Rothenburg ob der Tauber": {
     "country": "Germany",
@@ -1505,7 +1595,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 51.05,
+    "longitude": 13.74
   },
   "Leipzig": {
     "country": "Germany",
@@ -1537,7 +1629,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 51.34,
+    "longitude": 12.37
   },
   "Bamberg": {
     "country": "Germany",
@@ -1569,7 +1663,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 49.89,
+    "longitude": 10.89
   },
   "Garmisch-Partenkirchen": {
     "country": "Germany",
@@ -1632,7 +1728,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 49.02,
+    "longitude": 12.1
   },
   "Lübeck": {
     "country": "Germany",
@@ -1663,7 +1761,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 53.87,
+    "longitude": 10.69
   },
   "Freiburg": {
     "country": "Germany",
@@ -1694,7 +1794,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 47.99,
+    "longitude": 7.85
   },
   "Potsdam": {
     "country": "Germany",
@@ -1725,7 +1827,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 52.39,
+    "longitude": 13.07
   },
   "Würzburg": {
     "country": "Germany",
@@ -1756,7 +1860,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 49.8,
+    "longitude": 9.94
   },
   "Tübingen": {
     "country": "Germany",
@@ -1787,7 +1893,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 48.52,
+    "longitude": 9.06
   },
   "Fussen": {
     "country": "Germany",
@@ -1818,7 +1926,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 47.57,
+    "longitude": 10.7
   },
   "Dusseldorf": {
     "country": "Germany",
@@ -1850,7 +1960,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 51.22,
+    "longitude": 6.78
   },
   "Trier": {
     "country": "Germany",
@@ -1882,7 +1994,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 49.75,
+    "longitude": 6.64
   },
   "Cochem": {
     "country": "Germany",
@@ -1913,7 +2027,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 50.15,
+    "longitude": 7.17
   },
   "Bacharach": {
     "country": "Germany",
@@ -1944,7 +2060,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 50.06,
+    "longitude": 7.77
   },
   "Weimar": {
     "country": "Germany",
@@ -1975,7 +2093,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 50.98,
+    "longitude": 11.33
   },
   "Quedlinburg": {
     "country": "Germany",
@@ -2006,7 +2126,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 51.78,
+    "longitude": 11.14
   },
   "Versailles": {
     "country": "France",
@@ -2036,7 +2158,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 48.8,
+    "longitude": 2.13
   },
   "Fontainebleau": {
     "country": "France",
@@ -2065,7 +2189,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 48.41,
+    "longitude": 2.7
   },
   "Nice": {
     "country": "France",
@@ -2096,7 +2222,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.7,
+    "longitude": 7.27
   },
   "Marseille": {
     "country": "France",
@@ -2127,7 +2255,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.3,
+    "longitude": 5.37
   },
   "Cannes": {
     "country": "France",
@@ -2158,7 +2288,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 43.55,
+    "longitude": 7.02
   },
   "Aix-en-Provence": {
     "country": "France",
@@ -2253,7 +2385,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.95,
+    "longitude": 4.81
   },
   "Arles": {
     "country": "France",
@@ -2284,7 +2418,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 43.68,
+    "longitude": 4.63
   },
   "Grasse": {
     "country": "France",
@@ -2313,7 +2449,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.66,
+    "longitude": 6.92
   },
   "Menton": {
     "country": "France",
@@ -2344,7 +2482,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.77,
+    "longitude": 7.5
   },
   "Toulouse": {
     "country": "France",
@@ -2375,7 +2515,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 43.6,
+    "longitude": 1.44
   },
   "Montpellier": {
     "country": "France",
@@ -2405,7 +2547,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.61,
+    "longitude": 3.88
   },
   "Albi": {
     "country": "France",
@@ -2435,7 +2579,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 43.93,
+    "longitude": 2.15
   },
   "Nîmes": {
     "country": "France",
@@ -2465,7 +2611,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.84,
+    "longitude": 4.36
   },
   "Collioure": {
     "country": "France",
@@ -2495,7 +2643,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 42.53,
+    "longitude": 3.08
   },
   "Lourdes": {
     "country": "France",
@@ -2524,7 +2674,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 43.1,
+    "longitude": -0.04
   },
   "Bordeaux": {
     "country": "France",
@@ -2554,7 +2706,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 44.84,
+    "longitude": -0.58
   },
   "Saint-Émilion": {
     "country": "France",
@@ -2614,7 +2768,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.48,
+    "longitude": -1.56
   },
   "Arcachon": {
     "country": "France",
@@ -2644,7 +2800,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.66,
+    "longitude": -1.17
   },
   "La Rochelle": {
     "country": "France",
@@ -2704,7 +2862,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 45.69,
+    "longitude": -0.33
   },
   "Angoulême": {
     "country": "France",
@@ -2734,7 +2894,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 45.65,
+    "longitude": 0.16
   },
   "Rennes": {
     "country": "France",
@@ -2764,7 +2926,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 48.12,
+    "longitude": -1.68
   },
   "Saint-Malo": {
     "country": "France",
@@ -2825,7 +2989,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 48,
+    "longitude": -4.1
   },
   "Dinan": {
     "country": "France",
@@ -2855,7 +3021,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 48.45,
+    "longitude": -2.04
   },
   "Vannes": {
     "country": "France",
@@ -2885,7 +3053,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 47.66,
+    "longitude": -2.76
   },
   "Concarneau": {
     "country": "France",
@@ -2915,7 +3085,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 47.87,
+    "longitude": -3.91
   },
   "Rouen": {
     "country": "France",
@@ -2945,7 +3117,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 49.44,
+    "longitude": 1.1
   },
   "Caen": {
     "country": "France",
@@ -2974,7 +3148,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 49.18,
+    "longitude": -0.37
   },
   "Honfleur": {
     "country": "France",
@@ -3004,7 +3180,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 49.42,
+    "longitude": 0.23
   },
   "Bayeux": {
     "country": "France",
@@ -3034,7 +3212,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 49.28,
+    "longitude": -0.7
   },
   "Etretat": {
     "country": "France",
@@ -3064,7 +3244,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 49.71,
+    "longitude": 0.21
   },
   "Mont Saint-Michel": {
     "country": "France",
@@ -3125,7 +3307,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 48.58,
+    "longitude": 7.75
   },
   "Metz": {
     "country": "France",
@@ -3155,7 +3339,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 49.12,
+    "longitude": 6.17
   },
   "Reims": {
     "country": "France",
@@ -3185,7 +3371,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 49.26,
+    "longitude": 4.03
   },
   "Mulhouse": {
     "country": "France",
@@ -3214,7 +3402,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 47.75,
+    "longitude": 7.34
   },
   "Dijon": {
     "country": "France",
@@ -3244,7 +3434,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 47.32,
+    "longitude": 5.04
   },
   "Beaune": {
     "country": "France",
@@ -3274,7 +3466,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 47.03,
+    "longitude": 4.84
   },
   "Besançon": {
     "country": "France",
@@ -3304,7 +3498,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 47.24,
+    "longitude": 6.02
   },
   "Auxerre": {
     "country": "France",
@@ -3333,7 +3529,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 47.8,
+    "longitude": 3.57
   },
   "Lyon": {
     "country": "France",
@@ -3364,7 +3562,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 45.76,
+    "longitude": 4.84
   },
   "Grenoble": {
     "country": "France",
@@ -3394,7 +3594,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 45.19,
+    "longitude": 5.72
   },
   "Clermont-Ferrand": {
     "country": "France",
@@ -3454,7 +3656,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 45.52,
+    "longitude": 4.87
   },
   "Aix-les-Bains": {
     "country": "France",
@@ -3515,7 +3719,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 47.22,
+    "longitude": -1.55
   },
   "Angers": {
     "country": "France",
@@ -3545,7 +3751,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 47.48,
+    "longitude": -0.55
   },
   "Le Mans": {
     "country": "France",
@@ -3635,7 +3843,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 47.39,
+    "longitude": 0.69
   },
   "Bourges": {
     "country": "France",
@@ -3664,7 +3874,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 47.08,
+    "longitude": 2.4
   },
   "Orléans": {
     "country": "France",
@@ -3693,7 +3905,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 47.91,
+    "longitude": 1.9
   },
   "Blois": {
     "country": "France",
@@ -3723,7 +3937,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 47.59,
+    "longitude": 1.33
   },
   "Amboise": {
     "country": "France",
@@ -3753,7 +3969,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 47.41,
+    "longitude": 0.98
   },
   "Ajaccio": {
     "country": "France",
@@ -3783,7 +4001,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 41.92,
+    "longitude": 8.73
   },
   "Bonifacio": {
     "country": "France",
@@ -3813,7 +4033,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 41.39,
+    "longitude": 9.16
   },
   "Calvi": {
     "country": "France",
@@ -3843,7 +4065,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 42.57,
+    "longitude": 8.76
   },
   "Bastia": {
     "country": "France",
@@ -3873,7 +4097,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 42.7,
+    "longitude": 9.45
   },
   "L'Aquila": {
     "country": "Italy",
@@ -3933,7 +4159,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 42.05,
+    "longitude": 13.93
   },
   "Pescara": {
     "country": "Italy",
@@ -3962,7 +4190,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 42.46,
+    "longitude": 14.21
   },
   "Matera": {
     "country": "Italy",
@@ -3992,7 +4222,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 40.67,
+    "longitude": 16.6
   },
   "Potenza": {
     "country": "Italy",
@@ -4021,7 +4253,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 40.64,
+    "longitude": 15.8
   },
   "Tropea": {
     "country": "Italy",
@@ -4051,7 +4285,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 38.68,
+    "longitude": 15.89
   },
   "Scilla": {
     "country": "Italy",
@@ -4081,7 +4317,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 38.25,
+    "longitude": 15.71
   },
   "Reggio Calabria": {
     "country": "Italy",
@@ -4142,7 +4380,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 40.63,
+    "longitude": 14.49
   },
   "Pompeii": {
     "country": "Italy",
@@ -4172,7 +4412,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 40.75,
+    "longitude": 14.49
   },
   "Ravenna": {
     "country": "Italy",
@@ -4202,7 +4444,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.42,
+    "longitude": 12.2
   },
   "Parma": {
     "country": "Italy",
@@ -4232,7 +4476,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 44.8,
+    "longitude": 10.33
   },
   "Modena": {
     "country": "Italy",
@@ -4262,7 +4508,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.65,
+    "longitude": 10.92
   },
   "Ferrara": {
     "country": "Italy",
@@ -4292,7 +4540,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 44.83,
+    "longitude": 11.62
   },
   "Trieste": {
     "country": "Italy",
@@ -4322,7 +4572,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 45.65,
+    "longitude": 13.77
   },
   "Udine": {
     "country": "Italy",
@@ -4351,7 +4603,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 46.07,
+    "longitude": 13.24
   },
   "Grado": {
     "country": "Italy",
@@ -4380,7 +4634,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 45.68,
+    "longitude": 13.4
   },
   "Tivoli": {
     "country": "Italy",
@@ -4410,7 +4666,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 41.96,
+    "longitude": 12.8
   },
   "Viterbo": {
     "country": "Italy",
@@ -4439,7 +4697,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 42.42,
+    "longitude": 12.11
   },
   "Genoa": {
     "country": "Italy",
@@ -4469,7 +4729,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 44.41,
+    "longitude": 8.93
   },
   "Monterosso al Mare": {
     "country": "Italy",
@@ -4529,7 +4791,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.14,
+    "longitude": 9.68
   },
   "Corniglia": {
     "country": "Italy",
@@ -4559,7 +4823,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 44.13,
+    "longitude": 9.69
   },
   "Manarola": {
     "country": "Italy",
@@ -4589,7 +4855,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.11,
+    "longitude": 9.73
   },
   "Riomaggiore": {
     "country": "Italy",
@@ -4619,7 +4887,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.1,
+    "longitude": 9.74
   },
   "Bergamo": {
     "country": "Italy",
@@ -4650,7 +4920,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 45.7,
+    "longitude": 9.67
   },
   "Como": {
     "country": "Italy",
@@ -4681,7 +4953,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 45.81,
+    "longitude": 9.08
   },
   "Lecco": {
     "country": "Italy",
@@ -4711,7 +4985,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 45.85,
+    "longitude": 9.4
   },
   "Pavia": {
     "country": "Italy",
@@ -4741,7 +5017,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 45.19,
+    "longitude": 9.16
   },
   "Ancona": {
     "country": "Italy",
@@ -4771,7 +5049,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 43.61,
+    "longitude": 13.52
   },
   "Urbino": {
     "country": "Italy",
@@ -4802,7 +5082,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 43.72,
+    "longitude": 12.63
   },
   "Ascoli Piceno": {
     "country": "Italy",
@@ -4862,7 +5144,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 5
+    "transitScore": 5,
+    "latitude": 41.56,
+    "longitude": 14.66
   },
   "Termoli": {
     "country": "Italy",
@@ -4892,7 +5176,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 5.5
+    "transitScore": 5.5,
+    "latitude": 42,
+    "longitude": 14.99
   },
   "Asti": {
     "country": "Italy",
@@ -4921,7 +5207,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 44.9,
+    "longitude": 8.21
   },
   "Bari": {
     "country": "Italy",
@@ -4951,7 +5239,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 41.12,
+    "longitude": 16.87
   },
   "Lecce": {
     "country": "Italy",
@@ -4981,7 +5271,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 40.35,
+    "longitude": 18.17
   },
   "Polignano a Mare": {
     "country": "Italy",
@@ -5041,7 +5333,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 40.73,
+    "longitude": 17.57
   },
   "Cagliari": {
     "country": "Italy",
@@ -5071,7 +5365,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 39.22,
+    "longitude": 9.12
   },
   "Alghero": {
     "country": "Italy",
@@ -5101,7 +5397,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 40.56,
+    "longitude": 8.32
   },
   "Olbia": {
     "country": "Italy",
@@ -5130,7 +5428,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 40.93,
+    "longitude": 9.5
   },
   "Bosa": {
     "country": "Italy",
@@ -5160,7 +5460,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 40.29,
+    "longitude": 8.51
   },
   "Catania": {
     "country": "Italy",
@@ -5191,7 +5493,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 37.51,
+    "longitude": 15.09
   },
   "Taormina": {
     "country": "Italy",
@@ -5221,7 +5525,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 37.85,
+    "longitude": 15.29
   },
   "Siracusa": {
     "country": "Italy",
@@ -5251,7 +5557,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 37.07,
+    "longitude": 15.29
   },
   "Agrigento": {
     "country": "Italy",
@@ -5281,7 +5589,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 37.31,
+    "longitude": 13.58
   },
   "Noto": {
     "country": "Italy",
@@ -5311,7 +5621,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 36.89,
+    "longitude": 15.07
   },
   "Cefalù": {
     "country": "Italy",
@@ -5341,7 +5653,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 38.04,
+    "longitude": 14.02
   },
   "Lucca": {
     "country": "Italy",
@@ -5371,7 +5685,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 43.84,
+    "longitude": 10.5
   },
   "Arezzo": {
     "country": "Italy",
@@ -5401,7 +5717,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.46,
+    "longitude": 11.88
   },
   "Volterra": {
     "country": "Italy",
@@ -5431,7 +5749,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.4,
+    "longitude": 10.86
   },
   "Bolzano": {
     "country": "Italy",
@@ -5461,7 +5781,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 46.5,
+    "longitude": 11.35
   },
   "Trento": {
     "country": "Italy",
@@ -5491,7 +5813,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 46.07,
+    "longitude": 11.12
   },
   "Merano": {
     "country": "Italy",
@@ -5521,7 +5845,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 46.67,
+    "longitude": 11.16
   },
   "Bressanone": {
     "country": "Italy",
@@ -5551,7 +5877,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 46.72,
+    "longitude": 11.66
   },
   "Perugia": {
     "country": "Italy",
@@ -5581,7 +5909,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 43.11,
+    "longitude": 12.39
   },
   "Assisi": {
     "country": "Italy",
@@ -5611,7 +5941,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.07,
+    "longitude": 12.62
   },
   "Todi": {
     "country": "Italy",
@@ -5641,7 +5973,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 42.78,
+    "longitude": 12.41
   },
   "Norcia": {
     "country": "Italy",
@@ -5671,7 +6005,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 42.79,
+    "longitude": 13.1
   },
   "Spoleto": {
     "country": "Italy",
@@ -5701,7 +6037,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 42.74,
+    "longitude": 12.74
   },
   "Ravello": {
     "country": "Italy",
@@ -5731,7 +6069,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 40.65,
+    "longitude": 14.61
   },
   "Portofino": {
     "country": "Italy",
@@ -5761,7 +6101,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 44.3,
+    "longitude": 9.21
   },
   "San Gimignano": {
     "country": "Italy",
@@ -5822,7 +6164,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 42.72,
+    "longitude": 12.11
   },
   "Padua": {
     "country": "Italy",
@@ -5852,7 +6196,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 45.41,
+    "longitude": 11.88
   },
   "Vicenza": {
     "country": "Italy",
@@ -5882,7 +6228,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 45.55,
+    "longitude": 11.54
   },
   "Treviso": {
     "country": "Italy",
@@ -5911,7 +6259,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 45.67,
+    "longitude": 12.24
   },
   "Tokyo": {
     "country": "Japan",
@@ -5942,7 +6292,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9.5
+    "transitScore": 9.5,
+    "latitude": 35.68,
+    "longitude": 139.76
   },
   "Kyoto": {
     "country": "Japan",
@@ -5974,7 +6326,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 35.01,
+    "longitude": 135.76
   },
   "Osaka": {
     "country": "Japan",
@@ -6005,7 +6359,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 34.69,
+    "longitude": 135.5
   },
   "Sapporo": {
     "country": "Japan",
@@ -6036,7 +6392,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 43.06,
+    "longitude": 141.35
   },
   "Otaru": {
     "country": "Japan",
@@ -6067,7 +6425,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 43.19,
+    "longitude": 140.99
   },
   "Furano": {
     "country": "Japan",
@@ -6098,7 +6458,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 5
+    "transitScore": 5,
+    "latitude": 43.34,
+    "longitude": 142.38
   },
   "Nara": {
     "country": "Japan",
@@ -6129,7 +6491,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 34.69,
+    "longitude": 135.8
   },
   "Hakone": {
     "country": "Japan",
@@ -6160,7 +6524,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 35.23,
+    "longitude": 139.02
   },
   "Kanazawa": {
     "country": "Japan",
@@ -6191,7 +6557,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 36.57,
+    "longitude": 136.65
   },
   "Nikko": {
     "country": "Japan",
@@ -6221,7 +6589,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 36.75,
+    "longitude": 139.61
   },
   "Takayama": {
     "country": "Japan",
@@ -6251,7 +6621,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 36.14,
+    "longitude": 137.25
   },
   "Kamakura": {
     "country": "Japan",
@@ -6281,7 +6653,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 35.31,
+    "longitude": 139.55
   },
   "Fukuoka": {
     "country": "Japan",
@@ -6311,7 +6685,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 33.59,
+    "longitude": 130.4
   },
   "Hiroshima": {
     "country": "Japan",
@@ -6341,7 +6717,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 34.39,
+    "longitude": 132.45
   },
   "Miyajima": {
     "country": "Japan",
@@ -6371,7 +6749,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 34.3,
+    "longitude": 132.32
   },
   "Kobe": {
     "country": "Japan",
@@ -6401,7 +6781,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 34.69,
+    "longitude": 135.2
   },
   "Nagoya": {
     "country": "Japan",
@@ -6431,7 +6813,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 35.18,
+    "longitude": 136.91
   },
   "Yokohama": {
     "country": "Japan",
@@ -6461,7 +6845,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 35.45,
+    "longitude": 139.63
   },
   "Nagasaki": {
     "country": "Japan",
@@ -6492,7 +6878,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 32.75,
+    "longitude": 129.87
   },
   "Ise": {
     "country": "Japan",
@@ -6522,7 +6910,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 34.49,
+    "longitude": 136.7
   },
   "Karuizawa": {
     "country": "Japan",
@@ -6552,7 +6942,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 36.34,
+    "longitude": 138.62
   },
   "Kusatsu": {
     "country": "Japan",
@@ -6582,7 +6974,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 36.62,
+    "longitude": 138.6
   },
   "Beppu": {
     "country": "Japan",
@@ -6611,7 +7005,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 33.28,
+    "longitude": 131.5
   },
   "Kawagoe": {
     "country": "Japan",
@@ -6641,7 +7037,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 35.91,
+    "longitude": 139.49
   },
   "Arashiyama": {
     "country": "Japan",
@@ -6671,7 +7069,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 35.01,
+    "longitude": 135.67
   },
   "Shirakawa-go": {
     "country": "Japan",
@@ -6730,7 +7130,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 35.71,
+    "longitude": 139.72
   },
   "Matsumoto": {
     "country": "Japan",
@@ -6760,7 +7162,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 36.24,
+    "longitude": 137.97
   },
   "Gifu": {
     "country": "Japan",
@@ -6789,7 +7193,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 35.42,
+    "longitude": 136.76
   },
   "Uji": {
     "country": "Japan",
@@ -6819,7 +7225,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 34.89,
+    "longitude": 135.8
   },
   "Ohara": {
     "country": "Japan",
@@ -6849,7 +7257,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 35.12,
+    "longitude": 135.86
   },
   "Asuka": {
     "country": "Japan",
@@ -6879,7 +7289,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 34.47,
+    "longitude": 135.81
   },
   "Hakodate": {
     "country": "Japan",
@@ -6909,7 +7321,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 41.77,
+    "longitude": 140.73
   },
   "Katoomba": {
     "country": "Australia",
@@ -6939,7 +7353,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": -33.72,
+    "longitude": 150.31
   },
   "Wollongong": {
     "country": "Australia",
@@ -6968,7 +7384,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": -34.43,
+    "longitude": 150.89
   },
   "Bowral": {
     "country": "Australia",
@@ -6997,7 +7415,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": -34.48,
+    "longitude": 150.42
   },
   "Apollo Bay": {
     "country": "Australia",
@@ -7057,7 +7477,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": -38.53,
+    "longitude": 143.97
   },
   "Daylesford": {
     "country": "Australia",
@@ -7087,7 +7509,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": -37.34,
+    "longitude": 144.14
   },
   "Bright": {
     "country": "Australia",
@@ -7117,7 +7541,9 @@ export const fallbackCityData = {
     "costIndex": 5,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": -36.73,
+    "longitude": 146.96
   },
   "Phillip Island": {
     "country": "Australia",
@@ -7176,7 +7602,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": -37.56,
+    "longitude": 143.85
   },
   "Mornington Peninsula": {
     "country": "Australia",
@@ -7236,7 +7664,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": -26.39,
+    "longitude": 153.09
   },
   "Airlie Beach": {
     "country": "Australia",
@@ -7295,7 +7725,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": -19.26,
+    "longitude": 146.82
   },
   "Hervey Bay": {
     "country": "Australia",
@@ -7387,7 +7819,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": -34.52,
+    "longitude": 138.96
   },
   "Angaston": {
     "country": "Australia",
@@ -7416,7 +7850,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": -34.5,
+    "longitude": 139.05
   },
   "Victor Harbor": {
     "country": "Australia",
@@ -7508,7 +7944,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": -31.95,
+    "longitude": 115.86
   },
   "Margaret River": {
     "country": "Australia",
@@ -7570,7 +8008,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": -17.96,
+    "longitude": 122.23
   },
   "Albany": {
     "country": "Australia",
@@ -7601,7 +8041,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": -35.02,
+    "longitude": 117.88
   },
   "Launceston": {
     "country": "Australia",
@@ -7632,7 +8074,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": -41.44,
+    "longitude": 147.13
   },
   "Cradle Mountain": {
     "country": "Australia",
@@ -7759,7 +8203,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": -12.46,
+    "longitude": 130.84
   },
   "Alice Springs": {
     "country": "Australia",
@@ -7822,7 +8268,9 @@ export const fallbackCityData = {
     "costIndex": 9,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": -25.34,
+    "longitude": 131.03
   },
   "Katherine": {
     "country": "Australia",
@@ -7852,7 +8300,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": -14.47,
+    "longitude": 132.27
   },
   "Rotterdam": {
     "country": "Netherlands",
@@ -7882,7 +8332,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 51.92,
+    "longitude": 4.48
   },
   "Utrecht": {
     "country": "Netherlands",
@@ -7912,7 +8364,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 52.09,
+    "longitude": 5.12
   },
   "Haarlem": {
     "country": "Netherlands",
@@ -7942,7 +8396,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 52.38,
+    "longitude": 4.64
   },
   "The Hague": {
     "country": "Netherlands",
@@ -8001,7 +8457,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 5
+    "transitScore": 5,
+    "latitude": 52.73,
+    "longitude": 6.08
   },
   "Leiden": {
     "country": "Netherlands",
@@ -8031,7 +8489,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 52.16,
+    "longitude": 4.49
   },
   "Maastricht": {
     "country": "Netherlands",
@@ -8061,7 +8521,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 50.85,
+    "longitude": 5.69
   },
   "Delft": {
     "country": "Netherlands",
@@ -8091,7 +8553,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 52.01,
+    "longitude": 4.36
   },
   "Edam": {
     "country": "Netherlands",
@@ -8120,7 +8584,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 52.51,
+    "longitude": 5.05
   },
   "Zaanse Schans": {
     "country": "Netherlands",
@@ -8180,7 +8646,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 52.63,
+    "longitude": 4.75
   },
   "Arnhem": {
     "country": "Netherlands",
@@ -8210,7 +8678,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 51.99,
+    "longitude": 5.91
   },
   "Zwolle": {
     "country": "Netherlands",
@@ -8240,7 +8710,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 52.51,
+    "longitude": 6.09
   },
   "Gouda": {
     "country": "Netherlands",
@@ -8270,7 +8742,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 52.01,
+    "longitude": 4.71
   },
   "Enkhuizen": {
     "country": "Netherlands",
@@ -8300,7 +8774,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 52.7,
+    "longitude": 5.29
   },
   "Hoorn": {
     "country": "Netherlands",
@@ -8330,7 +8806,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 52.64,
+    "longitude": 5.06
   },
   "Den Bosch": {
     "country": "Netherlands",
@@ -8391,7 +8869,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 51.5,
+    "longitude": 3.61
   },
   "Volendam": {
     "country": "Netherlands",
@@ -8421,7 +8901,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7.5
+    "transitScore": 7.5,
+    "latitude": 52.5,
+    "longitude": 5.07
   },
   "Stockholm": {
     "country": "Sweden",
@@ -8451,7 +8933,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 9
+    "transitScore": 9,
+    "latitude": 59.33,
+    "longitude": 18.07
   },
   "Gothenburg": {
     "country": "Sweden",
@@ -8481,7 +8965,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 57.71,
+    "longitude": 11.97
   },
   "Malmö": {
     "country": "Sweden",
@@ -8511,7 +8997,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 55.61,
+    "longitude": 13
   },
   "Kiruna": {
     "country": "Sweden",
@@ -8541,7 +9029,9 @@ export const fallbackCityData = {
     "costIndex": 6,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6
+    "transitScore": 6,
+    "latitude": 67.85,
+    "longitude": 20.22
   },
   "Visby": {
     "country": "Sweden",
@@ -8571,7 +9061,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 57.64,
+    "longitude": 18.29
   },
   "Uppsala": {
     "country": "Sweden",
@@ -8601,7 +9093,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 59.86,
+    "longitude": 17.64
   },
   "Lund": {
     "country": "Sweden",
@@ -8631,7 +9125,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8.5
+    "transitScore": 8.5,
+    "latitude": 55.7,
+    "longitude": 13.19
   },
   "Helsingborg": {
     "country": "Sweden",
@@ -8660,7 +9156,9 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 8
+    "transitScore": 8,
+    "latitude": 56.05,
+    "longitude": 12.7
   },
   "Åre": {
     "country": "Sweden",
@@ -8690,7 +9188,9 @@ export const fallbackCityData = {
     "costIndex": 8,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 6.5
+    "transitScore": 6.5,
+    "latitude": 63.4,
+    "longitude": 13.08
   },
   "Östersund": {
     "country": "Sweden",
@@ -8720,6 +9220,8 @@ export const fallbackCityData = {
     "costIndex": 7,
     "safetyScore": 7.5,
     "walkScore": 8,
-    "transitScore": 7
+    "transitScore": 7,
+    "latitude": 63.18,
+    "longitude": 14.64
   }
 };

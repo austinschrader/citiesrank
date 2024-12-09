@@ -46,11 +46,15 @@ const CitiesActionsContext = createContext<{
     queryParams?: QueryParams
   ) => Promise<any>;
   getCityByName: (cityName: string) => Promise<CitiesResponse>;
+  getCityById: (id: string) => Promise<CitiesResponse>;
   getAllCities: () => Promise<CitiesResponse[]>;
 }>({
   refreshCities: async () => {},
   fetchCitiesPaginated: async () => {},
   getCityByName: async () => {
+    throw new Error("Not implemented");
+  },
+  getCityById: async () => {
     throw new Error("Not implemented");
   },
   getAllCities: async () => {
@@ -121,6 +125,37 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     }
   };
 
+  const getCityById = async (id: string): Promise<CitiesResponse> => {
+    try {
+      return await pb.collection("cities").getOne<CitiesResponse>(id);
+    } catch (error) {
+      console.error("Error fetching city by ID:", error);
+      throw error;
+    }
+  };
+
+  const getCityByName = async (cityName: string) => {
+    const decodedCity = decodeURIComponent(cityName)
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    const result = await pb.collection("cities").getList(1, 1, {
+      filter: `name = "${decodedCity}"`,
+      $autoCancel: false,
+    });
+
+    if (result.items.length === 0) {
+      throw new Error(`Place not found: ${decodedCity}`);
+    }
+
+    return result.items[0] as CitiesResponse;
+  };
+
+  const getAllCities = async () => {
+    const records = await pb.collection("cities").getFullList<CitiesResponse>();
+    return records;
+  };
+
   const refreshCities = async () => {
     try {
       setState((prev) => ({
@@ -151,28 +186,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     }
   };
 
-  const getCityByName = async (cityName: string) => {
-    const decodedCity = decodeURIComponent(cityName)
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-
-    const result = await pb.collection("cities").getList(1, 1, {
-      filter: `name = "${decodedCity}"`,
-      $autoCancel: false,
-    });
-
-    if (result.items.length === 0) {
-      throw new Error(`City not found: ${decodedCity}`);
-    }
-
-    return result.items[0] as CitiesResponse;
-  };
-
-  const getAllCities = async () => {
-    const records = await pb.collection("cities").getFullList<CitiesResponse>();
-    return records;
-  };
-
   useEffect(() => {
     refreshCities();
   }, []);
@@ -184,6 +197,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
           refreshCities,
           fetchCitiesPaginated,
           getCityByName,
+          getCityById,
           getAllCities,
         }}
       >
