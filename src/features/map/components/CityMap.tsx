@@ -22,6 +22,9 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
         scrollWheelZoom={true}
         zoomControl={false}
         className="h-full w-full rounded-xl"
+        maxBounds={[[-90, -180], [90, 180]]}
+        maxBoundsViscosity={1.0}
+        worldCopyJump={false}
       >
         <MapControls
           onZoomChange={setZoom}
@@ -35,7 +38,14 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
         {places
           .filter((place) => place.latitude && place.longitude)
           .map((place) => (
-            <MapMarker key={place.id} place={place} onSelect={onPlaceSelect} />
+            <MapMarker 
+              key={place.id} 
+              place={place} 
+              onSelect={onPlaceSelect ? 
+                () => onPlaceSelect(place) : 
+                undefined
+              } 
+            />
           ))}
       </MapContainer>
     </div>

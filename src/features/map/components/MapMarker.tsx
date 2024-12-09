@@ -60,8 +60,12 @@ export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
           <h3 className="font-semibold">{place.name}</h3>
           <p className="text-sm text-muted-foreground">
             {place.description}
-            {place.matchScore && <div>Match Score: {place.matchScore}</div>}
           </p>
+          {place.matchScore && (
+            <p className="text-sm text-muted-foreground">
+              Match Score: {place.matchScore}
+            </p>
+          )}
         </div>
       </Popup>
     </Marker>

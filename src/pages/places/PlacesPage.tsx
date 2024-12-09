@@ -238,7 +238,19 @@ export const PlacesPage = () => {
           {viewMode === "map" ? (
             <CityMap
               places={getCurrentLevelData()}
-              onPlaceSelect={handleCitySelect}
+              onPlaceSelect={(place) => {
+                // Only scroll to the place without filtering
+                const citySlug = place.name
+                  .toLowerCase()
+                  .replace(/[^\w\s-]/g, "")
+                  .replace(/\s+/g, "-");
+                const cityElement = document.getElementById(`city-${citySlug}`);
+                if (cityElement) {
+                  setTimeout(() => {
+                    cityElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }, 100);
+                }
+              }}
               className="h-[70vh] w-full"
             />
           ) : (
