@@ -794,37 +794,51 @@ function FilterSection({
   onToggleCollapse,
 }: FilterSectionProps) {
   return (
-    <div className="mb-2">
+    <div className="mb-3 rounded-xl bg-background/50 backdrop-blur-sm shadow-sm border border-accent/10">
       <button
         onClick={onToggleCollapse}
-        className={`w-full flex items-center justify-between p-2 rounded-lg ${color} hover:opacity-90 transition-opacity`}
+        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${color} hover:brightness-105 group`}
       >
-        <div className="flex items-center space-x-2">
-          <span className="text-lg">{emoji}</span>
-          <span className="font-medium">{title}</span>
+        <div className="flex items-center gap-2.5">
+          <span className="text-xl group-hover:scale-110 transition-transform">{emoji}</span>
+          <span className="font-semibold tracking-tight">{title}</span>
         </div>
         <ChevronDown
-          className={`h-4 w-4 transition-transform duration-200 ${
+          className={`h-4 w-4 transition-all duration-200 ${
             isCollapsed ? "" : "rotate-180"
-          }`}
+          } opacity-70 group-hover:opacity-100`}
         />
       </button>
       {!isCollapsed && (
-        <div className="flex flex-wrap gap-1 pt-1.5 animate-in slide-in-from-top-1 duration-200">
+        <div className="flex flex-wrap gap-1.5 p-2 pt-1.5 animate-in slide-in-from-top-2 duration-200">
           {filters.map((filter) => (
             <button
               key={filter.label}
               onClick={() => onFilterToggle(filter.label)}
-              className={`flex items-center p-1 rounded-md text-sm hover:opacity-90 transition-colors grow basis-[calc(50%-0.25rem)] ${
-                selectedFilters.has(filter.label)
-                  ? color
-                  : "hover:bg-accent/10"
-              }`}
+              className={`flex items-center px-2 py-1.5 rounded-lg text-sm transition-all duration-200 grow basis-[calc(50%-0.75rem)] group/item
+                ${
+                  selectedFilters.has(filter.label)
+                    ? `${color} shadow-sm hover:shadow-md hover:-translate-y-[1px]`
+                    : "hover:bg-accent/5 hover:shadow-sm active:scale-[0.98]"
+                }
+              `}
             >
-              <span className="flex-shrink-0 mr-1">{filter.emoji}</span>
-              <span className="text-left min-w-0 flex-1">{filter.label}</span>
+              <span className={`flex-shrink-0 mr-1.5 text-base transition-transform group-hover/item:scale-110 ${
+                selectedFilters.has(filter.label) ? "" : "opacity-70"
+              }`}>
+                {filter.emoji}
+              </span>
+              <span className={`text-left min-w-0 flex-1 ${
+                selectedFilters.has(filter.label) ? "font-medium" : ""
+              }`}>
+                {filter.label}
+              </span>
               {filter.count !== undefined && (
-                <span className="ml-1 flex-shrink-0 text-muted-foreground">
+                <span className={`ml-1.5 flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full ${
+                  selectedFilters.has(filter.label)
+                    ? "bg-black/10"
+                    : "bg-accent/10"
+                }`}>
                   {filter.count}
                 </span>
               )}
