@@ -1,53 +1,41 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Bike,
-  Book,
-  Briefcase,
   Building2,
-  Calendar,
   Camera,
   Car,
-  Clock,
+  ChevronDown,
   Cloud,
-  Coffee,
   DollarSign,
   Globe,
-  GraduationCap,
   Heart,
   Home,
   Landmark,
-  Laptop,
   Leaf,
-  LucideIcon,
   Map,
-  Moon,
   Mountain,
   Music,
-  Plane,
-  Rocket,
   Shield,
   Star,
   Sun,
-  Train,
   Users,
-  UtensilsCrossed,
   Waves,
-  Wifi,
   Wind,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 interface FilterItem {
   label: string;
-  icon: LucideIcon;
+  emoji: string;
   count?: number;
 }
 
 interface Category {
   id: string;
   title: string;
-  icon: LucideIcon;
+  emoji: string;
   color: string;
   filters: FilterItem[];
 }
@@ -55,512 +43,486 @@ interface Category {
 interface FilterSectionProps {
   title: string;
   filters: FilterItem[];
-  icon: LucideIcon;
+  emoji: string;
   color: string;
   selectedFilters: Set<string>;
   onFilterToggle: (filter: string) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
+}
+
+interface VerticalFiltersProps {
+  onFiltersChange?: (filters: Set<string>) => void;
 }
 
 const categories: Category[] = [
   {
     id: "basics",
     title: "Basic Essentials",
-    icon: Shield,
-    color: "bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700",
+    emoji: "🛡️",
+    color: "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800",
     filters: [
-      { label: "Drinkable Tap Water", icon: Shield },
-      { label: "24/7 Convenience Stores", icon: Clock },
-      { label: "Easy SIM Cards", icon: Wifi },
-      { label: "ATMs Everywhere", icon: DollarSign },
-      { label: "English at Hospitals", icon: Shield },
-      { label: "Reliable Power", icon: Wifi },
-      { label: "Clean Public Toilets", icon: Shield },
+      { label: "Drinkable Tap Water", emoji: "🚰" },
+      { label: "24/7 Convenience Stores", emoji: "🏪" },
+      { label: "Easy SIM Cards", emoji: "📱" },
+      { label: "ATMs Everywhere", emoji: "💳" },
+      { label: "English at Hospitals", emoji: "🏥" },
+      { label: "Reliable Power", emoji: "⚡" },
+      { label: "Clean Public Toilets", emoji: "🚽" },
     ],
   },
   {
     id: "daily",
     title: "Daily Living",
-    icon: Coffee,
-    color: "bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700",
+    emoji: "☕",
+    color: "bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800",
     filters: [
-      { label: "Good Supermarkets", icon: Star },
-      { label: "Hardware Stores", icon: Star },
-      { label: "Easy Laundry", icon: Star },
-      { label: "Food Delivery 24/7", icon: UtensilsCrossed },
-      { label: "Late Night Shopping", icon: Star },
-      { label: "Easy Package Delivery", icon: Star },
+      { label: "Good Supermarkets", emoji: "🛒" },
+      { label: "Hardware Stores", emoji: "🔨" },
+      { label: "Easy Laundry", emoji: "🧺" },
+      { label: "Food Delivery 24/7", emoji: "🍜" },
+      { label: "Late Night Shopping", emoji: "🌙" },
+      { label: "Easy Package Delivery", emoji: "📦" },
     ],
   },
   {
     id: "annoyances",
     title: "Common Annoyances",
-    icon: Shield,
-    color: "bg-gradient-to-r from-red-100 to-rose-100 text-red-700",
+    emoji: "⚠️",
+    color: "bg-gradient-to-r from-rose-100 to-rose-200 text-rose-800",
     filters: [
-      { label: "No Street Harassment", icon: Shield },
-      { label: "Low Traffic Noise", icon: Shield },
-      { label: "Few Mosquitoes", icon: Shield },
-      { label: "No Aggressive Vendors", icon: Shield },
-      { label: "Clean Air", icon: Wind },
-      { label: "Not Too Touristy", icon: Users },
+      { label: "No Street Harassment", emoji: "🚫" },
+      { label: "Low Traffic Noise", emoji: "🚗" },
+      { label: "Clean Air", emoji: "🌬️" },
+      { label: "No Scams", emoji: "🎭" },
     ],
   },
   {
-    id: "specific",
+    id: "specific-needs",
     title: "Specific Needs",
-    icon: Heart,
-    color: "bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700",
+    emoji: "♿",
+    color: "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800",
     filters: [
-      { label: "Wheelchair Friendly", icon: Heart },
-      { label: "Vegan Options", icon: UtensilsCrossed },
-      { label: "Halal Food", icon: UtensilsCrossed },
-      { label: "Kosher Available", icon: UtensilsCrossed },
-      { label: "Gluten-Free Friendly", icon: UtensilsCrossed },
-      { label: "Child-Friendly Sidewalks", icon: Heart },
+      { label: "Wheelchair Accessible", emoji: "♿" },
+      { label: "Disability Support", emoji: "🤲" },
+      { label: "Dietary Options", emoji: "🥗" },
+      { label: "Religious Facilities", emoji: "🕌" },
+      { label: "Cultural Support", emoji: "🤝" },
+      { label: "Language Support", emoji: "💬" },
     ],
   },
   {
     id: "comfort",
     title: "Comfort & Convenience",
-    icon: Star,
-    color: "bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700",
+    emoji: "🛋️",
+    color: "bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800",
     filters: [
-      { label: "Not Too Humid", icon: Cloud },
-      { label: "Good Air Conditioning", icon: Star },
-      { label: "Good Heating", icon: Star },
-      { label: "Quiet at Night", icon: Moon },
-      { label: "No Power Cuts", icon: Star },
-      { label: "Fast Deliveries", icon: Star },
+      { label: "Modern Amenities", emoji: "🏢" },
+      { label: "Good Appliances", emoji: "🔌" },
+      { label: "Easy Parking", emoji: "🅿️" },
+      { label: "Home Delivery", emoji: "📦" },
+      { label: "Cleaning Services", emoji: "🧹" },
+      { label: "Maintenance Services", emoji: "🔧" },
+      { label: "Storage Options", emoji: "📦" },
     ],
   },
   {
     id: "community",
     title: "Community & Social",
-    icon: Users,
-    color: "bg-gradient-to-r from-blue-100 to-sky-100 text-blue-700",
+    emoji: "👥",
+    color: "bg-gradient-to-r from-pink-100 to-pink-200 text-pink-800",
     filters: [
-      { label: "Active Facebook Groups", icon: Users },
-      { label: "Meetup Events", icon: Users },
-      { label: "Sports Groups", icon: Users },
-      { label: "Language Exchange", icon: Globe },
-      { label: "Parent Groups", icon: Users },
-      { label: "Book Clubs", icon: Book },
+      { label: "Friendly Locals", emoji: "🤝" },
+      { label: "Expat Community", emoji: "🌏" },
+      { label: "Family Friendly", emoji: "👨‍👩‍👧‍👦" },
+      { label: "LGBTQ+ Friendly", emoji: "🌈" },
+      { label: "Pet Friendly", emoji: "🐾" },
+      { label: "Social Events", emoji: "🎉" },
+      { label: "Dating Scene", emoji: "❤️" },
     ],
   },
   {
     id: "pets",
     title: "Pet Friendly",
-    icon: Heart,
+    emoji: "🐶",
     color: "bg-gradient-to-r from-orange-100 to-amber-100 text-orange-700",
     filters: [
-      { label: "Dog Parks", icon: Heart },
-      { label: "Pet Cafes", icon: Coffee },
-      { label: "Vet Clinics", icon: Shield },
-      { label: "Pet Supplies", icon: Star },
-      { label: "Pet Sitters", icon: Users },
-      { label: "Dog-Friendly Transit", icon: Train },
+      { label: "Dog Parks", emoji: "🦴" },
+      { label: "Pet Cafes", emoji: "☕" },
+      { label: "Vet Clinics", emoji: "🏥" },
+      { label: "Pet Supplies", emoji: "🛍️" },
+      { label: "Pet Sitters", emoji: "👩‍⚕️" },
+      { label: "Dog-Friendly Transit", emoji: "🚇" },
     ],
   },
   {
     id: "work",
     title: "Remote Work",
-    icon: Laptop,
+    emoji: "💻",
     color: "bg-gradient-to-r from-indigo-100 to-blue-100 text-indigo-700",
     filters: [
-      { label: "Cafes with Plugs", icon: Coffee },
-      { label: "Libraries with Wifi", icon: Book },
-      { label: "24/7 Workspaces", icon: Clock },
-      { label: "Backup Internet", icon: Wifi },
-      { label: "Phone Booths", icon: Star },
-      { label: "Meeting Rooms", icon: Users },
+      { label: "Cafes with Plugs", emoji: "☕" },
+      { label: "Libraries with Wifi", emoji: "📚" },
+      { label: "24/7 Workspaces", emoji: "⏰" },
+      { label: "Backup Internet", emoji: "📶" },
+      { label: "Phone Booths", emoji: "⭐" },
+      { label: "Meeting Rooms", emoji: "👥" },
     ],
   },
   {
     id: "medical",
     title: "Healthcare Access",
-    icon: Shield,
+    emoji: "🛡️",
     color: "bg-gradient-to-r from-cyan-100 to-sky-100 text-cyan-700",
     filters: [
-      { label: "English Doctors", icon: Shield },
-      { label: "24/7 Pharmacies", icon: Clock },
-      { label: "Mental Health Care", icon: Heart },
-      { label: "Dental Care", icon: Shield },
-      { label: "Quality Hospitals", icon: Shield },
-      { label: "Health Insurance", icon: Shield },
+      { label: "English Doctors", emoji: "🩺" },
+      { label: "24/7 Pharmacies", emoji: "⏰" },
+      { label: "Mental Health Care", emoji: "❤️" },
+      { label: "Dental Care", emoji: "🦷" },
+      { label: "Quality Hospitals", emoji: "🏥" },
+      { label: "Health Insurance", emoji: "🛡️" },
     ],
   },
   {
     id: "season",
     title: "Best Season to Visit",
-    icon: Sun,
+    emoji: "☀️",
     color:
       "bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 hover:from-amber-200 hover:to-orange-200",
     filters: [
-      { label: "Amazing in Spring", icon: Sun },
-      { label: "Summer Paradise", icon: Sun },
-      { label: "Fall Colors", icon: Moon },
-      { label: "Winter Magic", icon: Cloud },
-      { label: "Good Year-Round", icon: Clock },
-      { label: "Peak Season Now", icon: Star },
-      { label: "Off-Peak Deals", icon: DollarSign },
+      { label: "Amazing in Spring", emoji: "🌸" },
+      { label: "Summer Paradise", emoji: "🌞" },
+      { label: "Fall Colors", emoji: "🍁" },
+      { label: "Winter Magic", emoji: "❄️" },
+      { label: "Good Year-Round", emoji: "🕒" },
+      { label: "Peak Season Now", emoji: "⭐" },
+      { label: "Off-Peak Deals", emoji: "💵" },
     ],
   },
   {
     id: "transport",
     title: "Getting Around",
-    icon: Train,
+    emoji: "🚆",
     color:
       "bg-gradient-to-r from-sky-100 to-blue-100 text-sky-700 hover:from-sky-200 hover:to-blue-200",
     filters: [
-      { label: "Metro System", icon: Train },
-      { label: "Bike Lanes", icon: Bike },
-      { label: "Walkable Streets", icon: Map },
-      { label: "Night Transit", icon: Moon },
-      { label: "Easy Airport Access", icon: Plane },
-      { label: "Reliable Taxis", icon: Car },
-      { label: "Good for Walking", icon: Map },
+      { label: "Metro System", emoji: "🚇" },
+      { label: "Bike Lanes", emoji: "🚲" },
+      { label: "Walkable Streets", emoji: "🚶‍♂️" },
+      { label: "Night Transit", emoji: "🌙" },
+      { label: "Easy Airport Access", emoji: "✈️" },
+      { label: "Reliable Taxis", emoji: "🚕" },
+      { label: "Good for Walking", emoji: "🗺️" },
     ],
   },
   {
     id: "wellness",
     title: "Health & Wellness",
-    icon: Heart,
+    emoji: "❤️",
     color:
       "bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 hover:from-rose-200 hover:to-pink-200",
     filters: [
-      { label: "Yoga Studios", icon: Heart },
-      { label: "Fitness Culture", icon: Heart },
-      { label: "Thermal Spas", icon: Waves },
-      { label: "Clean Air Index", icon: Wind },
-      { label: "Outdoor Gyms", icon: Mountain },
-      { label: "Wellness Centers", icon: Heart },
-      { label: "Mental Health", icon: Heart },
+      { label: "Yoga Studios", emoji: "🧘‍♀️" },
+      { label: "Fitness Culture", emoji: "🏋️‍♂️" },
+      { label: "Thermal Spas", emoji: "♨️" },
+      { label: "Clean Air Index", emoji: "🌬️" },
+      { label: "Outdoor Gyms", emoji: "🏔️" },
+      { label: "Wellness Centers", emoji: "🏥" },
+      { label: "Mental Health", emoji: "🧠" },
     ],
   },
   {
     id: "photography",
     title: "Photography & Views",
-    icon: Camera,
+    emoji: "📷",
     color:
       "bg-gradient-to-r from-violet-100 to-purple-100 text-violet-700 hover:from-violet-200 hover:to-purple-200",
     filters: [
-      { label: "Sunset Spots", icon: Sun },
-      { label: "City Views", icon: Building2 },
-      { label: "Nature Shots", icon: Mountain },
-      { label: "Street Photography", icon: Camera },
-      { label: "Historic Sites", icon: Landmark },
-      { label: "Hidden Spots", icon: Map },
+      { label: "Sunset Spots", emoji: "🌅" },
+      { label: "City Views", emoji: "🏙️" },
+      { label: "Nature Shots", emoji: "🏞️" },
+      { label: "Street Photography", emoji: "📸" },
+      { label: "Historic Sites", emoji: "🏛️" },
+      { label: "Hidden Spots", emoji: "🗺️" },
     ],
   },
   {
     id: "unique",
     title: "Unique Experiences",
-    icon: Star,
+    emoji: "🌟",
     color:
       "bg-gradient-to-r from-teal-100 to-emerald-100 text-teal-700 hover:from-teal-200 hover:to-emerald-200",
     filters: [
-      { label: "Local Festivals", icon: Music },
-      { label: "Night Markets", icon: Moon },
-      { label: "Traditional Crafts", icon: Heart },
-      { label: "Local Secrets", icon: Star },
-      { label: "Cultural Shows", icon: Music },
-      { label: "Food Tours", icon: UtensilsCrossed },
+      { label: "Local Festivals", emoji: "🎶" },
+      { label: "Night Markets", emoji: "🌙" },
+      { label: "Traditional Crafts", emoji: "🧵" },
+      { label: "Local Secrets", emoji: "✨" },
+      { label: "Cultural Shows", emoji: "🎭" },
+      { label: "Food Tours", emoji: "🍴" },
     ],
   },
   {
     id: "architecture",
     title: "Architecture & Design",
-    icon: Building2,
+    emoji: "🏢",
     color:
       "bg-gradient-to-r from-stone-100 to-zinc-100 text-stone-700 hover:from-stone-200 hover:to-zinc-200",
     filters: [
-      { label: "Modern Design", icon: Building2 },
-      { label: "Historic Buildings", icon: Building2 },
-      { label: "Famous Landmarks", icon: Building2 },
-      { label: "Urban Planning", icon: Map },
-      { label: "Green Spaces", icon: Leaf },
-      { label: "Public Art", icon: Camera },
+      { label: "Modern Design", emoji: "🏙️" },
+      { label: "Historic Buildings", emoji: "🏰" },
+      { label: "Famous Landmarks", emoji: "🗽" },
+      { label: "Urban Planning", emoji: "🗺️" },
+      { label: "Green Spaces", emoji: "🌳" },
+      { label: "Public Art", emoji: "🎨" },
     ],
   },
   {
     id: "language",
     title: "Language & Communication",
-    icon: Globe,
+    emoji: "🌍",
     color:
       "bg-gradient-to-r from-indigo-100 to-blue-100 text-indigo-700 hover:from-indigo-200 hover:to-blue-200",
     filters: [
-      { label: "English Common", icon: Globe },
-      { label: "Easy to Learn", icon: Book },
-      { label: "Language Cafes", icon: Coffee },
-      { label: "Cultural Exchange", icon: Users },
-      { label: "Language Schools", icon: GraduationCap },
+      { label: "English Common", emoji: "🇬🇧" },
+      { label: "Easy to Learn", emoji: "📖" },
+      { label: "Language Cafes", emoji: "☕" },
+      { label: "Cultural Exchange", emoji: "🤝" },
+      { label: "Language Schools", emoji: "🎓" },
     ],
   },
   {
     id: "safety",
     title: "Safety & Security",
-    icon: Shield,
+    emoji: "🛡️",
     color:
       "bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 hover:from-green-200 hover:to-emerald-200",
     filters: [
-      { label: "Safe at Night", icon: Moon },
-      { label: "Women Friendly", icon: Heart },
-      { label: "LGBTQ+ Safe", icon: Heart },
-      { label: "Health Safety", icon: Shield },
-      { label: "Low Crime Rate", icon: Shield },
-      { label: "Political Stability", icon: Shield },
+      { label: "Safe at Night", emoji: "🌙" },
+      { label: "Women Friendly", emoji: "👩" },
+      { label: "LGBTQ+ Safe", emoji: "🏳️‍🌈" },
+      { label: "Health Safety", emoji: "🏥" },
+      { label: "Low Crime Rate", emoji: "🚔" },
+      { label: "Political Stability", emoji: "⚖️" },
     ],
   },
   {
     id: "academic",
     title: "Academic & Research",
-    icon: GraduationCap,
+    emoji: "🎓",
     color:
       "bg-gradient-to-r from-red-100 to-rose-100 text-red-700 hover:from-red-200 hover:to-rose-200",
     filters: [
-      { label: "Universities", icon: GraduationCap },
-      { label: "Research Centers", icon: Laptop },
-      { label: "Public Libraries", icon: Book },
-      { label: "Study Spaces", icon: Book },
-      { label: "Academic Events", icon: Calendar },
-      { label: "Student Life", icon: Users },
+      { label: "Universities", emoji: "🏫" },
+      { label: "Research Centers", emoji: "🔬" },
+      { label: "Public Libraries", emoji: "📚" },
+      { label: "Study Spaces", emoji: "📖" },
+      { label: "Academic Events", emoji: "📅" },
+      { label: "Student Life", emoji: "👩‍🎓" },
     ],
   },
   {
     id: "business",
     title: "Business Environment",
-    icon: Briefcase,
+    emoji: "💼",
     color:
       "bg-gradient-to-r from-blue-100 to-sky-100 text-blue-700 hover:from-blue-200 hover:to-sky-200",
     filters: [
-      { label: "Startup Scene", icon: Rocket },
-      { label: "Business Centers", icon: Building2 },
-      { label: "Networking Events", icon: Users },
-      { label: "Tax Benefits", icon: DollarSign },
-      { label: "Investment Hub", icon: DollarSign },
+      { label: "Startup Scene", emoji: "🚀" },
+      { label: "Business Centers", emoji: "🏢" },
+      { label: "Networking Events", emoji: "🤝" },
+      { label: "Tax Benefits", emoji: "💵" },
+      { label: "Investment Hub", emoji: "📈" },
     ],
   },
   {
     id: "medical-tourism",
     title: "Medical Tourism",
-    icon: Shield,
+    emoji: "🩺",
     color: "bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700",
     filters: [
-      { label: "Hair Transplant Centers", icon: Star },
-      { label: "Dental Tourism", icon: Shield },
-      { label: "Cosmetic Surgery", icon: Star },
-      { label: "Recovery Hotels", icon: Building2 },
-      { label: "Medical Visas Easy", icon: Shield },
-      { label: "English-Speaking Doctors", icon: Globe },
-      { label: "Medical Concierge", icon: Users },
-      { label: "Wellness Centers", icon: Heart },
+      { label: "Hair Transplant Centers", emoji: "⭐" },
+      { label: "Dental Tourism", emoji: "🦷" },
+      { label: "Cosmetic Surgery", emoji: "✨" },
+      { label: "Recovery Hotels", emoji: "🏨" },
+      { label: "Medical Visas Easy", emoji: "📄" },
+      { label: "English-Speaking Doctors", emoji: "🌍" },
+      { label: "Medical Concierge", emoji: "🤝" },
+      { label: "Wellness Centers", emoji: "❤️" },
     ],
   },
   {
     id: "business",
     title: "Business Travel",
-    icon: Briefcase,
+    emoji: "💼",
     color: "bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700",
     filters: [
-      { label: "Airport Lounges", icon: Plane },
-      { label: "Business Hotels", icon: Building2 },
-      { label: "Conference Centers", icon: Users },
-      { label: "Fast Track Visa", icon: Clock },
-      { label: "Business District", icon: Building2 },
-      { label: "Express Transport", icon: Train },
-      { label: "5G Coverage", icon: Wifi },
+      { label: "Airport Lounges", emoji: "🛫" },
+      { label: "Business Hotels", emoji: "🏢" },
+      { label: "Conference Centers", emoji: "👥" },
+      { label: "Fast Track Visa", emoji: "⏩" },
+      { label: "Business District", emoji: "🏙️" },
+      { label: "Express Transport", emoji: "🚆" },
+      { label: "5G Coverage", emoji: "📶" },
     ],
   },
   {
     id: "religious",
     title: "Religious & Cultural",
-    icon: Star,
+    emoji: "🕌",
     color: "bg-gradient-to-r from-purple-100 to-violet-100 text-purple-700",
     filters: [
-      { label: "Halal Everywhere", icon: Star },
-      { label: "Kosher Available", icon: Star },
-      { label: "Prayer Rooms", icon: Heart },
-      { label: "Religious Sites", icon: Building2 },
-      { label: "Modest Dress Area", icon: Users },
-      { label: "Cultural Respect", icon: Heart },
+      { label: "Halal Everywhere", emoji: "🕌" },
+      { label: "Kosher Available", emoji: "✡️" },
+      { label: "Prayer Rooms", emoji: "🙏" },
+      { label: "Religious Sites", emoji: "⛪" },
+      { label: "Modest Dress Area", emoji: "🧕" },
+      { label: "Cultural Respect", emoji: "🤝" },
     ],
   },
   {
     id: "ethnic",
     title: "Ethnic Communities",
-    icon: Globe,
+    emoji: "🌍",
     color: "bg-gradient-to-r from-orange-100 to-amber-100 text-orange-700",
     filters: [
-      { label: "Chinatown", icon: Building2 },
-      { label: "Little India", icon: Star },
-      { label: "Korean District", icon: Building2 },
-      { label: "Arab Quarter", icon: Moon },
-      { label: "Latino Community", icon: Music },
-      { label: "African Diaspora", icon: Star },
+      { label: "Chinatown", emoji: "🏮" },
+      { label: "Little India", emoji: "🌸" },
+      { label: "Korean District", emoji: "🍚" },
+      { label: "Arab Quarter", emoji: "🌙" },
+      { label: "Latino Community", emoji: "🎶" },
+      { label: "African Diaspora", emoji: "🌍" },
     ],
   },
   {
     id: "language",
     title: "Language Access",
-    icon: Globe,
+    emoji: "🗣️",
     color: "bg-gradient-to-r from-sky-100 to-blue-100 text-sky-700",
     filters: [
-      { label: "English Common", icon: Globe },
-      { label: "Chinese Spoken", icon: Globe },
-      { label: "Spanish Common", icon: Globe },
-      { label: "Arabic Signs", icon: Globe },
-      { label: "Hindi/Urdu Used", icon: Globe },
-      { label: "Language Schools", icon: Book },
+      { label: "English Common", emoji: "🇬🇧" },
+      { label: "Chinese Spoken", emoji: "🇨🇳" },
+      { label: "Spanish Common", emoji: "🇪🇸" },
+      { label: "Arabic Signs", emoji: "🇸🇦" },
+      { label: "Hindi/Urdu Used", emoji: "🇮🇳" },
+      { label: "Language Schools", emoji: "📖" },
     ],
   },
   {
     id: "senior",
     title: "Senior Travel",
-    icon: Heart,
+    emoji: "❤️",
     color: "bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700",
     filters: [
-      { label: "Easy Terrain", icon: Mountain },
-      { label: "Medical Facilities", icon: Shield },
-      { label: "Senior Discounts", icon: DollarSign },
-      { label: "Accessible Transit", icon: Train },
-      { label: "Quiet Areas", icon: Moon },
-      { label: "Senior Communities", icon: Users },
+      { label: "Easy Terrain", emoji: "⛰️" },
+      { label: "Medical Facilities", emoji: "🩺" },
+      { label: "Senior Discounts", emoji: "💲" },
+      { label: "Accessible Transit", emoji: "🚉" },
+      { label: "Quiet Areas", emoji: "🌙" },
+      { label: "Senior Communities", emoji: "👥" },
     ],
   },
   {
     id: "student",
     title: "Student Life",
-    icon: GraduationCap,
+    emoji: "🎓",
     color: "bg-gradient-to-r from-cyan-100 to-teal-100 text-cyan-700",
     filters: [
-      { label: "Student Housing", icon: Building2 },
-      { label: "Student Discounts", icon: DollarSign },
-      { label: "Study Spots", icon: Book },
-      { label: "Campus Life", icon: Users },
-      { label: "Part-time Jobs", icon: Briefcase },
-      { label: "Student Bars", icon: Music },
+      { label: "Student Housing", emoji: "🏢" },
+      { label: "Student Discounts", emoji: "💸" },
+      { label: "Study Spots", emoji: "📚" },
+      { label: "Campus Life", emoji: "👥" },
+      { label: "Part-time Jobs", emoji: "💼" },
+      { label: "Student Bars", emoji: "🍻" },
     ],
   },
   {
     id: "lgbtq",
     title: "LGBTQ+ Travel",
-    icon: Heart,
+    emoji: "❤️‍🔥",
     color: "bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700",
     filters: [
-      { label: "LGBTQ+ Venues", icon: Star },
-      { label: "Pride Events", icon: Star },
-      { label: "Safe Spaces", icon: Shield },
-      { label: "Queer Culture", icon: Heart },
-      { label: "LGBTQ+ Healthcare", icon: Shield },
-      { label: "Community Centers", icon: Users },
+      { label: "LGBTQ+ Venues", emoji: "⭐" },
+      { label: "Pride Events", emoji: "🏳️‍🌈" },
+      { label: "Safe Spaces", emoji: "🛡️" },
+      { label: "Queer Culture", emoji: "❤️" },
+      { label: "LGBTQ+ Healthcare", emoji: "🩺" },
+      { label: "Community Centers", emoji: "🏘️" },
     ],
   },
   {
     id: "digital-nomad",
     title: "Digital Nomads",
-    icon: Laptop,
+    emoji: "💻",
     color: "bg-gradient-to-r from-violet-100 to-purple-100 text-violet-700",
     filters: [
-      { label: "Nomad Communities", icon: Users },
-      { label: "Fast Internet", icon: Wifi },
-      { label: "Coliving Spaces", icon: Building2 },
-      { label: "Cafes to Work", icon: Coffee },
-      { label: "Long-term Visas", icon: Shield },
-      { label: "Tech Meetups", icon: Users },
+      { label: "Nomad Communities", emoji: "👥" },
+      { label: "Fast Internet", emoji: "📶" },
+      { label: "Coliving Spaces", emoji: "🏠" },
+      { label: "Cafes to Work", emoji: "☕" },
+      { label: "Long-term Visas", emoji: "🛂" },
+      { label: "Tech Meetups", emoji: "👥" },
     ],
   },
   {
     id: "family",
     title: "Family Travel",
-    icon: Users,
+    emoji: "👨‍👩‍👧‍👦",
     color: "bg-gradient-to-r from-green-100 to-emerald-100 text-green-700",
     filters: [
-      { label: "Kid-Friendly", icon: Heart },
-      { label: "Family Activities", icon: Star },
-      { label: "Safe Parks", icon: Mountain },
-      { label: "Family Housing", icon: Building2 },
-      { label: "Schools Nearby", icon: GraduationCap },
-      { label: "Baby Facilities", icon: Heart },
+      { label: "Kid-Friendly", emoji: "❤️" },
+      { label: "Family Activities", emoji: "⭐" },
+      { label: "Safe Parks", emoji: "⛰️" },
+      { label: "Family Housing", emoji: "🏢" },
+      { label: "Schools Nearby", emoji: "🎓" },
+      { label: "Baby Facilities", emoji: "❤️" },
     ],
   },
 ];
 
-const FilterSection: React.FC<FilterSectionProps> = ({
-  title,
-  filters,
-  icon: Icon,
-  color,
-  selectedFilters,
-  onFilterToggle,
-}) => {
-  return (
-    <div className="py-4 border-b last:border-0">
-      <div className="flex items-center gap-2.5 mb-3">
-        <div className={`p-2 rounded-xl shadow-sm ${color}`}>
-          <Icon className="h-5 w-5" />
-        </div>
-        <h3 className="text-lg font-bold">{title}</h3>
-      </div>
-
-      <div className="flex flex-wrap gap-1.5">
-        {filters.map(({ label, icon: FilterIcon }) => (
-          <Button
-            key={label}
-            variant={selectedFilters.has(label) ? "default" : "outline"}
-            className={`
-              h-auto py-2 px-3.5 gap-2 rounded-xl
-              font-medium text-sm
-              transition-all duration-300
-              hover:scale-105 hover:shadow-md
-              ${
-                selectedFilters.has(label)
-                  ? color + " shadow-sm"
-                  : "hover:bg-slate-50"
-              }
-            `}
-            onClick={() => onFilterToggle(label)}
-          >
-            <FilterIcon className="h-4 w-4" />
-            <span className="font-semibold">{label}</span>
-          </Button>
-        ))}
-      </div>
-    </div>
-  );
+const lifestyleFilters = {
+  id: "lifestyle",
+  title: "Lifestyle & Culture",
+  emoji: "🎭",
+  color: "bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800",
+  filters: [
+    { label: "Great Nightlife", emoji: "🌃" },
+    { label: "Art Scene", emoji: "🎨" },
+    { label: "Live Music", emoji: "🎵" },
+    { label: "Food Scene", emoji: "🍳" },
+    { label: "Cafe Culture", emoji: "☕" },
+    { label: "Shopping", emoji: "🛍️" },
+    { label: "Sports & Recreation", emoji: "⚽" },
+    { label: "Cultural Events", emoji: "🎪" },
+  ],
 };
 
 const navigationFilters = {
   id: "navigation",
   title: "Location & Scale",
-  icon: Globe,
-  color: "bg-gradient-to-r from-blue-100 to-sky-100 text-blue-700",
+  emoji: "🗺️",
+  color: "bg-gradient-to-r from-green-100 to-green-200 text-green-800",
   filters: [
-    { label: "Major Metropolis", icon: Building2 },
-    { label: "Mid-Size City", icon: Building2 },
-    { label: "Small City", icon: Building2 },
-    { label: "Town or Village", icon: Building2 },
-    { label: "Rural Area", icon: Mountain },
-    { label: "Island", icon: Waves },
-    { label: "Coastal", icon: Waves },
-    { label: "Mountain", icon: Mountain },
-    { label: "Desert", icon: Sun },
+    { label: "Easy Public Transit", emoji: "🚇" },
+    { label: "Walkable Streets", emoji: "🚶" },
+    { label: "Good Bike Lanes", emoji: "🚲" },
+    { label: "Near Nature", emoji: "🌳" },
+    { label: "Close to Beach", emoji: "🏖️" },
+    { label: "Airport Access", emoji: "✈️" },
   ],
 };
 
 const costFilters = {
   id: "cost",
-  title: "Cost & Budget",
-  icon: DollarSign,
-  color: "bg-gradient-to-r from-green-100 to-emerald-100 text-green-700",
+  title: "Cost of Living",
+  emoji: "💰",
+  color: "bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800",
   filters: [
-    { label: "Ultra Budget", icon: DollarSign },
-    { label: "Budget Friendly", icon: DollarSign },
-    { label: "Mid-Range", icon: DollarSign },
-    { label: "High-End", icon: DollarSign },
-    { label: "Ultra Luxury", icon: DollarSign },
-    { label: "Good Value", icon: DollarSign },
-    { label: "Cost Effective", icon: DollarSign },
-    { label: "Tax Haven", icon: DollarSign },
+    { label: "Affordable Housing", emoji: "🏠" },
+    { label: "Cheap Food", emoji: "🍽️" },
+    { label: "Low Cost Transport", emoji: "🚌" },
+    { label: "Affordable Healthcare", emoji: "🏥" },
+    { label: "Budget Entertainment", emoji: "🎭" },
+    { label: "Low Tax Rate", emoji: "📊" },
   ],
 };
 
@@ -663,16 +625,227 @@ const newCategories = [
   },
 ];
 
-interface VerticalFiltersProps {
-  onFiltersChange?: (filters: Set<string>) => void;
+const educationFilters = {
+  id: "education",
+  title: "Education & Learning",
+  emoji: "🎓",
+  color: "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800",
+  filters: [
+    { label: "Universities", emoji: "🏛️" },
+    { label: "Language Schools", emoji: "📚" },
+    { label: "International Schools", emoji: "🌍" },
+    { label: "Libraries", emoji: "📖" },
+    { label: "Study Groups", emoji: "👥" },
+    { label: "Cultural Classes", emoji: "🎭" },
+    { label: "Online Learning", emoji: "💻" },
+  ],
+};
+
+const nomadFilters = {
+  id: "nomad",
+  title: "Digital Nomad",
+  emoji: "🌎",
+  color: "bg-gradient-to-r from-cyan-100 to-cyan-200 text-cyan-800",
+  filters: [
+    { label: "Nomad Community", emoji: "👥" },
+    { label: "Visa Friendly", emoji: "📄" },
+    { label: "Good Cafes", emoji: "☕" },
+    { label: "Coworking Spaces", emoji: "💼" },
+    { label: "Short-term Housing", emoji: "🏠" },
+    { label: "Payment Apps", emoji: "📱" },
+    { label: "Travel Hub", emoji: "✈️" },
+  ],
+};
+
+const familyFilters = {
+  id: "family",
+  title: "Family Travel",
+  emoji: "👨‍👩‍👧‍👦",
+  color: "bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800",
+  filters: [
+    { label: "Kid-Friendly Activities", emoji: "🎪" },
+    { label: "Safe for Children", emoji: "🛡️" },
+    { label: "Good Schools", emoji: "🏫" },
+    { label: "Parks & Playgrounds", emoji: "🎡" },
+    { label: "Family Healthcare", emoji: "👨‍⚕️" },
+    { label: "Baby Supplies", emoji: "🍼" },
+    { label: "Child Care", emoji: "👶" },
+  ],
+};
+
+const techFilters = {
+  id: "tech",
+  title: "Tech & Work",
+  emoji: "💻",
+  color: "bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-800",
+  filters: [
+    { label: "Fast Internet", emoji: "📶" },
+    { label: "Good Coworking", emoji: "🏢" },
+    { label: "Tech Hub", emoji: "🚀" },
+    { label: "Startup Scene", emoji: "💡" },
+    { label: "Remote Work Friendly", emoji: "🏠" },
+    { label: "Digital Nomad Hub", emoji: "🌍" },
+  ],
+};
+
+const weatherFilters = {
+  id: "weather",
+  title: "Weather & Climate",
+  emoji: "🌤️",
+  color: "bg-gradient-to-r from-sky-100 to-sky-200 text-sky-800",
+  filters: [
+    { label: "Warm Weather", emoji: "☀️" },
+    { label: "Cool Weather", emoji: "❄️" },
+    { label: "Mild Weather", emoji: "🌡️" },
+    { label: "Low Humidity", emoji: "💧" },
+    { label: "No Natural Disasters", emoji: "🌪️" },
+    { label: "Clear Skies", emoji: "☁️" },
+  ],
+};
+
+const healthcareFilters = {
+  id: "healthcare",
+  title: "Healthcare & Wellness",
+  emoji: "⚕️",
+  color: "bg-gradient-to-r from-red-100 to-red-200 text-red-800",
+  filters: [
+    { label: "Good Hospitals", emoji: "🏥" },
+    { label: "English Doctors", emoji: "👨‍⚕️" },
+    { label: "Mental Health Care", emoji: "🧠" },
+    { label: "Pharmacies", emoji: "💊" },
+    { label: "Dental Care", emoji: "🦷" },
+    { label: "Fitness Centers", emoji: "🏋️" },
+    { label: "Health Insurance", emoji: "📋" },
+  ],
+};
+
+const petFilters = {
+  id: "pets",
+  title: "Pet Friendly",
+  emoji: "🐾",
+  color: "bg-gradient-to-r from-lime-100 to-lime-200 text-lime-800",
+  filters: [
+    { label: "Pet Supplies", emoji: "🦮" },
+    { label: "Veterinarians", emoji: "👨‍⚕️" },
+    { label: "Dog Parks", emoji: "🌳" },
+    { label: "Pet Sitters", emoji: "👥" },
+    { label: "Pet-Friendly Housing", emoji: "🏠" },
+    { label: "Pet Grooming", emoji: "✂️" },
+    { label: "Pet-Friendly Cafes", emoji: "☕" },
+  ],
+};
+
+const remoteWorkFilters = {
+  id: "remote-work",
+  title: "Remote Work",
+  emoji: "💼",
+  color: "bg-gradient-to-r from-violet-100 to-violet-200 text-violet-800",
+  filters: [
+    { label: "Fast WiFi", emoji: "📶" },
+    { label: "Backup Internet", emoji: "🔄" },
+    { label: "Quiet Workspace", emoji: "🤫" },
+    { label: "Power Stability", emoji: "🔌" },
+    { label: "Time Zone Friendly", emoji: "🕒" },
+    { label: "Work Community", emoji: "👥" },
+    { label: "Meeting Spaces", emoji: "🏢" },
+  ],
+};
+
+const healthcareAccessFilters = {
+  id: "healthcare-access",
+  title: "Healthcare Access",
+  emoji: "🏥",
+  color: "bg-gradient-to-r from-teal-100 to-teal-200 text-teal-800",
+  filters: [
+    { label: "24/7 Emergency Care", emoji: "🚑" },
+    { label: "Insurance Accepted", emoji: "📋" },
+    { label: "Specialists Available", emoji: "👨‍⚕️" },
+    { label: "Telehealth Options", emoji: "📱" },
+    { label: "Pharmacy Access", emoji: "💊" },
+    { label: "Medical Tourism", emoji: "✈️" },
+    { label: "Mental Health Access", emoji: "🧠" },
+  ],
+};
+
+const seasonFilters = {
+  id: "seasons",
+  title: "Best Season to Visit",
+  emoji: "🗓️",
+  color: "bg-gradient-to-r from-fuchsia-100 to-fuchsia-200 text-fuchsia-800",
+  filters: [
+    { label: "Spring Perfect", emoji: "🌸" },
+    { label: "Summer Ideal", emoji: "☀️" },
+    { label: "Fall Beautiful", emoji: "🍂" },
+    { label: "Winter Wonderful", emoji: "❄️" },
+    { label: "Year-Round Good", emoji: "🌍" },
+    { label: "Festival Season", emoji: "🎪" },
+    { label: "Off-Peak Best", emoji: "📉" },
+  ],
+};
+
+function FilterSection({
+  title,
+  filters,
+  emoji,
+  color,
+  selectedFilters,
+  onFilterToggle,
+  isCollapsed,
+  onToggleCollapse,
+}: FilterSectionProps) {
+  return (
+    <div className="mb-2">
+      <button
+        onClick={onToggleCollapse}
+        className={`w-full flex items-center justify-between p-2 rounded-lg ${color} hover:opacity-90 transition-opacity`}
+      >
+        <div className="flex items-center space-x-2">
+          <span className="text-lg">{emoji}</span>
+          <span className="font-medium">{title}</span>
+        </div>
+        <ChevronDown
+          className={`h-4 w-4 transition-transform duration-200 ${
+            isCollapsed ? "" : "rotate-180"
+          }`}
+        />
+      </button>
+      {!isCollapsed && (
+        <div className="flex flex-wrap gap-1 pt-1.5 animate-in slide-in-from-top-1 duration-200">
+          {filters.map((filter) => (
+            <button
+              key={filter.label}
+              onClick={() => onFilterToggle(filter.label)}
+              className={`flex items-center p-1 rounded-md text-sm hover:opacity-90 transition-colors grow basis-[calc(50%-0.25rem)] ${
+                selectedFilters.has(filter.label)
+                  ? color
+                  : "hover:bg-accent/10"
+              }`}
+            >
+              <span className="flex-shrink-0 mr-1">{filter.emoji}</span>
+              <span className="text-left min-w-0 flex-1">{filter.label}</span>
+              {filter.count !== undefined && (
+                <span className="ml-1 flex-shrink-0 text-muted-foreground">
+                  {filter.count}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
   const [selectedFilters, setSelectedFilters] = useState<Set<string>>(
     new Set()
   );
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set()
+  );
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleFilterToggle = (filter: string): void => {
+  const handleFilterToggle = (filter: string) => {
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(filter)) {
       newFilters.delete(filter);
@@ -683,37 +856,113 @@ export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
     onFiltersChange?.(newFilters);
   };
 
-  const allCategories = [
+  const handleToggleCollapse = (sectionId: string) => {
+    const newCollapsedSections = new Set(collapsedSections);
+    if (newCollapsedSections.has(sectionId)) {
+      newCollapsedSections.delete(sectionId);
+    } else {
+      newCollapsedSections.add(sectionId);
+    }
+    setCollapsedSections(newCollapsedSections);
+  };
+
+  const toggleAllSections = (collapse: boolean) => {
+    const allCategories = [
+      ...categories,
+      navigationFilters,
+      weatherFilters,
+      costFilters,
+      lifestyleFilters,
+      techFilters,
+      familyFilters,
+      nomadFilters,
+      educationFilters,
+      healthcareFilters,
+      petFilters,
+      remoteWorkFilters,
+      healthcareAccessFilters,
+      seasonFilters,
+    ];
+    const newCollapsedSections = new Set<string>();
+    if (collapse) {
+      allCategories.forEach((category) =>
+        newCollapsedSections.add(category.id)
+      );
+    }
+    setCollapsedSections(newCollapsedSections);
+  };
+
+  const filteredCategories = [
     ...categories,
     navigationFilters,
+    weatherFilters,
     costFilters,
-    ...newCategories,
-  ];
+    lifestyleFilters,
+    techFilters,
+    familyFilters,
+    nomadFilters,
+    educationFilters,
+    healthcareFilters,
+    petFilters,
+    remoteWorkFilters,
+    healthcareAccessFilters,
+    seasonFilters,
+  ]
+    .map((category) => ({
+      ...category,
+      filters: category.filters.filter((filter) =>
+        filter.label.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    }))
+    .filter((category) => category.filters.length > 0);
 
   return (
-    <div className="w-80 border-r h-[calc(100vh-4rem)] flex flex-col bg-white">
-      <div className="p-4 border-b bg-white/50 backdrop-blur-sm sticky top-0 z-10">
-        <h2 className="text-xl font-bold">Filters</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          {selectedFilters.size} selected
-        </p>
-      </div>
-
-      <ScrollArea className="flex-1">
-        <div className="p-4">
-          {allCategories.map((category) => (
-            <FilterSection
-              key={category.id}
-              title={category.title}
-              icon={category.icon}
-              filters={category.filters}
-              color={category.color}
-              selectedFilters={selectedFilters}
-              onFilterToggle={handleFilterToggle}
+    <ScrollArea className="h-[calc(100vh-4rem)]">
+      <div className="p-4 space-y-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Search filters..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1"
             />
-          ))}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleAllSections(collapsedSections.size === 0)}
+            >
+              {collapsedSections.size === 0 ? "Collapse All" : "Expand All"}
+            </Button>
+          </div>
+          {selectedFilters.size > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {selectedFilters.size} filter
+              {selectedFilters.size !== 1 ? "s" : ""} selected
+            </p>
+          )}
         </div>
-      </ScrollArea>
-    </div>
+
+        {filteredCategories.map((category) => (
+          <FilterSection
+            key={category.id}
+            title={category.title}
+            filters={category.filters}
+            emoji={category.emoji}
+            color={category.color}
+            selectedFilters={selectedFilters}
+            onFilterToggle={handleFilterToggle}
+            isCollapsed={collapsedSections.has(category.id)}
+            onToggleCollapse={() => handleToggleCollapse(category.id)}
+          />
+        ))}
+
+        {filteredCategories.length === 0 && searchQuery && (
+          <div className="text-center py-8 text-muted-foreground">
+            No filters match your search
+          </div>
+        )}
+      </div>
+    </ScrollArea>
   );
 }
