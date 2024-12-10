@@ -1,11 +1,73 @@
 // src/features/map/types/index.ts
 import { MatchScore } from "@/features/preferences/types";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
+import { LatLngTuple } from "leaflet";
 
-export type MapPlace = CitiesResponse & Partial<MatchScore>;
+// Core map types
+export interface MapPlace extends CitiesResponse, Partial<MatchScore> {}
 
 export interface MapViewState {
   zoom: number;
-  center: [number, number];
-  geographicLevel: "country" | "region" | "city" | "neighborhood" | "sight";
+  center: LatLngTuple;
+  geographicLevel: CitiesTypeOptions;
+}
+
+export interface MapBounds {
+  center: LatLngTuple;
+  zoom: number;
+}
+
+// Component prop types
+export interface MapMarkerProps {
+  place: MapPlace;
+  onSelect?: (place: MapPlace) => void;
+  isSelected?: boolean;
+}
+
+export interface CityMapProps {
+  places: MapPlace[];
+  onPlaceSelect?: (place: MapPlace) => void;
+  className?: string;
+}
+
+export interface MapControlsProps {
+  onZoomChange: (zoom: number) => void;
+  defaultCenter?: LatLngTuple;
+  defaultZoom?: number;
+}
+
+export interface PlaceGeoJsonProps {
+  place: MapPlace;
+}
+
+// Style configuration types
+export interface MarkerStyle {
+  color: string;
+  size: number;
+  className?: string;
+}
+
+export interface GeoJsonStyle {
+  weight: number;
+  opacity: number;
+  color: string;
+  fillOpacity: number;
+}
+
+// Map state types
+export interface MapStateContext {
+  mapState: MapViewState;
+  setZoom: (zoom: number) => void;
+  setCenter: (center: LatLngTuple) => void;
+  resetView: () => void;
+}
+
+export interface MapUpdaterProps {
+  selectedPlace: MapPlace | null;
+  shouldReset: boolean;
+  defaultCenter: LatLngTuple;
+  defaultZoom: number;
 }

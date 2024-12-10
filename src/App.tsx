@@ -1,19 +1,14 @@
-import { Toaster } from "@/components/ui/toaster"; // Add this import
+import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { CountriesProvider } from "@/features/places/context/CountriesContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { CreateListPage } from "@/pages/lists/CreateListPage";
-import { ListsPage } from "@/pages/lists/ListsPage";
-import { ViewListPage } from "@/pages/lists/ViewListPage";
-import { AddPlacePage } from "@/pages/places/AddPlacePage";
-import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage"; // Add this import
+import FavoritesPage from "@/pages/favorites/FavoritesPage";
+import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
-import { ProfilePage } from "@/pages/profile/ProfilePage"; // You'll need to create this
-import { SavedPage } from "@/pages/saved/SavedPage";
-import { SettingsPage } from "@/pages/settings/SettingsPage"; // You'll need to create this
+import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { Route, Routes } from "react-router-dom";
 
 function App() {
@@ -25,14 +20,8 @@ function App() {
             <RootLayout>
               <Routes>
                 <Route path="/" element={<PlacesPage />} />
-                <Route path="/lists" element={<ListsPage />} />
-                <Route path="/lists/:id" element={<ViewListPage />} />
-                <Route path="/saved" element={<SavedPage />} />
-                <Route path="/add" element={<AddPlacePage />} />
-                <Route path="/create-list" element={<CreateListPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
-                {/* New flexible routing for all place types */}
                 <Route
                   path="/places/:placeType/:id"
                   element={<PlaceDetailsPage />}
