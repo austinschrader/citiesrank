@@ -3,40 +3,33 @@ import { PlaceCard } from "@/features/places/components/PlaceCard";
 import L from "leaflet";
 import { useState } from "react";
 import { Marker, Popup } from "react-leaflet";
-import { MapPlace } from "../types";
+import { MapMarkerProps, MarkerStyle } from "../types";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
-interface MapMarkerProps {
-  place: MapPlace;
-  onSelect?: (place: MapPlace) => void;
-  isSelected?: boolean;
-}
-
-const getMarkerColor = (rating?: number) => {
-  if (!rating) return "#94a3b8"; // No rating - slate
-  if (rating >= 4.5) return "#10b981"; // High rating - emerald
-  if (rating >= 4.0) return "#3b82f6"; // Good rating - blue
-  if (rating >= 3.5) return "#f59e0b"; // Average rating - amber
-  if (rating >= 3.0) return "#ef4444"; // Low rating - red
-  return "#94a3b8"; // Below 3.0 - slate
+const getMarkerStyle = (rating?: number): MarkerStyle => {
+  if (!rating) return { color: "#94a3b8", size: 36 }; // No rating - slate
+  if (rating >= 4.5) return { color: "#10b981", size: 48 }; // High rating - emerald
+  if (rating >= 4.0) return { color: "#3b82f6", size: 44 }; // Good rating - blue
+  if (rating >= 3.5) return { color: "#f59e0b", size: 40 }; // Average rating - amber
+  if (rating >= 3.0) return { color: "#ef4444", size: 36 }; // Low rating - red
+  return { color: "#94a3b8", size: 36 }; // Below 3.0 - slate
 };
 
 const createMarkerHtml = (
-  size: number,
-  color: string,
+  style: MarkerStyle,
   rating?: number,
   isSelected?: boolean
 ) => {
   return `<div class="place-marker" style="
-    width: ${size}px;
-    height: ${size}px;
-    background-color: ${color};
+    width: ${style.size}px;
+    height: ${style.size}px;
+    background-color: ${style.color};
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: ${size * 0.4}px;
+    font-size: ${style.size * 0.4}px;
     font-weight: bold;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     cursor: pointer;
@@ -57,21 +50,13 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
 
   if (!place.latitude || !place.longitude) return null;
 
-  const markerSize = place.averageRating
-    ? Math.max(36, place.averageRating * 12)
-    : 36;
-  const markerColor = getMarkerColor(place.averageRating);
+  const markerStyle = getMarkerStyle(place.averageRating);
 
   const icon = L.divIcon({
     className: "custom-rating-marker",
-    html: createMarkerHtml(
-      markerSize,
-      markerColor,
-      place.averageRating,
-      isSelected
-    ),
-    iconSize: [markerSize, markerSize],
-    iconAnchor: [markerSize / 2, markerSize / 2],
+    html: createMarkerHtml(markerStyle, place.averageRating, isSelected),
+    iconSize: [markerStyle.size, markerStyle.size],
+    iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
   });
 
   const handleClick = () => {

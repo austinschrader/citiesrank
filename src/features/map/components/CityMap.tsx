@@ -1,14 +1,13 @@
 // src/features/map/components/CityMap.tsx
-import { MapControls } from "@/features/map/components/MapControls";
-import { MapMarker } from "@/features/map/components/MapMarker";
-import { useMapState } from "@/features/map/hooks/useMapState";
-import { MapPlace } from "@/features/map/types";
 import { useCallback, useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
-import { calculateMapBounds } from "../utils/mapUtils";
+import { useMapState } from "../hooks/useMapState";
+import { mapService } from "../services/mapService";
+import { MapPlace } from "../types";
+import { MapControls } from "./MapControls";
+import { MapMarker } from "./MapMarker";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
-// Component to handle map updates
 const MapUpdater = ({
   selectedPlace,
   shouldReset,
@@ -24,7 +23,7 @@ const MapUpdater = ({
 
   useEffect(() => {
     if (selectedPlace) {
-      const bounds = calculateMapBounds(selectedPlace);
+      const bounds = mapService.calculateBounds(selectedPlace);
       map.setView(bounds.center, bounds.zoom, {
         animate: true,
         duration: 1,
@@ -57,6 +56,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
 
   const handlePlaceSelect = useCallback(
     (place: MapPlace) => {
+      // If the same place is clicked, deselect it
       setSelectedPlace((prev) => (prev?.id === place.id ? null : place));
       onPlaceSelect?.(place);
     },
@@ -66,7 +66,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
   const handleReset = useCallback(() => {
     setShouldReset(true);
     setSelectedPlace(null);
-    setZoom(3); // Set initial zoom level
+    setZoom(3);
   }, [setZoom]);
 
   useEffect(() => {
@@ -109,6 +109,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
               isSelected={selectedPlace?.id === place.id}
             />
           ))}
+        {/* Only render GeoJSON for selected place */}
         {selectedPlace && (
           <PlaceGeoJson
             key={`geojson-${selectedPlace.id}`}
