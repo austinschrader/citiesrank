@@ -304,7 +304,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
                 size: 16,
                 className: "shrink-0",
               })}
-              {city.type[0]}
+              {city.type}
             </Badge>
           )}
 
