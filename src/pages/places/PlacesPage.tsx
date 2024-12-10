@@ -124,157 +124,159 @@ export const PlacesPage = () => {
 
   return (
     <PlacesLayout>
-      <div className="py-3 sm:py-4 md:py-6 space-y-3 sm:space-y-4 md:space-y-6">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
-          <div className="flex-1 space-y-1 sm:space-y-2">
-            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold">
-              Discover Places
-            </h1>
-            <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-              Find your perfect destination based on your preferences and travel
-              style.
-            </p>
-          </div>
+      <div id="places-section" className="relative min-h-screen">
+        <div className="py-3 sm:py-4 md:py-6 space-y-3 sm:space-y-4 md:space-y-6">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
+            <div className="flex-1 space-y-1 sm:space-y-2">
+              <h1 className="text-xl sm:text-2xl md:text-4xl font-bold">
+                Discover Places
+              </h1>
+              <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
+                Find your perfect destination based on your preferences and travel
+                style.
+              </p>
+            </div>
 
-          {/* Controls Section */}
-          <div className="flex flex-col gap-2 sm:gap-3 w-full md:w-auto">
-            <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full md:w-auto">
-              <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto">
-                <Button
-                  variant={viewMode === "map" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("map")}
-                  className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
-                >
-                  <MapPin className="h-4 w-4" />
-                  Map
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                  className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
-                >
-                  <List className="h-4 w-4" />
-                  List
-                </Button>
+            {/* Controls Section */}
+            <div className="flex flex-col gap-2 sm:gap-3 w-full md:w-auto">
+              <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full md:w-auto">
+                <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto">
+                  <Button
+                    variant={viewMode === "map" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("map")}
+                    className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                  >
+                    <MapPin className="h-4 w-4" />
+                    Map
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                  >
+                    <List className="h-4 w-4" />
+                    List
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Mobile Search Trigger */}
-        {viewMode === "list" && (
-          <div className="md:hidden relative">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                className="w-full pl-9 pr-10 h-10 sm:h-12"
-                placeholder="Search destinations..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onClick={() => setIsMobileSearchActive(true)}
-                readOnly
-              />
-              {searchQuery && (
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSearchQuery("");
-                  }}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Mobile Search Overlay */}
-        {isMobileSearchActive && viewMode === "list" && (
-          <MobileSearch
-            searchQuery={searchQuery}
-            onSearchChange={handleSearchChange}
-            onClose={() => setIsMobileSearchActive(false)}
-            searchInputRef={searchInputRef}
-            filteredCities={getFilteredCities(
-              cityData,
-              searchQuery,
-              calculateMatchForCity
-            )}
-            onCitySelect={handleCitySelect}
-          />
-        )}
-
-        {/* Mobile Filters */}
-        <MobileFilters
-          isFilterSheetOpen={isFilterSheetOpen}
-          setIsFilterSheetOpen={setIsFilterSheetOpen}
-          preferences={preferences}
-          setPreferences={setPreferences}
-          selectedFilter={selectedFilter}
-          onFilterSelect={handleFilterSelect}
-          selectedDestinationType={selectedDestinationType}
-          onDestinationTypeSelect={handleDestinationTypeSelect}
-          sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
-          filterOptions={filterOptions}
-        />
-
-        {/* Results Grid */}
-        <div className="space-y-8">
-          {viewMode === "map" ? (
-            <CityMap
-              places={getCurrentLevelData()}
-              onPlaceSelect={(place) => {
-                // Only scroll to the place without filtering
-                const citySlug = place.name
-                  .toLowerCase()
-                  .replace(/[^\w\s-]/g, "")
-                  .replace(/\s+/g, "-");
-                const cityElement = document.getElementById(`city-${citySlug}`);
-                if (cityElement) {
-                  setTimeout(() => {
-                    cityElement.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                    });
-                  }, 100);
-                }
-              }}
-              className="h-[70vh] w-full"
-            />
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
-                {getPaginatedData().map((place) => (
-                  <PlaceCard
-                    key={place.id || place.name}
-                    city={place}
-                    variant="ranked"
-                    matchScore={calculateMatchForCity({
-                      cost: place.cost,
-                      crowdLevel: place.crowdLevel,
-                      recommendedStay: place.recommendedStay,
-                      bestSeason: place.bestSeason,
-                      transit: place.transit,
-                      accessibility: place.accessibility,
-                    })}
-                  />
-                ))}
-              </div>
-
-              <div className="mt-6 sm:mt-8 flex justify-center">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={getTotalPages()}
-                  onPageChange={setCurrentPage}
+          {/* Mobile Search Trigger */}
+          {viewMode === "list" && (
+            <div className="md:hidden relative">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  className="w-full pl-9 pr-10 h-10 sm:h-12"
+                  placeholder="Search destinations..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onClick={() => setIsMobileSearchActive(true)}
+                  readOnly
                 />
+                {searchQuery && (
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSearchQuery("");
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
-            </>
+            </div>
           )}
+
+          {/* Mobile Search Overlay */}
+          {isMobileSearchActive && viewMode === "list" && (
+            <MobileSearch
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              onClose={() => setIsMobileSearchActive(false)}
+              searchInputRef={searchInputRef}
+              filteredCities={getFilteredCities(
+                cityData,
+                searchQuery,
+                calculateMatchForCity
+              )}
+              onCitySelect={handleCitySelect}
+            />
+          )}
+
+          {/* Mobile Filters */}
+          <MobileFilters
+            isFilterSheetOpen={isFilterSheetOpen}
+            setIsFilterSheetOpen={setIsFilterSheetOpen}
+            preferences={preferences}
+            setPreferences={setPreferences}
+            selectedFilter={selectedFilter}
+            onFilterSelect={handleFilterSelect}
+            selectedDestinationType={selectedDestinationType}
+            onDestinationTypeSelect={handleDestinationTypeSelect}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            filterOptions={filterOptions}
+          />
+
+          {/* Results Grid */}
+          <div className="space-y-8">
+            {viewMode === "map" ? (
+              <CityMap
+                places={getCurrentLevelData()}
+                onPlaceSelect={(place) => {
+                  // Only scroll to the place without filtering
+                  const citySlug = place.name
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, "")
+                    .replace(/\s+/g, "-");
+                  const cityElement = document.getElementById(`city-${citySlug}`);
+                  if (cityElement) {
+                    setTimeout(() => {
+                      cityElement.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center",
+                      });
+                    }, 100);
+                  }
+                }}
+                className="h-[70vh] w-full"
+              />
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
+                  {getPaginatedData().map((place) => (
+                    <PlaceCard
+                      key={place.id || place.name}
+                      city={place}
+                      variant="ranked"
+                      matchScore={calculateMatchForCity({
+                        cost: place.cost,
+                        crowdLevel: place.crowdLevel,
+                        recommendedStay: place.recommendedStay,
+                        bestSeason: place.bestSeason,
+                        transit: place.transit,
+                        accessibility: place.accessibility,
+                      })}
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-6 sm:mt-8 flex justify-center">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={getTotalPages()}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </PlacesLayout>

@@ -64,11 +64,11 @@ export const Header = () => {
               >
                 <img
                   src="/favicon.svg"
-                  alt="WanderLog Logo"
+                  alt="CitiesRank Logo"
                   className="w-9 h-9"
                 />
                 <span className="font-bold text-xl hidden sm:inline">
-                  WanderLog
+                  CitiesRank
                 </span>
                 <span className="font-bold text-xl sm:hidden">WL</span>
               </Link>
