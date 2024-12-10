@@ -1,25 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { StatCard } from "@/features/profile/components/StatCard";
-import { SimpleCity } from "@/features/profile/types";
 import { useToast } from "@/hooks/use-toast";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { MapPin, PenLine, Settings } from "lucide-react";
+import { MapPin, PenLine } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 export const ProfileOverview = () => {
@@ -105,21 +95,6 @@ export const ProfileOverview = () => {
     }
   };
 
-  // Group places by country
-  const visitedPlaces = useMemo(() => {
-    if (!user?.places_visited || !sortedCities.length) return {};
-
-    return sortedCities
-      .filter((city) => user.places_visited?.includes(city.id))
-      .reduce((acc, city) => {
-        if (!acc[city.country]) {
-          acc[city.country] = [];
-        }
-        acc[city.country].push(city);
-        return acc;
-      }, {} as Record<string, SimpleCity[]>);
-  }, [user?.places_visited, sortedCities]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -171,6 +146,16 @@ export const ProfileOverview = () => {
   // Display name logic
   const displayName = user?.name || user?.username;
   const showUsernameHint = !user?.name && user?.username;
+
+  const hasChanges = useMemo(() => {
+    return (
+      formData.name !== user?.name ||
+      formData.bio !== user?.bio ||
+      formData.location !== user?.location ||
+      formData.username !== user?.username ||
+      formData.isPrivate !== user?.isPrivate
+    );
+  }, [formData, user]);
 
   if (!user) {
     return <div>Please log in to view your profile.</div>;
@@ -234,18 +219,38 @@ export const ProfileOverview = () => {
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
           <CardTitle>Profile Overview</CardTitle>
-          <div className="flex gap-3">
-            <Button variant="outline" className="gap-2">
-              <PenLine className="h-4 w-4" /> Edit Profile
-            </Button>
-            <Button variant="outline" size="icon">
-              <Settings className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => {
+              if (isEditing && hasChanges) {
+                if (
+                  !window.confirm(
+                    "You have unsaved changes. Are you sure you want to cancel?"
+                  )
+                ) {
+                  return;
+                }
+              }
+              setIsEditing(!isEditing);
+              if (!isEditing) {
+                setFormData({
+                  name: user?.name || "",
+                  bio: user?.bio || "",
+                  location: user?.location || "",
+                  username: user?.username || "",
+                  isPrivate: user?.isPrivate || false,
+                });
+              }
+            }}
+          >
+            <PenLine className="h-4 w-4" />
+            {isEditing ? "Cancel" : "Edit Profile"}
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <Avatar className="h-32 w-32 border-4 border-background shadow-md">
@@ -272,229 +277,127 @@ export const ProfileOverview = () => {
               )}
             </div>
 
-            <div className="flex gap-2">
-              <Button
-                variant={isEditing ? "destructive" : "outline"}
-                onClick={() => {
-                  if (isEditing) {
-                    setFormData({
-                      name: user?.name || "",
-                      bio: user?.bio || "",
-                      location: user?.location || "",
-                      username: user?.username || "",
-                      isPrivate: user?.isPrivate || false,
-                    });
-                  }
-                  setIsEditing(!isEditing);
-                }}
-                disabled={isLoading}
-              >
-                {isEditing ? "Cancel" : "Edit Profile"}
-              </Button>
-              {isEditing && (
-                <Button onClick={handleSubmit} disabled={isLoading}>
-                  {isLoading ? "Saving..." : "Save Changes"}
-                </Button>
-              )}
-            </div>
+            {!isEditing ? (
+              <div className="text-center">
+                <h2 className="text-xl font-semibold">{displayName}</h2>
+                {showUsernameHint && (
+                  <p className="text-sm text-muted-foreground">
+                    @{user?.username}
+                  </p>
+                )}
+                {user?.location && (
+                  <div className="flex items-center justify-center gap-1 mt-1 text-muted-foreground">
+                    <MapPin className="h-4 w-4" />
+                    <span>{user.location}</span>
+                  </div>
+                )}
+                {user?.bio && (
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {user.bio}
+                  </p>
+                )}
+              </div>
+            ) : null}
           </div>
 
-          <div className="flex-1 space-y-6">
-            {isEditing ? (
-              <div className="space-y-4">
-                <div>
+          {isEditing && (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
+                      setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder="Add your real name"
                     disabled={isLoading}
-                    className="mt-1"
                   />
                 </div>
-
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      @
-                    </span>
-                    <Input
-                      id="username"
-                      value={formData.username}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          username: e.target.value,
-                        }))
-                      }
-                      className="pl-7 mt-1"
-                      disabled={isLoading}
-                    />
-                  </div>
+                  <Input
+                    id="username"
+                    value={formData.username}
+                    onChange={(e) =>
+                      setFormData({ ...formData, username: e.target.value })
+                    }
+                    disabled={isLoading}
+                  />
                 </div>
-
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="location">Location</Label>
                   <Input
                     id="location"
                     value={formData.location}
                     onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        location: e.target.value,
-                      }))
+                      setFormData({ ...formData, location: e.target.value })
                     }
-                    placeholder="City, Country"
                     disabled={isLoading}
-                    className="mt-1"
                   />
                 </div>
-
-                <div>
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={formData.bio}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        bio: e.target.value,
-                      }))
-                    }
-                    placeholder="Tell us about yourself..."
-                    disabled={isLoading}
-                    className="mt-1"
-                  />
-                </div>
-
-                <div>
-                  <Label>Add Places You've Visited</Label>
-                  <div className="flex gap-2">
-                    <Select
-                      value={selectedCity}
-                      onValueChange={setSelectedCity}
-                      disabled={isLoading || cityStatus.loading === false}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a city" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sortedCities.map((city) => (
-                          <SelectItem key={city.id} value={city.id}>
-                            {city.name}, {city.country}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      onClick={handleAddPlace}
-                      disabled={!selectedCity || isLoading}
-                    >
-                      Add
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="font-medium">Places Visited</h3>
-                  {Object.entries(visitedPlaces).map(([country, cities]) => (
-                    <div key={country} className="space-y-2">
-                      <h4 className="text-sm font-medium text-muted-foreground">
-                        {country}
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {cities.map((city) => (
-                          <Badge
-                            key={city.id}
-                            variant="secondary"
-                            className="flex items-center gap-1"
-                          >
-                            {city.name}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-4 w-4 p-0 hover:bg-transparent"
-                              onClick={() => handleRemovePlace(city.id)}
-                            >
-                              ×
-                            </Button>
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="isPrivate">Private Profile</Label>
+                <div className="flex items-center space-x-2 h-[68px]">
+                  <div className="flex items-center space-x-2">
                     <Switch
-                      id="isPrivate"
+                      id="private"
                       checked={formData.isPrivate}
                       onCheckedChange={(checked) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          isPrivate: checked,
-                        }))
+                        setFormData({ ...formData, isPrivate: checked })
                       }
                       disabled={isLoading}
                     />
+                    <div className="space-y-1">
+                      <Label htmlFor="private">Private Profile</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Hide profile from other users
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    When enabled, only you can see your profile details and
-                    travel history
-                  </p>
                 </div>
               </div>
-            ) : (
-              <>
-                <div>
-                  <h2 className="text-2xl font-bold">{displayName}</h2>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm text-muted-foreground">
-                      @{user.username}
-                    </p>
-                    {showUsernameHint && (
-                      <p className="text-sm text-muted-foreground">
-                        Add your real name to personalize your profile
-                      </p>
-                    )}
-                    {user.location && (
-                      <div className="flex items-center gap-1 text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{user.location}</span>
-                      </div>
-                    )}
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={formData.bio}
+                  onChange={(e) =>
+                    setFormData({ ...formData, bio: e.target.value })
+                  }
+                  disabled={isLoading}
+                  className="resize-none"
+                  rows={3}
+                  placeholder="Tell us about yourself..."
+                />
+              </div>
+              {hasChanges && (
+                <div className="bg-muted/50 px-4 py-3 rounded-lg flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    You have unsaved changes
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => {
+                        setFormData({
+                          name: user?.name || "",
+                          bio: user?.bio || "",
+                          location: user?.location || "",
+                          username: user?.username || "",
+                          isPrivate: user?.isPrivate || false,
+                        });
+                      }}
+                    >
+                      Reset
+                    </Button>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? "Saving..." : "Save Changes"}
+                    </Button>
                   </div>
                 </div>
-                {user.bio && (
-                  <p className="text-muted-foreground">{user.bio}</p>
-                )}
-              </>
-            )}
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <StatCard
-                label="Places"
-                value={user.places_visited?.length || 0}
-                icon="Globe"
-              />
-              <StatCard
-                label="Lists"
-                value={user.lists_count || 0}
-                icon="List"
-              />
-              <StatCard label="Joined" value={0} icon="Calendar" />
-            </div>
-          </div>
+              )}
+            </form>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -18,22 +18,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import {
-  BellDot,
-  Bookmark,
-  Globe,
-  Heart,
-  LifeBuoy,
-  LogOut,
-  Map,
-  Search,
-  Settings,
-  UserCircle,
-  X,
-} from "lucide-react";
+import { Bookmark, Globe, LogOut, Search, UserCircle, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -48,21 +35,10 @@ export const Header = () => {
     navigate("/");
   };
 
-  const navItems = [
-    { label: "Places", icon: Globe, to: "/" },
-    { label: "Lists", icon: Map, to: "/lists" },
-    { label: "Saved", icon: Heart, to: "/saved", mobileOnly: true },
-  ];
+  const navItems = [{ label: "Home", icon: Globe, to: "/" }];
 
   const SearchBar = () => (
     <div className="relative w-full max-w-md">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-      <Input
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search cities, regions, or experiences..."
-        className="pl-9 pr-4 h-11 w-full bg-muted/40 focus:bg-background"
-      />
       {searchQuery && (
         <button
           onClick={() => setSearchQuery("")}
@@ -100,16 +76,14 @@ export const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
-              {navItems
-                .filter((item) => !item.mobileOnly)
-                .map((item) => (
-                  <Link key={item.to} to={item.to}>
-                    <Button variant="ghost" size="lg" className="gap-2">
-                      <item.icon className="h-5 w-5" />
-                      {item.label}
-                    </Button>
-                  </Link>
-                ))}
+              {navItems.map((item) => (
+                <Link key={item.to} to={item.to}>
+                  <Button variant="ghost" size="lg" className="gap-2">
+                    <item.icon className="h-5 w-5" />
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
             </nav>
 
             {/* User menu section */}
@@ -140,10 +114,6 @@ export const Header = () => {
               <div className="hidden md:block">
                 <SearchBar />
               </div>
-
-              <Button variant="ghost" size="icon" className="h-11 w-11">
-                <BellDot className="h-5 w-5" />
-              </Button>
 
               {user ? (
                 <DropdownMenu>
@@ -183,17 +153,12 @@ export const Header = () => {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link to="/saved" className="cursor-pointer">
-                          <Bookmark className="mr-2 h-5 w-5" />
-                          Saved Items
-                          <DropdownMenuShortcut>⇧S</DropdownMenuShortcut>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/settings" className="cursor-pointer">
-                          <Settings className="mr-2 h-5 w-5" />
-                          Account Settings
-                          <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                        <Link
+                          to="/favorites"
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Bookmark className="mr-2 h-4 w-4" />
+                          Favorites
                         </Link>
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -201,17 +166,6 @@ export const Header = () => {
                     <DropdownMenuSeparator />
 
                     <DropdownMenuGroup>
-                      <DropdownMenuItem asChild>
-                        <a
-                          href="https://docs.citiesrank.com"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="cursor-pointer"
-                        >
-                          <LifeBuoy className="mr-2 h-5 w-5" />
-                          Help & Support
-                        </a>
-                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={handleSignOut}
                         className="text-red-600 focus:text-red-600 cursor-pointer"
@@ -235,22 +189,18 @@ export const Header = () => {
       <div className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background md:hidden z-50">
         <nav className="container h-full">
           <div className="grid h-full grid-cols-4 items-stretch">
-            {navItems
-              .filter((item) => !item.mobileOnly)
-              .map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className="flex items-center justify-center"
-                >
-                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <item.icon className="h-5 w-5" />
-                    <span className="text-[10px] font-medium">
-                      {item.label}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+            {navItems.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex items-center justify-center"
+              >
+                <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
+                  <item.icon className="h-5 w-5" />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </nav>
       </div>

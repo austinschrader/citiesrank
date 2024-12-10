@@ -21,33 +21,7 @@ export interface CompactPlaceCardProps extends BasePlaceCardProps {
   city: CitiesResponse;
 }
 
-export type PlaceCardProps = RankedPlaceCardProps | BasicPlaceCardProps | CompactPlaceCardProps;
-
-// City data types
-export interface CityData {
-  country: string;
-  name: string;
-  cost: number;
-  interesting: number;
-  transit: number;
-  description: string;
-  population: string;
-  highlights: string[];
-  reviews?: ReviewSummary;
-  tags: string[];
-  crowdLevel: number;
-  recommendedStay: number;
-  bestSeason: number;
-  accessibility: number;
-}
-
-export interface ReviewSummary {
-  averageRating: number;
-  totalReviews: number;
-}
-
-export type SimpleCity = {
-  id: string;
-  name: string;
-  country: string;
-};
+export type PlaceCardProps =
+  | RankedPlaceCardProps
+  | BasicPlaceCardProps
+  | CompactPlaceCardProps;
