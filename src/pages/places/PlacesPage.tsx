@@ -5,14 +5,13 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
-import { DesktopFilters } from "@/features/places/search/components/DesktopFilters";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
 import { useSearch } from "@/features/places/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
-import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import { List, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -103,9 +102,11 @@ export const PlacesPage = () => {
   // Get current data for map view
   const getCurrentLevelData = () => {
     // Apply filters and then filter for valid coordinates
-    return getFilteredCities(cityData, searchQuery, calculateMatchForCity).filter(
-      (city) => city.latitude != null && city.longitude != null
-    );
+    return getFilteredCities(
+      cityData,
+      searchQuery,
+      calculateMatchForCity
+    ).filter((city) => city.latitude != null && city.longitude != null);
   };
 
   if (isLoading) {
@@ -123,11 +124,11 @@ export const PlacesPage = () => {
 
   return (
     <PlacesLayout>
-      <div className="py-4 md:py-6 space-y-4 md:space-y-6">
+      <div className="py-3 sm:py-4 md:py-6 space-y-3 sm:space-y-4 md:space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
-          <div className="flex-1">
-            <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
+          <div className="flex-1 space-y-1 sm:space-y-2">
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold">
               Discover Places
             </h1>
             <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
@@ -137,14 +138,14 @@ export const PlacesPage = () => {
           </div>
 
           {/* Controls Section */}
-          <div className="flex flex-col gap-3 w-full md:w-auto">
-            <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-              <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1.5 md:p-1 shadow-sm">
+          <div className="flex flex-col gap-2 sm:gap-3 w-full md:w-auto">
+            <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full md:w-auto">
+              <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto">
                 <Button
                   variant={viewMode === "map" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("map")}
-                  className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                  className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
                 >
                   <MapPin className="h-4 w-4" />
                   Map
@@ -153,7 +154,7 @@ export const PlacesPage = () => {
                   variant={viewMode === "list" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode("list")}
-                  className="flex-1 md:flex-none gap-2 py-2 md:py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                  className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
                 >
                   <List className="h-4 w-4" />
                   List
@@ -164,13 +165,12 @@ export const PlacesPage = () => {
         </div>
 
         {/* Mobile Search Trigger */}
-        {/* Mobile Search Trigger with Integrated Search */}
         {viewMode === "list" && (
           <div className="md:hidden relative">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                className="w-full pl-9 pr-10 h-12"
+                className="w-full pl-9 pr-10 h-10 sm:h-12"
                 placeholder="Search destinations..."
                 value={searchQuery}
                 onChange={handleSearchChange}
@@ -208,23 +208,6 @@ export const PlacesPage = () => {
           />
         )}
 
-        {/* Desktop Filters */}
-        <DesktopFilters
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          selectedFilter={selectedFilter}
-          onFilterSelect={handleFilterSelect}
-          selectedDestinationType={selectedDestinationType}
-          onDestinationTypeSelect={handleDestinationTypeSelect}
-          preferences={preferences}
-          setPreferences={setPreferences}
-          filteredCities={getFilteredCities(
-            cityData,
-            searchQuery,
-            calculateMatchForCity
-          )}
-        />
-
         {/* Mobile Filters */}
         <MobileFilters
           isFilterSheetOpen={isFilterSheetOpen}
@@ -254,7 +237,10 @@ export const PlacesPage = () => {
                 const cityElement = document.getElementById(`city-${citySlug}`);
                 if (cityElement) {
                   setTimeout(() => {
-                    cityElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                    cityElement.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                    });
                   }, 100);
                 }
               }}
@@ -262,7 +248,7 @@ export const PlacesPage = () => {
             />
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
                 {getPaginatedData().map((place) => (
                   <PlaceCard
                     key={place.id || place.name}
@@ -280,7 +266,7 @@ export const PlacesPage = () => {
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-center">
+              <div className="mt-6 sm:mt-8 flex justify-center">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={getTotalPages()}

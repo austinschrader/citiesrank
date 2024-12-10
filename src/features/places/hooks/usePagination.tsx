@@ -1,7 +1,7 @@
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { useState } from "react";
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 12;
 
 export function usePagination(filteredCities: CitiesResponse[]) {
   const [currentPage, setCurrentPage] = useState(1);
