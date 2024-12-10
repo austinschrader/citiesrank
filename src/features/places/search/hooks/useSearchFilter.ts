@@ -1,6 +1,6 @@
 import { useTags } from "@/features/places/hooks/useTags";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useCallback, useState } from "react";
 
 interface UseSearchFiltersReturn {
@@ -8,10 +8,13 @@ interface UseSearchFiltersReturn {
   setIsFilterSheetOpen: (open: boolean) => void;
   selectedFilter: string | null;
   setSelectedFilter: (filter: string | null) => void;
+  selectedDestinationType: CitiesTypeOptions | null;
+  setSelectedDestinationType: (type: CitiesTypeOptions | null) => void;
   sortOrder: string;
   setSortOrder: (value: string) => void;
   filterOptions: Array<{ id: string; label: string }>;
   handleFilterSelect: (filter: string) => void;
+  handleDestinationTypeSelect: (type: CitiesTypeOptions) => void;
   getFilteredCities: (
     cityData: Record<string, CitiesResponse>,
     searchQuery: string,
@@ -24,6 +27,7 @@ export const useSearchFilters = (
 ): UseSearchFiltersReturn => {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [selectedDestinationType, setSelectedDestinationType] = useState<CitiesTypeOptions | null>(null);
   const [sortOrder, setSortOrder] = useState("match");
   const { filterOptions } = useTags();
 
@@ -32,6 +36,13 @@ export const useSearchFilters = (
       setSelectedFilter(selectedFilter === filter ? null : filter);
     },
     [selectedFilter]
+  );
+
+  const handleDestinationTypeSelect = useCallback(
+    (type: CitiesTypeOptions) => {
+      setSelectedDestinationType(selectedDestinationType === type ? null : type);
+    },
+    [selectedDestinationType]
   );
 
   const getFilteredCities = useCallback(
@@ -46,6 +57,10 @@ export const useSearchFilters = (
 
       return Object.entries(cityData)
         .filter(([name, data]) => {
+          // Check if the destination type matches
+          const matchesType = !selectedDestinationType || data.type === selectedDestinationType;
+
+          // Check if the tags match
           const matchesFilter =
             !selectedFilter ||
             (data.tags &&
@@ -57,15 +72,15 @@ export const useSearchFilters = (
             typeof name === 'string' ? name.toLowerCase() : '',
             typeof data.country === 'string' ? data.country.toLowerCase() : '',
             typeof data.description === 'string' ? data.description.toLowerCase() : '',
-            data.type ? String(data.type).toLowerCase() : '', // Convert enum to string
+            data.type ? String(data.type).toLowerCase() : '',
             ...(Array.isArray(data.tags) ? data.tags.map(String).map(tag => tag.toLowerCase()) : []),
-          ].filter(Boolean); // Remove any empty strings
+          ].filter(Boolean);
 
           const matchesSearch =
             !searchQuery ||
             searchFields.some((field) => field.includes(searchQuery.toLowerCase()));
 
-          return matchesFilter && matchesSearch;
+          return matchesType && matchesFilter && matchesSearch;
         })
         .map(([, data]) => {
           const matchScores = calculateMatchForCity(data);
@@ -87,7 +102,7 @@ export const useSearchFilters = (
           }
         });
     },
-    [selectedFilter, sortOrder]
+    [selectedFilter, selectedDestinationType, sortOrder]
   );
 
   return {
@@ -95,10 +110,13 @@ export const useSearchFilters = (
     setIsFilterSheetOpen,
     selectedFilter,
     setSelectedFilter,
+    selectedDestinationType,
+    setSelectedDestinationType,
     sortOrder,
     setSortOrder,
     filterOptions,
     handleFilterSelect,
+    handleDestinationTypeSelect,
     getFilteredCities,
   };
 };
