@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { DestinationFilter } from "@/features/places/components/DestinationFilter";
 import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Filter, Search } from "lucide-react";
 import React, { useState } from "react";
 
@@ -19,6 +19,8 @@ interface DesktopFiltersProps {
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   selectedFilter: string | null;
   onFilterSelect: (filter: string) => void;
+  selectedDestinationType: CitiesTypeOptions | null;
+  onDestinationTypeSelect: (type: CitiesTypeOptions) => void;
   preferences: UserPreferences;
   setPreferences: (preferences: UserPreferences) => void;
   filteredCities: (CitiesResponse & MatchScore)[];
@@ -29,6 +31,8 @@ export const DesktopFilters: React.FC<DesktopFiltersProps> = ({
   onSearchChange,
   selectedFilter,
   onFilterSelect,
+  selectedDestinationType,
+  onDestinationTypeSelect,
   preferences,
   setPreferences,
   filteredCities,
@@ -68,6 +72,8 @@ export const DesktopFilters: React.FC<DesktopFiltersProps> = ({
           <DestinationFilter
             selectedFilter={selectedFilter}
             onFilterSelect={onFilterSelect}
+            selectedDestinationType={selectedDestinationType}
+            onDestinationTypeSelect={onDestinationTypeSelect}
           />
         </div>
 

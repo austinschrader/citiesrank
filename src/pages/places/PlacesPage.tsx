@@ -12,7 +12,7 @@ import { useSearch } from "@/features/places/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import { List, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -25,10 +25,13 @@ export const PlacesPage = () => {
     setIsFilterSheetOpen,
     selectedFilter,
     setSelectedFilter,
+    selectedDestinationType,
+    setSelectedDestinationType,
     sortOrder,
     setSortOrder,
     filterOptions,
     handleFilterSelect,
+    handleDestinationTypeSelect,
     getFilteredCities,
   } = useSearchFilters(preferences);
   const { getAllCities } = useCitiesActions();
@@ -211,6 +214,8 @@ export const PlacesPage = () => {
           onSearchChange={handleSearchChange}
           selectedFilter={selectedFilter}
           onFilterSelect={handleFilterSelect}
+          selectedDestinationType={selectedDestinationType}
+          onDestinationTypeSelect={handleDestinationTypeSelect}
           preferences={preferences}
           setPreferences={setPreferences}
           filteredCities={getFilteredCities(
@@ -228,6 +233,8 @@ export const PlacesPage = () => {
           setPreferences={setPreferences}
           selectedFilter={selectedFilter}
           onFilterSelect={handleFilterSelect}
+          selectedDestinationType={selectedDestinationType}
+          onDestinationTypeSelect={handleDestinationTypeSelect}
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           filterOptions={filterOptions}
