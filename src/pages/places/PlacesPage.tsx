@@ -125,7 +125,7 @@ export const PlacesPage = () => {
   return (
     <PlacesLayout>
       <div id="places-section" className="relative min-h-screen">
-        <div className="py-3 sm:py-4 md:py-6 space-y-3 sm:space-y-4 md:space-y-6">
+        <div className="py-2 sm:py-3 md:py-4 space-y-3 sm:space-y-4 md:space-y-6">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
             <div className="flex-1 space-y-1 sm:space-y-2">
