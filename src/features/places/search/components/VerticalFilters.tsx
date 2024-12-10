@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import {
   Bike,
   Building2,
@@ -24,7 +25,8 @@ import {
   Waves,
   Wind,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 interface FilterItem {
   label: string;
@@ -851,6 +853,7 @@ function FilterSection({
 }
 
 export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
+  const { user } = useAuth();
   const [selectedFilters, setSelectedFilters] = useState<Set<string>>(
     new Set()
   );
@@ -858,8 +861,46 @@ export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
     new Set()
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+
+  useEffect(() => {
+    if (user) return; // Don't show for logged in users
+
+    let timeout: NodeJS.Timeout;
+    const handleMouseLeave = (e: MouseEvent) => {
+      // Clear any existing timeout
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      // Check if the mouse is moving towards the top of the viewport
+      if (
+        e.clientY <= 0 && 
+        e.clientX > 0 && 
+        e.clientX < window.innerWidth &&
+        !showSignUpDialog // Only set if not already showing
+      ) {
+        timeout = setTimeout(() => {
+          setShowSignUpDialog(true);
+        }, 100); // Small delay to prevent double triggers
+      }
+    };
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [user, showSignUpDialog]);
 
   const handleFilterToggle = (filter: string) => {
+    if (!user) {
+      setShowSignUpDialog(true);
+      return;
+    }
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(filter)) {
       newFilters.delete(filter);
@@ -975,6 +1016,14 @@ export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
           <div className="text-center py-8 text-muted-foreground">
             No filters match your search
           </div>
+        )}
+        {showSignUpDialog && (
+          <SignUpDialog
+            open={showSignUpDialog}
+            onOpenChange={setShowSignUpDialog}
+            title="Unlock All Filters"
+            description="Join our community to access all filters and discover your perfect city"
+          />
         )}
       </div>
     </ScrollArea>

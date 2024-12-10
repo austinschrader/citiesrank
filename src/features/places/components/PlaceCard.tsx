@@ -32,6 +32,7 @@ import {
 import PocketBase from "pocketbase";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -118,6 +119,11 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't navigate if clicking the favorite button
     if ((e.target as HTMLElement).closest("button")) {
+      return;
+    }
+
+    if (!user) {
+      setShowSignUpDialog(true);
       return;
     }
 
@@ -353,95 +359,12 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
         </div>
       </Card>
 
-      <Dialog open={showSignUpDialog} onOpenChange={setShowSignUpDialog}>
-        <DialogContent className="sm:max-w-[400px] px-6 pt-8 pb-6 overflow-hidden animate-dialog-content">
-          <DialogHeader className="text-center space-y-2.5 mb-6">
-            <DialogTitle className="text-xl sm:text-2xl font-semibold text-foreground px-4">
-              Save {city.name} to Your Lists
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Join our community of travelers discovering and sharing hidden
-              gems around the world
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6">
-            {/* Sign In Options */}
-            <div className="space-y-3">
-              <Button
-                variant="outline"
-                className="w-full relative h-11 bg-white hover:bg-gray-50 text-sm border-2"
-                onClick={() => {
-                  handleSignIn();
-                }}
-              >
-                <div className="absolute left-4 flex items-center justify-center">
-                  <LogIn className="h-4 w-4" />
-                </div>
-                Continue with Google
-              </Button>
-
-              <p className="text-center space-x-1 text-sm">
-                <span className="text-muted-foreground">
-                  Already have an account?
-                </span>
-                <button
-                  className="text-primary hover:underline font-medium"
-                  onClick={() => {
-                    handleSignIn();
-                  }}
-                >
-                  Sign in
-                </button>
-              </p>
-            </div>
-
-            {/* Feature Highlights */}
-            <div className="border rounded-lg p-4 bg-muted/30">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 shadow-sm">
-                    <Heart className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <span className="text-sm font-medium">Save Favorites</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-50 shadow-sm">
-                    <Compass className="w-4 h-4 text-purple-600" />
-                  </div>
-                  <span className="text-sm font-medium">Find Hidden Gems</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 shadow-sm">
-                    <Users className="w-4 h-4 text-green-600" />
-                  </div>
-                  <span className="text-sm font-medium">Join Community</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 shadow-sm">
-                    <Camera className="w-4 h-4 text-orange-600" />
-                  </div>
-                  <span className="text-sm font-medium">Share Stories</span>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-center text-muted-foreground">
-              By continuing, you agree to our{" "}
-              <a href="#" className="underline hover:text-primary">
-                Terms
-              </a>{" "}
-              and{" "}
-              <a href="#" className="underline hover:text-primary">
-                Privacy Policy
-              </a>
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <SignUpDialog
+        open={showSignUpDialog}
+        onOpenChange={setShowSignUpDialog}
+        title={`Save ${city.name} to Your Lists`}
+        description="Join our community of travelers discovering and sharing hidden gems around the world"
+      />
     </>
   );
 };
