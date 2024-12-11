@@ -7,12 +7,14 @@ interface MapControlsProps {
   onZoomChange: (zoom: number) => void;
   defaultCenter?: [number, number];
   defaultZoom?: number;
+  className?: string;
 }
 
 export const MapControls = ({
   onZoomChange,
   defaultCenter = [20, 0],
   defaultZoom = 2,
+  className = '',
 }: MapControlsProps) => {
   const map = useMap();
 
@@ -40,11 +42,11 @@ export const MapControls = ({
   };
 
   return (
-    <div className="absolute right-4 top-4 z-[400] flex flex-col gap-2">
+    <div className={className}>
       <Button
         variant="secondary"
         size="icon"
-        className="h-8 w-8 shadow-md"
+        className="h-8 w-8 shadow-md backdrop-blur-sm bg-white/90 hover:bg-white/95"
         onClick={handleZoomIn}
       >
         <Plus className="h-4 w-4" />
@@ -52,7 +54,7 @@ export const MapControls = ({
       <Button
         variant="secondary"
         size="icon"
-        className="h-8 w-8 shadow-md"
+        className="h-8 w-8 shadow-md backdrop-blur-sm bg-white/90 hover:bg-white/95"
         onClick={handleZoomOut}
       >
         <Minus className="h-4 w-4" />
@@ -60,7 +62,7 @@ export const MapControls = ({
       <Button
         variant="secondary"
         size="icon"
-        className="h-8 w-8 shadow-md"
+        className="h-8 w-8 shadow-md backdrop-blur-sm bg-white/90 hover:bg-white/95"
         onClick={handleReset}
       >
         <Home className="h-4 w-4" />

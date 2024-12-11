@@ -76,13 +76,20 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
   }, [shouldReset]);
 
   return (
-    <div className={className}>
+    <div
+      className={`${className} relative`}
+      style={{
+        height: "calc(100vh - 13rem)",
+        minHeight: "500px",
+        maxHeight: "100vh",
+      }}
+    >
       <MapContainer
         center={mapState.center}
         zoom={3}
         scrollWheelZoom={true}
         zoomControl={false}
-        className="h-full w-full rounded-xl relative z-0"
+        className="h-full w-full rounded-xl relative z-0 sm:rounded-2xl md:rounded-3xl"
         maxBounds={[
           [-90, -180],
           [90, 180],
@@ -94,6 +101,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
           onZoomChange={setZoom}
           defaultCenter={[20, 0]}
           defaultZoom={3}
+          className="absolute right-4 top-4 z-[1000] flex flex-col gap-2 sm:right-6 sm:top-6"
         />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
