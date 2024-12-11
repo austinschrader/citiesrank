@@ -1,26 +1,35 @@
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { useState } from "react";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 
 export function usePagination(filteredCities: CitiesResponse[]) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const getPaginatedData = () => {
-    return filteredCities.slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE
-    );
+  const loadMore = () => {
+    setIsLoading(true);
+    // Simulate network delay
+    setTimeout(() => {
+      setCurrentPage((prev) => prev + 1);
+      setIsLoading(false);
+    }, 500);
   };
 
-  const getTotalPages = () => {
-    return Math.ceil(filteredCities.length / ITEMS_PER_PAGE);
+  const getPaginatedData = () => {
+    return filteredCities.slice(0, currentPage * ITEMS_PER_PAGE);
+  };
+
+  const hasMore = () => {
+    return currentPage * ITEMS_PER_PAGE < filteredCities.length;
   };
 
   return {
     currentPage,
     setCurrentPage,
     getPaginatedData,
-    getTotalPages,
+    loadMore,
+    hasMore,
+    isLoading,
   };
 }
