@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Bike,
   Building2,
@@ -25,8 +26,7 @@ import {
   Waves,
   Wind,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useEffect, useState } from "react";
 
 interface FilterItem {
   label: string;
@@ -802,7 +802,9 @@ function FilterSection({
         className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${color} hover:brightness-105 group`}
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-xl group-hover:scale-110 transition-transform">{emoji}</span>
+          <span className="text-xl group-hover:scale-110 transition-transform">
+            {emoji}
+          </span>
           <span className="font-semibold tracking-tight">{title}</span>
         </div>
         <ChevronDown
@@ -825,22 +827,28 @@ function FilterSection({
                 }
               `}
             >
-              <span className={`flex-shrink-0 mr-1.5 text-base transition-transform group-hover/item:scale-110 ${
-                selectedFilters.has(filter.label) ? "" : "opacity-70"
-              }`}>
+              <span
+                className={`flex-shrink-0 mr-1.5 text-base transition-transform group-hover/item:scale-110 ${
+                  selectedFilters.has(filter.label) ? "" : "opacity-70"
+                }`}
+              >
                 {filter.emoji}
               </span>
-              <span className={`text-left min-w-0 flex-1 ${
-                selectedFilters.has(filter.label) ? "font-medium" : ""
-              }`}>
+              <span
+                className={`text-left min-w-0 flex-1 ${
+                  selectedFilters.has(filter.label) ? "font-medium" : ""
+                }`}
+              >
                 {filter.label}
               </span>
               {filter.count !== undefined && (
-                <span className={`ml-1.5 flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full ${
-                  selectedFilters.has(filter.label)
-                    ? "bg-black/10"
-                    : "bg-accent/10"
-                }`}>
+                <span
+                  className={`ml-1.5 flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full ${
+                    selectedFilters.has(filter.label)
+                      ? "bg-black/10"
+                      : "bg-accent/10"
+                  }`}
+                >
                   {filter.count}
                 </span>
               )}
@@ -875,8 +883,8 @@ export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
 
       // Check if the mouse is moving towards the top of the viewport
       if (
-        e.clientY <= 0 && 
-        e.clientX > 0 && 
+        e.clientY <= 0 &&
+        e.clientX > 0 &&
         e.clientX < window.innerWidth &&
         !showSignUpDialog // Only set if not already showing
       ) {
@@ -1023,6 +1031,9 @@ export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
             onOpenChange={setShowSignUpDialog}
             title="Unlock All Filters"
             description="Join our community to access all filters and discover your perfect city"
+            city="paris"
+            country="france"
+            imageNumber={4}
           />
         )}
       </div>

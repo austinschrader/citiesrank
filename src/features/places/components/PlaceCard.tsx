@@ -1,14 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { getApiUrl } from "@/config/appConfig";
+import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useTagIdentifiers } from "@/features/places/hooks/useTagIdentifiers";
@@ -20,19 +14,15 @@ import { getCountryCode } from "@/lib/utils/countryUtils";
 import * as Flags from "country-flag-icons/react/3x2";
 import {
   Building2,
-  Camera,
   Compass,
   Globe2,
   Heart,
   Home,
   Landmark,
-  LogIn,
-  Users,
 } from "lucide-react";
 import PocketBase from "pocketbase";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 
 // Add this utility function at the top
 const createSlug = (text: string): string => {
@@ -362,8 +352,11 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
       <SignUpDialog
         open={showSignUpDialog}
         onOpenChange={setShowSignUpDialog}
-        title={`Save ${city.name} to Your Lists`}
+        title={`Explore ${city.name} and meet new friends`}
         description="Join our community of travelers discovering and sharing hidden gems around the world"
+        city={city.name}
+        country={city.country}
+        imageNumber={1}
       />
     </>
   );

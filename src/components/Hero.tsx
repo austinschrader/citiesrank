@@ -45,8 +45,10 @@ export const Hero = () => {
   };
 
   return (
-    <div 
-      className={`relative transition-[height] duration-500 ease-in-out overflow-hidden ${isHeroCollapsed ? 'h-0' : 'h-auto'}`}
+    <div
+      className={`relative transition-[height] duration-500 ease-in-out overflow-hidden ${
+        isHeroCollapsed ? "h-0" : "h-auto"
+      }`}
       onTransitionEnd={handleTransitionEnd}
     >
       {isHeroCollapsed ? (
@@ -92,7 +94,9 @@ export const Hero = () => {
                     </li>
                     <li className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm hover:bg-white/20 transition-colors">
                       <span className="text-xl">🌏</span>
-                      <span className="font-medium">Every country and region</span>
+                      <span className="font-medium">
+                        Every country and region
+                      </span>
                     </li>
                     <li className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm hover:bg-white/20 transition-colors">
                       <span className="text-xl">🎉</span>
@@ -126,7 +130,11 @@ export const Hero = () => {
                 className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4"
               >
                 {[
-                  { number: "1000+", label: "Cities & Neighborhoods", icon: "🏙️" },
+                  {
+                    number: "1000+",
+                    label: "Cities & Neighborhoods",
+                    icon: "🏙️",
+                  },
                   { number: "195", label: "Countries", icon: "🌏" },
                   { number: "10K+", label: "Local Events", icon: "🎉" },
                   { number: "100K+", label: "Places to Visit", icon: "🗺️" },
@@ -137,7 +145,9 @@ export const Hero = () => {
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-xl">{stat.icon}</span>
-                      <p className="text-2xl font-bold text-white">{stat.number}</p>
+                      <p className="text-2xl font-bold text-white">
+                        {stat.number}
+                      </p>
                     </div>
                     <p className="text-sm font-medium text-white/90">
                       {stat.label}
@@ -151,6 +161,9 @@ export const Hero = () => {
           <SignUpDialog
             open={showSignUpDialog}
             onOpenChange={setShowSignUpDialog}
+            city="Paris"
+            country="france"
+            imageNumber={3}
           />
 
           {/* Hide Hero Button */}
