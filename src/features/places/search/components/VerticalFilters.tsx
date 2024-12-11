@@ -1,22 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { PopulationRange, PopulationRanges } from "@/lib/utils/populationUtils";
 import {
   Bike,
   Building2,
   Camera,
   Car,
-  ChevronDown,
   Cloud,
   DollarSign,
   Globe,
+  Globe2,
   Heart,
   Home,
   Landmark,
   Leaf,
   Map,
+  MapPin,
   Mountain,
   Music,
   Shield,
@@ -54,7 +56,13 @@ interface FilterSectionProps {
 }
 
 interface VerticalFiltersProps {
-  onFiltersChange?: (filters: Set<string>) => void;
+  onFiltersChange?: (filters: {
+    types: Set<CitiesTypeOptions>;
+    sizes: Set<PopulationRange>;
+    tags: Set<string>;
+  }) => void;
+  selectedDestinationType?: CitiesTypeOptions | null;
+  onDestinationTypeSelect?: (type: CitiesTypeOptions) => void;
 }
 
 const categories: Category[] = [
@@ -785,7 +793,47 @@ const seasonFilters = {
   ],
 };
 
-function FilterSection({
+const placeTypeFilters = [
+  { type: CitiesTypeOptions.country, label: "Countries", icon: Globe2 },
+  { type: CitiesTypeOptions.region, label: "Regions", icon: Mountain },
+  { type: CitiesTypeOptions.city, label: "Cities", icon: Building2 },
+  {
+    type: CitiesTypeOptions.neighborhood,
+    label: "Neighborhoods",
+    icon: MapPin,
+  },
+  { type: CitiesTypeOptions.sight, label: "Sights", icon: Landmark },
+];
+
+const destinationTypes = [
+  {
+    type: CitiesTypeOptions.country,
+    label: "Countries",
+    icon: Globe2,
+  },
+  {
+    type: CitiesTypeOptions.region,
+    label: "Regions",
+    icon: Mountain,
+  },
+  {
+    type: CitiesTypeOptions.city,
+    label: "Cities",
+    icon: Building2,
+  },
+  {
+    type: CitiesTypeOptions.neighborhood,
+    label: "Neighborhoods",
+    icon: MapPin,
+  },
+  {
+    type: CitiesTypeOptions.sight,
+    label: "Sights",
+    icon: Landmark,
+  },
+];
+
+const FilterSection = ({
   title,
   filters,
   emoji,
@@ -794,77 +842,65 @@ function FilterSection({
   onFilterToggle,
   isCollapsed,
   onToggleCollapse,
-}: FilterSectionProps) {
+}: FilterSectionProps) => {
   return (
-    <div className="mb-3 rounded-xl bg-background/50 backdrop-blur-sm shadow-sm border border-accent/10">
-      <button
+    <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+      <Button
+        variant="ghost"
+        className={`w-full justify-between px-4 py-2 ${color} rounded-t-lg`}
         onClick={onToggleCollapse}
-        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${color} hover:brightness-105 group`}
       >
-        <div className="flex items-center gap-2.5">
-          <span className="text-xl group-hover:scale-110 transition-transform">
-            {emoji}
-          </span>
-          <span className="font-semibold tracking-tight">{title}</span>
-        </div>
-        <ChevronDown
-          className={`h-4 w-4 transition-all duration-200 ${
+        <span className="flex items-center gap-2">
+          <span className="text-lg">{emoji}</span>
+          <span className="font-medium">{title}</span>
+        </span>
+        <span
+          className={`transform transition-transform ${
             isCollapsed ? "" : "rotate-180"
-          } opacity-70 group-hover:opacity-100`}
-        />
-      </button>
+          }`}
+        >
+          ▼
+        </span>
+      </Button>
       {!isCollapsed && (
-        <div className="flex flex-wrap gap-1.5 p-2 pt-1.5 animate-in slide-in-from-top-2 duration-200">
+        <div className="p-4 space-y-2">
           {filters.map((filter) => (
-            <button
+            <Button
               key={filter.label}
+              variant={
+                selectedFilters.has(filter.label) ? "default" : "outline"
+              }
+              className="w-full justify-start gap-2"
               onClick={() => onFilterToggle(filter.label)}
-              className={`flex items-center px-2 py-1.5 rounded-lg text-sm transition-all duration-200 grow basis-[calc(50%-0.75rem)] group/item
-                ${
-                  selectedFilters.has(filter.label)
-                    ? `${color} shadow-sm hover:shadow-md hover:-translate-y-[1px]`
-                    : "hover:bg-accent/5 hover:shadow-sm active:scale-[0.98]"
-                }
-              `}
             >
-              <span
-                className={`flex-shrink-0 mr-1.5 text-base transition-transform group-hover/item:scale-110 ${
-                  selectedFilters.has(filter.label) ? "" : "opacity-70"
-                }`}
-              >
-                {filter.emoji}
-              </span>
-              <span
-                className={`text-left min-w-0 flex-1 ${
-                  selectedFilters.has(filter.label) ? "font-medium" : ""
-                }`}
-              >
-                {filter.label}
-              </span>
+              <span className="text-lg">{filter.emoji}</span>
+              {filter.label}
               {filter.count !== undefined && (
-                <span
-                  className={`ml-1.5 flex-shrink-0 text-xs px-1.5 py-0.5 rounded-full ${
-                    selectedFilters.has(filter.label)
-                      ? "bg-black/10"
-                      : "bg-accent/10"
-                  }`}
-                >
+                <span className="ml-auto text-xs text-muted-foreground">
                   {filter.count}
                 </span>
               )}
-            </button>
+            </Button>
           ))}
         </div>
       )}
     </div>
   );
-}
+};
 
-export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
+export function VerticalFilters({
+  onFiltersChange,
+  selectedDestinationType,
+  onDestinationTypeSelect,
+}: VerticalFiltersProps) {
   const { user } = useAuth();
-  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(
+  const [selectedTypes, setSelectedTypes] = useState<Set<CitiesTypeOptions>>(
     new Set()
   );
+  const [selectedSizes, setSelectedSizes] = useState<Set<PopulationRange>>(
+    new Set()
+  );
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
     new Set()
   );
@@ -872,171 +908,207 @@ export function VerticalFilters({ onFiltersChange }: VerticalFiltersProps) {
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
   useEffect(() => {
-    if (user) return; // Don't show for logged in users
+    onFiltersChange?.({
+      types: selectedTypes,
+      sizes: selectedSizes,
+      tags: selectedTags,
+    });
+  }, [selectedTypes, selectedSizes, selectedTags, onFiltersChange]);
 
-    let timeout: NodeJS.Timeout;
-    const handleMouseLeave = (e: MouseEvent) => {
-      // Clear any existing timeout
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-
-      // Check if the mouse is moving towards the top of the viewport
-      if (
-        e.clientY <= 0 &&
-        e.clientX > 0 &&
-        e.clientX < window.innerWidth &&
-        !showSignUpDialog // Only set if not already showing
-      ) {
-        timeout = setTimeout(() => {
-          setShowSignUpDialog(true);
-        }, 100); // Small delay to prevent double triggers
-      }
-    };
-
-    document.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [user, showSignUpDialog]);
-
-  const handleFilterToggle = (filter: string) => {
+  const handleTypeToggle = (type: CitiesTypeOptions) => {
     if (!user) {
       setShowSignUpDialog(true);
       return;
     }
-    const newFilters = new Set(selectedFilters);
-    if (newFilters.has(filter)) {
-      newFilters.delete(filter);
+    const newTypes = new Set(selectedTypes);
+    if (newTypes.has(type)) {
+      newTypes.delete(type);
     } else {
-      newFilters.add(filter);
+      newTypes.add(type);
     }
-    setSelectedFilters(newFilters);
-    onFiltersChange?.(newFilters);
+    setSelectedTypes(newTypes);
   };
 
-  const handleToggleCollapse = (sectionId: string) => {
-    const newCollapsedSections = new Set(collapsedSections);
-    if (newCollapsedSections.has(sectionId)) {
-      newCollapsedSections.delete(sectionId);
+  const handleSizeToggle = (size: PopulationRange) => {
+    if (!user) {
+      setShowSignUpDialog(true);
+      return;
+    }
+    const newSizes = new Set(selectedSizes);
+    if (newSizes.has(size)) {
+      newSizes.delete(size);
     } else {
-      newCollapsedSections.add(sectionId);
+      newSizes.add(size);
     }
-    setCollapsedSections(newCollapsedSections);
+    setSelectedSizes(newSizes);
   };
 
-  const toggleAllSections = (collapse: boolean) => {
-    const allCategories = [
-      ...categories,
-      navigationFilters,
-      weatherFilters,
-      costFilters,
-      lifestyleFilters,
-      techFilters,
-      familyFilters,
-      nomadFilters,
-      educationFilters,
-      healthcareFilters,
-      petFilters,
-      remoteWorkFilters,
-      healthcareAccessFilters,
-      seasonFilters,
-    ];
-    const newCollapsedSections = new Set<string>();
-    if (collapse) {
-      allCategories.forEach((category) =>
-        newCollapsedSections.add(category.id)
-      );
+  const handleTagToggle = (tag: string) => {
+    if (!user) {
+      setShowSignUpDialog(true);
+      return;
     }
-    setCollapsedSections(newCollapsedSections);
+    const newTags = new Set(selectedTags);
+    if (newTags.has(tag)) {
+      newTags.delete(tag);
+    } else {
+      newTags.add(tag);
+    }
+    setSelectedTags(newTags);
   };
-
-  const filteredCategories = [
-    ...categories,
-    navigationFilters,
-    weatherFilters,
-    costFilters,
-    lifestyleFilters,
-    techFilters,
-    familyFilters,
-    nomadFilters,
-    educationFilters,
-    healthcareFilters,
-    petFilters,
-    remoteWorkFilters,
-    healthcareAccessFilters,
-    seasonFilters,
-  ]
-    .map((category) => ({
-      ...category,
-      filters: category.filters.filter((filter) =>
-        filter.label.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
-    }))
-    .filter((category) => category.filters.length > 0);
 
   return (
-    <ScrollArea className="h-[calc(100vh-4rem)]">
-      <div className="p-4 space-y-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search filters..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => toggleAllSections(collapsedSections.size === 0)}
-            >
-              {collapsedSections.size === 0 ? "Collapse All" : "Expand All"}
-            </Button>
-          </div>
-          {selectedFilters.size > 0 && (
-            <p className="text-sm text-muted-foreground">
-              {selectedFilters.size} filter
-              {selectedFilters.size !== 1 ? "s" : ""} selected
-            </p>
-          )}
-        </div>
+    <div className="w-full max-w-xs flex flex-col gap-6">
+      <div className="space-y-2">
+        <Input
+          placeholder="Search filters..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full"
+        />
+      </div>
 
-        {filteredCategories.map((category) => (
+      {/* Place Type Filters */}
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+        <Button
+          variant="ghost"
+          className="w-full justify-between px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 rounded-t-lg"
+          onClick={() => {
+            const newCollapsed = new Set(collapsedSections);
+            if (newCollapsed.has("types")) {
+              newCollapsed.delete("types");
+            } else {
+              newCollapsed.add("types");
+            }
+            setCollapsedSections(newCollapsed);
+          }}
+        >
+          <span className="flex items-center gap-2">
+            <MapPin className="h-5 w-5" />
+            <span className="font-medium">Place Type</span>
+          </span>
+          <span
+            className={`transform transition-transform ${
+              collapsedSections.has("types") ? "" : "rotate-180"
+            }`}
+          >
+            ▼
+          </span>
+        </Button>
+        {!collapsedSections.has("types") && (
+          <div className="p-4 space-y-2">
+            {destinationTypes.map(({ type, label, icon: Icon }) => (
+              <Button
+                key={type}
+                variant={
+                  selectedDestinationType === type ? "default" : "outline"
+                }
+                className="w-full justify-start gap-2"
+                onClick={() => onDestinationTypeSelect?.(type)}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Population Size Filters */}
+      <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+        <Button
+          variant="ghost"
+          className="w-full justify-between px-4 py-2 bg-gradient-to-r from-green-100 to-green-200 text-green-800 rounded-t-lg"
+          onClick={() => {
+            const newCollapsed = new Set(collapsedSections);
+            if (newCollapsed.has("sizes")) {
+              newCollapsed.delete("sizes");
+            } else {
+              newCollapsed.add("sizes");
+            }
+            setCollapsedSections(newCollapsed);
+          }}
+        >
+          <span className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            <span className="font-medium">Population Size</span>
+          </span>
+          <span
+            className={`transform transition-transform ${
+              collapsedSections.has("sizes") ? "" : "rotate-180"
+            }`}
+          >
+            ▼
+          </span>
+        </Button>
+        {!collapsedSections.has("sizes") && (
+          <div className="p-4 space-y-2">
+            {(
+              Object.entries(PopulationRanges) as [
+                PopulationRange,
+                { label: string }
+              ][]
+            ).map(([size, { label }]) => (
+              <Button
+                key={size}
+                variant={
+                  selectedSizes.has(size as PopulationRange)
+                    ? "default"
+                    : "outline"
+                }
+                className="w-full justify-start gap-2"
+                onClick={() => handleSizeToggle(size as PopulationRange)}
+              >
+                <Users className="h-4 w-4" />
+                {label}
+              </Button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Original Tag Filters */}
+      {categories
+        .filter((category) =>
+          category.filters.some((filter) =>
+            filter.label.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        )
+        .map((category) => (
           <FilterSection
             key={category.id}
             title={category.title}
-            filters={category.filters}
+            filters={category.filters.filter((filter) =>
+              filter.label.toLowerCase().includes(searchQuery.toLowerCase())
+            )}
             emoji={category.emoji}
             color={category.color}
-            selectedFilters={selectedFilters}
-            onFilterToggle={handleFilterToggle}
+            selectedFilters={selectedTags}
+            onFilterToggle={handleTagToggle}
             isCollapsed={collapsedSections.has(category.id)}
-            onToggleCollapse={() => handleToggleCollapse(category.id)}
+            onToggleCollapse={() => {
+              const newCollapsed = new Set(collapsedSections);
+              if (newCollapsed.has(category.id)) {
+                newCollapsed.delete(category.id);
+              } else {
+                newCollapsed.add(category.id);
+              }
+              setCollapsedSections(newCollapsed);
+            }}
           />
         ))}
 
-        {filteredCategories.length === 0 && searchQuery && (
-          <div className="text-center py-8 text-muted-foreground">
-            No filters match your search
-          </div>
-        )}
-        {showSignUpDialog && (
-          <SignUpDialog
-            open={showSignUpDialog}
-            onOpenChange={setShowSignUpDialog}
-            title="Unlock All Filters"
-            description="Join our community to access all filters and discover your perfect city"
-            city="paris"
-            country="france"
-            imageNumber={4}
-          />
-        )}
-      </div>
-    </ScrollArea>
+      {showSignUpDialog && (
+        <SignUpDialog
+          open={showSignUpDialog}
+          onOpenChange={setShowSignUpDialog}
+          title="Unlock All Filters"
+          description="Join our community to access all filters and discover your perfect city"
+          city="paris"
+          country="france"
+          imageNumber={4}
+        />
+      )}
+    </div>
   );
 }

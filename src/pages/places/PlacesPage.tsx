@@ -1,60 +1,53 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/Pagination";
 import { CityMap } from "@/features/map/components/CityMap";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
-import { MobileSearch } from "@/features/places/search/components/MobileSearch";
 import { useSearch } from "@/features/places/search/hooks/useSearch";
-import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
-import { usePreferences } from "@/features/preferences/hooks/usePreferences";
+import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilters";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
-import { List, MapPin, Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { List, MapPin } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 export const PlacesPage = () => {
-  const { preferences, setPreferences, calculateMatchForCity } =
-    usePreferences();
   const {
-    isFilterSheetOpen,
-    setIsFilterSheetOpen,
     selectedFilter,
-    setSelectedFilter,
     selectedDestinationType,
-    setSelectedDestinationType,
     sortOrder,
     setSortOrder,
-    filterOptions,
+    isFilterSheetOpen,
+    setIsFilterSheetOpen,
     handleFilterSelect,
     handleDestinationTypeSelect,
     getFilteredCities,
-  } = useSearchFilters(preferences);
+    filterOptions,
+  } = useSearchFilters();
   const { getAllCities } = useCitiesActions();
 
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const currentRequestIdRef = useRef<string>("");
-  const isLoadingRef = useRef(false);
-
   const {
     searchQuery,
-    setSearchQuery,
+    searchInputRef,
     isMobileSearchActive,
     setIsMobileSearchActive,
-    searchInputRef,
     handleSearchChange,
     handleCitySelect,
   } = useSearch();
+
+  const filteredCities = useMemo(
+    () => getFilteredCities(cityData, searchQuery),
+    [cityData, searchQuery, getFilteredCities]
+  );
+
   const { currentPage, setCurrentPage, getPaginatedData, getTotalPages } =
-    usePagination(
-      getFilteredCities(cityData, searchQuery, calculateMatchForCity)
-    );
+    usePagination(filteredCities);
 
   useEffect(() => {
     if (isMobileSearchActive && searchInputRef.current) {
@@ -64,35 +57,25 @@ export const PlacesPage = () => {
 
   useEffect(() => {
     const loadCityData = async () => {
-      if (isLoadingRef.current) return;
-
-      const requestId = Math.random().toString(36).substring(7);
-      currentRequestIdRef.current = requestId;
-      isLoadingRef.current = true;
       setIsLoading(true);
 
       try {
         const records = await getAllCities();
 
-        if (currentRequestIdRef.current === requestId) {
-          const transformedData: Record<string, CitiesResponse> =
-            records.reduce((acc, record) => {
-              acc[record.name] = record;
-              return acc;
-            }, {} as Record<string, CitiesResponse>);
+        const transformedData: Record<string, CitiesResponse> = records.reduce(
+          (acc, record) => {
+            acc[record.name] = record;
+            return acc;
+          },
+          {} as Record<string, CitiesResponse>
+        );
 
-          setCityData(transformedData);
-        }
+        setCityData(transformedData);
       } catch (error) {
-        if (currentRequestIdRef.current === requestId) {
-          console.error("Error loading city data:", error);
-          setCityData({});
-        }
+        console.error("Error loading city data:", error);
+        setCityData({});
       } finally {
-        if (currentRequestIdRef.current === requestId) {
-          isLoadingRef.current = false;
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
@@ -102,11 +85,9 @@ export const PlacesPage = () => {
   // Get current data for map view
   const getCurrentLevelData = () => {
     // Apply filters and then filter for valid coordinates
-    return getFilteredCities(
-      cityData,
-      searchQuery,
-      calculateMatchForCity
-    ).filter((city) => city.latitude != null && city.longitude != null);
+    return getFilteredCities(cityData, searchQuery).filter(
+      (city) => city.latitude != null && city.longitude != null
+    );
   };
 
   if (isLoading) {
@@ -123,8 +104,11 @@ export const PlacesPage = () => {
   }
 
   return (
-    <PlacesLayout>
-      <div id="places-section" className="relative min-h-screen">
+    <PlacesLayout
+      selectedDestinationType={selectedDestinationType}
+      onDestinationTypeSelect={handleDestinationTypeSelect}
+    >
+      <div className="flex flex-col h-full">
         <div className="py-2 sm:py-3 md:py-4 space-y-3 sm:space-y-4 md:space-y-6">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
@@ -133,8 +117,8 @@ export const PlacesPage = () => {
                 Discover Places
               </h1>
               <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                Find your perfect destination based on your preferences and travel
-                style.
+                Find your perfect destination based on your preferences and
+                travel style.
               </p>
             </div>
 
@@ -164,57 +148,13 @@ export const PlacesPage = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Mobile Search Trigger */}
-          {viewMode === "list" && (
-            <div className="md:hidden relative">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  className="w-full pl-9 pr-10 h-10 sm:h-12"
-                  placeholder="Search destinations..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onClick={() => setIsMobileSearchActive(true)}
-                  readOnly
-                />
-                {searchQuery && (
-                  <button
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSearchQuery("");
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Mobile Search Overlay */}
-          {isMobileSearchActive && viewMode === "list" && (
-            <MobileSearch
-              searchQuery={searchQuery}
-              onSearchChange={handleSearchChange}
-              onClose={() => setIsMobileSearchActive(false)}
-              searchInputRef={searchInputRef}
-              filteredCities={getFilteredCities(
-                cityData,
-                searchQuery,
-                calculateMatchForCity
-              )}
-              onCitySelect={handleCitySelect}
-            />
-          )}
-
-          {/* Mobile Filters */}
+        {/* Mobile Search */}
+        <div className="md:hidden">
           <MobileFilters
             isFilterSheetOpen={isFilterSheetOpen}
             setIsFilterSheetOpen={setIsFilterSheetOpen}
-            preferences={preferences}
-            setPreferences={setPreferences}
             selectedFilter={selectedFilter}
             onFilterSelect={handleFilterSelect}
             selectedDestinationType={selectedDestinationType}
@@ -223,51 +163,48 @@ export const PlacesPage = () => {
             setSortOrder={setSortOrder}
             filterOptions={filterOptions}
           />
+        </div>
 
-          {/* Results Grid */}
-          <div className="space-y-8">
-            {viewMode === "map" ? (
-              <CityMap
-                places={getCurrentLevelData()}
-                onPlaceSelect={(place) => {
-                  // Only scroll to the place without filtering
-                  const citySlug = place.name
-                    .toLowerCase()
-                    .replace(/[^\w\s-]/g, "")
-                    .replace(/\s+/g, "-");
-                  const cityElement = document.getElementById(`city-${citySlug}`);
-                  if (cityElement) {
-                    setTimeout(() => {
-                      cityElement.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                      });
-                    }, 100);
-                  }
-                }}
-                className="h-[70vh] w-full"
-              />
-            ) : (
+        <div className="flex flex-1 min-h-0">
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Map View */}
+            {viewMode === "map" && (
+              <div className="relative flex-1">
+                <CityMap
+                  places={getPaginatedData()}
+                  onPlaceSelect={handleCitySelect}
+                  className="h-full w-full"
+                />
+                <div className="absolute bottom-4 right-4 flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                  >
+                    <List className="h-4 w-4 mr-2" />
+                    List View
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* List View */}
+            {viewMode === "list" && (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
-                  {getPaginatedData().map((place) => (
-                    <PlaceCard
-                      key={place.id || place.name}
-                      city={place}
-                      variant="ranked"
-                      matchScore={calculateMatchForCity({
-                        cost: place.cost,
-                        crowdLevel: place.crowdLevel,
-                        recommendedStay: place.recommendedStay,
-                        bestSeason: place.bestSeason,
-                        transit: place.transit,
-                        accessibility: place.accessibility,
-                      })}
-                    />
+                <div className="flex items-center gap-4 px-4 py-2 bg-muted/50 rounded-lg">
+                  <div className="space-y-0.5 text-sm">
+                    <div className="text-muted-foreground">
+                      {filteredCities.length} places
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+                  {getPaginatedData().map((city) => (
+                    <PlaceCard key={city.id} city={city} variant="basic" />
                   ))}
                 </div>
-
-                <div className="mt-6 sm:mt-8 flex justify-center">
+                <div className="mt-auto border-t p-4">
                   <Pagination
                     currentPage={currentPage}
                     totalPages={getTotalPages()}

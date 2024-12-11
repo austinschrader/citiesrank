@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -9,24 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { DestinationFilter } from "@/features/places/components/DestinationFilter";
-import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
-import { UserPreferences } from "@/features/preferences/types";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import { SlidersHorizontal, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
+import { VerticalFilters } from "./VerticalFilters";
 
 interface MobileFiltersProps {
   isFilterSheetOpen: boolean;
   setIsFilterSheetOpen: (open: boolean) => void;
-  preferences: UserPreferences;
-  setPreferences: (preferences: UserPreferences) => void;
   selectedFilter: string | null;
   onFilterSelect: (filter: string) => void;
   selectedDestinationType: CitiesTypeOptions | null;
@@ -39,8 +35,6 @@ interface MobileFiltersProps {
 export const MobileFilters = ({
   isFilterSheetOpen,
   setIsFilterSheetOpen,
-  preferences,
-  setPreferences,
   selectedFilter,
   onFilterSelect,
   selectedDestinationType,
@@ -49,119 +43,66 @@ export const MobileFilters = ({
   setSortOrder,
   filterOptions,
 }: MobileFiltersProps) => {
-  const activeFilterCount = Object.values(preferences).filter(
-    (value) => value !== 50
+  const activeFilterCount = filterOptions.filter(
+    (option) => option.id === selectedFilter
   ).length;
 
   return (
-    <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur pt-2 pb-4 overflow-hidden">
-      <div className="overflow-x-auto hide-scrollbar">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 px-4 min-w-max">
-            <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 gap-2 whitespace-nowrap"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Filters
-                  {activeFilterCount > 0 && (
-                    <span className="ml-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="bottom"
-                className="h-[75vh] max-h-[800px] p-0 z-[400]"
+    <div className="md:hidden flex items-center gap-2 p-4 sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
+      <Dialog open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm" className="h-9 px-3 gap-2">
+            <Filter className="h-4 w-4" />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="ml-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="h-[80vh] flex flex-col p-0">
+          <DialogHeader className="px-4 py-2 border-b">
+            <div className="flex items-center justify-between">
+              <DialogTitle>Filters</DialogTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setIsFilterSheetOpen(false)}
               >
-                <div className="flex flex-col h-full">
-                  <SheetHeader className="px-4 py-3 border-b flex-shrink-0">
-                    <div className="flex items-center justify-between">
-                      <SheetTitle className="text-lg">Filters</SheetTitle>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-full"
-                        onClick={() => setIsFilterSheetOpen(false)}
-                        aria-label="Close filters"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {activeFilterCount > 0 && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {activeFilterCount} active filter
-                        {activeFilterCount !== 1 ? "s" : ""}
-                      </p>
-                    )}
-                  </SheetHeader>
-
-                  <ScrollArea className="flex-1 px-4 py-4">
-                    <PreferencesCard
-                      preferences={preferences}
-                      onPreferencesChange={setPreferences}
-                    />
-                  </ScrollArea>
-
-                  <div className="flex-shrink-0 border-t p-4 space-y-3">
-                    {activeFilterCount > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full text-muted-foreground"
-                        onClick={() => {
-                          setPreferences({
-                            budget: 50,
-                            crowds: 50,
-                            tripLength: 50,
-                            season: 50,
-                            transit: 50,
-                            accessibility: 50,
-                          });
-                        }}
-                      >
-                        Reset all filters
-                      </Button>
-                    )}
-                    <Button
-                      className="w-full"
-                      onClick={() => setIsFilterSheetOpen(false)}
-                    >
-                      Apply filters
-                    </Button>
-                  </div>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </DialogHeader>
+          <ScrollArea className="flex-1">
+            <div className="px-4 py-2 space-y-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <h3 className="font-medium">Sort by</h3>
+                  <Select value={sortOrder} onValueChange={setSortOrder}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select sort order" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Sort Options</SelectLabel>
+                        <SelectItem value="match">Best Match</SelectItem>
+                        <SelectItem value="population">Population</SelectItem>
+                        <SelectItem value="name">Name</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
-              </SheetContent>
-            </Sheet>
-
-            <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger className="h-9 whitespace-nowrap">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Sort by</SelectLabel>
-                  <SelectItem value="match">Best Match</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="cost-low">Price: Low to High</SelectItem>
-                  <SelectItem value="cost-high">Price: High to Low</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <DestinationFilter
-            selectedFilter={selectedFilter}
-            onFilterSelect={onFilterSelect}
-            selectedDestinationType={selectedDestinationType}
-            onDestinationTypeSelect={onDestinationTypeSelect}
-          />
-        </div>
-      </div>
+                <VerticalFilters
+                  selectedDestinationType={selectedDestinationType}
+                  onDestinationTypeSelect={onDestinationTypeSelect}
+                />
+              </div>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import type { MatchScore } from "@/features/preferences/types";
 import type { CitiesResponse } from "@/lib/types/pocketbase-types";
 
 export interface BasePlaceCardProps {
@@ -8,7 +7,6 @@ export interface BasePlaceCardProps {
 export interface RankedPlaceCardProps extends BasePlaceCardProps {
   variant: "ranked";
   city: CitiesResponse;
-  matchScore: MatchScore;
 }
 
 export interface BasicPlaceCardProps extends BasePlaceCardProps {

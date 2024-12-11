@@ -1,23 +1,28 @@
 import { VerticalFilters } from "@/features/places/search/components/VerticalFilters";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 interface PlacesLayoutProps {
   children: React.ReactNode;
+  selectedDestinationType?: CitiesTypeOptions | null;
+  onDestinationTypeSelect?: (type: CitiesTypeOptions) => void;
 }
 
-export const PlacesLayout = ({ children }: PlacesLayoutProps) => {
+export const PlacesLayout = ({ 
+  children, 
+  selectedDestinationType,
+  onDestinationTypeSelect 
+}: PlacesLayoutProps) => {
   return (
     <div className="min-h-[calc(100vh-4rem)] pb-16 sm:pb-20 md:pb-0">
-      <div className="mx-1 sm:mx-2 md:mx-4">
-        <div className="flex flex-col lg:flex-row gap-2">
-          <div className="lg:hidden sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-2">
-            <VerticalFilters />
-          </div>
-          <div className="hidden lg:block min-w-[420px] max-w-[460px]">
-            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-              <VerticalFilters />
-            </div>
-          </div>
-          <div className="flex-1 pt-2 lg:pt-0">{children}</div>
+      <div className="flex">
+        <aside className="hidden lg:block w-80 border-r min-h-[calc(100vh-4rem)] p-4">
+          <VerticalFilters
+            selectedDestinationType={selectedDestinationType}
+            onDestinationTypeSelect={onDestinationTypeSelect}
+          />
+        </aside>
+        <div className="flex-1 mx-1 sm:mx-2 md:mx-4">
+          {children}
         </div>
       </div>
     </div>

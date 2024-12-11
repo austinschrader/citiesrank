@@ -224,15 +224,6 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
         <p className="text-sm text-muted-foreground line-clamp-2">
           {city.description}
         </p>
-
-        {"matchScore" in city && typeof city.matchScore === "number" && (
-          <Badge
-            variant="secondary"
-            className={cn("text-xs", getMatchColor(city.matchScore))}
-          >
-            {city.matchScore.toFixed(0)}% Match
-          </Badge>
-        )}
       </div>
     );
   }
@@ -326,26 +317,6 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ city, variant }) => {
               )}
             />
           </button>
-
-          {/* Match score badge with improved design */}
-          {variant === "ranked" && "matchScore" in city && (
-            <div className="absolute top-3 left-3 z-30 transform transition-all duration-500 ease-out group-hover:scale-105">
-              <div
-                className={cn(
-                  "px-3 py-1.5 rounded-full text-sm font-semibold",
-                  "shadow-lg backdrop-blur-sm",
-                  "transform transition-all duration-300",
-                  getMatchColor(
-                    typeof city.matchScore === "number" ? city.matchScore : 0
-                  )
-                )}
-              >
-                {typeof city.matchScore === "number"
-                  ? `${Math.round(city.matchScore)}% match`
-                  : null}
-              </div>
-            </div>
-          )}
         </div>
       </Card>
 

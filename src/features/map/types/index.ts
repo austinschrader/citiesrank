@@ -1,5 +1,4 @@
 // src/features/map/types/index.ts
-import { MatchScore } from "@/features/preferences/types";
 import {
   CitiesResponse,
   CitiesTypeOptions,
@@ -7,7 +6,9 @@ import {
 import { LatLngTuple } from "leaflet";
 
 // Core map types
-export interface MapPlace extends CitiesResponse, Partial<MatchScore> {}
+export interface MapPlace extends CitiesResponse {
+  type: CitiesTypeOptions;
+}
 
 export interface MapViewState {
   zoom: number;
