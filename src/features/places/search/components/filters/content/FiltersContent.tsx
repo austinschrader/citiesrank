@@ -1,12 +1,15 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FilterSection } from "../shared/FilterSection";
-import { useState, useEffect } from "react";
+import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { UserPreferences } from "@/features/preferences/types";
 import { filterCategories } from "@/lib/data/filter-categories";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { LocationSearch } from "../../LocationSearch";
+import { SearchLayout } from "../../layout/SearchLayout";
+import { FilterSection } from "../shared/FilterSection";
 
 interface FiltersContentProps {
   preferences: UserPreferences;
@@ -14,10 +17,18 @@ interface FiltersContentProps {
   onFiltersChange?: (filters: Set<string>) => void;
 }
 
-export function FiltersContent({ preferences, setPreferences, onFiltersChange }: FiltersContentProps) {
+export function FiltersContent({
+  preferences,
+  setPreferences,
+  onFiltersChange,
+}: FiltersContentProps) {
   const { user } = useAuth();
-  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(new Set());
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(
+    new Set()
+  );
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set()
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
@@ -82,7 +93,9 @@ export function FiltersContent({ preferences, setPreferences, onFiltersChange }:
   const toggleAllSections = (collapse: boolean) => {
     const newCollapsedSections = new Set<string>();
     if (collapse) {
-      filterCategories.forEach((category) => newCollapsedSections.add(category.id));
+      filterCategories.forEach((category) =>
+        newCollapsedSections.add(category.id)
+      );
     }
     setCollapsedSections(newCollapsedSections);
   };
@@ -98,62 +111,88 @@ export function FiltersContent({ preferences, setPreferences, onFiltersChange }:
 
   return (
     <ScrollArea className="h-[calc(100vh-4rem)]">
-      <div className="p-4 space-y-4">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Search filters..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => toggleAllSections(collapsedSections.size === 0)}
-            >
-              {collapsedSections.size === 0 ? "Collapse All" : "Expand All"}
-            </Button>
-          </div>
-          {selectedFilters.size > 0 && (
-            <p className="text-sm text-muted-foreground">
-              {selectedFilters.size} filter
-              {selectedFilters.size !== 1 ? "s" : ""} selected
-            </p>
-          )}
-        </div>
+      <SearchLayout
+        searchBar={<LocationSearch />}
+        filters={
+          <div className="p-4 space-y-4">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search filters..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
+              />
+              {searchQuery && (
+                <button
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
 
-        {filteredCategories.map((category) => (
-          <FilterSection
-            key={category.id}
-            title={category.title}
-            filters={category.filters}
-            emoji={category.emoji}
-            color={category.color}
-            selectedFilters={selectedFilters}
-            onFilterToggle={handleFilterToggle}
-            isCollapsed={collapsedSections.has(category.id)}
-            onToggleCollapse={() => handleToggleCollapse(category.id)}
-          />
-        ))}
+            {filteredCategories.length > 0 && (
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleAllSections(false)}
+                >
+                  Expand All
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleAllSections(true)}
+                >
+                  Collapse All
+                </Button>
+              </div>
+            )}
 
-        {filteredCategories.length === 0 && searchQuery && (
-          <div className="text-center py-8 text-muted-foreground">
-            No filters match your search
+            {filteredCategories.length === 0 && searchQuery ? (
+              <div className="text-center text-muted-foreground py-4">
+                No filters match your search
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {selectedFilters.size > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {selectedFilters.size} filter
+                    {selectedFilters.size !== 1 ? "s" : ""} selected
+                  </p>
+                )}
+                {filteredCategories.map((category) => (
+                  <FilterSection
+                    key={category.id}
+                    title={category.title}
+                    filters={category.filters}
+                    emoji={category.emoji}
+                    color={category.color}
+                    selectedFilters={selectedFilters}
+                    onFilterToggle={handleFilterToggle}
+                    isCollapsed={collapsedSections.has(category.id)}
+                    onToggleCollapse={() => handleToggleCollapse(category.id)}
+                  />
+                ))}
+              </div>
+            )}
+            {showSignUpDialog && (
+              <SignUpDialog
+                open={showSignUpDialog}
+                onOpenChange={setShowSignUpDialog}
+                title="Unlock All Filters"
+                description="Join our community to access all filters and discover your perfect city"
+                city="paris"
+                country="france"
+                imageNumber={4}
+              />
+            )}
           </div>
-        )}
-        {showSignUpDialog && (
-          <SignUpDialog
-            open={showSignUpDialog}
-            onOpenChange={setShowSignUpDialog}
-            title="Unlock All Filters"
-            description="Join our community to access all filters and discover your perfect city"
-            city="paris"
-            country="france"
-            imageNumber={4}
-          />
-        )}
-      </div>
+        }
+      />
     </ScrollArea>
   );
 }

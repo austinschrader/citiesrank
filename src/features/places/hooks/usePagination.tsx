@@ -1,11 +1,18 @@
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 
-export function usePagination(filteredCities: CitiesResponse[]) {
+export function usePagination(getFilteredData: () => CitiesResponse[]) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [filteredData, setFilteredData] = useState<CitiesResponse[]>([]);
+
+  // Update filtered data whenever the filter function changes
+  useEffect(() => {
+    setFilteredData(getFilteredData());
+    setCurrentPage(1); // Reset to first page when filter changes
+  }, [getFilteredData]);
 
   const loadMore = () => {
     setIsLoading(true);
@@ -17,11 +24,11 @@ export function usePagination(filteredCities: CitiesResponse[]) {
   };
 
   const getPaginatedData = () => {
-    return filteredCities.slice(0, currentPage * ITEMS_PER_PAGE);
+    return filteredData.slice(0, currentPage * ITEMS_PER_PAGE);
   };
 
   const hasMore = () => {
-    return currentPage * ITEMS_PER_PAGE < filteredCities.length;
+    return currentPage * ITEMS_PER_PAGE < filteredData.length;
   };
 
   return {
