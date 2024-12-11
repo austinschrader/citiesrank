@@ -174,205 +174,164 @@ const PlacesContent = () => {
   return (
     <PlacesLayout>
       <div className="flex flex-col gap-4 p-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger className="w-[140px] bg-background/50 backdrop-blur-sm shadow-sm">
-                <SelectValue>
-                  <div className="flex items-center gap-2">
-                    <span>{sortOrder}</span>
-                  </div>
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="alphabetical">
-                  <div className="flex items-center gap-2">
-                    <span>Alphabetical</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="match">
-                  <div className="flex items-center gap-2">
-                    <span>Match</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <div id="places-section" className="relative min-h-screen">
-          <div className="py-2 sm:py-3 md:py-4 space-y-3 sm:space-y-4 md:space-y-6">
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
-              <div className="flex-1 space-y-1 sm:space-y-2">
-                <h1 className="text-xl sm:text-2xl md:text-4xl font-bold">
-                  Discover Places
-                </h1>
-                <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                  Find your perfect destination based on your preferences and
-                  travel style.
-                </p>
-              </div>
-
-              {/* Controls Section */}
-              <div className="flex flex-col gap-2 sm:gap-3 w-full md:w-auto">
-                <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full md:w-auto">
-                  <div className="relative z-50">
-                    <Select
-                      value={viewMode}
-                      onValueChange={(value: "map" | "list") =>
-                        setViewMode(value)
-                      }
-                    >
-                      <SelectTrigger className="w-[140px] bg-background/50 backdrop-blur-sm shadow-sm">
-                        <SelectValue>
-                          <div className="flex items-center gap-2">
-                            {viewMode === "map" ? (
-                              <>
-                                <MapPin className="h-4 w-4" />
-                                <span>Map View</span>
-                              </>
-                            ) : (
-                              <>
-                                <List className="h-4 w-4" />
-                                <span>List View</span>
-                              </>
-                            )}
-                          </div>
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="map">
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
-                            <span>Map View</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="list">
-                          <div className="flex items-center gap-2">
-                            <List className="h-4 w-4" />
-                            <span>List View</span>
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile Search Trigger */}
-            {viewMode === "list" && (
-              <div className="md:hidden relative">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    className="w-full pl-9 pr-10 h-10 sm:h-12"
-                    placeholder="Search destinations..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    onClick={() => setIsMobileSearchActive(true)}
-                    readOnly
-                  />
-                  {searchQuery && (
-                    <button
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSearchQuery("");
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
+        {/* Controls Section - Simplified */}
+        <div className="flex items-center justify-between gap-2">
+          <Select value={sortOrder} onValueChange={setSortOrder}>
+            <SelectTrigger className="w-[140px] bg-background/50 backdrop-blur-sm shadow-sm">
+              <SelectValue>{sortOrder}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="alphabetical">Alphabetical</SelectItem>
+              <SelectItem value="match">Match</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select
+            value={viewMode}
+            onValueChange={(value: "map" | "list") => setViewMode(value)}
+          >
+            <SelectTrigger className="w-[140px] bg-background/50 backdrop-blur-sm shadow-sm">
+              <SelectValue>
+                <div className="flex items-center gap-2">
+                  {viewMode === "map" ? (
+                    <>
+                      <MapPin className="h-4 w-4" />
+                      <span>Map</span>
+                    </>
+                  ) : (
+                    <>
+                      <List className="h-4 w-4" />
+                      <span>List</span>
+                    </>
                   )}
                 </div>
-              </div>
-            )}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="map">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>Map</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="list">
+                <div className="flex items-center gap-2">
+                  <List className="h-4 w-4" />
+                  <span>List</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-            {/* Mobile Search Overlay */}
-            {isMobileSearchActive && viewMode === "list" && (
-              <MobileSearch
-                searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
-                onClose={() => setIsMobileSearchActive(false)}
-                searchInputRef={searchInputRef}
-                filteredCities={getFilteredData()}
-                onCitySelect={handleCitySelect}
+        {/* Mobile Search */}
+        {viewMode === "list" && (
+          <div className="md:hidden relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                className="w-full pl-9 pr-10 h-10 sm:h-12"
+                placeholder="Search destinations..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onClick={() => setIsMobileSearchActive(true)}
+                readOnly
               />
-            )}
-
-            {/* Mobile Filters */}
-            <MobileFilters
-              isFilterSheetOpen={isFilterSheetOpen}
-              setIsFilterSheetOpen={setIsFilterSheetOpen}
-              preferences={preferences}
-              setPreferences={setPreferences}
-              selectedFilter={selectedFilter}
-              onFilterSelect={handleFilterSelect}
-              selectedDestinationType={selectedDestinationType}
-              onDestinationTypeSelect={handleDestinationTypeSelect}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-              filterOptions={filterOptions}
-            />
-
-            {/* Results Grid */}
-            <div className="space-y-8">
-              {viewMode === "map" ? (
-                <CityMap
-                  places={getCurrentLevelData()}
-                  onPlaceSelect={(place) => {
-                    // Only scroll to the place without filtering
-                    const citySlug = place.name
-                      .toLowerCase()
-                      .replace(/[^\w\s-]/g, "")
-                      .replace(/\s+/g, "-");
-                    const cityElement = document.getElementById(
-                      `city-${citySlug}`
-                    );
-                    if (cityElement) {
-                      setTimeout(() => {
-                        cityElement.scrollIntoView({
-                          behavior: "smooth",
-                          block: "center",
-                        });
-                      }, 100);
-                    }
+              {searchQuery && (
+                <button
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearchQuery("");
                   }}
-                  className="h-[70vh] w-full"
-                />
-              ) : (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
-                    {getPaginatedData().map((place) => (
-                      <PlaceCard
-                        key={place.id || place.name}
-                        city={place}
-                        variant="ranked"
-                        matchScore={calculateMatchForCity({
-                          cost: place.cost,
-                          crowdLevel: place.crowdLevel,
-                          recommendedStay: place.recommendedStay,
-                          bestSeason: place.bestSeason,
-                          transit: place.transit,
-                          accessibility: place.accessibility,
-                        })}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Infinite Scroll Observer */}
-                  <div
-                    ref={observerTarget}
-                    className="h-10 flex items-center justify-center"
-                  >
-                    {isLoadingMore && (
-                      <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
-                    )}
-                  </div>
-                </>
+                >
+                  <X className="h-4 w-4" />
+                </button>
               )}
             </div>
           </div>
+        )}
+
+        {/* Mobile Search Overlay */}
+        {isMobileSearchActive && viewMode === "list" && (
+          <MobileSearch
+            searchQuery={searchQuery}
+            onSearchChange={handleSearchChange}
+            onClose={() => setIsMobileSearchActive(false)}
+            searchInputRef={searchInputRef}
+            filteredCities={getFilteredData()}
+            onCitySelect={handleCitySelect}
+          />
+        )}
+
+        {/* Mobile Filters */}
+        <MobileFilters
+          isFilterSheetOpen={isFilterSheetOpen}
+          setIsFilterSheetOpen={setIsFilterSheetOpen}
+          preferences={preferences}
+          setPreferences={setPreferences}
+          selectedFilter={selectedFilter}
+          onFilterSelect={handleFilterSelect}
+          selectedDestinationType={selectedDestinationType}
+          onDestinationTypeSelect={handleDestinationTypeSelect}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          filterOptions={filterOptions}
+        />
+
+        {/* Results Section */}
+        <div className="space-y-8">
+          {viewMode === "map" ? (
+            <CityMap
+              places={getCurrentLevelData()}
+              onPlaceSelect={(place) => {
+                const citySlug = place.name
+                  .toLowerCase()
+                  .replace(/[^\w\s-]/g, "")
+                  .replace(/\s+/g, "-");
+                const cityElement = document.getElementById(`city-${citySlug}`);
+                if (cityElement) {
+                  setTimeout(() => {
+                    cityElement.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
+                    });
+                  }, 100);
+                }
+              }}
+              className="h-[70vh] w-full"
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
+                {getPaginatedData().map((place) => (
+                  <PlaceCard
+                    key={place.id || place.name}
+                    city={place}
+                    variant="ranked"
+                    matchScore={calculateMatchForCity({
+                      cost: place.cost,
+                      crowdLevel: place.crowdLevel,
+                      recommendedStay: place.recommendedStay,
+                      bestSeason: place.bestSeason,
+                      transit: place.transit,
+                      accessibility: place.accessibility,
+                    })}
+                  />
+                ))}
+              </div>
+
+              {/* Infinite Scroll Observer */}
+              <div
+                ref={observerTarget}
+                className="h-10 flex items-center justify-center"
+              >
+                {isLoadingMore && (
+                  <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </PlacesLayout>

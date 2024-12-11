@@ -9,7 +9,7 @@ interface DesktopFiltersProps {
 
 export function DesktopFilters({ preferences, setPreferences, onFiltersChange }: DesktopFiltersProps) {
   return (
-    <div className="hidden md:block w-80 border-r">
+    <div className="hidden md:block border-r">
       <FiltersContent 
         preferences={preferences}
         setPreferences={setPreferences}
