@@ -7,7 +7,7 @@ export function FilterSection({
   filters,
   emoji,
   color,
-  selectedFilters,
+  selectedFilters = new Set<string>(),
   onFilterToggle,
   isCollapsed,
   onToggleCollapse,

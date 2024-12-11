@@ -6,10 +6,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { MatchScore, UserPreferences } from "@/features/preferences/types";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
 import { SlidersHorizontal, X } from "lucide-react";
 import { FiltersContent } from "../content/FiltersContent";
-import { UserPreferences } from "@/features/preferences/types";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 interface MobileFiltersProps {
   isFilterSheetOpen: boolean;
@@ -22,8 +25,10 @@ interface MobileFiltersProps {
   onDestinationTypeSelect: (type: CitiesTypeOptions) => void;
   sortOrder: string;
   setSortOrder: (value: string) => void;
-  filterOptions: Array<{ id: string; label: string }>;
+  filterOptions: Array<{ id?: string; label: string }>;
   onFiltersChange?: (filters: Set<string>) => void;
+  cityData: Record<string, CitiesResponse>;
+  calculateMatchForCity: (city: CitiesResponse) => MatchScore;
 }
 
 export function MobileFilters({
@@ -39,6 +44,8 @@ export function MobileFilters({
   setSortOrder,
   filterOptions,
   onFiltersChange,
+  cityData,
+  calculateMatchForCity,
 }: MobileFiltersProps) {
   const activeFilterCount = Object.values(preferences).filter(
     (value) => value !== 50
@@ -58,7 +65,10 @@ export function MobileFilters({
             )}
           </Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-[75vh] max-h-[800px] p-0 z-[400]">
+        <SheetContent
+          side="bottom"
+          className="h-[75vh] max-h-[800px] p-0 z-[400]"
+        >
           <div className="flex flex-col h-full">
             <SheetHeader className="px-4 py-3 border-b flex-shrink-0">
               <div className="flex items-center justify-between">
@@ -80,19 +90,14 @@ export function MobileFilters({
               )}
             </SheetHeader>
             <div className="flex-1 overflow-auto">
-              <FiltersContent 
+              <FiltersContent
                 preferences={preferences}
                 setPreferences={setPreferences}
-                onFiltersChange={(filters) => {
-                  onFiltersChange?.(filters);
-                  // Also call onFilterSelect for backward compatibility
-                  if (filters.size > 0) {
-                    const lastFilter = Array.from(filters).pop()!;
-                    onFilterSelect(lastFilter);
-                  } else {
-                    onFilterSelect("");
-                  }
-                }}
+                onFiltersChange={onFiltersChange}
+                cityData={cityData}
+                calculateMatchForCity={calculateMatchForCity}
+                selectedDestinationType={selectedDestinationType}
+                onDestinationTypeSelect={onDestinationTypeSelect}
               />
             </div>
           </div>

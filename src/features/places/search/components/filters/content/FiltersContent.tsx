@@ -7,8 +7,9 @@ import { useSearch } from "@/features/places/search/context/SearchContext";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { UserPreferences } from "@/features/preferences/types";
 import { MatchScore } from "@/features/preferences/types";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { filterCategories } from "@/lib/data/filter-categories";
+import { implementedFilters } from "@/lib/data/implemented-filters";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LocationSearch } from "../../LocationSearch";
@@ -22,6 +23,8 @@ interface FiltersContentProps {
   onFiltersChange?: (filters: Set<string>) => void;
   cityData: Record<string, CitiesResponse>;
   calculateMatchForCity: (city: CitiesResponse) => MatchScore;
+  selectedDestinationType?: CitiesTypeOptions | null;
+  onDestinationTypeSelect?: (type: CitiesTypeOptions) => void;
 }
 
 export function FiltersContent({
@@ -30,6 +33,8 @@ export function FiltersContent({
   onFiltersChange,
   cityData,
   calculateMatchForCity,
+  selectedDestinationType,
+  onDestinationTypeSelect,
 }: FiltersContentProps) {
   const { user } = useAuth();
   const { searchQuery: locationSearchQuery } = useSearch();
@@ -81,6 +86,14 @@ export function FiltersContent({
       setShowSignUpDialog(true);
       return;
     }
+
+    // Handle CityTypeOptions differently
+    const placeTypeCategory = implementedFilters.find(cat => cat.id === 'placeTypes');
+    if (placeTypeCategory && placeTypeCategory.filters.some(f => f.label === filter)) {
+      onDestinationTypeSelect?.(filter as CitiesTypeOptions);
+      return;
+    }
+
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(filter)) {
       newFilters.delete(filter);
@@ -104,19 +117,30 @@ export function FiltersContent({
   const toggleAllSections = (collapse: boolean) => {
     const newCollapsedSections = new Set<string>();
     if (collapse) {
-      filterCategories.forEach((category) =>
+      [...implementedFilters, ...filterCategories].forEach((category) =>
         newCollapsedSections.add(category.id)
       );
     }
     setCollapsedSections(newCollapsedSections);
   };
 
-  const filteredCategories = filterCategories
+  const filteredCategories = [...implementedFilters, ...filterCategories]
     .map((category) => ({
       ...category,
-      filters: category.filters.filter((filter) =>
-        filter.label.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
+      filters: category.filters
+        .map(filter => {
+          const isPlaceType = category.id === 'placeTypes';
+          return {
+            ...filter,
+            selected: isPlaceType 
+              ? filter.label === selectedDestinationType 
+              : selectedFilters.has(filter.label)
+          };
+        })
+        .filter((filter) =>
+          !searchQuery || 
+          (filter.label && filter.label.toLowerCase().includes(searchQuery.toLowerCase()))
+        ),
     }))
     .filter((category) => category.filters.length > 0);
 
@@ -149,8 +173,8 @@ export function FiltersContent({
                     className="text-xs h-7 px-2 text-muted-foreground hover:text-foreground"
                   >
                     {collapsedSections.size === 0
-                      ? "Collapse All"
-                      : "Expand All"}
+                      ? "Collapse all"
+                      : "Expand all"}
                   </Button>
                 )}
               </div>
@@ -202,10 +226,10 @@ export function FiltersContent({
                   <FilterSection
                     key={category.id}
                     title={category.title}
-                    filters={category.filters}
                     emoji={category.emoji}
                     color={category.color}
-                    selectedFilters={selectedFilters}
+                    filters={category.filters}
+                    selectedFilters={category.id === 'placeTypes' ? undefined : selectedFilters}
                     onFilterToggle={handleFilterToggle}
                     isCollapsed={collapsedSections.has(category.id)}
                     onToggleCollapse={() => handleToggleCollapse(category.id)}

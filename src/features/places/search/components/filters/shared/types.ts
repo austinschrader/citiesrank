@@ -1,7 +1,9 @@
 export interface FilterItem {
   label: string;
-  emoji: string;
+  displayLabel?: string;
+  emoji?: string;
   count?: number;
+  selected?: boolean;
 }
 
 export interface Category {
@@ -10,6 +12,8 @@ export interface Category {
   emoji: string;
   color: string;
   filters: FilterItem[];
+  singleSelect?: boolean;
+  displayLabel?: string;
 }
 
 export interface FilterSectionProps {
@@ -17,8 +21,9 @@ export interface FilterSectionProps {
   filters: FilterItem[];
   emoji: string;
   color: string;
-  selectedFilters: Set<string>;
+  selectedFilters?: Set<string>;
   onFilterToggle: (filter: string) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  singleSelect?: boolean;
 }

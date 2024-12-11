@@ -1,9 +1,13 @@
 import { useTags } from "@/features/places/hooks/useTags";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
-import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { implementedFilters } from "@/lib/data/implemented-filters";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
 import { useCallback, useState } from "react";
 
-interface UseSearchFiltersReturn {
+export interface UseSearchFiltersReturn {
   isFilterSheetOpen: boolean;
   setIsFilterSheetOpen: (open: boolean) => void;
   selectedFilter: string | null;
@@ -11,8 +15,8 @@ interface UseSearchFiltersReturn {
   selectedDestinationType: CitiesTypeOptions | null;
   setSelectedDestinationType: (type: CitiesTypeOptions | null) => void;
   sortOrder: string;
-  setSortOrder: (value: string) => void;
-  filterOptions: Array<{ id: string; label: string }>;
+  setSortOrder: (order: string) => void;
+  filterOptions: { id?: string; label: string }[];
   handleFilterSelect: (filter: string) => void;
   handleDestinationTypeSelect: (type: CitiesTypeOptions) => void;
   getFilteredCities: (
@@ -27,9 +31,13 @@ export const useSearchFilters = (
 ): UseSearchFiltersReturn => {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-  const [selectedDestinationType, setSelectedDestinationType] = useState<CitiesTypeOptions | null>(null);
+  const [selectedDestinationType, setSelectedDestinationType] =
+    useState<CitiesTypeOptions | null>(null);
   const [sortOrder, setSortOrder] = useState("alphabetical-asc");
   const { filterOptions } = useTags();
+
+  // Add implemented filters to the filter options
+  const allFilterOptions = [...implementedFilters[0].filters, ...filterOptions];
 
   const handleFilterSelect = useCallback(
     (filter: string) => {
@@ -40,7 +48,11 @@ export const useSearchFilters = (
 
   const handleDestinationTypeSelect = useCallback(
     (type: CitiesTypeOptions) => {
-      setSelectedDestinationType(selectedDestinationType === type ? null : type);
+      if (selectedDestinationType === type) {
+        setSelectedDestinationType(null);
+      } else {
+        setSelectedDestinationType(type);
+      }
     },
     [selectedDestinationType]
   );
@@ -58,7 +70,9 @@ export const useSearchFilters = (
       return Object.entries(cityData)
         .filter(([name, data]) => {
           // Check if the destination type matches
-          const matchesType = !selectedDestinationType || data.type === selectedDestinationType;
+          const matchesType =
+            !selectedDestinationType ||
+            data.type === selectedDestinationType;
 
           // Check if the tags match
           const matchesFilter =
@@ -69,16 +83,22 @@ export const useSearchFilters = (
 
           // Search across all fields that could contain relevant text
           const searchFields = [
-            typeof name === 'string' ? name.toLowerCase() : '',
-            typeof data.country === 'string' ? data.country.toLowerCase() : '',
-            typeof data.description === 'string' ? data.description.toLowerCase() : '',
-            data.type ? String(data.type).toLowerCase() : '',
-            ...(Array.isArray(data.tags) ? data.tags.map(String).map(tag => tag.toLowerCase()) : []),
+            typeof name === "string" ? name.toLowerCase() : "",
+            typeof data.country === "string" ? data.country.toLowerCase() : "",
+            typeof data.description === "string"
+              ? data.description.toLowerCase()
+              : "",
+            data.type ? String(data.type).toLowerCase() : "",
+            ...(Array.isArray(data.tags)
+              ? data.tags.map(String).map((tag) => tag.toLowerCase())
+              : []),
           ].filter(Boolean);
 
           const matchesSearch =
             !searchQuery ||
-            searchFields.some((field) => field.includes(searchQuery.toLowerCase()));
+            searchFields.some((field) =>
+              field.includes(searchQuery.toLowerCase())
+            );
 
           return matchesType && matchesFilter && matchesSearch;
         })
@@ -118,7 +138,7 @@ export const useSearchFilters = (
     setSelectedDestinationType,
     sortOrder,
     setSortOrder,
-    filterOptions,
+    filterOptions: allFilterOptions,
     handleFilterSelect,
     handleDestinationTypeSelect,
     getFilteredCities,

@@ -279,6 +279,8 @@ const PlacesContent = () => {
           sortOrder={sortOrder}
           setSortOrder={setSortOrder}
           filterOptions={filterOptions}
+          cityData={cityData}
+          calculateMatchForCity={calculateMatchForCity}
         />
 
         {/* Results Section */}
