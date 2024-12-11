@@ -10,7 +10,6 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
-import { MobileFilters } from "@/features/places/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
 import { useSearch } from "@/features/places/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
@@ -20,6 +19,8 @@ import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import { List, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { MobileFilters } from "@/features/places/search/components/filters/mobile/MobileFilters";
+import { DesktopFilters } from "@/features/places/search/components/filters/desktop/DesktopFilters";
 
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } =
