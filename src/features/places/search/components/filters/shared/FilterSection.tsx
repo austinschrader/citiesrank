@@ -36,17 +36,17 @@ export function FilterSection({
             <button
               key={filter.label}
               onClick={() => onFilterToggle(filter.label)}
-              className={`flex items-center px-2 py-1.5 rounded-lg text-sm transition-all duration-200 grow basis-[calc(50%-0.75rem)] group/item
+              className={`flex items-center px-3 py-2 rounded-lg text-sm transition-all duration-200 grow basis-[calc(50%-0.75rem)] group/item
                 ${
                   selectedFilters.has(filter.label)
-                    ? `${color} shadow-sm hover:shadow-md hover:-translate-y-[1px]`
-                    : "hover:bg-accent/5 hover:shadow-sm active:scale-[0.98]"
+                    ? `${color} shadow-sm hover:brightness-105 hover:-translate-y-[1px]`
+                    : "hover:bg-accent/10 active:bg-accent/15 hover:shadow-sm active:scale-[0.99]"
                 }
               `}
             >
               <span
-                className={`flex-shrink-0 mr-1.5 text-base transition-transform group-hover/item:scale-110 ${
-                  selectedFilters.has(filter.label) ? "" : "opacity-70"
+                className={`flex-shrink-0 mr-2 text-base transition-transform group-hover/item:scale-110 ${
+                  selectedFilters.has(filter.label) ? "" : "opacity-80"
                 }`}
               >
                 {filter.emoji}

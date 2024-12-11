@@ -172,7 +172,7 @@ const PlacesContent = () => {
   }
 
   return (
-    <PlacesLayout>
+    <PlacesLayout cityData={cityData} calculateMatchForCity={calculateMatchForCity}>
       <div className="flex flex-col gap-4 p-4">
         {/* Controls Section - Simplified */}
         <div className="flex items-center justify-between gap-2">

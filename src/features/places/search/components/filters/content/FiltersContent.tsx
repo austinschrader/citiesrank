@@ -4,11 +4,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useSearch } from "@/features/places/search/context/SearchContext";
+import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { UserPreferences } from "@/features/preferences/types";
+import { MatchScore } from "@/features/preferences/types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { filterCategories } from "@/lib/data/filter-categories";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LocationSearch } from "../../LocationSearch";
+import { PlacesCount } from "../../PlacesCount";
 import { SearchLayout } from "../../layout/SearchLayout";
 import { FilterSection } from "../shared/FilterSection";
 
@@ -16,15 +20,20 @@ interface FiltersContentProps {
   preferences: UserPreferences;
   setPreferences: (preferences: UserPreferences) => void;
   onFiltersChange?: (filters: Set<string>) => void;
+  cityData: Record<string, CitiesResponse>;
+  calculateMatchForCity: (city: CitiesResponse) => MatchScore;
 }
 
 export function FiltersContent({
   preferences,
   setPreferences,
   onFiltersChange,
+  cityData,
+  calculateMatchForCity,
 }: FiltersContentProps) {
   const { user } = useAuth();
   const { searchQuery: locationSearchQuery } = useSearch();
+  const { getFilteredCities } = useSearchFilters(preferences);
   const [selectedFilters, setSelectedFilters] = useState<Set<string>>(
     new Set()
   );
@@ -119,9 +128,17 @@ export function FiltersContent({
           <div>
             <div className="px-6 pb-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-medium text-muted-foreground">
-                  Filters
-                </h2>
+                <div className="flex flex-col">
+                  <h2 className="text-sm font-medium text-muted-foreground">
+                    Filters
+                  </h2>
+                  {locationSearchQuery && (
+                    <PlacesCount 
+                      places={getFilteredCities(cityData, locationSearchQuery, calculateMatchForCity)} 
+                      selectedTypes={selectedFilters}
+                    />
+                  )}
+                </div>
                 {filteredCategories.length > 0 && (
                   <Button
                     variant="ghost"

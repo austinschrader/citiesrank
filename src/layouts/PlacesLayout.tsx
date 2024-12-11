@@ -1,11 +1,15 @@
 import { DesktopFilters } from "@/features/places/search/components/filters/desktop/DesktopFilters";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { MatchScore } from "@/features/preferences/types";
 
 interface PlacesLayoutProps {
   children: React.ReactNode;
+  cityData?: Record<string, CitiesResponse>;
+  calculateMatchForCity?: (city: CitiesResponse) => MatchScore;
 }
 
-export const PlacesLayout = ({ children }: PlacesLayoutProps) => {
+export const PlacesLayout = ({ children, cityData = {}, calculateMatchForCity }: PlacesLayoutProps) => {
   const { preferences, setPreferences } = usePreferences();
 
   return (
@@ -16,6 +20,8 @@ export const PlacesLayout = ({ children }: PlacesLayoutProps) => {
             <DesktopFilters 
               preferences={preferences}
               setPreferences={setPreferences}
+              cityData={cityData}
+              calculateMatchForCity={calculateMatchForCity!}
             />
           </div>
           <div className="hidden lg:block min-w-[420px] max-w-[460px]">
@@ -23,6 +29,8 @@ export const PlacesLayout = ({ children }: PlacesLayoutProps) => {
               <DesktopFilters 
                 preferences={preferences}
                 setPreferences={setPreferences}
+                cityData={cityData}
+                calculateMatchForCity={calculateMatchForCity!}
               />
             </div>
           </div>
