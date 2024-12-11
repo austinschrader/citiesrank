@@ -114,56 +114,53 @@ export function FiltersContent({
       <SearchLayout
         searchBar={<LocationSearch />}
         filters={
-          <div className="p-4 space-y-4">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Search filters..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full"
-              />
-              {searchQuery && (
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  onClick={() => setSearchQuery("")}
-                >
-                  <X className="h-4 w-4" />
-                </button>
+          <div>
+            <div className="px-6 pb-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-medium text-muted-foreground">Filters</h2>
+                {filteredCategories.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleAllSections(collapsedSections.size === 0)}
+                    className="text-xs h-7 px-2 text-muted-foreground hover:text-foreground"
+                  >
+                    {collapsedSections.size === 0 ? "Collapse All" : "Expand All"}
+                  </Button>
+                )}
+              </div>
+
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Search filters..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
+                {searchQuery && (
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    onClick={() => setSearchQuery("")}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              {selectedFilters.size > 0 && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  {selectedFilters.size} filter{selectedFilters.size !== 1 ? "s" : ""} selected
+                </p>
               )}
             </div>
 
-            {filteredCategories.length > 0 && (
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleAllSections(false)}
-                >
-                  Expand All
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleAllSections(true)}
-                >
-                  Collapse All
-                </Button>
-              </div>
-            )}
-
             {filteredCategories.length === 0 && searchQuery ? (
-              <div className="text-center text-muted-foreground py-4">
+              <div className="px-6 py-8 text-center text-sm text-muted-foreground">
                 No filters match your search
               </div>
             ) : (
-              <div className="space-y-4">
-                {selectedFilters.size > 0 && (
-                  <p className="text-sm text-muted-foreground">
-                    {selectedFilters.size} filter
-                    {selectedFilters.size !== 1 ? "s" : ""} selected
-                  </p>
-                )}
+              <div className="px-6 space-y-4">
                 {filteredCategories.map((category) => (
                   <FilterSection
                     key={category.id}

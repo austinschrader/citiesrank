@@ -10,18 +10,19 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
+import { MobileFilters } from "@/features/places/search/components/filters/mobile/MobileFilters";
 import { MobileSearch } from "@/features/places/search/components/MobileSearch";
-import { useSearch, SearchProvider } from "@/features/places/search/context/SearchContext";
+import {
+  SearchProvider,
+  useSearch,
+} from "@/features/places/search/context/SearchContext";
 import { useSearchFilters } from "@/features/places/search/hooks/useSearchFilter";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import { List, MapPin, Search, X } from "lucide-react";
-import { useEffect, useRef, useState, useCallback } from "react";
-import { MobileFilters } from "@/features/places/search/components/filters/mobile/MobileFilters";
-import { DesktopFilters } from "@/features/places/search/components/filters/desktop/DesktopFilters";
-import { LocationSearch } from "@/features/places/search/components/LocationSearch";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
   return (
@@ -32,7 +33,8 @@ export const PlacesPage = () => {
 };
 
 const PlacesContent = () => {
-  const { preferences, setPreferences, calculateMatchForCity } = usePreferences();
+  const { preferences, setPreferences, calculateMatchForCity } =
+    usePreferences();
   const {
     isFilterSheetOpen,
     setIsFilterSheetOpen,
