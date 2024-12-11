@@ -1,6 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pagination } from "@/components/ui/Pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CityMap } from "@/features/map/components/CityMap";
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
@@ -162,33 +167,53 @@ export const PlacesPage = () => {
                 Discover Places
               </h1>
               <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                Find your perfect destination based on your preferences and travel
-                style.
+                Find your perfect destination based on your preferences and
+                travel style.
               </p>
             </div>
 
             {/* Controls Section */}
             <div className="flex flex-col gap-2 sm:gap-3 w-full md:w-auto">
               <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full md:w-auto">
-                <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto">
-                  <Button
-                    variant={viewMode === "map" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("map")}
-                    className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
+                <div className="relative z-50">
+                  <Select
+                    value={viewMode}
+                    onValueChange={(value: "map" | "list") =>
+                      setViewMode(value)
+                    }
                   >
-                    <MapPin className="h-4 w-4" />
-                    Map
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
-                  >
-                    <List className="h-4 w-4" />
-                    List
-                  </Button>
+                    <SelectTrigger className="w-[140px] bg-background/50 backdrop-blur-sm shadow-sm">
+                      <SelectValue>
+                        <div className="flex items-center gap-2">
+                          {viewMode === "map" ? (
+                            <>
+                              <MapPin className="h-4 w-4" />
+                              <span>Map View</span>
+                            </>
+                          ) : (
+                            <>
+                              <List className="h-4 w-4" />
+                              <span>List View</span>
+                            </>
+                          )}
+                        </div>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="map">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          <span>Map View</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="list">
+                        <div className="flex items-center gap-2">
+                          <List className="h-4 w-4" />
+                          <span>List View</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
@@ -264,7 +289,9 @@ export const PlacesPage = () => {
                     .toLowerCase()
                     .replace(/[^\w\s-]/g, "")
                     .replace(/\s+/g, "-");
-                  const cityElement = document.getElementById(`city-${citySlug}`);
+                  const cityElement = document.getElementById(
+                    `city-${citySlug}`
+                  );
                   if (cityElement) {
                     setTimeout(() => {
                       cityElement.scrollIntoView({
