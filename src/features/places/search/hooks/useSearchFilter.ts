@@ -28,7 +28,7 @@ export const useSearchFilters = (
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
   const [selectedDestinationType, setSelectedDestinationType] = useState<CitiesTypeOptions | null>(null);
-  const [sortOrder, setSortOrder] = useState("match");
+  const [sortOrder, setSortOrder] = useState("alphabetical-asc");
   const { filterOptions } = useTags();
 
   const handleFilterSelect = useCallback(
@@ -91,6 +91,10 @@ export const useSearchFilters = (
         })
         .sort((a, b) => {
           switch (sortOrder) {
+            case "alphabetical-asc":
+              return a.name.localeCompare(b.name);
+            case "alphabetical-desc":
+              return b.name.localeCompare(a.name);
             case "cost-low":
               return a.cost - b.cost;
             case "cost-high":
@@ -98,7 +102,7 @@ export const useSearchFilters = (
             case "popular":
               return b.crowdLevel - a.crowdLevel;
             default:
-              return b.matchScore - a.matchScore;
+              return a.name.localeCompare(b.name);
           }
         });
     },

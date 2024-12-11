@@ -178,11 +178,13 @@ const PlacesContent = () => {
         <div className="flex items-center justify-between gap-2">
           <Select value={sortOrder} onValueChange={setSortOrder}>
             <SelectTrigger className="w-[140px] bg-background/50 backdrop-blur-sm shadow-sm">
-              <SelectValue>{sortOrder}</SelectValue>
+              <SelectValue>
+                {sortOrder === "alphabetical-asc" ? "A to Z" : "Z to A"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="alphabetical">Alphabetical</SelectItem>
-              <SelectItem value="match">Match</SelectItem>
+              <SelectItem value="alphabetical-asc">A to Z</SelectItem>
+              <SelectItem value="alphabetical-desc">Z to A</SelectItem>
             </SelectContent>
           </Select>
           
