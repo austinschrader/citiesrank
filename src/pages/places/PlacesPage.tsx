@@ -51,10 +51,39 @@ export const PlacesPage = () => {
     handleSearchChange,
     handleCitySelect,
   } = useSearch();
-  const { currentPage, setCurrentPage, getPaginatedData, getTotalPages } =
-    usePagination(
-      getFilteredCities(cityData, searchQuery, calculateMatchForCity)
+  const {
+    currentPage,
+    setCurrentPage,
+    getPaginatedData,
+    loadMore,
+    hasMore,
+    isLoading: isLoadingMore,
+  } = usePagination(
+    getFilteredCities(cityData, searchQuery, calculateMatchForCity)
+  );
+
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore() && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
     );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMore, isLoadingMore, loadMore]);
 
   useEffect(() => {
     if (isMobileSearchActive && searchInputRef.current) {
@@ -267,12 +296,14 @@ export const PlacesPage = () => {
                   ))}
                 </div>
 
-                <div className="mt-6 sm:mt-8 flex justify-center">
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={getTotalPages()}
-                    onPageChange={setCurrentPage}
-                  />
+                {/* Infinite Scroll Observer */}
+                <div
+                  ref={observerTarget}
+                  className="h-10 flex items-center justify-center"
+                >
+                  {isLoadingMore && (
+                    <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+                  )}
                 </div>
               </>
             )}
