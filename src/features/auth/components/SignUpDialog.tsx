@@ -1,28 +1,40 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Camera, Compass, Heart, LogIn, Users } from "lucide-react";
+import { getPlaceImage } from "@/lib/cloudinary";
+import { Heart, LogIn, Map, Star, Zap } from "lucide-react";
 
 interface SignUpDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title?: string;
   description?: string;
+  city?: string;
+  country?: string;
+  imageNumber?: number;
 }
 
 export function SignUpDialog({
   open,
   onOpenChange,
-  title = "Join Our Community",
-  description = "Join our community to unlock all features and discover your perfect city",
+  title,
+  description,
+  city = "paris",
+  country = "france",
+  imageNumber = 4,
 }: SignUpDialogProps) {
   const { signInWithGoogle } = useAuth();
+  const citySlug = `${city.toLowerCase()}-${country.toLowerCase()}-${imageNumber}`;
+  const bgImage = getPlaceImage(citySlug, "standard");
+
+  // If no title is provided, generate one based on the city
+  const defaultTitle = city ? `Discover ${city}` : "Discover Your Perfect City";
+  const defaultDescription = city 
+    ? `Join thousands of travelers exploring ${city} and other amazing destinations`
+    : "Join thousands of travelers finding their ideal destinations";
+
+  const finalTitle = title || defaultTitle;
+  const finalDescription = description || defaultDescription;
 
   const handleSignIn = async () => {
     try {
@@ -35,22 +47,53 @@ export function SignUpDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px] px-6 pt-8 pb-6 overflow-hidden animate-dialog-content">
-        <DialogHeader className="text-center space-y-2.5 mb-6">
-          <DialogTitle className="text-xl sm:text-2xl font-semibold text-foreground px-4">
-            {title}
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            {description}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden animate-dialog-content">
+        {/* Background Image Section */}
+        <div
+          className="h-40 relative bg-cover bg-center"
+          style={{ backgroundImage: `url(${bgImage})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
+          <div className="absolute bottom-4 left-6 right-6">
+            <h2 className="text-2xl font-bold text-white mb-2">{finalTitle}</h2>
+            <p className="text-white/90 text-sm">{finalDescription}</p>
+          </div>
+        </div>
 
-        <div className="space-y-6">
-          {/* Sign In Options */}
-          <div className="space-y-3">
+        <div className="p-6 space-y-6">
+          {/* Feature Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <FeatureItem
+              icon={<Star className="w-4 h-4 text-amber-500" />}
+              bgColor="bg-amber-50"
+              title="Rate Cities"
+              description="Share your experiences"
+            />
+            <FeatureItem
+              icon={<Heart className="w-4 h-4 text-rose-500" />}
+              bgColor="bg-rose-50"
+              title="Save Favorites"
+              description="Build your wishlist"
+            />
+            <FeatureItem
+              icon={<Map className="w-4 h-4 text-emerald-500" />}
+              bgColor="bg-emerald-50"
+              title="Explore Places"
+              description="Find hidden gems"
+            />
+            <FeatureItem
+              icon={<Zap className="w-4 h-4 text-purple-500" />}
+              bgColor="bg-purple-50"
+              title="Get Insights"
+              description="Make better decisions"
+            />
+          </div>
+
+          {/* Sign In Button */}
+          <div className="space-y-4">
             <Button
-              variant="outline"
-              className="w-full relative h-11 bg-white hover:bg-gray-50 text-sm border-2"
+              variant="default"
+              className="w-full relative h-12 text-sm font-medium shadow-md bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
               onClick={handleSignIn}
             >
               <div className="absolute left-4 flex items-center justify-center">
@@ -64,59 +107,38 @@ export function SignUpDialog({
                 Already have an account?
               </span>
               <button
-                className="text-primary hover:underline font-medium"
+                className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
                 onClick={handleSignIn}
               >
                 Sign in
               </button>
             </p>
           </div>
-
-          {/* Feature Highlights */}
-          <div className="border rounded-lg p-4 bg-muted/30">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 shadow-sm">
-                  <Heart className="w-4 h-4 text-blue-600" />
-                </div>
-                <span className="text-sm font-medium">Save Favorites</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-50 shadow-sm">
-                  <Compass className="w-4 h-4 text-purple-600" />
-                </div>
-                <span className="text-sm font-medium">Find Hidden Gems</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-50 shadow-sm">
-                  <Users className="w-4 h-4 text-green-600" />
-                </div>
-                <span className="text-sm font-medium">Join Community</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-50 shadow-sm">
-                  <Camera className="w-4 h-4 text-orange-600" />
-                </div>
-                <span className="text-sm font-medium">Share Stories</span>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-xs text-center text-muted-foreground">
-            By continuing, you agree to our{" "}
-            <a href="#" className="underline hover:text-primary">
-              Terms
-            </a>{" "}
-            and{" "}
-            <a href="#" className="underline hover:text-primary">
-              Privacy Policy
-            </a>
-          </p>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+interface FeatureItemProps {
+  icon: React.ReactNode;
+  bgColor: string;
+  title: string;
+  description: string;
+}
+
+function FeatureItem({ icon, bgColor, title, description }: FeatureItemProps) {
+  return (
+    <div className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+      <div
+        className={`flex items-center justify-center w-8 h-8 rounded-full ${bgColor} shadow-sm`}
+      >
+        {icon}
+      </div>
+      <div className="space-y-0.5">
+        <h3 className="text-sm font-medium">{title}</h3>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+    </div>
   );
 }
