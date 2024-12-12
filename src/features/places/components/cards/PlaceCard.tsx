@@ -3,10 +3,10 @@
  * Main place card component that displays city information.
  * Uses modular components for specific functionality.
  */
+import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Card } from "@/components/ui/card";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlaceCard";
 import { FavoriteButton } from "@/features/places/components/cards/FavoriteButton";
 import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";

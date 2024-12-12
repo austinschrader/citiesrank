@@ -1,7 +1,7 @@
+import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getApiUrl } from "@/config/appConfig";
-import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";

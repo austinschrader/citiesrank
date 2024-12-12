@@ -2,10 +2,10 @@
 /**
  * Compact version of PlaceCard used in popups and tight spaces
  */
+import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { ImageGallery } from "@/features/gallery/ImageGallery";
 import {
   getMatchColor,
   getPlaceTypeInfo,
