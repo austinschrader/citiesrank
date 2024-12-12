@@ -1,192 +1,171 @@
-// file location: src/features/places/components/filters/PlaceFilters.tsx
+/**
+ * PlaceFilters: Main filter component orchestrating all filter functionality
+ * Dependencies:
+ * - Uses FiltersContext and CitiesContext for state management
+ * - Uses AuthContext for user authentication state
+ * - Composes PlaceTypeFilter, CategoryFilter, and FilterSearch components
+ * - Uses filterCategories data from lib/data/places/filters
+ */
+
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import { cn } from "@/lib/utils";
-import { Building2, Compass, Globe2, Home, Landmark } from "lucide-react";
-import { useEffect, useState } from "react";
 import { filterCategories } from "@/lib/data/places/filters/categories";
-
-const placeTypeFilters = [
-  { type: CitiesTypeOptions.country, label: "Countries", icon: Globe2 },
-  { type: CitiesTypeOptions.region, label: "Regions", icon: Compass },
-  { type: CitiesTypeOptions.city, label: "Cities", icon: Building2 },
-  { type: CitiesTypeOptions.neighborhood, label: "Neighborhoods", icon: Home },
-  { type: CitiesTypeOptions.sight, label: "Sights", icon: Landmark },
-] as const;
+import { useEffect, useState } from "react";
+import { PlaceTypeFilter } from "./PlaceTypeFilter";
+import { CategoryFilter } from "./CategoryFilter";
+import { FilterSearch } from "./FilterSearch";
 
 export const PlaceFilters = () => {
   const { filters, setFilter } = useFilters();
+  const { cities } = useCities();
   const { user } = useAuth();
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set()
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
+  // Calculate place type counts
+  const placeTypeCounts = cities.reduce((acc, place) => {
+    acc[place.type] = (acc[place.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
   useEffect(() => {
-    if (user) return; // Don't show for logged in users
+    if (user) return;
 
     let timeout: NodeJS.Timeout;
     const handleMouseLeave = (e: MouseEvent) => {
-      // Clear any existing timeout
-      if (timeout) {
-        clearTimeout(timeout);
-      }
+      if (timeout) clearTimeout(timeout);
 
-      // Check if the mouse is moving towards the top of the viewport
       if (
         e.clientY <= 0 &&
         e.clientX > 0 &&
         e.clientX < window.innerWidth &&
-        !showSignUpDialog // Only set if not already showing
+        !showSignUpDialog
       ) {
-        timeout = setTimeout(() => {
-          setShowSignUpDialog(true);
-        }, 100); // Small delay to prevent double triggers
+        timeout = setTimeout(() => setShowSignUpDialog(true), 100);
       }
     };
 
     document.addEventListener("mouseleave", handleMouseLeave);
-
     return () => {
       document.removeEventListener("mouseleave", handleMouseLeave);
-      if (timeout) {
-        clearTimeout(timeout);
-      }
+      if (timeout) clearTimeout(timeout);
     };
   }, [user, showSignUpDialog]);
 
-  const handleFilterToggle = (type: CitiesTypeOptions) => {
-    if (!user) {
-      setShowSignUpDialog(true);
-      return;
-    }
-    setFilter("placeType", filters.placeType === type ? null : type);
+  const handleClearFilters = () => {
+    setFilter("placeType", null);
   };
 
-  const handleToggleCollapse = (sectionId: string) => {
-    const newCollapsedSections = new Set(collapsedSections);
-    if (newCollapsedSections.has(sectionId)) {
-      newCollapsedSections.delete(sectionId);
-    } else {
-      newCollapsedSections.add(sectionId);
+  const toggleAllSections = (collapse: boolean) => {
+    const newCollapsedSections = new Set<string>();
+    if (collapse) {
+      ["placeType", ...filterCategories.map((cat) => cat.id)].forEach((id) =>
+        newCollapsedSections.add(id)
+      );
     }
     setCollapsedSections(newCollapsedSections);
   };
 
-  const handleClearFilters = () => {
-    if (!user) {
-      setShowSignUpDialog(true);
-      return;
-    }
-    setFilter("placeType", null);
-  };
-
   return (
-    <>
-      <div className="flex flex-col border rounded-lg bg-card">
-        <div className="p-4 border-b">
+    <div className="flex flex-col border rounded-lg bg-card">
+      {/* Header Section */}
+      <div className="p-4 border-b space-y-4">
+        <div>
           <h2 className="font-semibold">Filters</h2>
           <p className="text-sm text-muted-foreground">
             Refine your destination search
           </p>
         </div>
 
-        <ScrollArea className="flex-1">
-          <div className="p-4 space-y-4">
-            {/* Place Type Filter - Implemented */}
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <Button
-                variant="ghost"
-                className={cn(
-                  "w-full justify-between px-4 py-2 rounded-t-lg",
-                  "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800"
-                )}
-                onClick={() => handleToggleCollapse("placeType")}
-              >
-                <span className="flex items-center gap-2">
-                  <span className="text-lg">🗺️</span>
-                  <span className="font-medium">Place Type</span>
+        <div className="space-y-4">
+          {/* Stats and Collapse All */}
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              {cities.length} places found
+              {filters.placeType && (
+                <span className="block text-xs">
+                  {placeTypeCounts[filters.placeType] || 0} {filters.placeType}
+                  {placeTypeCounts[filters.placeType] !== 1 ? "s" : ""}
                 </span>
-                <span
-                  className={`transform transition-transform ${
-                    collapsedSections.has("placeType") ? "" : "rotate-180"
-                  }`}
-                >
-                  ▼
-                </span>
-              </Button>
-              {!collapsedSections.has("placeType") && (
-                <div className="p-4 space-y-2">
-                  {placeTypeFilters.map(({ type, label, icon: Icon }) => (
-                    <Button
-                      key={type}
-                      variant={filters.placeType === type ? "default" : "outline"}
-                      className="w-full justify-start gap-2"
-                      onClick={() => handleFilterToggle(type)}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {label}
-                    </Button>
-                  ))}
-                </div>
               )}
-            </div>
-
-            {/* Display-Only Filters */}
-            {filterCategories.map((section) => (
-              <div key={section.id} className="rounded-lg border bg-card text-card-foreground shadow-sm">
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-between px-4 py-2 rounded-t-lg",
-                    section.color
-                  )}
-                  onClick={() => handleToggleCollapse(section.id)}
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="text-lg">{section.emoji}</span>
-                    <span className="font-medium">{section.title}</span>
-                  </span>
-                  <span
-                    className={`transform transition-transform ${
-                      collapsedSections.has(section.id) ? "" : "rotate-180"
-                    }`}
-                  >
-                    ▼
-                  </span>
-                </Button>
-                {!collapsedSections.has(section.id) && (
-                  <div className="p-4 space-y-2">
-                    {section.filters.map((filter) => (
-                      <Button
-                        key={filter.label}
-                        variant="outline"
-                        className="w-full justify-start gap-2"
-                        disabled
-                      >
-                        <span className="text-lg">{filter.emoji}</span>
-                        {filter.label}
-                        <span className="ml-auto text-xs text-muted-foreground">
-                          Soon
-                        </span>
-                      </Button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => toggleAllSections(collapsedSections.size === 0)}
+              className="text-xs"
+            >
+              {collapsedSections.size === 0 ? "Collapse all" : "Expand all"}
+            </Button>
           </div>
-        </ScrollArea>
 
-        <div className="p-4 border-t">
-          <Button variant="outline" className="w-full" onClick={handleClearFilters}>
-            Clear Filters
-          </Button>
+          {/* Search Bar */}
+          <FilterSearch
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
         </div>
       </div>
 
+      {/* Filter Sections */}
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-4">
+          {/* Place Type Filter - Implemented */}
+          <PlaceTypeFilter
+            searchQuery={searchQuery}
+            isCollapsed={collapsedSections.has("placeType")}
+            placeTypeCounts={placeTypeCounts}
+            onToggleCollapse={() => {
+              const newCollapsed = new Set(collapsedSections);
+              if (newCollapsed.has("placeType")) {
+                newCollapsed.delete("placeType");
+              } else {
+                newCollapsed.add("placeType");
+              }
+              setCollapsedSections(newCollapsed);
+            }}
+          />
+
+          {/* Display-Only Filters */}
+          {filterCategories.map((category) => (
+            <CategoryFilter
+              key={category.id}
+              {...category}
+              searchQuery={searchQuery}
+              isCollapsed={collapsedSections.has(category.id)}
+              onToggleCollapse={() => {
+                const newCollapsed = new Set(collapsedSections);
+                if (newCollapsed.has(category.id)) {
+                  newCollapsed.delete(category.id);
+                } else {
+                  newCollapsed.add(category.id);
+                }
+                setCollapsedSections(newCollapsed);
+              }}
+            />
+          ))}
+        </div>
+      </ScrollArea>
+
+      {/* Footer */}
+      <div className="p-4 border-t">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleClearFilters}
+        >
+          Clear Filters
+        </Button>
+      </div>
+
+      {/* Sign Up Dialog */}
       {showSignUpDialog && (
         <SignUpDialog
           open={showSignUpDialog}
@@ -195,6 +174,6 @@ export const PlaceFilters = () => {
           description="Join our community to access all filters and discover your perfect city"
         />
       )}
-    </>
+    </div>
   );
 };
