@@ -1,18 +1,19 @@
 // file location: src/pages/places/PlacesPage.tsx
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useCities } from "@/features//places/context/CitiesContext";
 import { CityMap } from "@/features/map/components/CityMap";
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { Header } from "@/features/places/components/header/Header";
+import { LoadingSpinner } from "@/features/places/components/loading/LoadingSpinner";
+import { ResultsGrid } from "@/features/places/components/results/ResultsGrid";
 import { MobileFilters } from "@/features/places/components/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
+import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
 import { useSearch } from "@/features/places/components/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/components/search/hooks/useSearchFilter";
+import { ViewModeToggle } from "@/features/places/components/view-toggle/ViewModeToggle";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import "leaflet/dist/leaflet.css";
-import { List, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
@@ -96,16 +97,7 @@ export const PlacesPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto" />
-          <p className="text-muted-foreground">
-            Finding perfect destinations...
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -114,68 +106,31 @@ export const PlacesPage = () => {
         <div className="py-2 sm:py-3 md:py-4 space-y-3 sm:space-y-4 md:space-y-6">
           {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 md:gap-6">
-            <div className="flex-1 space-y-1 sm:space-y-2">
-              <h1 className="text-xl sm:text-2xl md:text-4xl font-bold">
-                Discover Places
-              </h1>
-              <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                Find your perfect destination based on your preferences and
-                travel style.
-              </p>
-            </div>
+            <Header
+              title="Discover Places"
+              description="Find your perfect destination based on your preferences and travel style."
+            />
 
             {/* Controls Section */}
             <div className="flex flex-col gap-2 sm:gap-3 w-full md:w-auto">
               <div className="flex flex-col md:flex-row gap-2 sm:gap-3 w-full md:w-auto">
-                <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto">
-                  <Button
-                    variant={viewMode === "map" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("map")}
-                    className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
-                  >
-                    <MapPin className="h-4 w-4" />
-                    Map
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="flex-1 md:flex-none gap-1.5 py-1.5 transition-all duration-300 ease-in-out hover:bg-muted/50"
-                  >
-                    <List className="h-4 w-4" />
-                    List
-                  </Button>
-                </div>
+                <ViewModeToggle
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
+                />
               </div>
             </div>
           </div>
 
-          {/* Mobile Search Trigger */}
+          {/* Mobile Search */}
           {viewMode === "list" && (
             <div className="md:hidden relative">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  className="w-full pl-9 pr-10 h-10 sm:h-12"
-                  placeholder="Search destinations..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onClick={() => setIsMobileSearchActive(true)}
-                  readOnly
-                />
-                {searchQuery && (
-                  <button
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSearchQuery("");
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
+              <MobileSearchBar
+                searchQuery={searchQuery}
+                onSearchChange={handleSearchChange}
+                onSearchClick={() => setIsMobileSearchActive(true)}
+                onClearSearch={() => setSearchQuery("")}
+              />
             </div>
           )}
 
@@ -210,13 +165,12 @@ export const PlacesPage = () => {
             filterOptions={filterOptions}
           />
 
-          {/* Results Grid */}
+          {/* Results */}
           <div className="space-y-8">
             {viewMode === "map" ? (
               <CityMap
                 places={getCurrentLevelData()}
                 onPlaceSelect={(place) => {
-                  // Only scroll to the place without filtering
                   const citySlug = place.name
                     .toLowerCase()
                     .replace(/[^\w\s-]/g, "")
@@ -236,35 +190,12 @@ export const PlacesPage = () => {
                 className="h-[70vh] w-full"
               />
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
-                  {getPaginatedData().map((place) => (
-                    <PlaceCard
-                      key={place.id || place.name}
-                      city={place}
-                      variant="ranked"
-                      matchScore={calculateMatchForCity({
-                        cost: place.cost,
-                        crowdLevel: place.crowdLevel,
-                        recommendedStay: place.recommendedStay,
-                        bestSeason: place.bestSeason,
-                        transit: place.transit,
-                        accessibility: place.accessibility,
-                      })}
-                    />
-                  ))}
-                </div>
-
-                {/* Infinite Scroll Observer */}
-                <div
-                  ref={observerTarget}
-                  className="h-10 flex items-center justify-center"
-                >
-                  {isLoadingMore && (
-                    <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
-                  )}
-                </div>
-              </>
+              <ResultsGrid
+                cities={getPaginatedData()}
+                calculateMatchForCity={calculateMatchForCity}
+                isLoadingMore={isLoadingMore}
+                observerRef={observerTarget}
+              />
             )}
           </div>
         </div>
