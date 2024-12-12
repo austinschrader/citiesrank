@@ -1,4 +1,4 @@
-import { VerticalFilters } from "@/features/places/search/components/VerticalFilters";
+import { VerticalFilters } from "@/features/places/filters/VerticalFilters";
 
 interface PlacesLayoutProps {
   children: React.ReactNode;
