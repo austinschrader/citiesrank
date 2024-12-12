@@ -9,24 +9,28 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { filterCategories } from "@/lib/data/places/filters/categories";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
 import { PlaceSearch } from "./PlaceSearch";
 import { PlaceTypeFilter } from "./PlaceTypeFilter";
+
+interface FilterContentProps {
+  cities: any[];
+  placeTypeCounts: Record<string, number>;
+  searchQuery: string;
+  collapsedSections: Set<string>;
+  setCollapsedSections: (sections: Set<string>) => void;
+  handleClearFilters: () => void;
+  isMobile?: boolean;
+}
 
 const FilterContent = ({
   cities,
@@ -36,15 +40,7 @@ const FilterContent = ({
   setCollapsedSections,
   handleClearFilters,
   isMobile = false,
-}: {
-  cities: any[];
-  placeTypeCounts: Record<string, number>;
-  searchQuery: string;
-  collapsedSections: Set<string>;
-  setCollapsedSections: (sections: Set<string>) => void;
-  handleClearFilters: () => void;
-  isMobile?: boolean;
-}) => {
+}: FilterContentProps) => {
   return (
     <>
       {/* Header Section */}
@@ -130,7 +126,11 @@ const FilterContent = ({
 
       {/* Footer */}
       <div className="p-4 border-t">
-        <Button variant="outline" className="w-full" onClick={handleClearFilters}>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleClearFilters}
+        >
           Clear Filters
         </Button>
       </div>
@@ -138,7 +138,11 @@ const FilterContent = ({
   );
 };
 
-export const PlaceFilters = () => {
+interface PlaceFiltersProps {
+  variant?: "mobile" | "desktop";
+}
+
+export const PlaceFilters = ({ variant }: PlaceFiltersProps) => {
   const { filters, setFilter } = useFilters();
   const { cities } = useCities();
   const { user } = useAuth();
@@ -183,76 +187,52 @@ export const PlaceFilters = () => {
     setFilter("placeType", null);
   };
 
-  return (
-    <>
-      {/* Desktop View */}
-      <div className="hidden md:flex flex-col border rounded-lg bg-card">
-        <FilterContent
-          cities={cities}
-          placeTypeCounts={placeTypeCounts}
-          searchQuery={searchQuery}
-          collapsedSections={collapsedSections}
-          setCollapsedSections={setCollapsedSections}
-          handleClearFilters={handleClearFilters}
-        />
-      </div>
+  if (!variant) return null;
 
-      {/* Mobile View */}
-      <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur pt-2 pb-4">
+  if (variant === "mobile") {
+    return (
+      <div className="block md:hidden">
         <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="w-full">
+            <Button
+              variant="outline"
+              size="default"
+              className="w-full bg-background/50 backdrop-blur-sm"
+            >
               <SlidersHorizontal className="mr-2 h-4 w-4" />
               Filters
-              {filters.placeType && (
-                <span className="ml-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                  {placeTypeCounts[filters.placeType] || 0}
-                </span>
-              )}
             </Button>
           </SheetTrigger>
-          <SheetContent
-            side="bottom"
-            className="h-[85vh] p-0 z-[400]"
-          >
+          <SheetContent side="bottom" className="h-[85vh] p-0 z-[400]">
             <div className="flex flex-col h-full">
-              <SheetHeader className="px-4 py-3 border-b flex-shrink-0">
-                <div className="flex items-center justify-between">
-                  <SheetTitle className="text-lg">Filters</SheetTitle>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-full"
-                    onClick={() => setIsFilterSheetOpen(false)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </SheetHeader>
-
-              <FilterContent
-                cities={cities}
-                placeTypeCounts={placeTypeCounts}
-                searchQuery={searchQuery}
-                collapsedSections={collapsedSections}
-                setCollapsedSections={setCollapsedSections}
-                handleClearFilters={handleClearFilters}
-                isMobile={true}
-              />
+              <div className="flex-1 overflow-auto">
+                <FilterContent
+                  cities={cities}
+                  placeTypeCounts={placeTypeCounts}
+                  searchQuery={searchQuery}
+                  collapsedSections={collapsedSections}
+                  setCollapsedSections={setCollapsedSections}
+                  handleClearFilters={handleClearFilters}
+                  isMobile={true}
+                />
+              </div>
             </div>
           </SheetContent>
         </Sheet>
       </div>
+    );
+  }
 
-      {/* Sign Up Dialog */}
-      {showSignUpDialog && (
-        <SignUpDialog
-          open={showSignUpDialog}
-          onOpenChange={setShowSignUpDialog}
-          title="Unlock All Filters"
-          description="Join our community to access all filters and discover your perfect city"
-        />
-      )}
-    </>
+  return (
+    <div className="hidden md:flex flex-col border rounded-lg bg-card">
+      <FilterContent
+        cities={cities}
+        placeTypeCounts={placeTypeCounts}
+        searchQuery={searchQuery}
+        collapsedSections={collapsedSections}
+        setCollapsedSections={setCollapsedSections}
+        handleClearFilters={handleClearFilters}
+      />
+    </div>
   );
 };
