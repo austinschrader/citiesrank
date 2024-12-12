@@ -1,4 +1,9 @@
 // src/features/map/components/MapMarker.tsx
+/**
+ * Renders an interactive marker on the map for a specific place.
+ * Handles marker styling, click events, and popup displays.
+ * Integrates with the parent CityMap component for place selection.
+ */
 import { PlaceCard } from "@/features/places/components/PlaceCard";
 import L from "leaflet";
 import { useState } from "react";

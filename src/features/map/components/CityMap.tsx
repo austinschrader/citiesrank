@@ -1,7 +1,8 @@
+// src/features/map/components/CityMap.tsx
 /**
- * Main map component that renders places as markers. Consumes MapContext for state
- * management and delegates rendering to MapMarker and PlaceGeoJson components.
- * Updates global map state when places are selected.
+ * Main map component that renders interactive city locations with markers.
+ * Handles map interactions, marker clicks, and location selection.
+ * Uses MapContext for state management and Leaflet for map rendering.
  */
 
 import type { MapPlace } from "@/features/map/types";
