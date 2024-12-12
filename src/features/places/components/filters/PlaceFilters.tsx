@@ -8,6 +8,7 @@ import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { Building2, Compass, Globe2, Home, Landmark } from "lucide-react";
 import { useEffect, useState } from "react";
+import { filterCategories } from "@/lib/data/places/filters/categories";
 
 const placeTypeFilters = [
   { type: CitiesTypeOptions.country, label: "Countries", icon: Globe2 },
@@ -17,23 +18,10 @@ const placeTypeFilters = [
   { type: CitiesTypeOptions.sight, label: "Sights", icon: Landmark },
 ] as const;
 
-// Future display-only filters
-const displayFilters = [
-  {
-    title: "Season",
-    options: ["Spring", "Summer", "Fall", "Winter"],
-    key: "season" as const,
-  },
-  {
-    title: "Budget",
-    options: ["Budget", "Mid-Range", "Luxury"],
-    key: "budget" as const,
-  },
-] as const;
-
 export const PlaceFilters = () => {
   const { filters, setFilter } = useFilters();
   const { user } = useAuth();
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
   useEffect(() => {
@@ -69,12 +57,22 @@ export const PlaceFilters = () => {
     };
   }, [user, showSignUpDialog]);
 
-  const handleFilterClick = (type: CitiesTypeOptions) => {
+  const handleFilterToggle = (type: CitiesTypeOptions) => {
     if (!user) {
       setShowSignUpDialog(true);
       return;
     }
     setFilter("placeType", filters.placeType === type ? null : type);
+  };
+
+  const handleToggleCollapse = (sectionId: string) => {
+    const newCollapsedSections = new Set(collapsedSections);
+    if (newCollapsedSections.has(sectionId)) {
+      newCollapsedSections.delete(sectionId);
+    } else {
+      newCollapsedSections.add(sectionId);
+    }
+    setCollapsedSections(newCollapsedSections);
   };
 
   const handleClearFilters = () => {
@@ -95,66 +93,95 @@ export const PlaceFilters = () => {
           </p>
         </div>
 
-        <ScrollArea className="flex-1 p-4">
-          <div className="space-y-6">
+        <ScrollArea className="flex-1">
+          <div className="p-4 space-y-4">
             {/* Place Type Filter - Implemented */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Place Type</h3>
-              <div className="space-y-2">
-                {placeTypeFilters.map(({ type, label, icon: Icon }) => (
-                  <button
-                    key={type}
-                    onClick={() => handleFilterClick(type)}
-                    className={cn(
-                      "flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md transition-colors",
-                      "hover:bg-accent hover:text-accent-foreground",
-                      filters.placeType === type
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground"
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="border-t my-4" />
-
-            {/* Display-Only Filters */}
-            {displayFilters.map((section) => (
-              <div key={section.key} className="space-y-3">
-                <h3 className="text-sm font-medium">{section.title}</h3>
-                <div className="space-y-2">
-                  {section.options.map((option) => (
-                    <button
-                      key={option}
-                      className={cn(
-                        "flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors",
-                        "hover:bg-accent hover:text-accent-foreground",
-                        "text-muted-foreground"
-                      )}
-                      disabled
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <Button
+                variant="ghost"
+                className={cn(
+                  "w-full justify-between px-4 py-2 rounded-t-lg",
+                  "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800"
+                )}
+                onClick={() => handleToggleCollapse("placeType")}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-lg">🗺️</span>
+                  <span className="font-medium">Place Type</span>
+                </span>
+                <span
+                  className={`transform transition-transform ${
+                    collapsedSections.has("placeType") ? "" : "rotate-180"
+                  }`}
+                >
+                  ▼
+                </span>
+              </Button>
+              {!collapsedSections.has("placeType") && (
+                <div className="p-4 space-y-2">
+                  {placeTypeFilters.map(({ type, label, icon: Icon }) => (
+                    <Button
+                      key={type}
+                      variant={filters.placeType === type ? "default" : "outline"}
+                      className="w-full justify-start gap-2"
+                      onClick={() => handleFilterToggle(type)}
                     >
-                      <span>{option}</span>
-                      <span className="ml-auto text-xs text-muted-foreground">
-                        Soon
-                      </span>
-                    </button>
+                      <Icon className="h-4 w-4" />
+                      {label}
+                    </Button>
                   ))}
                 </div>
+              )}
+            </div>
+
+            {/* Display-Only Filters */}
+            {filterCategories.map((section) => (
+              <div key={section.id} className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-between px-4 py-2 rounded-t-lg",
+                    section.color
+                  )}
+                  onClick={() => handleToggleCollapse(section.id)}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="text-lg">{section.emoji}</span>
+                    <span className="font-medium">{section.title}</span>
+                  </span>
+                  <span
+                    className={`transform transition-transform ${
+                      collapsedSections.has(section.id) ? "" : "rotate-180"
+                    }`}
+                  >
+                    ▼
+                  </span>
+                </Button>
+                {!collapsedSections.has(section.id) && (
+                  <div className="p-4 space-y-2">
+                    {section.filters.map((filter) => (
+                      <Button
+                        key={filter.label}
+                        variant="outline"
+                        className="w-full justify-start gap-2"
+                        disabled
+                      >
+                        <span className="text-lg">{filter.emoji}</span>
+                        {filter.label}
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          Soon
+                        </span>
+                      </Button>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </ScrollArea>
 
         <div className="p-4 border-t">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleClearFilters}
-          >
+          <Button variant="outline" className="w-full" onClick={handleClearFilters}>
             Clear Filters
           </Button>
         </div>
