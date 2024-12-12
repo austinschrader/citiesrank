@@ -1,17 +1,16 @@
 // file location: src/pages/places/PlacesPage.tsx
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useCities } from "@/features//places/context/CitiesContext";
 import { CityMap } from "@/features/map/components/CityMap";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { useCitiesActions } from "@/features/places/context/CitiesContext";
-import { usePagination } from "@/features/places/hooks/usePagination";
 import { MobileFilters } from "@/features/places/components/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
 import { useSearch } from "@/features/places/components/search/hooks/useSearch";
 import { useSearchFilters } from "@/features/places/components/search/hooks/useSearchFilter";
+import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import "leaflet/dist/leaflet.css";
 import { List, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -33,14 +32,13 @@ export const PlacesPage = () => {
     handleDestinationTypeSelect,
     getFilteredCities,
   } = useSearchFilters(preferences);
-  const { getAllCities } = useCitiesActions();
+
+  const {
+    cities,
+    cityStatus: { loading },
+  } = useCities();
 
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [cityData, setCityData] = useState<Record<string, CitiesResponse>>({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  const currentRequestIdRef = useRef<string>("");
-  const isLoadingRef = useRef(false);
 
   const {
     searchQuery,
@@ -52,14 +50,12 @@ export const PlacesPage = () => {
     handleCitySelect,
   } = useSearch();
   const {
-    currentPage,
-    setCurrentPage,
     getPaginatedData,
     loadMore,
     hasMore,
     isLoading: isLoadingMore,
   } = usePagination(
-    getFilteredCities(cityData, searchQuery, calculateMatchForCity)
+    getFilteredCities(cities, searchQuery, calculateMatchForCity)
   );
 
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -91,54 +87,15 @@ export const PlacesPage = () => {
     }
   }, [isMobileSearchActive]);
 
-  useEffect(() => {
-    const loadCityData = async () => {
-      if (isLoadingRef.current) return;
-
-      const requestId = Math.random().toString(36).substring(7);
-      currentRequestIdRef.current = requestId;
-      isLoadingRef.current = true;
-      setIsLoading(true);
-
-      try {
-        const records = await getAllCities();
-
-        if (currentRequestIdRef.current === requestId) {
-          const transformedData: Record<string, CitiesResponse> =
-            records.reduce((acc, record) => {
-              acc[record.name] = record;
-              return acc;
-            }, {} as Record<string, CitiesResponse>);
-
-          setCityData(transformedData);
-        }
-      } catch (error) {
-        if (currentRequestIdRef.current === requestId) {
-          console.error("Error loading city data:", error);
-          setCityData({});
-        }
-      } finally {
-        if (currentRequestIdRef.current === requestId) {
-          isLoadingRef.current = false;
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadCityData();
-  }, [getAllCities]);
-
   // Get current data for map view
   const getCurrentLevelData = () => {
     // Apply filters and then filter for valid coordinates
-    return getFilteredCities(
-      cityData,
-      searchQuery,
-      calculateMatchForCity
-    ).filter((city) => city.latitude != null && city.longitude != null);
+    return getFilteredCities(cities, searchQuery, calculateMatchForCity).filter(
+      (city) => city.latitude != null && city.longitude != null
+    );
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -230,7 +187,7 @@ export const PlacesPage = () => {
               onClose={() => setIsMobileSearchActive(false)}
               searchInputRef={searchInputRef}
               filteredCities={getFilteredCities(
-                cityData,
+                cities,
                 searchQuery,
                 calculateMatchForCity
               )}

@@ -17,7 +17,7 @@ interface UseSearchFiltersReturn {
   handleFilterSelect: (filter: string) => void;
   handleDestinationTypeSelect: (type: CitiesTypeOptions) => void;
   getFilteredCities: (
-    cityData: Record<string, CitiesResponse>,
+    cities: CitiesResponse[],
     searchQuery: string,
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
   ) => (CitiesResponse & MatchScore)[];
@@ -48,7 +48,7 @@ export const useSearchFilters = (
 
   const getFilteredCities = useCallback(
     (
-      cityData: Record<string, CitiesResponse>,
+      cityData: CitiesResponse[],
       searchQuery: string,
       calculateMatchForCity: (city: CitiesResponse) => MatchScore
     ): (CitiesResponse & MatchScore)[] => {
