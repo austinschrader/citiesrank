@@ -9,73 +9,40 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { filterCategories } from "@/lib/data/places/filters/categories";
+import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
 import { PlaceSearch } from "./PlaceSearch";
 import { PlaceTypeFilter } from "./PlaceTypeFilter";
 
-export const PlaceFilters = () => {
-  const { filters, setFilter } = useFilters();
-  const { cities } = useCities();
-  const { user } = useAuth();
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+interface FilterContentProps {
+  cities: any[];
+  placeTypeCounts: Record<string, number>;
+  searchQuery: string;
+  collapsedSections: Set<string>;
+  setCollapsedSections: (sections: Set<string>) => void;
+  handleClearFilters: () => void;
+  isMobile?: boolean;
+}
 
-  // Calculate place type counts
-  const placeTypeCounts = cities.reduce((acc, place) => {
-    acc[place.type] = (acc[place.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  useEffect(() => {
-    if (user) return;
-
-    let timeout: NodeJS.Timeout;
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (timeout) clearTimeout(timeout);
-
-      if (
-        e.clientY <= 0 &&
-        e.clientX > 0 &&
-        e.clientX < window.innerWidth &&
-        !showSignUpDialog
-      ) {
-        timeout = setTimeout(() => setShowSignUpDialog(true), 100);
-      }
-    };
-
-    document.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [user, showSignUpDialog]);
-
-  const handleClearFilters = () => {
-    setFilter("placeType", null);
-  };
-
-  const toggleAllSections = (collapse: boolean) => {
-    const newCollapsedSections = new Set<string>();
-    if (collapse) {
-      ["placeType", ...filterCategories.map((cat) => cat.id)].forEach((id) =>
-        newCollapsedSections.add(id)
-      );
-    }
-    setCollapsedSections(newCollapsedSections);
-  };
-
+const FilterContent = ({
+  cities,
+  placeTypeCounts,
+  searchQuery,
+  collapsedSections,
+  setCollapsedSections,
+  handleClearFilters,
+  isMobile = false,
+}: FilterContentProps) => {
   return (
-    <div className="flex flex-col border rounded-lg bg-card">
+    <>
       {/* Header Section */}
       <div className="p-4 border-b space-y-4">
         <div>
@@ -90,17 +57,19 @@ export const PlaceFilters = () => {
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               {cities.length} places found
-              {filters.placeType && (
-                <span className="block text-xs">
-                  {placeTypeCounts[filters.placeType] || 0} {filters.placeType}
-                  {placeTypeCounts[filters.placeType] !== 1 ? "s" : ""}
-                </span>
-              )}
             </p>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => toggleAllSections(collapsedSections.size === 0)}
+              onClick={() =>
+                setCollapsedSections(
+                  new Set(
+                    collapsedSections.size === 0
+                      ? ["placeType", ...filterCategories.map((cat) => cat.id)]
+                      : []
+                  )
+                )
+              }
               className="text-xs"
             >
               {collapsedSections.size === 0 ? "Collapse all" : "Expand all"}
@@ -111,17 +80,14 @@ export const PlaceFilters = () => {
           <PlaceSearch />
 
           {/* Filter Categories Search */}
-          <FilterSearch
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
+          <FilterSearch searchQuery={searchQuery} onSearchChange={() => {}} />
         </div>
       </div>
 
       {/* Filter Sections */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className={isMobile ? "flex-1 h-full" : "flex-1"}>
         <div className="p-4 space-y-4">
-          {/* Place Type Filter - Implemented */}
+          {/* Place Type Filter */}
           <PlaceTypeFilter
             searchQuery={searchQuery}
             isCollapsed={collapsedSections.has("placeType")}
@@ -168,16 +134,105 @@ export const PlaceFilters = () => {
           Clear Filters
         </Button>
       </div>
+    </>
+  );
+};
 
-      {/* Sign Up Dialog */}
-      {showSignUpDialog && (
-        <SignUpDialog
-          open={showSignUpDialog}
-          onOpenChange={setShowSignUpDialog}
-          title="Unlock All Filters"
-          description="Join our community to access all filters and discover your perfect city"
-        />
-      )}
+interface PlaceFiltersProps {
+  variant?: "mobile" | "desktop";
+}
+
+export const PlaceFilters = ({ variant }: PlaceFiltersProps) => {
+  const { filters, setFilter } = useFilters();
+  const { cities } = useCities();
+  const { user } = useAuth();
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set()
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+
+  // Calculate place type counts
+  const placeTypeCounts = cities.reduce((acc, place) => {
+    acc[place.type] = (acc[place.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  useEffect(() => {
+    if (user) return;
+
+    let timeout: NodeJS.Timeout;
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (timeout) clearTimeout(timeout);
+
+      if (
+        e.clientY <= 0 &&
+        e.clientX > 0 &&
+        e.clientX < window.innerWidth &&
+        !showSignUpDialog
+      ) {
+        timeout = setTimeout(() => setShowSignUpDialog(true), 100);
+      }
+    };
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [user, showSignUpDialog]);
+
+  const handleClearFilters = () => {
+    setFilter("placeType", null);
+  };
+
+  if (!variant) return null;
+
+  if (variant === "mobile") {
+    return (
+      <div className="block md:hidden">
+        <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              size="default"
+              className="w-full bg-background/50 backdrop-blur-sm"
+            >
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
+              Filters
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="h-[85vh] p-0 z-[400]">
+            <div className="flex flex-col h-full">
+              <div className="flex-1 overflow-auto">
+                <FilterContent
+                  cities={cities}
+                  placeTypeCounts={placeTypeCounts}
+                  searchQuery={searchQuery}
+                  collapsedSections={collapsedSections}
+                  setCollapsedSections={setCollapsedSections}
+                  handleClearFilters={handleClearFilters}
+                  isMobile={true}
+                />
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    );
+  }
+
+  return (
+    <div className="hidden md:flex flex-col border rounded-lg bg-card">
+      <FilterContent
+        cities={cities}
+        placeTypeCounts={placeTypeCounts}
+        searchQuery={searchQuery}
+        collapsedSections={collapsedSections}
+        setCollapsedSections={setCollapsedSections}
+        handleClearFilters={handleClearFilters}
+      />
     </div>
   );
 };
