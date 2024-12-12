@@ -220,7 +220,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                     {childPlaces.map((place) => (
                       <Link
                         key={place.id}
-                        to={`/places/${formatUrlName(place.normalizedName)}`}
+                        to={`/places/${place.type}/${formatUrlName(place.normalizedName)}`}
                         className="block group"
                       >
                         <Card className="overflow-hidden border-none hover:shadow-md transition-all duration-300 h-full">
