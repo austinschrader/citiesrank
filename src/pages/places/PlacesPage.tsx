@@ -1,5 +1,4 @@
 // file location: src/pages/places/PlacesPage.tsx
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -12,13 +11,14 @@ import { PlaceFilters } from "@/features/places/components/filters/PlaceFilters"
 import { LoadingSpinner } from "@/features/places/components/loading/LoadingSpinner";
 import { ResultsGrid } from "@/features/places/components/results/ResultsGrid";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
+import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import "leaflet/dist/leaflet.css";
-import { List, MapPin, Search, X } from "lucide-react";
+import { List, MapPin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
@@ -118,29 +118,14 @@ export const PlacesPage = () => {
           {/* Mobile Search and Filters */}
           {viewMode === "list" && (
             <div className="w-full sm:max-w-md space-y-3">
-              <div className="relative block md:hidden">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  className="w-full pl-9 pr-10 h-11 bg-background/50 backdrop-blur-sm"
-                  placeholder="Search destinations..."
-                  value={filters.search}
-                  onChange={(e) => setFilter("search", e.target.value)}
-                  onClick={() => setIsMobileSearchActive(true)}
-                  readOnly
+              <div className="block md:hidden">
+                <MobileSearchBar
+                  searchQuery={filters.search}
+                  onSearchChange={(e) => setFilter("search", e.target.value)}
+                  onSearchClick={() => setIsMobileSearchActive(true)}
+                  onClearSearch={() => setFilter("search", "")}
                 />
-                {filters.search && (
-                  <button
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFilter("search", "");
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
               </div>
-
               <PlaceFilters variant="mobile" />
             </div>
           )}
