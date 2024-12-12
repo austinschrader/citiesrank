@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pagination } from "@/components/ui/Pagination";
 import { CityMap } from "@/features/map/components/CityMap";
-import { PlaceCard } from "@/features/places/components/PlaceCard";
+import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { MobileFilters } from "@/features/places/search/components/MobileFilters";
@@ -162,8 +161,8 @@ export const PlacesPage = () => {
                 Discover Places
               </h1>
               <p className="text-sm md:text-base text-muted-foreground max-w-2xl">
-                Find your perfect destination based on your preferences and travel
-                style.
+                Find your perfect destination based on your preferences and
+                travel style.
               </p>
             </div>
 
@@ -264,7 +263,9 @@ export const PlacesPage = () => {
                     .toLowerCase()
                     .replace(/[^\w\s-]/g, "")
                     .replace(/\s+/g, "-");
-                  const cityElement = document.getElementById(`city-${citySlug}`);
+                  const cityElement = document.getElementById(
+                    `city-${citySlug}`
+                  );
                   if (cityElement) {
                     setTimeout(() => {
                       cityElement.scrollIntoView({

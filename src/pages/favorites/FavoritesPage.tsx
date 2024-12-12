@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { PlaceCard } from "@/features/places/components/PlaceCard";
+import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useToast } from "@/hooks/use-toast";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { Search, Star } from "lucide-react";
