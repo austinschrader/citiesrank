@@ -1,3 +1,4 @@
+// file location: src/features/places/components/search/hooks/useSearchFilter.ts
 import { useTags } from "@/features/places/hooks/useTags";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
 import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";

@@ -1,4 +1,4 @@
-// src/features/map/components/CityMap.tsx
+// file location: src/features/map/components/CityMap.tsx
 /**
  * Main map component that renders interactive city locations with markers.
  * Handles map interactions, marker clicks, and location selection.

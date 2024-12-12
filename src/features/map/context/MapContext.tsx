@@ -1,3 +1,4 @@
+// file location: src/features/map/context/MapContext.tsx
 /**
  * Global map state provider used by map components to share state and interactions.
  * Manages zoom, center, selected place and geographic level. Used by CityMap and

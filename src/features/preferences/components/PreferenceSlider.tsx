@@ -1,3 +1,4 @@
+// file location: src/features/preferences/components/PreferenceSlider.tsx
 import { Slider } from "@/components/ui/slider";
 import { LucideIcon } from "lucide-react";
 

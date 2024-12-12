@@ -1,3 +1,4 @@
+// file location: src/features/places/components/DestinationFilter.tsx
 import { Button } from "@/components/ui/button";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";

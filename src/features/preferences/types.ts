@@ -1,3 +1,4 @@
+// file location: src/features/preferences/types.ts
 import { LucideIcon } from "lucide-react";
 
 // Core preference types

@@ -1,4 +1,4 @@
-// src/features/map/components/PlaceGeoJson.tsx
+// file location: src/features/map/components/PlaceGeoJson.tsx
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Layer } from "leaflet";
 import { useEffect, useState } from "react";

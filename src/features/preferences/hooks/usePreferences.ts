@@ -1,3 +1,4 @@
+// file location: src/features/preferences/hooks/usePreferences.ts
 import { PreferencesContext } from "@/features/preferences/context/PreferencesContext";
 import { MatchScoreContextValue } from "@/features/preferences/types";
 import { useContext } from "react";

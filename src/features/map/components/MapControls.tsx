@@ -1,3 +1,4 @@
+// file location: src/features/map/components/MapControls.tsx
 import { Button } from "@/components/ui/button";
 import { Home, Minus, Plus } from "lucide-react";
 import { useEffect } from "react";

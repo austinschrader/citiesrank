@@ -1,3 +1,4 @@
+// file location: src/pages/places/PlacesPage.tsx
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CityMap } from "@/features/map/components/CityMap";

@@ -1,4 +1,4 @@
-// src/features/places/components/cards/PlaceInfoOverlay.tsx
+// file location: src/features/places/components/cards/PlaceInfoOverlay.tsx
 /**
  * Info overlay shown on place cards displaying basic information.
  * Uses dual gradients for optimal text contrast while preserving image brightness.

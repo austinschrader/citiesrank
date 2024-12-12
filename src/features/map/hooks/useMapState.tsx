@@ -1,4 +1,4 @@
-// src/features/map/hooks/useMapState.ts
+// file location: src/features/map/hooks/useMapState.tsx
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useState } from "react";
 import { mapService } from "../services/mapService";

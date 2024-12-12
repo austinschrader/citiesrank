@@ -1,3 +1,4 @@
+// file location: src/pages/HomePage.tsx
 import { useRef } from "react";
 import { Hero } from "@/components/Hero";
 import { PlacesPage } from "./places/PlacesPage";

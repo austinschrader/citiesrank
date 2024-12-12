@@ -1,3 +1,4 @@
+// file location: src/features/places/context/CitiesContext.tsx
 import { getApiUrl } from "@/config/appConfig";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";

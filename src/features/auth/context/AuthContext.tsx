@@ -1,4 +1,4 @@
-// src/lib/auth/AuthContext.tsx
+// file location: src/features/auth/context/AuthContext.tsx
 import {
   createContext,
   useContext,

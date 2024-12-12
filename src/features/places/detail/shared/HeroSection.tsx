@@ -1,3 +1,4 @@
+// file location: src/features/places/detail/shared/HeroSection.tsx
 import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";

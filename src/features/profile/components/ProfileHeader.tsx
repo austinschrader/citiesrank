@@ -1,3 +1,4 @@
+// file location: src/features/profile/components/ProfileHeader.tsx
 export const ProfileHeader = () => {
   return (
     <div className="mb-8">

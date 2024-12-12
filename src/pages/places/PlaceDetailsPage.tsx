@@ -1,3 +1,4 @@
+// file location: src/pages/places/PlaceDetailsPage.tsx
 import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";

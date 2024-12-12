@@ -1,4 +1,4 @@
-// src/features/places/components/PlaceCard.tsx
+// file location: src/features/places/components/PlaceCard.tsx
 /**
  * Main place card component that displays city information.
  * Uses modular components for specific functionality.

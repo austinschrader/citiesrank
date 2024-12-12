@@ -1,3 +1,4 @@
+// file location: src/features/places/components/filters/FilterSection.tsx
 import { ChevronDown } from "lucide-react";
 
 interface FilterItem {

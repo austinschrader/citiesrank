@@ -1,3 +1,4 @@
+// src/layouts/PlacesLayout.tsx
 import { VerticalFilters } from "@/features/places/components/filters/VerticalFilters";
 
 interface PlacesLayoutProps {

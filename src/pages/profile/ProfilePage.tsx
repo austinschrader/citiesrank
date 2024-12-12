@@ -1,3 +1,4 @@
+// file location: src/pages/profile/ProfilePage.tsx
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ProfileHeader } from "@/features/profile/components/ProfileHeader";
 import { ProfileOverview } from "@/features/profile/components/ProfileOverview";

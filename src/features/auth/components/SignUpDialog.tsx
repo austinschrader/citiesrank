@@ -1,3 +1,4 @@
+// file location: src/features/auth/components/SignUpDialog.tsx
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";

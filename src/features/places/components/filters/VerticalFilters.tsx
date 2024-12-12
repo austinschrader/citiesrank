@@ -1,3 +1,4 @@
+// file location: src/features/places/components/filters/VerticalFilters.tsx
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";

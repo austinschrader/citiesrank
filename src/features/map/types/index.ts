@@ -1,4 +1,4 @@
-// src/features/map/types/index.ts
+// file location: src/features/map/types/index.ts
 import {
   CitiesResponse,
   CitiesTypeOptions,
