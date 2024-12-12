@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { FilterSection } from "@/features/places/filters/FilterSection";
+import { FilterSection } from "@/features/places/components/filters/FilterSection";
 import { filterCategories } from "@/lib/data/places/filters/categories";
 import { useState } from "react";
 
