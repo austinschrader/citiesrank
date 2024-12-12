@@ -3,6 +3,7 @@ import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { MapProvider } from "@/features/map/context/MapContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { CountriesProvider } from "@/features/places/context/CountriesContext";
+import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
@@ -19,17 +20,19 @@ function App() {
         <AuthProvider>
           <PreferencesProvider>
             <MapProvider>
-              <RootLayout>
-                <Routes>
-                  <Route path="/" element={<PlacesPage />} />
-                  <Route path="/favorites" element={<FavoritesPage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route
-                    path="/places/:placeType/:id"
-                    element={<PlaceDetailsPage />}
-                  />
-                </Routes>
-              </RootLayout>
+              <FiltersProvider>
+                <RootLayout>
+                  <Routes>
+                    <Route path="/" element={<PlacesPage />} />
+                    <Route path="/favorites" element={<FavoritesPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route
+                      path="/places/:placeType/:id"
+                      element={<PlaceDetailsPage />}
+                    />
+                  </Routes>
+                </RootLayout>
+              </FiltersProvider>
             </MapProvider>
             <Toaster />
           </PreferencesProvider>

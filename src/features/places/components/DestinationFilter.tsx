@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import {
   Building2,
   ChevronLeft,
@@ -14,13 +15,6 @@ import {
 import { useRef } from "react";
 import { useTags } from "../hooks/useTags";
 
-interface DestinationFilterProps {
-  selectedFilter: string | null;
-  onFilterSelect: (filter: string) => void;
-  selectedDestinationType: CitiesTypeOptions | null;
-  onDestinationTypeSelect: (type: CitiesTypeOptions) => void;
-}
-
 const destinationTypes = [
   { type: CitiesTypeOptions.country, label: "Countries", icon: Globe2 },
   { type: CitiesTypeOptions.region, label: "Regions", icon: Compass },
@@ -29,14 +23,15 @@ const destinationTypes = [
   { type: CitiesTypeOptions.sight, label: "Sights", icon: Landmark },
 ];
 
-export const DestinationFilter = ({
-  selectedFilter,
-  onFilterSelect,
-  selectedDestinationType,
-  onDestinationTypeSelect,
-}: DestinationFilterProps) => {
+export const DestinationFilter = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { filterOptions, isLoading, error } = useTags();
+  const {
+    selectedFilter,
+    setSelectedFilter,
+    selectedDestinationType,
+    setSelectedDestinationType,
+  } = useFilters();
 
   const handleScroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -59,7 +54,7 @@ export const DestinationFilter = ({
         {destinationTypes.map(({ type, label, icon: Icon }) => (
           <button
             key={type}
-            onClick={() => onDestinationTypeSelect(type)}
+            onClick={() => setSelectedDestinationType(type)}
             className={cn(
               "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
               "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
@@ -103,7 +98,7 @@ export const DestinationFilter = ({
               {filterOptions.map((option) => (
                 <button
                   key={option.id}
-                  onClick={() => onFilterSelect(option.id)}
+                  onClick={() => setSelectedFilter(option.id)}
                   className={cn(
                     "inline-flex items-center justify-center rounded-full whitespace-nowrap text-sm font-medium transition-colors",
                     "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",

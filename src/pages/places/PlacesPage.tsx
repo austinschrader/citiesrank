@@ -1,5 +1,6 @@
 // file location: src/pages/places/PlacesPage.tsx
 import { useCities } from "@/features//places/context/CitiesContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { CityMap } from "@/features/map/components/CityMap";
 import { Header } from "@/features/places/components/header/Header";
 import { LoadingSpinner } from "@/features/places/components/loading/LoadingSpinner";
@@ -8,7 +9,6 @@ import { MobileFilters } from "@/features/places/components/search/components/Mo
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
 import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
 import { useSearch } from "@/features/places/components/search/hooks/useSearch";
-import { useSearchFilters } from "@/features/places/components/search/hooks/useSearchFilter";
 import { ViewModeToggle } from "@/features/places/components/view-toggle/ViewModeToggle";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
@@ -17,22 +17,18 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
-  const { preferences, setPreferences, calculateMatchForCity } =
-    usePreferences();
+  const { preferences, setPreferences, calculateMatchForCity } = usePreferences();
   const {
-    isFilterSheetOpen,
-    setIsFilterSheetOpen,
+    searchQuery,
+    setSearchQuery,
     selectedFilter,
     setSelectedFilter,
     selectedDestinationType,
     setSelectedDestinationType,
     sortOrder,
     setSortOrder,
-    filterOptions,
-    handleFilterSelect,
-    handleDestinationTypeSelect,
     getFilteredCities,
-  } = useSearchFilters(preferences);
+  } = useFilters();
 
   const {
     cities,
@@ -40,24 +36,15 @@ export const PlacesPage = () => {
   } = useCities();
 
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    searchQuery,
-    setSearchQuery,
-    isMobileSearchActive,
-    setIsMobileSearchActive,
-    searchInputRef,
-    handleSearchChange,
-    handleCitySelect,
-  } = useSearch();
   const {
     getPaginatedData,
     loadMore,
     hasMore,
     isLoading: isLoadingMore,
-  } = usePagination(
-    getFilteredCities(cities, searchQuery, calculateMatchForCity)
-  );
+  } = usePagination(getFilteredCities(cities, calculateMatchForCity));
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -91,7 +78,7 @@ export const PlacesPage = () => {
   // Get current data for map view
   const getCurrentLevelData = () => {
     // Apply filters and then filter for valid coordinates
-    return getFilteredCities(cities, searchQuery, calculateMatchForCity).filter(
+    return getFilteredCities(cities, calculateMatchForCity).filter(
       (city) => city.latitude != null && city.longitude != null
     );
   };
@@ -99,6 +86,24 @@ export const PlacesPage = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  const handleCitySelect = (city: any) => {
+    setSearchQuery(city.name);
+
+    // Create a slug from the city name for the ID
+    const citySlug = city.name
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-");
+
+    // Find and scroll to the city card
+    const cityElement = document.getElementById(`city-${citySlug}`);
+    if (cityElement) {
+      setTimeout(() => {
+        cityElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  };
 
   return (
     <PlacesLayout>
@@ -127,7 +132,7 @@ export const PlacesPage = () => {
             <div className="md:hidden relative">
               <MobileSearchBar
                 searchQuery={searchQuery}
-                onSearchChange={handleSearchChange}
+                onSearchChange={(e) => setSearchQuery(e.target.value)}
                 onSearchClick={() => setIsMobileSearchActive(true)}
                 onClearSearch={() => setSearchQuery("")}
               />
@@ -138,31 +143,18 @@ export const PlacesPage = () => {
           {isMobileSearchActive && viewMode === "list" && (
             <MobileSearch
               searchQuery={searchQuery}
-              onSearchChange={handleSearchChange}
+              onSearchChange={(e) => setSearchQuery(e.target.value)}
               onClose={() => setIsMobileSearchActive(false)}
               searchInputRef={searchInputRef}
-              filteredCities={getFilteredCities(
-                cities,
-                searchQuery,
-                calculateMatchForCity
-              )}
+              filteredCities={getFilteredCities(cities, calculateMatchForCity)}
               onCitySelect={handleCitySelect}
             />
           )}
 
           {/* Mobile Filters */}
           <MobileFilters
-            isFilterSheetOpen={isFilterSheetOpen}
-            setIsFilterSheetOpen={setIsFilterSheetOpen}
             preferences={preferences}
             setPreferences={setPreferences}
-            selectedFilter={selectedFilter}
-            onFilterSelect={handleFilterSelect}
-            selectedDestinationType={selectedDestinationType}
-            onDestinationTypeSelect={handleDestinationTypeSelect}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            filterOptions={filterOptions}
           />
 
           {/* Results */}
@@ -170,24 +162,8 @@ export const PlacesPage = () => {
             {viewMode === "map" ? (
               <CityMap
                 places={getCurrentLevelData()}
-                onPlaceSelect={(place) => {
-                  const citySlug = place.name
-                    .toLowerCase()
-                    .replace(/[^\w\s-]/g, "")
-                    .replace(/\s+/g, "-");
-                  const cityElement = document.getElementById(
-                    `city-${citySlug}`
-                  );
-                  if (cityElement) {
-                    setTimeout(() => {
-                      cityElement.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                      });
-                    }, 100);
-                  }
-                }}
-                className="h-[70vh] w-full"
+                onPlaceSelect={handleCitySelect}
+                className="h-[calc(100vh-16rem)]"
               />
             ) : (
               <ResultsGrid
