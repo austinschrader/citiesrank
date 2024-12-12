@@ -15,9 +15,10 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { filterCategories } from "@/lib/data/places/filters/categories";
 import { useEffect, useState } from "react";
-import { PlaceTypeFilter } from "./PlaceTypeFilter";
 import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
+import { PlaceSearch } from "./PlaceSearch";
+import { PlaceTypeFilter } from "./PlaceTypeFilter";
 
 export const PlaceFilters = () => {
   const { filters, setFilter } = useFilters();
@@ -107,6 +108,9 @@ export const PlaceFilters = () => {
           </div>
 
           {/* Search Bar */}
+          <PlaceSearch />
+
+          {/* Filter Categories Search */}
           <FilterSearch
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}

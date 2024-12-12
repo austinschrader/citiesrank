@@ -1,7 +1,7 @@
 /**
- * FilterSearch: Reusable search input with clear button
+ * FilterSearch: Input to filter the category list
  * Dependencies:
- * - Used by PlaceFilters for filter search functionality
+ * - Used by PlaceFilters to filter visible categories
  * - Uses Input from shared UI components
  */
 
@@ -18,7 +18,7 @@ export const FilterSearch = ({ searchQuery, onSearchChange }: FilterSearchProps)
     <div className="relative">
       <Input
         type="text"
-        placeholder="Search filters..."
+        placeholder="Filter categories..."
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         className="w-full pr-8"
