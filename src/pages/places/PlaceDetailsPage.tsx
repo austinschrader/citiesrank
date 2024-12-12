@@ -1,11 +1,24 @@
 // file location: src/pages/places/PlaceDetailsPage.tsx
-import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getApiUrl } from "@/config/appConfig";
-import { useCitiesActions } from "@/features/places/context/CitiesContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { useSearch } from "@/features/places/components/search/hooks/useSearch";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFilters, SortOrder } from "@/features/places/context/FiltersContext";
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { LocationMap } from "@/features/places/detail/shared/LocationMap";
+import { usePreferences } from "@/features/preferences/hooks/usePreferences";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import {
   Building,
@@ -19,7 +32,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 interface PlaceDetailsPageProps {
@@ -31,67 +44,47 @@ const formatUrlName = (name: string) => {
 };
 
 export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
-  const { placeType, id } = useParams();
-  const [placeData, setPlaceData] = useState<CitiesResponse | null>(
-    initialData || null
-  );
-  const [parentPlace, setParentPlace] = useState<CitiesResponse | null>(null);
-  const [childPlaces, setChildPlaces] = useState<CitiesResponse[]>([]);
-  const [loading, setLoading] = useState(!initialData);
-  const [error, setError] = useState<string | null>(null);
-  const { getCityByName, getCityById, getAllCities } = useCitiesActions();
-  const apiUrl = getApiUrl();
+  const { id } = useParams();
+  const { preferences, calculateMatchForCity } = usePreferences();
+  const { cities, cityStatus } = useCities();
+  const { searchQuery } = useSearch();
+  const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
 
-  const getImageUrl = (record: CitiesResponse) => {
-    if (!record.imageUrl) return undefined;
-    return `${apiUrl}/api/files/cities/${record.id}/${record.imageUrl}`;
-  };
-
+  // Reset filters when entering the page
   useEffect(() => {
-    if (initialData) return;
+    resetFilters("implemented");
+  }, [resetFilters]);
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        if (!id) throw new Error("No place identifier provided");
+  // Get current place and its parent
+  const placeData = useMemo(() => {
+    if (initialData) return initialData;
+    return cities.find(
+      (city) => city.normalizedName.toLowerCase() === id?.toLowerCase()
+    );
+  }, [cities, id, initialData]);
 
-        const data = await getCityByName(id);
-        setPlaceData(data);
+  const parentPlace = useMemo(() => {
+    if (!placeData?.parentId) return null;
+    return cities.find((city) => city.id === placeData.parentId);
+  }, [cities, placeData]);
 
-        // Fetch parent if exists
-        if (data.parentId) {
-          try {
-            const parent = await getCityById(data.parentId);
-            setParentPlace(parent);
-          } catch (parentError) {
-            console.error("Error fetching parent place:", parentError);
-          }
-        }
+  // Get filtered child places
+  const childPlaces = useMemo(() => {
+    if (!placeData) return [];
+    
+    // Filter cities by parent
+    const childCities = cities.filter((city) => city.parentId === placeData.id);
+    console.log('Child cities:', childCities);
+    console.log('Current filters:', filters);
+    
+    // Apply filters and sorting using context
+    const filtered = getFilteredCities(childCities, calculateMatchForCity);
+    console.log('Filtered cities:', filtered);
+    return filtered;
+  }, [cities, placeData, filters, getFilteredCities, calculateMatchForCity]);
 
-        // Fetch child places
-        try {
-          const allPlaces = await getAllCities();
-          const children = allPlaces.filter(
-            (place) => place.parentId === data.id
-          );
-          setChildPlaces(children);
-        } catch (childrenError) {
-          console.error("Error fetching child places:", childrenError);
-        }
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load place data"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id, initialData]);
-
-  if (loading) return <LoadingState />;
-  if (error) return <ErrorState error={error} />;
+  if (cityStatus.loading) return <LoadingState />;
+  if (cityStatus.error) return <ErrorState error={cityStatus.error} />;
   if (!placeData) return <NotFoundState />;
 
   return (
@@ -206,64 +199,88 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
 
             {childPlaces.length > 0 && (
               <Card className="overflow-hidden border-none shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-semibold">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <h2 className="text-xl sm:text-2xl font-semibold">
                       Places to Explore
                     </h2>
-                    <span className="text-sm text-muted-foreground">
-                      {childPlaces.length}{" "}
-                      {childPlaces.length === 1 ? "place" : "places"}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {childPlaces.map((place) => (
-                      <Link
-                        key={place.id}
-                        to={`/places/${formatUrlName(place.normalizedName)}`}
-                        className="block group"
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <Select
+                        value={filters.placeType || "all"}
+                        onValueChange={(value) =>
+                          setFilter(
+                            "placeType",
+                            value === "all"
+                              ? null
+                              : (value as CitiesTypeOptions)
+                          )
+                        }
                       >
-                        <Card className="overflow-hidden border-none hover:shadow-md transition-all duration-300 h-full">
-                          <CardContent className="p-0">
-                            <div className="relative h-40">
-                              <ImageGallery
-                                cityName={place.name}
-                                country={place.country}
-                                imageUrl={place.imageUrl}
-                                showControls={false}
-                                variant="default"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                              <div className="absolute bottom-0 left-0 p-4">
-                                <h3 className="text-lg font-semibold text-white mb-1">
-                                  {place.name}
-                                </h3>
-                                <div className="flex items-center text-white/80 text-sm">
-                                  <Users className="h-4 w-4 mr-1" />
-                                  <span>{place.population}</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="p-4">
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {place.description}
-                              </p>
-                              <div className="mt-3 flex items-center gap-4">
-                                <div className="flex items-center text-sm">
-                                  <Shield className="h-4 w-4 mr-1 text-muted-foreground" />
-                                  <span>{place.safetyScore}/10</span>
-                                </div>
-                                <div className="flex items-center text-sm">
-                                  <Wallet className="h-4 w-4 mr-1 text-muted-foreground" />
-                                  <span>{place.costIndex}/10</span>
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    ))}
+                        <SelectTrigger className="w-full sm:w-[140px]">
+                          <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Types</SelectItem>
+                          <SelectItem value="region">Regions</SelectItem>
+                          <SelectItem value="city">Cities</SelectItem>
+                          <SelectItem value="neighborhood">
+                            Neighborhoods
+                          </SelectItem>
+                          <SelectItem value="sight">Sights</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <Select 
+                        value={filters.sort} 
+                        onValueChange={(value) => setFilter("sort", value as SortOrder)}
+                      >
+                        <SelectTrigger className="w-full sm:w-[140px]">
+                          <SelectValue>
+                            {filters.sort === "alphabetical-asc" ? "A to Z" : "Z to A"}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="alphabetical-asc">A to Z</SelectItem>
+                          <SelectItem value="alphabetical-desc">Z to A</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
+
+                  {/* Group places by type */}
+                  {Object.entries(
+                    childPlaces.reduce((acc, place) => {
+                      const type = place.type;
+                      if (!acc[type]) acc[type] = [];
+                      acc[type].push(place);
+                      return acc;
+                    }, {} as Record<string, CitiesResponse[]>)
+                  ).map(([type, places]) => (
+                    <div key={type} className="mb-6 last:mb-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1">
+                        <h3 className="text-base sm:text-lg font-medium capitalize">
+                          {type === "region" && "Regions"}
+                          {type === "city" && "Cities"}
+                          {type === "neighborhood" && "Neighborhoods"}
+                          {type === "sight" && "Sights"}
+                        </h3>
+                        <span className="text-sm text-muted-foreground">
+                          {places.length}{" "}
+                          {places.length === 1 ? type : `${type}s`}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        {places.map((place) => (
+                          <PlaceCard
+                            key={place.id}
+                            city={place}
+                            variant="compact"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             )}
@@ -275,20 +292,24 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
               <CardContent className="p-6">
                 <h2 className="text-2xl font-semibold mb-4">Location</h2>
                 {placeData.latitude && placeData.longitude && (
-                  <div className="aspect-square rounded-lg bg-muted/50">
-                    {/* Add your map component here */}
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <MapPin className="h-6 w-6 mr-2" />
-                      <span>
-                        {placeData.latitude.toFixed(2)},{" "}
-                        {placeData.longitude.toFixed(2)}
-                      </span>
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden">
+                    <LocationMap
+                      latitude={placeData.latitude}
+                      longitude={placeData.longitude}
+                      type={placeData.type as 'city' | 'region' | 'neighborhood' | 'sight'}
+                    />
                   </div>
                 )}
               </CardContent>
             </Card>
-
+            {parentPlace && (
+              <Card className="overflow-hidden border-none shadow-lg">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-semibold mb-4">Parent Location</h2>
+                  <PlaceCard city={parentPlace} variant="compact" />
+                </CardContent>
+              </Card>
+            )}
             {childPlaces.length === 0 && (
               <Card className="overflow-hidden border-none shadow-lg">
                 <CardContent className="p-6">
