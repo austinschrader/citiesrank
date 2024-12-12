@@ -1,31 +1,29 @@
-import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { MatchScore } from "@/features/preferences/types";
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
+import { createContext, useCallback, useContext, useState } from "react";
 
 export type SortOrder = "match" | "popular" | "cost-low" | "cost-high";
 
-// All possible filter types
 export interface Filters {
+  // Implemented filters
   search: string;
   placeType: CitiesTypeOptions | null;
   sort: SortOrder;
-  // Display-only filters (will be implemented later)
+
+  // Display-only filters
   tags: string[];
   season: string | null;
   budget: string | null;
-  // Add more filter types here as needed
 }
 
 interface FiltersContextValue {
-  // The current state of all filters
   filters: Filters;
-  // Update a single filter
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
-  // Update multiple filters at once
   setFilters: (filters: Partial<Filters>) => void;
-  // Reset all filters to their default state
-  resetFilters: () => void;
-  // Get filtered cities based on implemented filters
+  resetFilters: (filterGroup?: "implemented" | "display") => void;
   getFilteredCities: (
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
@@ -46,17 +44,42 @@ const FiltersContext = createContext<FiltersContextValue | null>(null);
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const [filters, setAllFilters] = useState<Filters>(defaultFilters);
 
-  const setFilter = useCallback(<K extends keyof Filters>(key: K, value: Filters[K]) => {
-    setAllFilters(prev => ({ ...prev, [key]: value }));
-  }, []);
+  const setFilter = useCallback(
+    <K extends keyof Filters>(key: K, value: Filters[K]) => {
+      setAllFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
 
   const setFilters = useCallback((newFilters: Partial<Filters>) => {
-    setAllFilters(prev => ({ ...prev, ...newFilters }));
+    setAllFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
-  const resetFilters = useCallback(() => {
-    setAllFilters(defaultFilters);
-  }, []);
+  const resetFilters = useCallback(
+    (filterGroup?: "implemented" | "display") => {
+      if (!filterGroup) {
+        setAllFilters(defaultFilters);
+        return;
+      }
+
+      setAllFilters((prev) => {
+        const newFilters = { ...prev };
+
+        if (filterGroup === "implemented") {
+          newFilters.search = defaultFilters.search;
+          newFilters.placeType = defaultFilters.placeType;
+          newFilters.sort = defaultFilters.sort;
+        } else {
+          newFilters.tags = defaultFilters.tags;
+          newFilters.season = defaultFilters.season;
+          newFilters.budget = defaultFilters.budget;
+        }
+
+        return newFilters;
+      });
+    },
+    []
+  );
 
   const getFilteredCities = useCallback(
     (
@@ -69,20 +92,25 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
       return cityData
         .filter((city) => {
-          // Implemented filters
-          const matchesType = !filters.placeType || city.type === filters.placeType;
+          // Apply implemented filters only
+          const matchesType =
+            !filters.placeType || city.type === filters.placeType;
 
           const searchFields = [
-            city.name?.toLowerCase() || '',
-            city.country?.toLowerCase() || '',
-            city.description?.toLowerCase() || '',
-            city.type?.toLowerCase() || '',
-            ...(Array.isArray(city.tags) ? city.tags.map(String).map(tag => tag.toLowerCase()) : []),
+            city.name?.toLowerCase() || "",
+            city.country?.toLowerCase() || "",
+            city.description?.toLowerCase() || "",
+            city.type?.toLowerCase() || "",
+            ...(Array.isArray(city.tags)
+              ? city.tags.map(String).map((tag) => tag.toLowerCase())
+              : []),
           ].filter(Boolean);
 
           const matchesSearch =
             !filters.search ||
-            searchFields.some((field) => field.includes(filters.search.toLowerCase()));
+            searchFields.some((field) =>
+              field.includes(filters.search.toLowerCase())
+            );
 
           return matchesType && matchesSearch;
         })
