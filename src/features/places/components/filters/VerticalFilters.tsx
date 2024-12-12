@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { useAuthenticatedAction } from "@/features/auth/hooks/useAuthenticatedAction";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import {
   Building2,
@@ -15,6 +15,7 @@ import {
   Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const placeTypeFilters = [
   { type: CitiesTypeOptions.country, label: "Countries", icon: Globe2 },
@@ -40,22 +41,56 @@ const displayFilters = [
 
 export const VerticalFilters = () => {
   const { filters, setFilter } = useFilters();
-  const {
-    handleAuthenticatedAction,
-    showSignUpDialog,
-    setShowSignUpDialog
-  } = useAuthenticatedAction();
+  const { user } = useAuth();
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+
+  useEffect(() => {
+    if (user) return; // Don't show for logged in users
+
+    let timeout: NodeJS.Timeout;
+    const handleMouseLeave = (e: MouseEvent) => {
+      // Clear any existing timeout
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      // Check if the mouse is moving towards the top of the viewport
+      if (
+        e.clientY <= 0 &&
+        e.clientX > 0 &&
+        e.clientX < window.innerWidth &&
+        !showSignUpDialog // Only set if not already showing
+      ) {
+        timeout = setTimeout(() => {
+          setShowSignUpDialog(true);
+        }, 100); // Small delay to prevent double triggers
+      }
+    };
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [user, showSignUpDialog]);
 
   const handleFilterClick = (type: CitiesTypeOptions) => {
-    handleAuthenticatedAction(() => {
-      setFilter('placeType', filters.placeType === type ? null : type);
-    });
+    if (!user) {
+      setShowSignUpDialog(true);
+      return;
+    }
+    setFilter('placeType', filters.placeType === type ? null : type);
   };
 
   const handleClearFilters = () => {
-    handleAuthenticatedAction(() => {
-      setFilter('placeType', null);
-    });
+    if (!user) {
+      setShowSignUpDialog(true);
+      return;
+    }
+    setFilter('placeType', null);
   };
 
   return (
