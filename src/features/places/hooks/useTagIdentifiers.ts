@@ -1,3 +1,4 @@
+// file location: src/features/places/hooks/useTagIdentifiers.ts
 import { useMemo } from "react";
 import { useTags } from "./useTags";
 

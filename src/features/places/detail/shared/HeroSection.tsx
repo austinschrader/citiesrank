@@ -1,6 +1,7 @@
+// file location: src/features/places/detail/shared/HeroSection.tsx
+import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ImageGallery } from "@/features/gallery/ImageGallery";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { BookmarkPlus, MapPin, Share2 } from "lucide-react";

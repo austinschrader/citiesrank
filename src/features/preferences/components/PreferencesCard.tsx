@@ -1,3 +1,4 @@
+// file location: src/features/preferences/components/PreferencesCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PreferenceSlider } from "@/features/preferences/components/PreferenceSlider";
 import { UserPreferences } from "@/features/preferences/types";

@@ -1,3 +1,4 @@
+// file location: src/features/places/components/search/hooks/useSearch.tsx
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import debounce from "lodash/debounce";
 import { useRef, useState } from "react";

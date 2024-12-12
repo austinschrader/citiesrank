@@ -1,4 +1,4 @@
-// src/features/map/services/mapService.ts
+// file location: src/features/map/services/mapService.ts
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { LatLngTuple } from "leaflet";
 import { MapPlace } from "../types";

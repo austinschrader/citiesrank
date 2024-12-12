@@ -1,3 +1,4 @@
+// file location: src/features/auth/hooks/useAuth.ts
 import { useContext } from "react";
 import { AuthContext } from "@/features/auth/context/AuthContext";
 

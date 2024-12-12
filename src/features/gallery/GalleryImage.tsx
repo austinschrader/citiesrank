@@ -1,3 +1,4 @@
+// file location: src/features/gallery/GalleryImage.tsx
 import React, { useState } from "react";
 
 interface GalleryImageType {

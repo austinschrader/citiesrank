@@ -1,3 +1,4 @@
+// src/layouts/RootLayout.tsx
 import { Hero } from "@/components/Hero";
 import { SignUpBanner } from "@/features/auth/components/SignUpBanner";
 import { useAuth } from "@/features/auth/hooks/useAuth";

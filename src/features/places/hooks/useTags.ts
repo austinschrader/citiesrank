@@ -1,3 +1,4 @@
+// file location: src/features/places/hooks/useTags.ts
 import { getApiUrl } from "@/config/appConfig";
 import { TagsResponse } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";

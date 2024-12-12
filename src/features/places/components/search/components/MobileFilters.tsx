@@ -17,38 +17,24 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { DestinationFilter } from "@/features/places/components/DestinationFilter";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { PreferencesCard } from "@/features/preferences/components/PreferencesCard";
 import { UserPreferences } from "@/features/preferences/types";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { SlidersHorizontal, X } from "lucide-react";
+import { useState } from "react";
 
 interface MobileFiltersProps {
-  isFilterSheetOpen: boolean;
-  setIsFilterSheetOpen: (open: boolean) => void;
   preferences: UserPreferences;
   setPreferences: (preferences: UserPreferences) => void;
-  selectedFilter: string | null;
-  onFilterSelect: (filter: string) => void;
-  selectedDestinationType: CitiesTypeOptions | null;
-  onDestinationTypeSelect: (type: CitiesTypeOptions) => void;
-  sortOrder: string;
-  setSortOrder: (value: string) => void;
-  filterOptions: Array<{ id: string; label: string }>;
 }
 
 export const MobileFilters = ({
-  isFilterSheetOpen,
-  setIsFilterSheetOpen,
   preferences,
   setPreferences,
-  selectedFilter,
-  onFilterSelect,
-  selectedDestinationType,
-  onDestinationTypeSelect,
-  sortOrder,
-  setSortOrder,
-  filterOptions,
 }: MobileFiltersProps) => {
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const { filters, setFilter } = useFilters();
+
   const activeFilterCount = Object.values(preferences).filter(
     (value) => value !== 50
   ).length;
@@ -138,7 +124,7 @@ export const MobileFilters = ({
               </SheetContent>
             </Sheet>
 
-            <Select value={sortOrder} onValueChange={setSortOrder}>
+            <Select value={filters.sort} onValueChange={(value) => setFilter('sort', value as typeof filters.sort)}>
               <SelectTrigger className="h-9 whitespace-nowrap">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -154,12 +140,7 @@ export const MobileFilters = ({
             </Select>
           </div>
 
-          <DestinationFilter
-            selectedFilter={selectedFilter}
-            onFilterSelect={onFilterSelect}
-            selectedDestinationType={selectedDestinationType}
-            onDestinationTypeSelect={onDestinationTypeSelect}
-          />
+          <DestinationFilter />
         </div>
       </div>
     </div>

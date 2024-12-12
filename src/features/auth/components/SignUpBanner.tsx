@@ -1,3 +1,4 @@
+// file location: src/features/auth/components/SignUpBanner.tsx
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 

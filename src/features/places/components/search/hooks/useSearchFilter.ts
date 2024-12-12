@@ -1,3 +1,4 @@
+// file location: src/features/places/components/search/hooks/useSearchFilter.ts
 import { useTags } from "@/features/places/hooks/useTags";
 import { MatchScore, UserPreferences } from "@/features/preferences/types";
 import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
@@ -16,7 +17,7 @@ interface UseSearchFiltersReturn {
   handleFilterSelect: (filter: string) => void;
   handleDestinationTypeSelect: (type: CitiesTypeOptions) => void;
   getFilteredCities: (
-    cityData: Record<string, CitiesResponse>,
+    cities: CitiesResponse[],
     searchQuery: string,
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
   ) => (CitiesResponse & MatchScore)[];
@@ -47,7 +48,7 @@ export const useSearchFilters = (
 
   const getFilteredCities = useCallback(
     (
-      cityData: Record<string, CitiesResponse>,
+      cityData: CitiesResponse[],
       searchQuery: string,
       calculateMatchForCity: (city: CitiesResponse) => MatchScore
     ): (CitiesResponse & MatchScore)[] => {
