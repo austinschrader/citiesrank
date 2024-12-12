@@ -1,5 +1,5 @@
 // file location: src/pages/places/PlacesPage.tsx
-import { useCities } from "@/features//places/context/CitiesContext";
+import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CityMap } from "@/features/map/components/CityMap";
 import { Header } from "@/features/places/components/header/Header";
@@ -8,7 +8,6 @@ import { ResultsGrid } from "@/features/places/components/results/ResultsGrid";
 import { MobileFilters } from "@/features/places/components/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
 import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
-import { useSearch } from "@/features/places/components/search/hooks/useSearch";
 import { ViewModeToggle } from "@/features/places/components/view-toggle/ViewModeToggle";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
@@ -18,18 +17,7 @@ import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
   const { preferences, setPreferences, calculateMatchForCity } = usePreferences();
-  const {
-    searchQuery,
-    setSearchQuery,
-    selectedFilter,
-    setSelectedFilter,
-    selectedDestinationType,
-    setSelectedDestinationType,
-    sortOrder,
-    setSortOrder,
-    getFilteredCities,
-  } = useFilters();
-
+  const { filters, setFilter, getFilteredCities } = useFilters();
   const {
     cities,
     cityStatus: { loading },
@@ -39,15 +27,20 @@ export const PlacesPage = () => {
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Get filtered cities with match scores
+  const filteredCities = getFilteredCities(cities, calculateMatchForCity);
+
+  // Set up pagination for filtered cities
   const {
     getPaginatedData,
     loadMore,
     hasMore,
     isLoading: isLoadingMore,
-  } = usePagination(getFilteredCities(cities, calculateMatchForCity));
+  } = usePagination(filteredCities);
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
+  // Set up infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -69,26 +62,23 @@ export const PlacesPage = () => {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
+  // Auto-focus search input when mobile search is activated
   useEffect(() => {
     if (isMobileSearchActive && searchInputRef.current) {
       searchInputRef.current.focus();
     }
   }, [isMobileSearchActive]);
 
-  // Get current data for map view
+  // Get current data for map view (only cities with valid coordinates)
   const getCurrentLevelData = () => {
-    // Apply filters and then filter for valid coordinates
-    return getFilteredCities(cities, calculateMatchForCity).filter(
+    return filteredCities.filter(
       (city) => city.latitude != null && city.longitude != null
     );
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   const handleCitySelect = (city: any) => {
-    setSearchQuery(city.name);
+    setFilter('search', city.name);
+    setIsMobileSearchActive(false);
 
     // Create a slug from the city name for the ID
     const citySlug = city.name
@@ -104,6 +94,10 @@ export const PlacesPage = () => {
       }, 100);
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <PlacesLayout>
@@ -131,10 +125,10 @@ export const PlacesPage = () => {
           {viewMode === "list" && (
             <div className="md:hidden relative">
               <MobileSearchBar
-                searchQuery={searchQuery}
-                onSearchChange={(e) => setSearchQuery(e.target.value)}
+                searchQuery={filters.search}
+                onSearchChange={(e) => setFilter('search', e.target.value)}
                 onSearchClick={() => setIsMobileSearchActive(true)}
-                onClearSearch={() => setSearchQuery("")}
+                onClearSearch={() => setFilter('search', '')}
               />
             </div>
           )}
@@ -142,11 +136,11 @@ export const PlacesPage = () => {
           {/* Mobile Search Overlay */}
           {isMobileSearchActive && viewMode === "list" && (
             <MobileSearch
-              searchQuery={searchQuery}
-              onSearchChange={(e) => setSearchQuery(e.target.value)}
+              searchQuery={filters.search}
+              onSearchChange={(e) => setFilter('search', e.target.value)}
               onClose={() => setIsMobileSearchActive(false)}
               searchInputRef={searchInputRef}
-              filteredCities={getFilteredCities(cities, calculateMatchForCity)}
+              filteredCities={filteredCities}
               onCitySelect={handleCitySelect}
             />
           )}

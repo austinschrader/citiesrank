@@ -33,14 +33,7 @@ export const MobileFilters = ({
   setPreferences,
 }: MobileFiltersProps) => {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const {
-    selectedFilter,
-    setSelectedFilter,
-    selectedDestinationType,
-    setSelectedDestinationType,
-    sortOrder,
-    setSortOrder,
-  } = useFilters();
+  const { filters, setFilter } = useFilters();
 
   const activeFilterCount = Object.values(preferences).filter(
     (value) => value !== 50
@@ -131,7 +124,7 @@ export const MobileFilters = ({
               </SheetContent>
             </Sheet>
 
-            <Select value={sortOrder} onValueChange={setSortOrder}>
+            <Select value={filters.sort} onValueChange={(value) => setFilter('sort', value as typeof filters.sort)}>
               <SelectTrigger className="h-9 whitespace-nowrap">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>

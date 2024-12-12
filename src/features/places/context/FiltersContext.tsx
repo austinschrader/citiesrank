@@ -1,36 +1,62 @@
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { MatchScore } from "@/features/preferences/types";
-import {
-  CitiesResponse,
-  CitiesTypeOptions,
-} from "@/lib/types/pocketbase-types";
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 
-interface FiltersState {
-  searchQuery: string;
-  selectedFilter: string | null;
-  selectedDestinationType: CitiesTypeOptions | null;
-  sortOrder: string;
+export type SortOrder = "match" | "popular" | "cost-low" | "cost-high";
+
+// All possible filter types
+export interface Filters {
+  search: string;
+  placeType: CitiesTypeOptions | null;
+  sort: SortOrder;
+  // Display-only filters (will be implemented later)
+  tags: string[];
+  season: string | null;
+  budget: string | null;
+  // Add more filter types here as needed
 }
 
-interface FiltersContextValue extends FiltersState {
-  setSearchQuery: (query: string) => void;
-  setSelectedFilter: (filter: string | null) => void;
-  setSelectedDestinationType: (type: CitiesTypeOptions | null) => void;
-  setSortOrder: (order: string) => void;
+interface FiltersContextValue {
+  // The current state of all filters
+  filters: Filters;
+  // Update a single filter
+  setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
+  // Update multiple filters at once
+  setFilters: (filters: Partial<Filters>) => void;
+  // Reset all filters to their default state
+  resetFilters: () => void;
+  // Get filtered cities based on implemented filters
   getFilteredCities: (
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
   ) => (CitiesResponse & MatchScore)[];
 }
 
+const defaultFilters: Filters = {
+  search: "",
+  placeType: null,
+  sort: "match",
+  tags: [],
+  season: null,
+  budget: null,
+};
+
 const FiltersContext = createContext<FiltersContextValue | null>(null);
 
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-  const [selectedDestinationType, setSelectedDestinationType] =
-    useState<CitiesTypeOptions | null>(null);
-  const [sortOrder, setSortOrder] = useState("match");
+  const [filters, setAllFilters] = useState<Filters>(defaultFilters);
+
+  const setFilter = useCallback(<K extends keyof Filters>(key: K, value: Filters[K]) => {
+    setAllFilters(prev => ({ ...prev, [key]: value }));
+  }, []);
+
+  const setFilters = useCallback((newFilters: Partial<Filters>) => {
+    setAllFilters(prev => ({ ...prev, ...newFilters }));
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setAllFilters(defaultFilters);
+  }, []);
 
   const getFilteredCities = useCallback(
     (
@@ -41,74 +67,55 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         return [];
       }
 
-      return Object.entries(cityData)
-        .filter(([name, data]) => {
-          // Check if the destination type matches
-          const matchesType =
-            !selectedDestinationType || data.type === selectedDestinationType;
+      return cityData
+        .filter((city) => {
+          // Implemented filters
+          const matchesType = !filters.placeType || city.type === filters.placeType;
 
-          // Check if the tags match
-          const matchesFilter =
-            !selectedFilter ||
-            (data.tags &&
-              Array.isArray(data.tags) &&
-              data.tags.includes(selectedFilter));
-
-          // Search across all fields that could contain relevant text
           const searchFields = [
-            typeof name === "string" ? name.toLowerCase() : "",
-            typeof data.country === "string" ? data.country.toLowerCase() : "",
-            typeof data.description === "string"
-              ? data.description.toLowerCase()
-              : "",
-            data.type ? String(data.type).toLowerCase() : "",
-            ...(Array.isArray(data.tags)
-              ? data.tags.map(String).map((tag) => tag.toLowerCase())
-              : []),
+            city.name?.toLowerCase() || '',
+            city.country?.toLowerCase() || '',
+            city.description?.toLowerCase() || '',
+            city.type?.toLowerCase() || '',
+            ...(Array.isArray(city.tags) ? city.tags.map(String).map(tag => tag.toLowerCase()) : []),
           ].filter(Boolean);
 
           const matchesSearch =
-            !searchQuery ||
-            searchFields.some((field) =>
-              field.includes(searchQuery.toLowerCase())
-            );
+            !filters.search ||
+            searchFields.some((field) => field.includes(filters.search.toLowerCase()));
 
-          return matchesType && matchesFilter && matchesSearch;
+          return matchesType && matchesSearch;
         })
-        .map(([, data]) => {
-          const matchScores = calculateMatchForCity(data);
+        .map((city) => {
+          const matchScores = calculateMatchForCity(city);
           return {
-            ...data,
+            ...city,
             ...matchScores,
           };
         })
         .sort((a, b) => {
-          switch (sortOrder) {
+          switch (filters.sort) {
             case "cost-low":
-              return a.cost - b.cost;
+              return (a.cost || 0) - (b.cost || 0);
             case "cost-high":
-              return b.cost - a.cost;
+              return (b.cost || 0) - (a.cost || 0);
             case "popular":
-              return b.crowdLevel - a.crowdLevel;
+              return (b.crowdLevel || 0) - (a.crowdLevel || 0);
             default:
-              return b.matchScore - a.matchScore;
+              return (b.matchScore || 0) - (a.matchScore || 0);
           }
         });
     },
-    [selectedFilter, selectedDestinationType, sortOrder, searchQuery]
+    [filters]
   );
 
   return (
     <FiltersContext.Provider
       value={{
-        searchQuery,
-        setSearchQuery,
-        selectedFilter,
-        setSelectedFilter,
-        selectedDestinationType,
-        setSelectedDestinationType,
-        sortOrder,
-        setSortOrder,
+        filters,
+        setFilter,
+        setFilters,
+        resetFilters,
         getFilteredCities,
       }}
     >
