@@ -1,20 +1,12 @@
-// file location: src/features/places/components/filters/VerticalFilters.tsx
+// file location: src/features/places/components/filters/PlaceFilters.tsx
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import { useFilters } from "@/features/places/context/FiltersContext";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
-import {
-  Building2,
-  ChevronLeft,
-  ChevronRight,
-  Compass,
-  Globe2,
-  Home,
-  Landmark,
-} from "lucide-react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useFilters } from "@/features/places/context/FiltersContext";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
+import { Building2, Compass, Globe2, Home, Landmark } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const placeTypeFilters = [
@@ -39,7 +31,7 @@ const displayFilters = [
   },
 ] as const;
 
-export const VerticalFilters = () => {
+export const PlaceFilters = () => {
   const { filters, setFilter } = useFilters();
   const { user } = useAuth();
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
@@ -82,7 +74,7 @@ export const VerticalFilters = () => {
       setShowSignUpDialog(true);
       return;
     }
-    setFilter('placeType', filters.placeType === type ? null : type);
+    setFilter("placeType", filters.placeType === type ? null : type);
   };
 
   const handleClearFilters = () => {
@@ -90,7 +82,7 @@ export const VerticalFilters = () => {
       setShowSignUpDialog(true);
       return;
     }
-    setFilter('placeType', null);
+    setFilter("placeType", null);
   };
 
   return (
