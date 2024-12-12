@@ -1,14 +1,13 @@
 // file location: src/pages/places/PlacesPage.tsx
-import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { CityMap } from "@/features/map/components/CityMap";
 import { Header } from "@/features/places/components/header/Header";
 import { LoadingSpinner } from "@/features/places/components/loading/LoadingSpinner";
 import { ResultsGrid } from "@/features/places/components/results/ResultsGrid";
-import { MobileFilters } from "@/features/places/components/search/components/MobileFilters";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
 import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
 import { ViewModeToggle } from "@/features/places/components/view-toggle/ViewModeToggle";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
@@ -16,7 +15,8 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
-  const { preferences, setPreferences, calculateMatchForCity } = usePreferences();
+  const { preferences, setPreferences, calculateMatchForCity } =
+    usePreferences();
   const { filters, setFilter, getFilteredCities } = useFilters();
   const {
     cities,
@@ -77,7 +77,7 @@ export const PlacesPage = () => {
   };
 
   const handleCitySelect = (city: any) => {
-    setFilter('search', city.name);
+    setFilter("search", city.name);
     setIsMobileSearchActive(false);
 
     // Create a slug from the city name for the ID
@@ -126,9 +126,9 @@ export const PlacesPage = () => {
             <div className="md:hidden relative">
               <MobileSearchBar
                 searchQuery={filters.search}
-                onSearchChange={(e) => setFilter('search', e.target.value)}
+                onSearchChange={(e) => setFilter("search", e.target.value)}
                 onSearchClick={() => setIsMobileSearchActive(true)}
-                onClearSearch={() => setFilter('search', '')}
+                onClearSearch={() => setFilter("search", "")}
               />
             </div>
           )}
@@ -137,19 +137,13 @@ export const PlacesPage = () => {
           {isMobileSearchActive && viewMode === "list" && (
             <MobileSearch
               searchQuery={filters.search}
-              onSearchChange={(e) => setFilter('search', e.target.value)}
+              onSearchChange={(e) => setFilter("search", e.target.value)}
               onClose={() => setIsMobileSearchActive(false)}
               searchInputRef={searchInputRef}
               filteredCities={filteredCities}
               onCitySelect={handleCitySelect}
             />
           )}
-
-          {/* Mobile Filters */}
-          <MobileFilters
-            preferences={preferences}
-            setPreferences={setPreferences}
-          />
 
           {/* Results */}
           <div className="space-y-8">

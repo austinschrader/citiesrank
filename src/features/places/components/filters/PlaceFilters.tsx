@@ -9,73 +9,44 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { filterCategories } from "@/lib/data/places/filters/categories";
+import { SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
 import { PlaceSearch } from "./PlaceSearch";
 import { PlaceTypeFilter } from "./PlaceTypeFilter";
 
-export const PlaceFilters = () => {
-  const { filters, setFilter } = useFilters();
-  const { cities } = useCities();
-  const { user } = useAuth();
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
-
-  // Calculate place type counts
-  const placeTypeCounts = cities.reduce((acc, place) => {
-    acc[place.type] = (acc[place.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  useEffect(() => {
-    if (user) return;
-
-    let timeout: NodeJS.Timeout;
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (timeout) clearTimeout(timeout);
-
-      if (
-        e.clientY <= 0 &&
-        e.clientX > 0 &&
-        e.clientX < window.innerWidth &&
-        !showSignUpDialog
-      ) {
-        timeout = setTimeout(() => setShowSignUpDialog(true), 100);
-      }
-    };
-
-    document.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [user, showSignUpDialog]);
-
-  const handleClearFilters = () => {
-    setFilter("placeType", null);
-  };
-
-  const toggleAllSections = (collapse: boolean) => {
-    const newCollapsedSections = new Set<string>();
-    if (collapse) {
-      ["placeType", ...filterCategories.map((cat) => cat.id)].forEach((id) =>
-        newCollapsedSections.add(id)
-      );
-    }
-    setCollapsedSections(newCollapsedSections);
-  };
-
+const FilterContent = ({
+  cities,
+  placeTypeCounts,
+  searchQuery,
+  collapsedSections,
+  setCollapsedSections,
+  handleClearFilters,
+  isMobile = false,
+}: {
+  cities: any[];
+  placeTypeCounts: Record<string, number>;
+  searchQuery: string;
+  collapsedSections: Set<string>;
+  setCollapsedSections: (sections: Set<string>) => void;
+  handleClearFilters: () => void;
+  isMobile?: boolean;
+}) => {
   return (
-    <div className="flex flex-col border rounded-lg bg-card">
+    <>
       {/* Header Section */}
       <div className="p-4 border-b space-y-4">
         <div>
@@ -90,17 +61,19 @@ export const PlaceFilters = () => {
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               {cities.length} places found
-              {filters.placeType && (
-                <span className="block text-xs">
-                  {placeTypeCounts[filters.placeType] || 0} {filters.placeType}
-                  {placeTypeCounts[filters.placeType] !== 1 ? "s" : ""}
-                </span>
-              )}
             </p>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => toggleAllSections(collapsedSections.size === 0)}
+              onClick={() =>
+                setCollapsedSections(
+                  new Set(
+                    collapsedSections.size === 0
+                      ? ["placeType", ...filterCategories.map((cat) => cat.id)]
+                      : []
+                  )
+                )
+              }
               className="text-xs"
             >
               {collapsedSections.size === 0 ? "Collapse all" : "Expand all"}
@@ -111,17 +84,14 @@ export const PlaceFilters = () => {
           <PlaceSearch />
 
           {/* Filter Categories Search */}
-          <FilterSearch
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-          />
+          <FilterSearch searchQuery={searchQuery} onSearchChange={() => {}} />
         </div>
       </div>
 
       {/* Filter Sections */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className={isMobile ? "flex-1 h-full" : "flex-1"}>
         <div className="p-4 space-y-4">
-          {/* Place Type Filter - Implemented */}
+          {/* Place Type Filter */}
           <PlaceTypeFilter
             searchQuery={searchQuery}
             isCollapsed={collapsedSections.has("placeType")}
@@ -160,13 +130,118 @@ export const PlaceFilters = () => {
 
       {/* Footer */}
       <div className="p-4 border-t">
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={handleClearFilters}
-        >
+        <Button variant="outline" className="w-full" onClick={handleClearFilters}>
           Clear Filters
         </Button>
+      </div>
+    </>
+  );
+};
+
+export const PlaceFilters = () => {
+  const { filters, setFilter } = useFilters();
+  const { cities } = useCities();
+  const { user } = useAuth();
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set()
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+
+  // Calculate place type counts
+  const placeTypeCounts = cities.reduce((acc, place) => {
+    acc[place.type] = (acc[place.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  useEffect(() => {
+    if (user) return;
+
+    let timeout: NodeJS.Timeout;
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (timeout) clearTimeout(timeout);
+
+      if (
+        e.clientY <= 0 &&
+        e.clientX > 0 &&
+        e.clientX < window.innerWidth &&
+        !showSignUpDialog
+      ) {
+        timeout = setTimeout(() => setShowSignUpDialog(true), 100);
+      }
+    };
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [user, showSignUpDialog]);
+
+  const handleClearFilters = () => {
+    setFilter("placeType", null);
+  };
+
+  return (
+    <>
+      {/* Desktop View */}
+      <div className="hidden md:flex flex-col border rounded-lg bg-card">
+        <FilterContent
+          cities={cities}
+          placeTypeCounts={placeTypeCounts}
+          searchQuery={searchQuery}
+          collapsedSections={collapsedSections}
+          setCollapsedSections={setCollapsedSections}
+          handleClearFilters={handleClearFilters}
+        />
+      </div>
+
+      {/* Mobile View */}
+      <div className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur pt-2 pb-4">
+        <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="sm" className="w-full">
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
+              Filters
+              {filters.placeType && (
+                <span className="ml-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+                  {placeTypeCounts[filters.placeType] || 0}
+                </span>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            side="bottom"
+            className="h-[85vh] p-0 z-[400]"
+          >
+            <div className="flex flex-col h-full">
+              <SheetHeader className="px-4 py-3 border-b flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <SheetTitle className="text-lg">Filters</SheetTitle>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={() => setIsFilterSheetOpen(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </SheetHeader>
+
+              <FilterContent
+                cities={cities}
+                placeTypeCounts={placeTypeCounts}
+                searchQuery={searchQuery}
+                collapsedSections={collapsedSections}
+                setCollapsedSections={setCollapsedSections}
+                handleClearFilters={handleClearFilters}
+                isMobile={true}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* Sign Up Dialog */}
@@ -178,6 +253,6 @@ export const PlaceFilters = () => {
           description="Join our community to access all filters and discover your perfect city"
         />
       )}
-    </div>
+    </>
   );
 };
