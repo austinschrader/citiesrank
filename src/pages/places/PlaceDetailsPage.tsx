@@ -8,15 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getApiUrl } from "@/config/appConfig";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useSearch } from "@/features/places/components/search/hooks/useSearch";
-import { useSearchFilters } from "@/features/places/components/search/hooks/useSearchFilter";
-import {
-  useCities,
-  useCitiesActions,
-} from "@/features/places/context/CitiesContext";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFilters, SortOrder } from "@/features/places/context/FiltersContext";
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
+import { LocationMap } from "@/features/places/detail/shared/LocationMap";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import {
   CitiesResponse,
@@ -47,92 +44,47 @@ const formatUrlName = (name: string) => {
 };
 
 export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
-  const { placeType, id } = useParams();
-  const [placeData, setPlaceData] = useState<CitiesResponse | null>(
-    initialData || null
-  );
-  const [parentPlace, setParentPlace] = useState<CitiesResponse | null>(null);
-  const [loading, setLoading] = useState(!initialData);
-  const [error, setError] = useState<string | null>(null);
-
-  // Use contexts and hooks
-  const { cities, cityStatus } = useCities();
-  const { getCityByName, getCityById } = useCitiesActions();
+  const { id } = useParams();
   const { preferences, calculateMatchForCity } = usePreferences();
-  const { searchQuery, setSearchQuery } = useSearch();
-  const {
-    selectedDestinationType,
-    setSelectedDestinationType,
-    sortOrder,
-    setSortOrder,
-    getFilteredCities,
-  } = useSearchFilters(preferences);
+  const { cities, cityStatus } = useCities();
+  const { searchQuery } = useSearch();
+  const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
 
-  const apiUrl = getApiUrl();
-
+  // Reset filters when entering the page
   useEffect(() => {
-    if (initialData) return;
+    resetFilters("implemented");
+  }, [resetFilters]);
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        if (!id) throw new Error("No place identifier provided");
+  // Get current place and its parent
+  const placeData = useMemo(() => {
+    if (initialData) return initialData;
+    return cities.find(
+      (city) => city.normalizedName.toLowerCase() === id?.toLowerCase()
+    );
+  }, [cities, id, initialData]);
 
-        const data = await getCityByName(id);
-        setPlaceData(data);
-
-        // Fetch parent if exists
-        if (data.parentId) {
-          try {
-            const parent = await getCityById(data.parentId);
-            setParentPlace(parent);
-          } catch (parentError) {
-            console.error("Error fetching parent place:", parentError);
-          }
-        }
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load place data"
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id, initialData]);
+  const parentPlace = useMemo(() => {
+    if (!placeData?.parentId) return null;
+    return cities.find((city) => city.id === placeData.parentId);
+  }, [cities, placeData]);
 
   // Get filtered child places
   const childPlaces = useMemo(() => {
     if (!placeData) return [];
-
+    
     // Filter cities by parent
     const childCities = cities.filter((city) => city.parentId === placeData.id);
+    console.log('Child cities:', childCities);
+    console.log('Current filters:', filters);
+    
+    // Apply filters and sorting using context
+    const filtered = getFilteredCities(childCities, calculateMatchForCity);
+    console.log('Filtered cities:', filtered);
+    return filtered;
+  }, [cities, placeData, filters, getFilteredCities, calculateMatchForCity]);
 
-    // Apply search and filters
-    return getFilteredCities(
-      childCities,
-      searchQuery,
-      calculateMatchForCity
-    ).sort((a, b) => {
-      if (sortOrder === "alphabetical-asc") return a.name.localeCompare(b.name);
-      if (sortOrder === "alphabetical-desc")
-        return b.name.localeCompare(a.name);
-      if (sortOrder === "match")
-        return (b.matchScore || 0) - (a.matchScore || 0);
-      return 0;
-    });
-  }, [
-    cities,
-    placeData,
-    searchQuery,
-    sortOrder,
-    getFilteredCities,
-    calculateMatchForCity,
-  ]);
-
-  if (loading) return <LoadingState />;
-  if (error) return <ErrorState error={error} />;
+  if (cityStatus.loading) return <LoadingState />;
+  if (cityStatus.error) return <ErrorState error={cityStatus.error} />;
   if (!placeData) return <NotFoundState />;
 
   return (
@@ -247,23 +199,24 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
 
             {childPlaces.length > 0 && (
               <Card className="overflow-hidden border-none shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-semibold">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <h2 className="text-xl sm:text-2xl font-semibold">
                       Places to Explore
                     </h2>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                       <Select
-                        value={selectedDestinationType || "all"}
+                        value={filters.placeType || "all"}
                         onValueChange={(value) =>
-                          setSelectedDestinationType(
+                          setFilter(
+                            "placeType",
                             value === "all"
                               ? null
                               : (value as CitiesTypeOptions)
                           )
                         }
                       >
-                        <SelectTrigger className="w-[140px]">
+                        <SelectTrigger className="w-full sm:w-[140px]">
                           <SelectValue placeholder="All Types" />
                         </SelectTrigger>
                         <SelectContent>
@@ -277,18 +230,18 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                         </SelectContent>
                       </Select>
 
-                      <Select value={sortOrder} onValueChange={setSortOrder}>
-                        <SelectTrigger className="w-[140px]">
-                          <SelectValue placeholder="Sort by" />
+                      <Select 
+                        value={filters.sort} 
+                        onValueChange={(value) => setFilter("sort", value as SortOrder)}
+                      >
+                        <SelectTrigger className="w-full sm:w-[140px]">
+                          <SelectValue>
+                            {filters.sort === "alphabetical-asc" ? "A to Z" : "Z to A"}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="match">Best Match</SelectItem>
-                          <SelectItem value="alphabetical-asc">
-                            A to Z
-                          </SelectItem>
-                          <SelectItem value="alphabetical-desc">
-                            Z to A
-                          </SelectItem>
+                          <SelectItem value="alphabetical-asc">A to Z</SelectItem>
+                          <SelectItem value="alphabetical-desc">Z to A</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -303,9 +256,9 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                       return acc;
                     }, {} as Record<string, CitiesResponse[]>)
                   ).map(([type, places]) => (
-                    <div key={type} className="mb-8 last:mb-0">
-                      <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium capitalize">
+                    <div key={type} className="mb-6 last:mb-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-1">
+                        <h3 className="text-base sm:text-lg font-medium capitalize">
                           {type === "region" && "Regions"}
                           {type === "city" && "Cities"}
                           {type === "neighborhood" && "Neighborhoods"}
@@ -317,7 +270,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {places.map((place) => (
                           <PlaceCard
                             key={place.id}
@@ -339,20 +292,24 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
               <CardContent className="p-6">
                 <h2 className="text-2xl font-semibold mb-4">Location</h2>
                 {placeData.latitude && placeData.longitude && (
-                  <div className="aspect-square rounded-lg bg-muted/50">
-                    {/* Add your map component here */}
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <MapPin className="h-6 w-6 mr-2" />
-                      <span>
-                        {placeData.latitude.toFixed(2)},{" "}
-                        {placeData.longitude.toFixed(2)}
-                      </span>
-                    </div>
+                  <div className="aspect-square rounded-lg overflow-hidden">
+                    <LocationMap
+                      latitude={placeData.latitude}
+                      longitude={placeData.longitude}
+                      type={placeData.type as 'city' | 'region' | 'neighborhood' | 'sight'}
+                    />
                   </div>
                 )}
               </CardContent>
             </Card>
-
+            {parentPlace && (
+              <Card className="overflow-hidden border-none shadow-lg">
+                <CardContent className="p-6">
+                  <h2 className="text-2xl font-semibold mb-4">Parent Location</h2>
+                  <PlaceCard city={parentPlace} variant="compact" />
+                </CardContent>
+              </Card>
+            )}
             {childPlaces.length === 0 && (
               <Card className="overflow-hidden border-none shadow-lg">
                 <CardContent className="p-6">

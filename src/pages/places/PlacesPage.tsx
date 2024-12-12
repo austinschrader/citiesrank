@@ -13,7 +13,7 @@ import { ResultsGrid } from "@/features/places/components/results/ResultsGrid";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
 import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
+import { useFilters, SortOrder } from "@/features/places/context/FiltersContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
@@ -33,26 +33,17 @@ export const PlacesPage = () => {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const [sortOrder, setSortOrder] = useState<
-    "alphabetical-asc" | "alphabetical-desc"
-  >("alphabetical-asc");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Get filtered cities with match scores and apply sorting
+  // Get filtered cities with match scores
   const filteredCities = getFilteredCities(cities, calculateMatchForCity);
-  const sortedCities = [...filteredCities].sort((a, b) => {
-    if (sortOrder === "alphabetical-asc") {
-      return a.name.localeCompare(b.name);
-    }
-    return b.name.localeCompare(a.name);
-  });
 
   const {
     getPaginatedData,
     loadMore,
     hasMore,
     isLoading: isLoadingMore,
-  } = usePagination(sortedCities);
+  } = usePagination(filteredCities);
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -84,7 +75,7 @@ export const PlacesPage = () => {
   }, [isMobileSearchActive]);
 
   const getCurrentLevelData = () => {
-    return sortedCities.filter(
+    return filteredCities.filter(
       (city) => city.latitude != null && city.longitude != null
     );
   };
@@ -133,14 +124,14 @@ export const PlacesPage = () => {
           {/* Sort and View Controls */}
           <div className="flex items-center gap-3 ml-auto">
             <Select
-              value={sortOrder}
-              onValueChange={(
-                value: "alphabetical-asc" | "alphabetical-desc"
-              ) => setSortOrder(value)}
+              value={filters.sort}
+              onValueChange={(value: SortOrder) =>
+                setFilter("sort", value)
+              }
             >
               <SelectTrigger className="w-[120px] bg-background/50 backdrop-blur-sm">
                 <SelectValue>
-                  {sortOrder === "alphabetical-asc" ? "A to Z" : "Z to A"}
+                  {filters.sort === "alphabetical-asc" ? "A to Z" : "Z to A"}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -195,7 +186,7 @@ export const PlacesPage = () => {
             onSearchChange={(e) => setFilter("search", e.target.value)}
             onClose={() => setIsMobileSearchActive(false)}
             searchInputRef={searchInputRef}
-            filteredCities={sortedCities}
+            filteredCities={filteredCities}
             onCitySelect={handleCitySelect}
           />
         )}

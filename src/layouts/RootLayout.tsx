@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { SignUpBanner } from "@/features/auth/components/SignUpBanner";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Header } from "@/layouts/Header";
+import "leaflet/dist/leaflet.css";
 
 interface RootLayoutProps {
   children: React.ReactNode;

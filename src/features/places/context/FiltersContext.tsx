@@ -5,7 +5,13 @@ import {
 } from "@/lib/types/pocketbase-types";
 import { createContext, useCallback, useContext, useState } from "react";
 
-export type SortOrder = "match" | "popular" | "cost-low" | "cost-high";
+export type SortOrder = 
+  | "match" 
+  | "popular" 
+  | "cost-low" 
+  | "cost-high" 
+  | "alphabetical-asc" 
+  | "alphabetical-desc";
 
 export interface Filters {
   // Implemented filters
@@ -33,7 +39,7 @@ interface FiltersContextValue {
 const defaultFilters: Filters = {
   search: "",
   placeType: null,
-  sort: "match",
+  sort: "alphabetical-asc",
   tags: [],
   season: null,
   budget: null,
@@ -129,6 +135,11 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
               return (b.cost || 0) - (a.cost || 0);
             case "popular":
               return (b.crowdLevel || 0) - (a.crowdLevel || 0);
+            case "alphabetical-asc":
+              return a.name.localeCompare(b.name);
+            case "alphabetical-desc":
+              return b.name.localeCompare(a.name);
+            case "match":
             default:
               return (b.matchScore || 0) - (a.matchScore || 0);
           }
