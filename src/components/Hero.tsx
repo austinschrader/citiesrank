@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getImageUrl } from "@/lib/cloudinary";
@@ -115,29 +114,28 @@ export const Hero = () => {
                     onSubmit={handleSearch}
                     className="flex shadow-lg relative"
                   >
-                    <Input
+                    <input
                       type="text"
-                      placeholder="Search any city, region, or country to explore..."
-                      className="rounded-md bg-white text-gray-900 text-base sm:text-lg py-6 sm:py-8 pl-10 sm:pl-12 pr-12 sm:pr-14
-                        placeholder:text-gray-500 border-[3px] border-transparent
-                        focus:border-indigo-400/70 focus:outline-none transition-colors duration-200
-                        shadow-none ring-0 focus:ring-0 hover:border-gray-100
-                        w-full"
+                      className="block w-full rounded-lg border-0 py-4 pl-4 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 text-base sm:text-lg"
+                      placeholder="Country, Region, City, Neighborhood, Sight"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-5 sm:h-6 w-5 sm:w-6 text-gray-400" />
-                    <button
-                      type="submit"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2
-                        bg-gradient-to-r from-indigo-500 to-purple-600 
-                        text-white rounded-md shadow-md
-                        hover:from-indigo-600 hover:to-purple-700
-                        transition-all duration-200
-                        focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-                    >
-                      <Search className="h-4 sm:h-5 w-4 sm:w-5" />
-                    </button>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                      <button
+                        type="submit"
+                        className="p-1.5 bg-gradient-to-r from-indigo-500 to-purple-600 
+                          text-white rounded-md shadow-sm
+                          hover:from-indigo-600 hover:to-purple-700
+                          transition-all duration-200
+                          focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                      >
+                        <span className="sr-only">Search</span>
+                        <div className="w-7 h-7">
+                          <Search className="h-7 w-7" />
+                        </div>
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
