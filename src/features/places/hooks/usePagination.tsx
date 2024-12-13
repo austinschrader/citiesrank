@@ -1,29 +1,30 @@
 // file location: src/features/places/hooks/usePagination.tsx
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12;
 
 export function usePagination(filteredCities: CitiesResponse[]) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadMore = () => {
-    setIsLoading(true);
-    // Simulate network delay
-    setTimeout(() => {
-      setCurrentPage((prev) => prev + 1);
-      setIsLoading(false);
-    }, 500);
-  };
+  const loadMore = useCallback(() => {
+    if (!isLoading) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setCurrentPage((prev) => prev + 1);
+        setIsLoading(false);
+      }, 100);
+    }
+  }, [isLoading]);
 
-  const getPaginatedData = () => {
-    return filteredCities.slice(0, currentPage * ITEMS_PER_PAGE);
-  };
-
-  const hasMore = () => {
+  const hasMore = useCallback(() => {
     return currentPage * ITEMS_PER_PAGE < filteredCities.length;
-  };
+  }, [currentPage, filteredCities.length]);
+
+  const getPaginatedData = useCallback(() => {
+    return filteredCities.slice(0, currentPage * ITEMS_PER_PAGE);
+  }, [filteredCities, currentPage]);
 
   return {
     currentPage,

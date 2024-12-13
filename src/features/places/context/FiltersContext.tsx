@@ -3,7 +3,7 @@ import {
   CitiesResponse,
   CitiesTypeOptions,
 } from "@/lib/types/pocketbase-types";
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState, useEffect } from "react";
 
 export type SortOrder = 
   | "match" 
@@ -29,7 +29,7 @@ interface FiltersContextValue {
   filters: Filters;
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
   setFilters: (filters: Partial<Filters>) => void;
-  resetFilters: (filterGroup?: "implemented" | "display") => void;
+  resetFilters: () => void;
   getFilteredCities: (
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
@@ -48,44 +48,28 @@ const defaultFilters: Filters = {
 const FiltersContext = createContext<FiltersContextValue | null>(null);
 
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
-  const [filters, setAllFilters] = useState<Filters>(defaultFilters);
+  const [filters, setFiltersState] = useState<Filters>(defaultFilters);
 
   const setFilter = useCallback(
     <K extends keyof Filters>(key: K, value: Filters[K]) => {
-      setAllFilters((prev) => ({ ...prev, [key]: value }));
+      setFiltersState((prev) => ({ ...prev, [key]: value }));
     },
     []
   );
 
-  const setFilters = useCallback((newFilters: Partial<Filters>) => {
-    setAllFilters((prev) => ({ ...prev, ...newFilters }));
+  const updateFilters = useCallback((newFilters: Partial<Filters>) => {
+    setFiltersState((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
-  const resetFilters = useCallback(
-    (filterGroup?: "implemented" | "display") => {
-      if (!filterGroup) {
-        setAllFilters(defaultFilters);
-        return;
-      }
+  const resetFilters = useCallback(() => {
+    setFiltersState(defaultFilters);
+  }, []);
 
-      setAllFilters((prev) => {
-        const newFilters = { ...prev };
-
-        if (filterGroup === "implemented") {
-          newFilters.search = defaultFilters.search;
-          newFilters.placeType = defaultFilters.placeType;
-          newFilters.sort = defaultFilters.sort;
-        } else {
-          newFilters.tags = defaultFilters.tags;
-          newFilters.season = defaultFilters.season;
-          newFilters.budget = defaultFilters.budget;
-        }
-
-        return newFilters;
-      });
-    },
-    []
-  );
+  useEffect(() => {
+    return () => {
+      resetFilters();
+    };
+  }, [resetFilters]);
 
   const getFilteredCities = useCallback(
     (
@@ -153,7 +137,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       value={{
         filters,
         setFilter,
-        setFilters,
+        setFilters: updateFilters,
         resetFilters,
         getFilteredCities,
       }}

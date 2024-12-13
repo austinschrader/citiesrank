@@ -11,10 +11,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Bookmark, Globe, LogOut, UserCircle, Map, Compass, Users } from "lucide-react";
-import { useState } from "react";
+import { SignInButton } from "@/features/auth/components/SignInButton";
+import { Bookmark, Compass, LogOut, UserCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
@@ -26,12 +25,7 @@ export const Header = () => {
     navigate("/");
   };
 
-  const navItems = [
-    { label: "Explore", icon: Compass, to: "/explore" },
-    { label: "Rankings", icon: Globe, to: "/rankings" },
-    { label: "Travel Guides", icon: Map, to: "/guides" },
-    { label: "Community", icon: Users, to: "/community" },
-  ];
+  const navItems = [{ label: "Explore", icon: Compass, to: "/explore" }];
 
   return (
     <header className="sticky top-0 z-[9999] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -39,7 +33,10 @@ export const Header = () => {
         <div className="h-16 flex items-center px-4">
           {/* Logo section */}
           <div className="flex-none">
-            <Link to="/" className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text hover:opacity-80 transition-opacity">
+            <Link
+              to="/"
+              className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text hover:opacity-80 transition-opacity"
+            >
               CitiesRank
             </Link>
           </div>
@@ -50,7 +47,11 @@ export const Header = () => {
             <nav className="hidden md:flex items-center gap-4">
               {navItems.map((item) => (
                 <Link key={item.to} to={item.to}>
-                  <Button variant="ghost" size="sm" className="text-sm font-semibold text-gray-900 hover:bg-gray-100">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-sm font-semibold text-gray-900 hover:bg-gray-100"
+                  >
                     {item.label}
                   </Button>
                 </Link>
@@ -121,9 +122,7 @@ export const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button className="bg-primary text-white hover:bg-primary/90">
-                Join/Sign up
-              </Button>
+              <SignInButton />
             )}
           </div>
         </div>
