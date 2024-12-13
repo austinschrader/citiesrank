@@ -2,48 +2,32 @@
  * Location: src/features/places/components/Hero/Hero.tsx
  * Purpose: Main hero component with search functionality for places
  * Used by: HomePage.tsx
- * Dependencies: FiltersContext.tsx for search state management
+ * Dependencies: useSearchForm.ts for search logic, SignUpDialog for auth
  */
 
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getImageUrl } from "@/lib/cloudinary";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Search } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createSlug } from "@/features/places/utils/placeUtils";
-import { PLACE_TYPES, PlaceType } from "@/features/places/components/hero/constants";
+import { PLACE_TYPES } from "./constants";
+import { useSearchForm } from "../../search/hooks/useSearchForm";
 
 export const Hero = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const [showSignUpDialog, setShowSignUpDialog] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<PlaceType>("countries");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const {
+    searchQuery,
+    setSearchQuery,
+    activeTab,
+    setActiveTab,
+    isSearchFocused,
+    setIsSearchFocused,
+    showSignUpDialog,
+    setShowSignUpDialog,
+    handleSearch,
+  } = useSearchForm();
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!searchQuery.trim()) return;
-
-    if (!user) {
-      setShowSignUpDialog(true);
-      return;
-    }
-
-    // Navigate to the place details page using the active tab as the place type
-    navigate(`/places/${activeTab}/${createSlug(searchQuery)}`, {
-      state: { 
-        placeData: {
-          name: searchQuery,
-          type: activeTab
-        }
-      }
-    });
-  };
-
-  const activeTabData = PLACE_TYPES.find((type) => type.id === activeTab)!;
+  const activeTabData = PLACE_TYPES.find(
+    (type) => type.id === activeTab
+  )!;
 
   return (
     <div className="relative">
