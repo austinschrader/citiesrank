@@ -7,7 +7,12 @@ import { useState } from "react";
 
 type PlaceType = "countries" | "regions" | "cities" | "sights";
 
-const PLACE_TYPES: { id: PlaceType; label: string; placeholder: string; header: string }[] = [
+const PLACE_TYPES: {
+  id: PlaceType;
+  label: string;
+  placeholder: string;
+  header: string;
+}[] = [
   {
     id: "countries",
     label: "Countries",
@@ -50,7 +55,7 @@ export const Hero = () => {
   return (
     <div className="relative">
       {/* Hero Content */}
-      <div className="relative h-[50vh] overflow-hidden">
+      <div className="relative h-[60vh] sm:h-[50vh] overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
@@ -64,23 +69,23 @@ export const Hero = () => {
         {/* Content */}
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="w-full max-w-2xl">
-            <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl mb-8 drop-shadow-md min-h-[80px]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-8 drop-shadow-md min-h-[80px] leading-tight">
               {activeTabData.header}
             </h1>
 
             {/* Search Section */}
             <div className="mt-4">
               {/* Tabs and Search Container */}
-              <div className="flex flex-col max-w-xl">
+              <div className="flex flex-col w-full sm:max-w-xl">
                 {/* Tabs */}
-                <div className="pl-2 mb-[-8px] relative z-10">
-                  <div className="flex gap-0.5 text-xs">
+                <div className="pl-0 sm:pl-2 mb-[-8px] relative z-10 overflow-x-auto">
+                  <div className="flex gap-0.5 text-xs min-w-max">
                     {PLACE_TYPES.map((type) => (
                       <button
                         key={type.id}
                         onClick={() => setActiveTab(type.id)}
                         className={`
-                          px-4 pt-3 pb-4 text-sm font-medium
+                          px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium
                           transition-all duration-200
                           relative rounded-tl-md rounded-tr-md border-3 
                           ${
@@ -94,8 +99,10 @@ export const Hero = () => {
                       </button>
                     ))}
                     <button
-                      className="px-4 pt-3 pb-4 text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-3 border-transparent hover:border-red-400/50"
-                      onClick={() => {/* Add viral locations handler */}}
+                      className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-3 border-transparent hover:border-red-400/50"
+                      onClick={() => {
+                        /* Add viral locations handler */
+                      }}
                     >
                       🔥 Viral
                     </button>
@@ -111,24 +118,25 @@ export const Hero = () => {
                     <Input
                       type="text"
                       placeholder="Search any city, region, or country to explore..."
-                      className="rounded-md bg-white text-gray-900 text-lg py-8 pl-12 pr-14
+                      className="rounded-md bg-white text-gray-900 text-base sm:text-lg py-6 sm:py-8 pl-10 sm:pl-12 pr-12 sm:pr-14
                         placeholder:text-gray-500 border-[3px] border-transparent
                         focus:border-indigo-400/70 focus:outline-none transition-colors duration-200
-                        shadow-none ring-0 focus:ring-0 hover:border-gray-100"
+                        shadow-none ring-0 focus:ring-0 hover:border-gray-100
+                        w-full"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400" />
+                    <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-5 sm:h-6 w-5 sm:w-6 text-gray-400" />
                     <button
                       type="submit"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 sm:p-2
                         bg-gradient-to-r from-indigo-500 to-purple-600 
                         text-white rounded-md shadow-md
                         hover:from-indigo-600 hover:to-purple-700
                         transition-all duration-200
                         focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                     >
-                      <Search className="h-5 w-5" />
+                      <Search className="h-4 sm:h-5 w-4 sm:w-5" />
                     </button>
                   </form>
                 </div>
