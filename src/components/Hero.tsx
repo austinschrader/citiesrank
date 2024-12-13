@@ -43,6 +43,7 @@ export const Hero = () => {
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<PlaceType>("countries");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +90,7 @@ export const Hero = () => {
                           relative rounded-tl-md rounded-tr-md border-2
                           ${
                             activeTab === type.id
-                              ? "bg-white text-gray-900 border-indigo-400/70 translate-y-[1px]"
+                              ? `bg-white text-gray-900 ${!isSearchFocused ? 'border-indigo-400/70' : 'border-transparent'} translate-y-[1px]`
                               : "bg-gray-200 text-gray-600 hover:bg-white hover:text-gray-900 hover:border-indigo-300/50 border-transparent hover:shadow-sm active:translate-y-[1px] active:border-indigo-400/70 active:bg-white active:text-gray-900"
                           }
                         `}
@@ -120,6 +121,8 @@ export const Hero = () => {
                       placeholder="Country, Region, City, Neighborhood, Sight"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
+                      onFocus={() => setIsSearchFocused(true)}
+                      onBlur={() => setIsSearchFocused(false)}
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-4">
                       <button
