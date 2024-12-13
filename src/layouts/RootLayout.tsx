@@ -16,7 +16,7 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
     <div className="min-h-screen bg-background font-sans antialiased">
       <Header />
       <Hero />
-      {!user && <SignUpBanner show={true} />}
+      {!user && <SignUpBanner show={false} />}
       <main className="pb-16">{children}</main>
     </div>
   );

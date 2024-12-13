@@ -1,183 +1,145 @@
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getImageUrl } from "@/lib/cloudinary";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Search } from "lucide-react";
+import { useState } from "react";
+
+type PlaceType = "countries" | "regions" | "cities" | "sights";
+
+const PLACE_TYPES: { id: PlaceType; label: string; placeholder: string }[] = [
+  {
+    id: "countries",
+    label: "Countries",
+    placeholder: "Search for countries to explore...",
+  },
+  {
+    id: "regions",
+    label: "Regions",
+    placeholder: "Find your perfect region...",
+  },
+  {
+    id: "cities",
+    label: "Cities",
+    placeholder: "Discover cities worldwide...",
+  },
+  {
+    id: "sights",
+    label: "Sights",
+    placeholder: "Explore amazing attractions...",
+  },
+];
 
 export const Hero = () => {
   const { user } = useAuth();
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
-  const [isHeroCollapsed, setIsHeroCollapsed] = useState(() => {
-    return localStorage.getItem("heroCollapsed") === "true";
-  });
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<PlaceType>("countries");
 
-  useEffect(() => {
-    localStorage.setItem("heroCollapsed", isHeroCollapsed.toString());
-  }, [isHeroCollapsed]);
-
-  const handleCollapse = () => {
-    setIsAnimating(true);
-    setIsHeroCollapsed(true);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle search logic here
   };
 
-  const handleExpand = () => {
-    setIsAnimating(true);
-    setIsHeroCollapsed(false);
-  };
-
-  const handleTransitionEnd = () => {
-    setIsAnimating(false);
-  };
-
-  const handleAction = () => {
-    if (user) {
-      // If user is logged in, scroll to places section
-      document.getElementById("places-section")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    } else {
-      // If not logged in, show signup dialog
-      setShowSignUpDialog(true);
-    }
-  };
+  const activeTabData = PLACE_TYPES.find((type) => type.id === activeTab)!;
 
   return (
-    <div
-      className={`relative transition-[height] duration-500 ease-in-out overflow-hidden ${
-        isHeroCollapsed ? "h-0" : "h-auto"
-      }`}
-      onTransitionEnd={handleTransitionEnd}
-    >
-      {isHeroCollapsed ? (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleExpand}
-          className="fixed top-20 left-3/4 -translate-x-1/2 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md border flex items-center gap-2 h-7 text-sm py-0"
-        >
-          <ChevronDown className="h-3 w-3" />
-          Show Hero
-        </Button>
-      ) : (
-        <>
-          {/* Background Image with Enhanced Overlay */}
-          <div className="absolute inset-0">
-            <img
-              src={getImageUrl("couple", "fullscreen")}
-              alt="Digital nomads working in a beautiful location"
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
-          </div>
+    <div className="relative">
+      {/* Hero Content */}
+      <div className="relative h-[50vh] overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src={getImageUrl("bordeaux-france-1", "wide")}
+            alt="Beautiful travel destination"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40" />
+        </div>
 
-          {/* Content */}
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="py-24 sm:py-32">
-              <div className="max-w-3xl">
-                <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl drop-shadow-md">
-                  Explore Every Corner of the World{" "}
-                  <span className="inline-block ml-2">🌎</span>
-                </h1>
-                <div className="mt-6 space-y-4">
-                  <p className="text-xl font-semibold text-white drop-shadow-sm">
-                    The only platform that lets you explore and filter:
-                  </p>
-                  <ul className="text-lg text-white list-none space-y-2">
-                    <li className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm hover:bg-white/20 transition-colors">
-                      <span className="text-xl">🏙️</span>
-                      <span className="font-medium">
-                        1000+ cities and their neighborhoods
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm hover:bg-white/20 transition-colors">
-                      <span className="text-xl">🌏</span>
-                      <span className="font-medium">
-                        Every country and region
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm hover:bg-white/20 transition-colors">
-                      <span className="text-xl">🎉</span>
-                      <span className="font-medium">
-                        Local meetups and events worldwide
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-3 bg-white/10 rounded-lg p-3 backdrop-blur-sm hover:bg-white/20 transition-colors">
-                      <span className="text-xl">💎</span>
-                      <span className="font-medium">
-                        Hidden gems and popular attractions
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="mt-8 flex gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-primary hover:bg-primary/90 text-white font-semibold px-6 h-12"
-                    onClick={handleAction}
-                  >
-                    {user ? "Discover Places" : "Start Your Adventure"} ✨{" "}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+        {/* Content */}
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div className="w-full max-w-xl">
+            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 drop-shadow-md">
+              Discover & organize your perfect
+              <br />
+              <span className="text-indigo-300">travel destinations</span>
+            </h1>
+            <p className="text-xl text-gray-200 mb-6 drop-shadow-md">
+              Filter, categorize, and rank locations worldwide based on your unique preferences
+            </p>
 
-              {/* Stats Grid */}
-              <div
-                id="places-section"
-                className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4"
-              >
-                {[
-                  {
-                    number: "1000+",
-                    label: "Cities & Neighborhoods",
-                    icon: "🏙️",
-                  },
-                  { number: "195", label: "Countries", icon: "🌏" },
-                  { number: "10K+", label: "Local Events", icon: "🎉" },
-                  { number: "100K+", label: "Places to Visit", icon: "🗺️" },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors"
+            {/* Search Section */}
+            <div className="mt-4">
+              {/* Tabs and Search Container */}
+              <div className="flex flex-col max-w-md">
+                {/* Tabs */}
+                <div className="flex gap-0.5 text-xs">
+                  {PLACE_TYPES.map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => setActiveTab(type.id)}
+                      className={`
+                        px-3 py-1.5 text-xs font-medium
+                        transition-colors duration-200
+                        relative
+                        ${
+                          activeTab === type.id
+                            ? "bg-white text-gray-900 rounded-t-lg shadow-sm z-10 translate-y-[1px]"
+                            : "bg-gray-200/90 text-gray-700 hover:bg-gray-100 rounded-t-md"
+                        }
+                      `}
+                    >
+                      {type.label}
+                    </button>
+                  ))}
+                  <button
+                    className="px-3 py-1.5 text-xs font-medium bg-red-500 text-white rounded-t-md hover:bg-red-600 transition-colors duration-200 ml-1"
+                    onClick={() => {/* Add viral locations handler */}}
                   >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl">{stat.icon}</span>
-                      <p className="text-2xl font-bold text-white">
-                        {stat.number}
-                      </p>
-                    </div>
-                    <p className="text-sm font-medium text-white/90">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
+                    🔥 Viral
+                  </button>
+                </div>
+
+                {/* Search Bar */}
+                <div className="relative z-20">
+                  <form
+                    onSubmit={handleSearch}
+                    className="flex shadow-lg relative"
+                  >
+                    <Input
+                      type="text"
+                      placeholder={activeTabData.placeholder}
+                      className="rounded-md bg-white/95 text-gray-900 text-sm py-5 pl-10 pr-14
+                        placeholder:text-gray-500 focus:ring-2 focus:ring-indigo-500/50"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <button
+                      type="submit"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-2
+                        bg-gradient-to-r from-indigo-500 to-purple-600 
+                        text-white rounded-md shadow-md
+                        hover:from-indigo-600 hover:to-purple-700
+                        transition-all duration-200
+                        focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                    >
+                      <Search className="h-4 w-4" />
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <SignUpDialog
-            open={showSignUpDialog}
-            onOpenChange={setShowSignUpDialog}
-            city="Paris"
-            country="france"
-            imageNumber={3}
-          />
-
-          {/* Hide Hero Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCollapse}
-            className="fixed top-20 left-3/4 -translate-x-1/2 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md border flex items-center gap-2 hover:bg-background/80"
-          >
-            Hide Hero
-            <ChevronUp className="h-4 w-4" />
-          </Button>
-        </>
-      )}
+      {/* Sign Up Dialog */}
+      <SignUpDialog
+        open={showSignUpDialog}
+        onOpenChange={setShowSignUpDialog}
+      />
     </div>
   );
 };
