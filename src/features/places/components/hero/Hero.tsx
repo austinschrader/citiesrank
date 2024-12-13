@@ -1,3 +1,10 @@
+/**
+ * Location: src/features/places/components/Hero/Hero.tsx
+ * Purpose: Main hero component with search functionality for places
+ * Used by: HomePage.tsx
+ * Dependencies: FiltersContext.tsx for search state management
+ */
+
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getImageUrl } from "@/lib/cloudinary";
@@ -5,40 +12,7 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createSlug } from "@/features/places/utils/placeUtils";
-
-type PlaceType = "countries" | "regions" | "cities" | "sights";
-
-const PLACE_TYPES: {
-  id: PlaceType;
-  label: string;
-  placeholder: string;
-  header: string;
-}[] = [
-  {
-    id: "countries",
-    label: "Countries",
-    placeholder: "Search for countries to explore...",
-    header: "Find your perfect country to call home",
-  },
-  {
-    id: "regions",
-    label: "Regions",
-    placeholder: "Find your perfect region...",
-    header: "Discover the best region for your lifestyle",
-  },
-  {
-    id: "cities",
-    label: "Cities",
-    placeholder: "Discover cities worldwide...",
-    header: "Find your perfect city to live in",
-  },
-  {
-    id: "sights",
-    label: "Sights",
-    placeholder: "Explore amazing attractions...",
-    header: "Explore the world's most amazing places",
-  },
-];
+import { PLACE_TYPES, PlaceType } from "@/features/places/components/hero/constants";
 
 export const Hero = () => {
   const { user } = useAuth();

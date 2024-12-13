@@ -1,5 +1,5 @@
-import { Hero } from "@/components/Hero";
 import { FeaturedPlaces } from "@/features/places/components/featured/FeaturedPlaces";
+import { Hero } from "@/features/places/components/hero/Hero";
 import { useRef } from "react";
 
 export const HomePage = () => {

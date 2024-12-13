@@ -24,7 +24,6 @@ import {
   Building,
   Calendar,
   ChevronRight,
-  MapPin,
   Shield,
   ThermometerSun,
   Train,
@@ -32,7 +31,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 
 interface PlaceDetailsPageProps {
@@ -52,7 +51,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
 
   // Reset filters when entering the page
   useEffect(() => {
-    resetFilters("implemented");
+    resetFilters();
   }, [resetFilters]);
 
   // Get current place and its parent
@@ -232,16 +231,24 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
 
                       <Select 
                         value={filters.sort} 
-                        onValueChange={(value) => setFilter("sort", value as SortOrder)}
+                        onValueChange={(value) =>
+                          setFilter("sort", value as SortOrder)
+                        }
                       >
                         <SelectTrigger className="w-full sm:w-[140px]">
                           <SelectValue>
-                            {filters.sort === "alphabetical-asc" ? "A to Z" : "Z to A"}
+                            {filters.sort === "alphabetical-asc"
+                              ? "A to Z"
+                              : "Z to A"}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="alphabetical-asc">A to Z</SelectItem>
-                          <SelectItem value="alphabetical-desc">Z to A</SelectItem>
+                          <SelectItem value="alphabetical-asc">
+                            A to Z
+                          </SelectItem>
+                          <SelectItem value="alphabetical-desc">
+                            Z to A
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -296,7 +303,13 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                     <LocationMap
                       latitude={placeData.latitude}
                       longitude={placeData.longitude}
-                      type={placeData.type as 'city' | 'region' | 'neighborhood' | 'sight'}
+                      type={
+                        placeData.type as
+                          | "city"
+                          | "region"
+                          | "neighborhood"
+                          | "sight"
+                      }
                     />
                   </div>
                 )}
@@ -305,7 +318,9 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
             {parentPlace && (
               <Card className="overflow-hidden border-none shadow-lg">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-semibold mb-4">Parent Location</h2>
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Parent Location
+                  </h2>
                   <PlaceCard city={parentPlace} variant="compact" />
                 </CardContent>
               </Card>
