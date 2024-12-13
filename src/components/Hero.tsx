@@ -74,31 +74,33 @@ export const Hero = () => {
               {/* Tabs and Search Container */}
               <div className="flex flex-col max-w-md">
                 {/* Tabs */}
-                <div className="flex gap-0.5 text-xs">
-                  {PLACE_TYPES.map((type) => (
+                <div className="pl-2 mb-[-8px] relative z-10">
+                  <div className="flex gap-0.5 text-xs">
+                    {PLACE_TYPES.map((type) => (
+                      <button
+                        key={type.id}
+                        onClick={() => setActiveTab(type.id)}
+                        className={`
+                          px-4 pt-2 pb-3 text-sm font-medium
+                          transition-colors duration-200
+                          relative rounded-tl-md rounded-tr-md
+                          ${
+                            activeTab === type.id
+                              ? "bg-white text-gray-900 shadow-sm"
+                              : "bg-gray-200 text-gray-700 hover:bg-gray-100"
+                          }
+                        `}
+                      >
+                        {type.label}
+                      </button>
+                    ))}
                     <button
-                      key={type.id}
-                      onClick={() => setActiveTab(type.id)}
-                      className={`
-                        px-3 py-1.5 text-xs font-medium
-                        transition-colors duration-200
-                        relative
-                        ${
-                          activeTab === type.id
-                            ? "bg-white text-gray-900 rounded-t-lg shadow-sm z-10 translate-y-[1px]"
-                            : "bg-gray-200/90 text-gray-700 hover:bg-gray-100 rounded-t-md"
-                        }
-                      `}
+                      className="px-4 pt-2 pb-3 text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 transition-colors duration-200 ml-1"
+                      onClick={() => {/* Add viral locations handler */}}
                     >
-                      {type.label}
+                      🔥 Viral
                     </button>
-                  ))}
-                  <button
-                    className="px-3 py-1.5 text-xs font-medium bg-red-500 text-white rounded-t-md hover:bg-red-600 transition-colors duration-200 ml-1"
-                    onClick={() => {/* Add viral locations handler */}}
-                  >
-                    🔥 Viral
-                  </button>
+                  </div>
                 </div>
 
                 {/* Search Bar */}
@@ -110,7 +112,7 @@ export const Hero = () => {
                     <Input
                       type="text"
                       placeholder={activeTabData.placeholder}
-                      className="rounded-md bg-white/95 text-gray-900 text-sm py-5 pl-10 pr-14
+                      className="rounded-md bg-white text-gray-900 text-base py-6 pl-10 pr-14
                         placeholder:text-gray-500 focus:ring-2 focus:ring-indigo-500/50"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
