@@ -57,8 +57,7 @@ export const Hero = () => {
                   setActiveTab={setActiveTab}
                   isSearchFocused={isSearchFocused}
                 />
-                <SearchInput
-                  searchQuery={searchQuery}
+                <SearchInput                  searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
                   setIsSearchFocused={setIsSearchFocused}
                   handleSearch={handleSearch}
