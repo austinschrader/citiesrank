@@ -87,11 +87,11 @@ export const Hero = () => {
                         className={`
                           px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium
                           transition-all duration-200
-                          relative rounded-tl-md rounded-tr-md border-3 
+                          relative rounded-tl-md rounded-tr-md border-2
                           ${
                             activeTab === type.id
-                              ? "bg-white text-gray-900 border-indigo-400/70"
-                              : "bg-gray-200 text-gray-600 hover:bg-white hover:text-gray-900 hover:border-indigo-300/50 border-transparent hover:shadow-sm"
+                              ? "bg-white text-gray-900 border-indigo-400/70 translate-y-[1px]"
+                              : "bg-gray-200 text-gray-600 hover:bg-white hover:text-gray-900 hover:border-indigo-300/50 border-transparent hover:shadow-sm active:translate-y-[1px] active:border-indigo-400/70 active:bg-white active:text-gray-900"
                           }
                         `}
                       >
@@ -99,7 +99,7 @@ export const Hero = () => {
                       </button>
                     ))}
                     <button
-                      className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-3 border-transparent hover:border-red-400/50"
+                      className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-2 border-transparent hover:border-red-400/50"
                       onClick={() => {
                         /* Add viral locations handler */
                       }}
