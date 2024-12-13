@@ -3,6 +3,8 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getImageUrl } from "@/lib/cloudinary";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createSlug } from "@/features/places/utils/placeUtils";
 
 type PlaceType = "countries" | "regions" | "cities" | "sights";
 
@@ -40,6 +42,7 @@ const PLACE_TYPES: {
 
 export const Hero = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<PlaceType>("countries");
@@ -47,7 +50,23 @@ export const Hero = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle search logic here
+    
+    if (!searchQuery.trim()) return;
+
+    if (!user) {
+      setShowSignUpDialog(true);
+      return;
+    }
+
+    // Navigate to the place details page using the active tab as the place type
+    navigate(`/places/${activeTab}/${createSlug(searchQuery)}`, {
+      state: { 
+        placeData: {
+          name: searchQuery,
+          type: activeTab
+        }
+      }
+    });
   };
 
   const activeTabData = PLACE_TYPES.find((type) => type.id === activeTab)!;
@@ -68,7 +87,7 @@ export const Hero = () => {
 
         {/* Content */}
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 h-full flex items-center">
-          <div className="w-full max-w-2xl">
+          <div className="w-full max-w-2xl -mt-16 -ml-4">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-8 drop-shadow-md min-h-[80px] leading-tight">
               {activeTabData.header}
             </h1>
@@ -90,7 +109,11 @@ export const Hero = () => {
                           relative rounded-tl-md rounded-tr-md border-2
                           ${
                             activeTab === type.id
-                              ? `bg-white text-gray-900 ${!isSearchFocused ? 'border-indigo-400/70' : 'border-transparent'} translate-y-[1px]`
+                              ? `bg-white text-gray-900 ${
+                                  !isSearchFocused
+                                    ? "border-indigo-400/70"
+                                    : "border-transparent"
+                                } translate-y-[1px]`
                               : "bg-gray-200 text-gray-600 hover:bg-white hover:text-gray-900 hover:border-indigo-300/50 border-transparent hover:shadow-sm active:translate-y-[1px] active:border-indigo-400/70 active:bg-white active:text-gray-900"
                           }
                         `}
