@@ -53,7 +53,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-[9999] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         {/* Changed from container/px-4 to match PlacesLayout */}
         <div className="mx-8 2xl:mx-16">
           <div className="h-16 flex items-center justify-between gap-4">
@@ -132,7 +132,7 @@ export const Header = () => {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-64" align="end">
+                  <DropdownMenuContent className="w-64 z-[9999]" align="end">
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">

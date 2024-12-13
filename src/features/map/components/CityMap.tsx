@@ -28,7 +28,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
         zoom={zoom}
         scrollWheelZoom={true}
         zoomControl={false}
-        className="h-full w-full rounded-xl"
+        className="h-full w-full rounded-xl relative z-0"
         maxBounds={[
           [-90, -180],
           [90, 180],
