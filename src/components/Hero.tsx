@@ -7,26 +7,30 @@ import { useState } from "react";
 
 type PlaceType = "countries" | "regions" | "cities" | "sights";
 
-const PLACE_TYPES: { id: PlaceType; label: string; placeholder: string }[] = [
+const PLACE_TYPES: { id: PlaceType; label: string; placeholder: string; header: string }[] = [
   {
     id: "countries",
     label: "Countries",
     placeholder: "Search for countries to explore...",
+    header: "Find your perfect country to call home",
   },
   {
     id: "regions",
     label: "Regions",
     placeholder: "Find your perfect region...",
+    header: "Discover the best region for your lifestyle",
   },
   {
     id: "cities",
     label: "Cities",
     placeholder: "Discover cities worldwide...",
+    header: "Find your perfect city to live in",
   },
   {
     id: "sights",
     label: "Sights",
     placeholder: "Explore amazing attractions...",
+    header: "Explore the world's most amazing places",
   },
 ];
 
@@ -60,14 +64,9 @@ export const Hero = () => {
         {/* Content */}
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 h-full flex items-center">
           <div className="w-full max-w-xl">
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl mb-4 drop-shadow-md">
-              Discover & organize your perfect
-              <br />
-              <span className="text-indigo-300">travel destinations</span>
+            <h1 className="text-5xl font-bold tracking-tight text-white sm:text-6xl mb-8 drop-shadow-md">
+              {activeTabData.header}
             </h1>
-            <p className="text-xl text-gray-200 mb-6 drop-shadow-md">
-              Filter, categorize, and rank locations worldwide based on your unique preferences
-            </p>
 
             {/* Search Section */}
             <div className="mt-4">
@@ -111,8 +110,8 @@ export const Hero = () => {
                   >
                     <Input
                       type="text"
-                      placeholder={activeTabData.placeholder}
-                      className="rounded-md bg-white text-gray-900 text-base py-6 pl-10 pr-14
+                      placeholder="Search any city, region, or country to explore..."
+                      className="rounded-md bg-white text-gray-900 text-lg py-10 pl-10 pr-14
                         placeholder:text-gray-500 focus:ring-2 focus:ring-indigo-500/50"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
