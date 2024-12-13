@@ -12,7 +12,7 @@ export const ViewModeToggle: React.FC<ViewModeToggleProps> = ({
   onViewModeChange,
 }) => {
   return (
-    <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto">
+    <div className="flex items-center bg-background/50 backdrop-blur-sm border rounded-xl p-1 shadow-sm w-full md:w-auto z-50">
       <Button
         variant={viewMode === "map" ? "default" : "ghost"}
         size="sm"

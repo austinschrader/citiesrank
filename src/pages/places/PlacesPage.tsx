@@ -122,7 +122,7 @@ export const PlacesPage = () => {
           )}
 
           {/* Sort and View Controls */}
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-3 ml-auto relative z-[100]">
             <Select
               value={filters.sort}
               onValueChange={(value: SortOrder) =>
