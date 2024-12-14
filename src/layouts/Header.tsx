@@ -184,6 +184,26 @@ export const Header = () => {
                 </div>
               </Link>
             ))}
+            {user ? (
+              <>
+                <Link to="/favorites" className="flex items-center justify-center">
+                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
+                    <Bookmark className="h-5 w-5 text-pink-500" strokeWidth={2.5} />
+                    <span className="text-[10px] font-medium">Saved</span>
+                  </div>
+                </Link>
+                <Link to="/profile" className="flex items-center justify-center">
+                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
+                    <UserCircle className="h-5 w-5 text-indigo-500" strokeWidth={2.5} />
+                    <span className="text-[10px] font-medium">Profile</span>
+                  </div>
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center justify-center">
+                <SignInButton />
+              </div>
+            )}
           </div>
         </nav>
       </div>
