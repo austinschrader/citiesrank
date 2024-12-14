@@ -20,31 +20,22 @@ export const FeaturedPlaces = () => {
   // Filter types for quick access
   const archetypeFilters = [
     {
-      id: "family",
-      label: "Family Friendly",
-      emoji: "🎠",
-      description: "Safe & family fun",
-      hoverGradient:
-        "from-sky-200/80 via-cyan-100 to-blue-200/80 dark:from-sky-800/30 dark:via-cyan-900/20 dark:to-blue-800/30",
-      activeGradient: "from-sky-500 to-blue-500",
-    },
-    {
       id: "culture",
-      label: "Dream Spots",
-      emoji: "✨",
-      description: "Local secrets & magic",
+      label: "OMG!",
+      emoji: "💫",
+      description: "Jaw-dropping & magical",
       hoverGradient:
         "from-purple-200/80 via-fuchsia-100 to-pink-200/80 dark:from-purple-800/30 dark:via-fuchsia-900/20 dark:to-pink-800/30",
       activeGradient: "from-purple-500 to-pink-500",
     },
     {
-      id: "digital-nomad",
-      label: "Work",
-      emoji: "💻",
-      description: "Fast WiFi & coworking",
+      id: "outdoor",
+      label: "Wild Wonder",
+      emoji: "🗻",
+      description: "Natural beauty & peace",
       hoverGradient:
-        "from-indigo-200/80 via-blue-100 to-violet-200/80 dark:from-indigo-800/30 dark:via-blue-900/20 dark:to-violet-800/30",
-      activeGradient: "from-indigo-500 to-violet-500",
+        "from-emerald-200/80 via-green-100 to-lime-200/80 dark:from-emerald-800/30 dark:via-green-900/20 dark:to-lime-800/30",
+      activeGradient: "from-emerald-500 to-green-500",
     },
     {
       id: "foodie",
@@ -56,18 +47,27 @@ export const FeaturedPlaces = () => {
       activeGradient: "from-amber-500 to-yellow-500",
     },
     {
-      id: "outdoor",
-      label: "Natural Wonder",
-      emoji: "🏝️",
-      description: "Natural wonders & peace",
+      id: "family",
+      label: "Family Friendly",
+      emoji: "🎠",
+      description: "Safe & family fun",
       hoverGradient:
-        "from-emerald-200/80 via-green-100 to-lime-200/80 dark:from-emerald-800/30 dark:via-green-900/20 dark:to-lime-800/30",
-      activeGradient: "from-emerald-500 to-green-500",
+        "from-sky-200/80 via-cyan-100 to-blue-200/80 dark:from-sky-800/30 dark:via-cyan-900/20 dark:to-blue-800/30",
+      activeGradient: "from-sky-500 to-blue-500",
+    },
+    {
+      id: "digital-nomad",
+      label: "Work",
+      emoji: "💻",
+      description: "Fast WiFi & coworking",
+      hoverGradient:
+        "from-indigo-200/80 via-blue-100 to-violet-200/80 dark:from-indigo-800/30 dark:via-blue-900/20 dark:to-violet-800/30",
+      activeGradient: "from-indigo-500 to-violet-500",
     },
     {
       id: "nightlife",
-      label: "Night Alive",
-      emoji: "🌃",
+      label: "Night Scene",
+      emoji: "🎉",
       description: "Vibrant nights & energy",
       hoverGradient:
         "from-violet-200/80 via-purple-100 to-fuchsia-200/80 dark:from-violet-800/30 dark:via-purple-900/20 dark:to-fuchsia-800/30",
