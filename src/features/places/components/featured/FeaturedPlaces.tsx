@@ -75,9 +75,75 @@ export const FeaturedPlaces = () => {
     },
   ];
 
-  const filteredCities = cities.filter(
-    (city) => !filters.placeType || city.type === filters.placeType
-  );
+  console.log(cities);
+
+  const filteredCities = cities
+    .filter((city) => {
+      // If no archetype is selected, show all cities
+      if (!selectedArchetype) return true;
+
+      // Temporary hardcoded filtering logic
+      switch (selectedArchetype) {
+        case "culture":
+          return [
+            "Acropolis",
+            "Kyoto",
+            "Le Marais",
+            "Tuscany",
+            "Andalusia",
+            "Colosseum",
+            "Sagrada Familia"
+          ].includes(city.name);
+        case "outdoor":
+          return [
+            "Provence",
+            "Bavaria",
+            "Queensland",
+            "Great Wall of China",
+            "Kyushu",
+            "California"
+          ].includes(city.name);
+        case "foodie":
+          return [
+            "Kansai",
+            "Lyon",
+            "Barcelona",
+            "Tuscany",
+            "SoHo",
+            "Kreuzberg"
+          ].includes(city.name);
+        case "family":
+          return [
+            "Bavaria",
+            "Eiffel Tower",
+            "Colosseum",
+            "Great Wall of China",
+            "Queensland",
+            "California"
+          ].includes(city.name);
+        case "digital-nomad":
+          return [
+            "Berlin",
+            "Barcelona",
+            "Kyoto",
+            "Amsterdam",
+            "SoHo",
+            "Kreuzberg"
+          ].includes(city.name);
+        case "nightlife":
+          return [
+            "Berlin",
+            "Kreuzberg",
+            "Le Marais",
+            "SoHo",
+            "Barcelona",
+            "Hamburg"
+          ].includes(city.name);
+        default:
+          return true;
+      }
+    })
+    .filter((city) => !filters.placeType || city.type === filters.placeType);
 
   const {
     getPaginatedData,
