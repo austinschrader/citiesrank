@@ -26,7 +26,7 @@ export const SearchTabs = ({
   };
 
   return (
-    <div className="pl-0 sm:pl-2 mb-[-8px] relative z-10 overflow-x-auto">
+    <div className="pl-0 sm:pl-2 mb-[-8px] relative z-10 overflow-x-auto overflow-y-hidden">
       <div className="flex gap-0.5 text-xs min-w-max">
         {PLACE_TYPES.map((type) => (
           <button
