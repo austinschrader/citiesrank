@@ -3,12 +3,13 @@ import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { MapProvider } from "@/features/map/context/MapContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { CountriesProvider } from "@/features/places/context/CountriesContext";
+import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
 import { HomePage } from "@/pages/HomePage";
-import FavoritesPage from "@/pages/favorites/FavoritesPage";
+import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
@@ -22,21 +23,23 @@ function App() {
           <PreferencesProvider>
             <MapProvider>
               <FiltersProvider>
-                <RootLayout>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/explore" element={<PlacesPage />} />
-                    <Route path="/favorites" element={<FavoritesPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route
-                      path="/places/:placeType/:id"
-                      element={<PlaceDetailsPage />}
-                    />
-                  </Routes>
-                </RootLayout>
+                <FavoritesProvider>
+                  <RootLayout>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/explore" element={<PlacesPage />} />
+                      <Route path="/favorites" element={<FavoritesPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route
+                        path="/places/:placeType/:id"
+                        element={<PlaceDetailsPage />}
+                      />
+                    </Routes>
+                  </RootLayout>
+                  <Toaster />
+                </FavoritesProvider>
               </FiltersProvider>
             </MapProvider>
-            <Toaster />
           </PreferencesProvider>
         </AuthProvider>
       </CountriesProvider>

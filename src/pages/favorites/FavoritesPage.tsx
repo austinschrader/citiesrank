@@ -4,67 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { useToast } from "@/hooks/use-toast";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { Search, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFavorites } from "@/features/places/context/FavoritesContext";
+import { Search } from "lucide-react";
+import { useState } from "react";
 
 export const FavoritesPage = () => {
-  const { user, pb } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth();
+  const { cities } = useCities();
+  const { favorites } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
-  const [favoriteCities, setFavoriteCities] = useState<CitiesResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    let isSubscribed = true;
-
-    async function fetchFavorites() {
-      if (!user) return;
-
-      setIsLoading(true);
-      try {
-        const favorites = await pb.collection("favorites").getFullList({
-          filter: `user = "${user.id}"`,
-          expand: "city",
-          $autoCancel: false,
-        });
-
-        if (isSubscribed) {
-          const favoritedCities = favorites
-            .map((favorite) => favorite.expand?.city)
-            .filter(Boolean);
-
-          setFavoriteCities(favoritedCities);
-        }
-      } catch (error) {
-        if (
-          isSubscribed &&
-          error instanceof Error &&
-          error.name !== "AbortError"
-        ) {
-          console.error("Error fetching favorites:", error);
-          toast({
-            title: "Error loading favorites",
-            description: "Please try again later",
-            variant: "destructive",
-          });
-        }
-      } finally {
-        if (isSubscribed) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    fetchFavorites();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [user, pb, toast]);
-
-  const filteredCities = favoriteCities.filter(
+  const favoritedCities = cities.filter(city => favorites.has(city.id));
+  const filteredCities = favoritedCities.filter(
     (city) =>
       city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       city.country.toLowerCase().includes(searchQuery.toLowerCase())
@@ -97,57 +49,21 @@ export const FavoritesPage = () => {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
         <Input
+          type="text"
           placeholder="Search your favorites..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
+          className="pl-10"
         />
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-        </div>
-      ) : filteredCities.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center h-48 text-center p-6">
-            {searchQuery ? (
-              <>
-                <h3 className="font-semibold text-lg mb-2">No matches found</h3>
-                <p className="text-sm text-muted-foreground max-w-sm">
-                  Try adjusting your search terms or clearing the search
-                </p>
-                <Button
-                  variant="link"
-                  onClick={() => setSearchQuery("")}
-                  className="mt-2"
-                >
-                  Clear search
-                </Button>
-              </>
-            ) : (
-              <>
-                <Star className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                <h3 className="font-semibold text-lg mb-2">No favorites yet</h3>
-                <p className="text-sm text-muted-foreground max-w-sm">
-                  Start exploring places and click the star icon to add them to
-                  your favorites!
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCities.map((city) => (
-            <PlaceCard key={city.id} city={city} variant="basic" />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredCities.map((city) => (
+          <PlaceCard key={city.id} city={city} variant="basic" />
+        ))}
+      </div>
     </div>
   );
 };
-
-export default FavoritesPage;
