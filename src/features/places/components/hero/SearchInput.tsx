@@ -53,7 +53,7 @@ export const SearchInput = ({
           }}
           onBlur={() => {
             setIsSearchFocused(false);
-            setTimeout(() => setShowSuggestions(false), 200);
+            setShowSuggestions(false);
           }}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-4">
