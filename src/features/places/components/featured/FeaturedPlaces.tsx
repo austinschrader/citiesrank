@@ -104,24 +104,28 @@ export const FeaturedPlaces = () => {
               }
               className={`
                 group flex flex-col items-center p-3 rounded-xl transition-all duration-300
-                hover:scale-[1.02] active:scale-[0.98] backdrop-blur-sm
+                hover:scale-[1.02] active:scale-[0.98] 
                 ${
                   selectedArchetype === type.id
                     ? `bg-gradient-to-br ${type.activeGradient} shadow-lg scale-[1.02] ring-1 ring-white/50`
-                    : `bg-card hover:bg-gradient-to-tl ${type.hoverGradient} border border-border hover:border-transparent hover:shadow-sm`
+                    : `bg-white dark:bg-gray-800
+                       shadow-md hover:shadow-lg
+                       border border-gray-200 dark:border-gray-700
+                       hover:bg-gradient-to-tl ${type.hoverGradient} hover:border-transparent
+                       relative`
                 }
               `}
             >
-              <span className="text-2xl mb-1.5 group-hover:scale-110 transition-transform">
+              <span className="text-2xl mb-1.5 group-hover:scale-110 transition-transform duration-300">
                 {type.emoji}
               </span>
               <span
                 className={`
-                font-medium text-sm text-center
+                font-medium text-sm text-center transition-colors duration-300
                 ${
                   selectedArchetype === type.id
                     ? "text-white"
-                    : "text-foreground"
+                    : "text-gray-700 dark:text-gray-200 group-hover:text-foreground/90"
                 }
               `}
               >
