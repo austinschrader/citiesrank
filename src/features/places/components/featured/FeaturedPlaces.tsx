@@ -75,8 +75,6 @@ export const FeaturedPlaces = () => {
     },
   ];
 
-  console.log(cities);
-
   const filteredCities = cities
     .filter((city) => {
       // If no archetype is selected, show all cities
@@ -92,7 +90,7 @@ export const FeaturedPlaces = () => {
             "Tuscany",
             "Andalusia",
             "Colosseum",
-            "Sagrada Familia"
+            "Sagrada Familia",
           ].includes(city.name);
         case "outdoor":
           return [
@@ -101,7 +99,7 @@ export const FeaturedPlaces = () => {
             "Queensland",
             "Great Wall of China",
             "Kyushu",
-            "California"
+            "California",
           ].includes(city.name);
         case "foodie":
           return [
@@ -110,7 +108,7 @@ export const FeaturedPlaces = () => {
             "Barcelona",
             "Tuscany",
             "SoHo",
-            "Kreuzberg"
+            "Kreuzberg",
           ].includes(city.name);
         case "family":
           return [
@@ -119,7 +117,7 @@ export const FeaturedPlaces = () => {
             "Colosseum",
             "Great Wall of China",
             "Queensland",
-            "California"
+            "California",
           ].includes(city.name);
         case "digital-nomad":
           return [
@@ -128,7 +126,7 @@ export const FeaturedPlaces = () => {
             "Kyoto",
             "Amsterdam",
             "SoHo",
-            "Kreuzberg"
+            "Kreuzberg",
           ].includes(city.name);
         case "nightlife":
           return [
@@ -137,7 +135,7 @@ export const FeaturedPlaces = () => {
             "Le Marais",
             "SoHo",
             "Barcelona",
-            "Hamburg"
+            "Hamburg",
           ].includes(city.name);
         default:
           return true;

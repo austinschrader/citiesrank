@@ -11,9 +11,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { SignInButton } from "@/features/auth/components/SignInButton";
-import { Bookmark, Compass, LogOut, UserCircle } from "lucide-react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Bookmark, Compass, Home, LogOut, UserCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
@@ -25,14 +25,29 @@ export const Header = () => {
     navigate("/");
   };
 
-  const navItems = [{ label: "Explore", icon: Compass, to: "/explore" }];
+  const navItems = [
+    {
+      label: "Home",
+      mobileLabel: "Home",
+      icon: Home,
+      to: "/",
+      iconClass: "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500",
+    },
+    {
+      label: "Hunt",
+      icon: Compass,
+      to: "/explore",
+      description: "Filter by lifestyle, cost, climate & more",
+      iconClass: "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400",
+    },
+  ];
 
   return (
     <header className="sticky top-0 z-[9999] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-0">
+      <div className="container mx-auto">
         <div className="h-16 flex items-center px-4">
-          {/* Logo section */}
-          <div className="flex-none">
+          {/* Logo section - only show on desktop */}
+          <div className="flex-none hidden md:block">
             <Link
               to="/"
               className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text hover:opacity-80 transition-opacity"
@@ -50,9 +65,31 @@ export const Header = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-sm font-semibold text-gray-900 hover:bg-gray-100"
+                    className="text-sm font-semibold text-gray-900 hover:bg-gray-100 flex items-center gap-2 group relative transition-all duration-200 ease-in-out"
                   >
-                    {item.label}
+                    <item.icon className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 ease-in-out group-hover:scale-110`} strokeWidth={2.5} />
+                    <span>{item.label}</span>
+                    {item.description && (
+                      <div className="absolute hidden group-hover:block top-full left-1/2 transform -translate-x-1/2 mt-1 w-64 p-3 bg-white text-xs text-gray-600 rounded-lg shadow-lg border whitespace-normal z-50">
+                        {item.description}
+                      </div>
+                    )}
+                  </Button>
+                </Link>
+              ))}
+            </nav>
+
+            {/* Mobile Navigation */}
+            <nav className="flex md:hidden items-center gap-2 flex-1 justify-around">
+              {navItems.map((item) => (
+                <Link key={item.to} to={item.to}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-sm font-medium text-gray-900 hover:bg-gray-100 flex items-center gap-2"
+                  >
+                    <item.icon className={`h-5 w-5 ${item.iconClass}`} strokeWidth={2.5} />
+                    <span>{item.label}</span>
                   </Button>
                 </Link>
               ))}
@@ -65,9 +102,9 @@ export const Header = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative h-11 w-11 rounded-full"
+                    className="relative h-8 w-8 md:h-11 md:w-11 rounded-full shrink-0"
                   >
-                    <Avatar className="h-9 w-9">
+                    <Avatar className="h-7 w-7 md:h-9 md:w-9">
                       <AvatarImage src={user.avatar} alt={user.name ?? ""} />
                       <AvatarFallback>
                         {user.name?.[0] ?? user.email?.[0].toUpperCase()}
@@ -75,7 +112,10 @@ export const Header = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 z-[9999]" align="end">
+                <DropdownMenuContent
+                  className="w-56 md:w-64 z-[9999]"
+                  align="end"
+                >
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
@@ -139,7 +179,7 @@ export const Header = () => {
                 className="flex items-center justify-center"
               >
                 <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                  <item.icon className="h-5 w-5" />
+                  <item.icon className={`h-5 w-5 ${item.iconClass}`} strokeWidth={2.5} />
                   <span className="text-[10px] font-medium">{item.label}</span>
                 </div>
               </Link>

@@ -11,7 +11,10 @@ import {
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useSearch } from "@/features/places/components/search/hooks/useSearch";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters, SortOrder } from "@/features/places/context/FiltersContext";
+import {
+  SortOrder,
+  useFilters,
+} from "@/features/places/context/FiltersContext";
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
 import { LocationMap } from "@/features/places/detail/shared/LocationMap";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
@@ -70,15 +73,12 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   // Get filtered child places
   const childPlaces = useMemo(() => {
     if (!placeData) return [];
-    
+
     // Filter cities by parent
     const childCities = cities.filter((city) => city.parentId === placeData.id);
-    console.log('Child cities:', childCities);
-    console.log('Current filters:', filters);
-    
+
     // Apply filters and sorting using context
     const filtered = getFilteredCities(childCities, calculateMatchForCity);
-    console.log('Filtered cities:', filtered);
     return filtered;
   }, [cities, placeData, filters, getFilteredCities, calculateMatchForCity]);
 
@@ -229,8 +229,8 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                         </SelectContent>
                       </Select>
 
-                      <Select 
-                        value={filters.sort} 
+                      <Select
+                        value={filters.sort}
                         onValueChange={(value) =>
                           setFilter("sort", value as SortOrder)
                         }
