@@ -33,7 +33,7 @@ export const SearchTabs = ({
             key={type.id}
             onClick={() => handleTypeChange(type.id)}
             className={`
-              px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium
+              px-2 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium
               transition-all duration-200
               relative rounded-tl-md rounded-tr-md border-2
               ${
@@ -51,7 +51,7 @@ export const SearchTabs = ({
           </button>
         ))}
         <button
-          className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-2 border-transparent hover:border-red-400/50"
+          className="px-2 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-2 border-transparent hover:border-red-400/50"
           onClick={() => {
             /* Add viral locations handler */
           }}
