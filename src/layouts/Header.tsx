@@ -31,14 +31,14 @@ export const Header = () => {
       mobileLabel: "Home",
       icon: Home,
       to: "/",
-      iconClass: "text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-violet-500",
+      iconClass: "text-indigo-500",
     },
     {
-      label: "Hunt",
+      label: "Match",
       icon: Compass,
       to: "/explore",
       description: "Filter by lifestyle, cost, climate & more",
-      iconClass: "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400",
+      iconClass: "text-emerald-500",
     },
   ];
 
@@ -65,10 +65,10 @@ export const Header = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-sm font-semibold text-gray-900 hover:bg-gray-100 flex items-center gap-2 group relative transition-all duration-200 ease-in-out"
+                    className="text-sm font-semibold text-gray-900 hover:bg-gray-50/50 flex items-center gap-2 group relative transition-all duration-200 ease-in-out"
                   >
-                    <item.icon className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 ease-in-out group-hover:scale-110`} strokeWidth={2.5} />
-                    <span>{item.label}</span>
+                    <item.icon className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 group-hover:scale-110`} strokeWidth={2.5} />
+                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
                     {item.description && (
                       <div className="absolute hidden group-hover:block top-full left-1/2 transform -translate-x-1/2 mt-1 w-64 p-3 bg-white text-xs text-gray-600 rounded-lg shadow-lg border whitespace-normal z-50">
                         {item.description}
@@ -86,10 +86,10 @@ export const Header = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-sm font-medium text-gray-900 hover:bg-gray-100 flex items-center gap-2"
+                    className="text-sm font-medium text-gray-900 hover:bg-gray-50/50 flex items-center gap-2 transition-all duration-200 ease-in-out"
                   >
-                    <item.icon className={`h-5 w-5 ${item.iconClass}`} strokeWidth={2.5} />
-                    <span>{item.label}</span>
+                    <item.icon className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 hover:scale-110`} strokeWidth={2.5} />
+                    <span className="hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
                   </Button>
                 </Link>
               ))}
