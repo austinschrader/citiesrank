@@ -11,18 +11,29 @@ interface SearchTabsProps {
   activeTab: CitiesTypeOptions;
   setActiveTab: (tab: CitiesTypeOptions) => void;
   isSearchFocused: boolean;
+  onTypeChange?: (type: CitiesTypeOptions) => void;
 }
 
-export const SearchTabs = ({ activeTab, setActiveTab, isSearchFocused }: SearchTabsProps) => {
+export const SearchTabs = ({ 
+  activeTab, 
+  setActiveTab, 
+  isSearchFocused,
+  onTypeChange 
+}: SearchTabsProps) => {
+  const handleTypeChange = (type: CitiesTypeOptions) => {
+    setActiveTab(type);
+    onTypeChange?.(type);
+  };
+
   return (
-    <div className="pl-0 sm:pl-2 mb-[-8px] relative z-10 overflow-x-auto">
+    <div className="pl-0 sm:pl-2 mb-[-8px] relative z-10 overflow-x-auto overflow-y-hidden">
       <div className="flex gap-0.5 text-xs min-w-max">
         {PLACE_TYPES.map((type) => (
           <button
             key={type.id}
-            onClick={() => setActiveTab(type.id)}
+            onClick={() => handleTypeChange(type.id)}
             className={`
-              px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium
+              px-2 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium
               transition-all duration-200
               relative rounded-tl-md rounded-tr-md border-2
               ${
@@ -40,7 +51,7 @@ export const SearchTabs = ({ activeTab, setActiveTab, isSearchFocused }: SearchT
           </button>
         ))}
         <button
-          className="px-3 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-2 border-transparent hover:border-red-400/50"
+          className="px-2 sm:px-4 pt-2 sm:pt-3 pb-3 sm:pb-4 text-xs sm:text-sm font-medium bg-red-500 text-white rounded-tl-md rounded-tr-md hover:bg-red-600 hover:shadow-sm transition-all duration-200 ml-1 border-2 border-transparent hover:border-red-400/50"
           onClick={() => {
             /* Add viral locations handler */
           }}
