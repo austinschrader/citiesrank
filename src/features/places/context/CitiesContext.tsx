@@ -1,6 +1,6 @@
 // file location: src/features/places/context/CitiesContext.tsx
 import { getApiUrl } from "@/config/appConfig";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
 import {
   createContext,
@@ -15,11 +15,14 @@ const pb = new PocketBase(apiUrl);
 
 interface CitiesState {
   cities: CitiesResponse[];
-  sortedCities: CitiesResponse[]; // Pre-sorted list for dropdowns
+  sortedCities: CitiesResponse[];
   totalCities: number;
   cityStatus: {
     loading: boolean;
     error: string | null;
+  };
+  typeSpecificLists: {
+    [key in CitiesTypeOptions]: CitiesResponse[];
   };
 }
 
@@ -30,6 +33,13 @@ const defaultState: CitiesState = {
   cityStatus: {
     loading: false,
     error: null,
+  },
+  typeSpecificLists: {
+    [CitiesTypeOptions.country]: [],
+    [CitiesTypeOptions.region]: [],
+    [CitiesTypeOptions.city]: [],
+    [CitiesTypeOptions.neighborhood]: [],
+    [CitiesTypeOptions.sight]: [],
   },
 };
 
@@ -86,6 +96,33 @@ interface CitiesProviderProps {
 export function CitiesProvider({ children }: CitiesProviderProps) {
   const [state, setState] = useState<CitiesState>(defaultState);
 
+  const organizeCitiesByType = (cities: CitiesResponse[]) => {
+    const lists = {
+      [CitiesTypeOptions.country]: [] as CitiesResponse[],
+      [CitiesTypeOptions.region]: [] as CitiesResponse[],
+      [CitiesTypeOptions.city]: [] as CitiesResponse[],
+      [CitiesTypeOptions.neighborhood]: [] as CitiesResponse[],
+      [CitiesTypeOptions.sight]: [] as CitiesResponse[],
+    };
+
+    const uniqueCountries = new Set(cities.map((city) => city.country));
+    lists[CitiesTypeOptions.country] = Array.from(uniqueCountries).map(
+      (country) => ({
+        ...cities.find((city) => city.country === country)!,
+        type: CitiesTypeOptions.country,
+        name: country,
+      } as CitiesResponse)
+    );
+
+    cities.forEach((city) => {
+      if (city.type && city.type !== CitiesTypeOptions.country) {
+        lists[city.type].push(city);
+      }
+    });
+
+    return lists;
+  };
+
   const fetchCitiesPaginated = async (
     page: number,
     perPage: number,
@@ -106,13 +143,15 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         sort: "-created",
       });
 
+      const citiesData = result.items as CitiesResponse[];
+      const allCities = [...state.cities, ...citiesData];
+
       setState((prev) => ({
         ...prev,
-        cities:
-          queryParams.searchTerm || page === 1
-            ? (result.items as CitiesResponse[])
-            : [...prev.cities, ...(result.items as CitiesResponse[])],
+        cities: allCities,
+        sortedCities: [...allCities].sort((a, b) => a.name.localeCompare(b.name)),
         totalCities: result.totalItems,
+        typeSpecificLists: organizeCitiesByType(allCities),
         cityStatus: { loading: false, error: null },
       }));
 
@@ -176,6 +215,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         cities: citiesData,
         sortedCities,
         totalCities: citiesData.length,
+        typeSpecificLists: organizeCitiesByType(citiesData),
         cityStatus: { loading: false, error: null },
       }));
     } catch (error) {

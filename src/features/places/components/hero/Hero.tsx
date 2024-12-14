@@ -30,7 +30,7 @@ export const Hero = () => {
   return (
     <div className="relative">
       {/* Hero Content */}
-      <div className="relative h-[60vh] sm:h-[50vh] overflow-hidden">
+      <div className="relative h-[60vh] sm:h-[50vh]">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
@@ -62,6 +62,7 @@ export const Hero = () => {
                   setSearchQuery={setSearchQuery}
                   setIsSearchFocused={setIsSearchFocused}
                   handleSearch={handleSearch}
+                  currentType={activeTab}
                 />
               </div>
             </div>

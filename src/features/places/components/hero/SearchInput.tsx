@@ -6,22 +6,16 @@
  */
 
 import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
-import { usePreferences } from "@/features/preferences/hooks/usePreferences";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Search } from "lucide-react";
 import { useState } from "react";
-
-// Type extension for future region support
-type CityWithRegion = CitiesResponse & {
-  region?: string;
-};
 
 interface SearchInputProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setIsSearchFocused: (focused: boolean) => void;
   handleSearch: (e: React.FormEvent) => void;
+  currentType: CitiesTypeOptions;
 }
 
 export const SearchInput = ({
@@ -29,28 +23,28 @@ export const SearchInput = ({
   setSearchQuery,
   setIsSearchFocused,
   handleSearch,
+  currentType,
 }: SearchInputProps) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const { cities, cityStatus } = useCities();
-  const { getFilteredCities } = useFilters();
-  const { calculateMatchForCity } = usePreferences();
+  const { cityStatus, typeSpecificLists } = useCities();
 
-  // Use existing filter functionality with proper match calculation
-  const suggestions = getFilteredCities(cities, calculateMatchForCity)
-    .filter(
+  // Get suggestions based on current type and search query
+  const suggestions = typeSpecificLists[currentType]
+    ?.filter(
       (city) =>
-        city.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        searchQuery.length > 0
+        !searchQuery ||
+        city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        city.country.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .slice(0, 5) as CityWithRegion[];
+    .slice(0, 5) || [];
 
   return (
-    <div className="relative z-20">
+    <div className="relative z-50">
       <form onSubmit={handleSearch} className="flex shadow-lg relative">
         <input
           type="text"
           className="block w-full rounded-lg border-0 py-4 pl-4 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-400 text-base sm:text-lg"
-          placeholder="Country, Region, City, Neighborhood, Sight"
+          placeholder={`Search ${currentType}...`}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => {
@@ -59,7 +53,6 @@ export const SearchInput = ({
           }}
           onBlur={() => {
             setIsSearchFocused(false);
-            // Delay hiding suggestions to allow clicking them
             setTimeout(() => setShowSuggestions(false), 200);
           }}
         />
@@ -81,26 +74,32 @@ export const SearchInput = ({
       </form>
 
       {/* Suggestions */}
-      {showSuggestions && searchQuery && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+      {showSuggestions && (
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
           {cityStatus.loading ? (
             <div className="p-4 text-center text-gray-500">Loading...</div>
           ) : suggestions.length > 0 ? (
             <ul className="py-2">
-              {suggestions.map((city: CityWithRegion) => (
+              {suggestions.map((city) => (
                 <li key={city.id}>
                   <button
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex flex-col"
                     onClick={(e) => {
                       e.preventDefault();
-                      setSearchQuery(city.name);
+                      setSearchQuery(
+                        currentType === CitiesTypeOptions.country ? city.country : city.name
+                      );
                       setShowSuggestions(false);
                       handleSearch(e);
                     }}
                   >
-                    <div className="font-medium">{city.name}</div>
-                    {city.region && (
-                      <div className="text-sm text-gray-500">{city.region}</div>
+                    <div className="font-medium">
+                      {currentType === CitiesTypeOptions.country ? city.country : city.name}
+                    </div>
+                    {currentType !== CitiesTypeOptions.country && (
+                      <div className="text-sm text-gray-500">
+                        {city.country}
+                      </div>
                     )}
                   </button>
                 </li>
@@ -108,7 +107,7 @@ export const SearchInput = ({
             </ul>
           ) : (
             <div className="p-4 text-center text-gray-500">
-              No suggestions found
+              No {currentType}s found
             </div>
           )}
         </div>
