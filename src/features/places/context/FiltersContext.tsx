@@ -23,6 +23,7 @@ export interface Filters {
   tags: string[];
   season: string | null;
   budget: string | null;
+  randomSelection: string[] | null;
 }
 
 interface FiltersContextValue {
@@ -43,6 +44,7 @@ const defaultFilters: Filters = {
   tags: [],
   season: null,
   budget: null,
+  randomSelection: null,
 };
 
 const FiltersContext = createContext<FiltersContextValue | null>(null);
@@ -80,9 +82,18 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         return [];
       }
 
+      // If we have a random selection, only show those cities
+      if (filters.randomSelection?.length) {
+        return cityData
+          .filter(city => filters.randomSelection?.includes(city.id))
+          .map((city) => ({
+            ...city,
+            ...calculateMatchForCity(city),
+          }));
+      }
+
       return cityData
         .filter((city) => {
-          // Apply implemented filters only
           const matchesType =
             !filters.placeType || city.type === filters.placeType;
 
@@ -102,7 +113,14 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
               field.includes(filters.search.toLowerCase())
             );
 
-          return matchesType && matchesSearch;
+          const matchesTags =
+            filters.tags.length === 0 ||
+            (Array.isArray(city.tags) &&
+              filters.tags.some((tag) =>
+                city.tags.includes(tag)
+              ));
+
+          return matchesType && matchesSearch && matchesTags;
         })
         .map((city) => {
           const matchScores = calculateMatchForCity(city);
