@@ -1,6 +1,9 @@
 // file location: src/features/places/context/CitiesContext.tsx
 import { getApiUrl } from "@/config/appConfig";
-import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
 import PocketBase from "pocketbase";
 import {
   createContext,
@@ -107,11 +110,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 
     const uniqueCountries = new Set(cities.map((city) => city.country));
     lists[CitiesTypeOptions.country] = Array.from(uniqueCountries).map(
-      (country) => ({
-        ...cities.find((city) => city.country === country)!,
-        type: CitiesTypeOptions.country,
-        name: country,
-      } as CitiesResponse)
+      (country) =>
+        ({
+          ...cities.find((city) => city.country === country)!,
+          type: CitiesTypeOptions.country,
+          name: country,
+        } as CitiesResponse)
     );
 
     cities.forEach((city) => {
@@ -149,7 +153,9 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
       setState((prev) => ({
         ...prev,
         cities: allCities,
-        sortedCities: [...allCities].sort((a, b) => a.name.localeCompare(b.name)),
+        sortedCities: [...allCities].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        ),
         totalCities: result.totalItems,
         typeSpecificLists: organizeCitiesByType(allCities),
         cityStatus: { loading: false, error: null },

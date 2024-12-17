@@ -16,9 +16,15 @@ interface CityMapProps {
   places: MapPlace[];
   onPlaceSelect?: (place: MapPlace) => void;
   className?: string;
+  interactive?: boolean;
 }
 
-export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
+export const CityMap = ({ 
+  places, 
+  onPlaceSelect, 
+  className,
+  interactive = true 
+}: CityMapProps) => {
   const { center, zoom, selectedPlace, selectPlace, setZoom } = useMap();
 
   return (
@@ -26,8 +32,11 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
       <MapContainer
         center={center}
         zoom={zoom}
-        scrollWheelZoom={true}
-        zoomControl={false}
+        scrollWheelZoom={interactive}
+        zoomControl={interactive}
+        dragging={interactive}
+        touchZoom={interactive}
+        doubleClickZoom={interactive}
         className="h-full w-full rounded-xl relative z-0"
         maxBounds={[
           [-90, -180],

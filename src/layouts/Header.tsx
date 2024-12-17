@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Bookmark, Compass, Home, LogOut, UserCircle } from "lucide-react";
+import { Bookmark, Compass, Home, LogOut, MapPin, UserCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
@@ -34,6 +34,14 @@ export const Header = () => {
       iconClass: "text-indigo-500",
     },
     {
+      label: "Discover",
+      mobileLabel: "Discover",
+      icon: Compass,
+      to: "/discover",
+      description: "Explore curated collections and trending places",
+      iconClass: "text-violet-500",
+    },
+    {
       label: "Match",
       icon: Compass,
       to: "/explore",
@@ -42,7 +50,7 @@ export const Header = () => {
     },
     {
       label: "Explorer",
-      icon: Compass,
+      icon: MapPin,
       to: "/explorer",
       description: "Interactive map and place discovery",
       iconClass: "text-blue-500",

@@ -9,6 +9,7 @@ import { PreferencesProvider } from "@/features/preferences/context/PreferencesC
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
 import { HomePage } from "@/pages/HomePage";
+import { DiscoveryPage } from "@/pages/discovery/DiscoveryPage";
 import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
@@ -28,6 +29,7 @@ function App() {
                   <RootLayout>
                     <Routes>
                       <Route path="/" element={<HomePage />} />
+                      <Route path="/discover" element={<DiscoveryPage />} />
                       <Route path="/explore" element={<PlacesPage />} />
                       <Route path="/explorer" element={<ExplorerPage />} />
                       <Route path="/favorites" element={<FavoritesPage />} />
