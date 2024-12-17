@@ -40,6 +40,13 @@ export const Header = () => {
       description: "Filter by lifestyle, cost, climate & more",
       iconClass: "text-emerald-500",
     },
+    {
+      label: "Explorer",
+      icon: Compass,
+      to: "/explorer",
+      description: "Interactive map and place discovery",
+      iconClass: "text-blue-500",
+    },
   ];
 
   return (
