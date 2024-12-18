@@ -5,7 +5,8 @@
  */
 
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMap as useLeafletMap } from "react-leaflet";
 import { useMap } from "../context/MapContext";
 import { MapPlace } from "../types";
 import { MapMarker } from "./MapMarker";
@@ -18,6 +19,18 @@ interface MapClusterProps {
 export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
   const { zoom } = useMap();
   const { filters } = useFilters();
+  const map = useLeafletMap();
+  const [mapPosition, setMapPosition] = useState(map.getCenter());
+
+  useEffect(() => {
+    const onMoveEnd = () => {
+      setMapPosition(map.getCenter());
+    };
+    map.on("moveend", onMoveEnd);
+    return () => {
+      map.off("moveend", onMoveEnd);
+    };
+  }, [map]);
 
   const filterPlacesByZoom = (places: MapPlace[], zoom: number): MapPlace[] => {
     return places.filter((place) => {
@@ -41,13 +54,24 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
   };
 
   const visiblePlaces = useMemo(() => {
-    // Apply existing filters from FiltersContext
-    return filterPlacesByZoom(places, zoom).filter((place) => {
+    const bounds = map.getBounds();
+
+    const filtered = filterPlacesByZoom(places, zoom).filter((place) => {
       if (!place.latitude || !place.longitude) return false;
       if (filters.placeType && place.type !== filters.placeType) return false;
-      return true;
+      // Check if place is within current map bounds
+      return bounds.contains([place.latitude, place.longitude]);
     });
-  }, [places, zoom, filters]);
+
+    // Sort all places by average rating
+    const sorted = filtered.sort((a, b) => {
+      const ratingA = typeof a.averageRating === "number" ? a.averageRating : 0;
+      const ratingB = typeof b.averageRating === "number" ? b.averageRating : 0;
+      return ratingB - ratingA;
+    });
+
+    return sorted.slice(0, 40);
+  }, [places, zoom, filters, map, mapPosition]);
 
   return (
     <>
