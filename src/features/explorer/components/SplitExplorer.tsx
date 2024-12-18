@@ -6,8 +6,12 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ITEMS_PER_PAGE = 12;
+const DEFAULT_RATING = 4.6;
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
@@ -24,12 +28,14 @@ export const SplitExplorer = () => {
     Object.values(CitiesTypeOptions)
   );
 
-  // Filter places based on active types
+  // Filter places based on active types and rating
   const filteredPlaces = useMemo(() => {
-    return cities.filter((place) =>
-      activeTypes.includes(place.type as CitiesTypeOptions)
-    );
-  }, [cities, activeTypes]);
+    return cities.filter((place) => {
+      const typeMatch = activeTypes.includes(place.type as CitiesTypeOptions);
+      const ratingMatch = !filters.averageRating || (place.averageRating && place.averageRating >= filters.averageRating);
+      return typeMatch && ratingMatch;
+    });
+  }, [cities, activeTypes, filters.averageRating]);
 
   // Get paginated places
   const paginatedPlaces = useMemo(() => {
@@ -52,13 +58,35 @@ export const SplitExplorer = () => {
   }, [hasMore, isLoadingMore]);
 
   const handleTypeClick = (type: CitiesTypeOptions) => {
-    setActiveTypes((prev) =>
-      prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type]
-    );
+    const newTypes = new Set(activeTypes);
+    if (newTypes.has(type)) {
+      newTypes.delete(type);
+    } else {
+      newTypes.add(type);
+    }
+    setActiveTypes(Array.from(newTypes));
     setPage(1);
   };
+
+  const handleRatingChange = (value: string) => {
+    const numValue = parseFloat(value);
+    if (!value) {
+      setFilters({ averageRating: null });
+    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
+      setFilters({ averageRating: numValue });
+    }
+  };
+
+  const handlePlaceSelect = (place: MapPlace) => {
+    setSelectedPlace(place);
+  };
+
+  // Set default rating on mount
+  useEffect(() => {
+    if (filters.averageRating === null) {
+      setFilters({ averageRating: DEFAULT_RATING });
+    }
+  }, []);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -82,10 +110,6 @@ export const SplitExplorer = () => {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
-  const handlePlaceSelect = (place: MapPlace) => {
-    setSelectedPlace(place);
-  };
-
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Left Panel */}
@@ -93,24 +117,54 @@ export const SplitExplorer = () => {
         {/* Filter Tags */}
         <div className="p-4 border-b bg-card">
           <h2 className="text-lg font-semibold mb-3 text-card-foreground">Discover Places</h2>
-          <div className="flex flex-wrap gap-2">
-            {Object.values(CitiesTypeOptions).map((type) => (
-              <button
-                key={type}
-                onClick={() => handleTypeClick(type)}
-                className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium",
-                  "transition-colors duration-200",
-                  "hover:bg-accent hover:text-accent-foreground",
-                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                  activeTypes.includes(type)
-                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)}s
-              </button>
-            ))}
+          
+          {/* Place Types */}
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-muted-foreground">
+              Place Types
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {Object.values(CitiesTypeOptions).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => handleTypeClick(type)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-full text-sm font-medium",
+                    "transition-colors duration-200",
+                    "hover:bg-accent hover:text-accent-foreground",
+                    "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                    activeTypes.includes(type)
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}s
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Rating Filter */}
+          <div className="mt-4 space-y-2">
+            <div className="text-xs font-medium text-muted-foreground">
+              Place Rating
+            </div>
+            <div className="flex items-baseline gap-2">
+              <Input
+                id="rating-filter"
+                type="number"
+                placeholder="4.6"
+                value={filters.averageRating ?? ""}
+                onChange={(e) => handleRatingChange(e.target.value)}
+                className="w-16 h-8 text-right"
+                min="0"
+                max="5"
+                step="0.1"
+              />
+              <span className="text-xs text-muted-foreground">
+                minimum rating out of 5.0
+              </span>
+            </div>
           </div>
         </div>
 

@@ -18,6 +18,7 @@ export interface Filters {
   search: string;
   placeType: CitiesTypeOptions | null;
   sort: SortOrder;
+  averageRating: number | null;
 
   // Display-only filters
   tags: string[];
@@ -40,6 +41,7 @@ const defaultFilters: Filters = {
   search: "",
   placeType: null,
   sort: "alphabetical-asc",
+  averageRating: null,
   tags: [],
   season: null,
   budget: null,

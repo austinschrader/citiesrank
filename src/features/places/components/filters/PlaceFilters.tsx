@@ -21,6 +21,7 @@ import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
 import { PlaceSearch } from "./PlaceSearch";
 import { PlaceTypeFilter } from "./PlaceTypeFilter";
+import { RatingFilter } from "./RatingFilter";
 
 interface FilterContentProps {
   cities: any[];
@@ -103,7 +104,10 @@ const FilterContent = ({
             }}
           />
 
-          {/* Display-Only Filters */}
+          {/* Rating Filter */}
+          <RatingFilter />
+
+          {/* Category Filters */}
           {filterCategories.map((category) => (
             <CategoryFilter
               key={category.id}
