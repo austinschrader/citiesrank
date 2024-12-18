@@ -5,47 +5,112 @@
  * Integrates with the parent CityMap component for place selection.
  */
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { getCountryCode } from "@/lib/utils/countryUtils";
+import * as Flags from "country-flag-icons/react/3x2";
 import L from "leaflet";
+import { Building, Building2, Landmark, MapPin } from "lucide-react";
 import { useState } from "react";
+import ReactDOMServer from "react-dom/server";
 import { Marker, Popup } from "react-leaflet";
-import { MapMarkerProps, MarkerStyle } from "../types";
+import { MapMarkerProps, MapPlace, MarkerStyle } from "../types";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
-const getMarkerStyle = (rating?: number): MarkerStyle => {
-  if (!rating) return { color: "#94a3b8", size: 36 }; // No rating - slate
-  if (rating >= 4.5) return { color: "#10b981", size: 48 }; // High rating - emerald
-  if (rating >= 4.0) return { color: "#3b82f6", size: 44 }; // Good rating - blue
-  if (rating >= 3.5) return { color: "#f59e0b", size: 40 }; // Average rating - amber
-  if (rating >= 3.0) return { color: "#ef4444", size: 36 }; // Low rating - red
-  return { color: "#94a3b8", size: 36 }; // Below 3.0 - slate
+const getMarkerStyle = (type?: string): MarkerStyle => {
+  let color = "#4b5563"; // Default gray
+  let backgroundColor = "#ffffff";
+  let size = 44; // Slightly larger for better readability
+
+  switch (type) {
+    case "region":
+      color = "#ffffff";
+      backgroundColor = "#2563eb"; // Blue-600
+      break;
+    case "city":
+      color = "#ffffff";
+      backgroundColor = "#059669"; // Emerald-600
+      break;
+    case "neighborhood":
+      color = "#ffffff";
+      backgroundColor = "#d97706"; // Amber-600
+      break;
+    case "sight":
+      color = "#ffffff";
+      backgroundColor = "#dc2626"; // Red-600
+      break;
+  }
+
+  return { color, backgroundColor, size };
 };
 
 const createMarkerHtml = (
   style: MarkerStyle,
-  rating?: number,
+  place: MapPlace,
   isSelected?: boolean
 ) => {
-  return `<div class="place-marker" style="
-    width: ${style.size}px;
-    height: ${style.size}px;
-    background-color: ${style.color};
-    border-radius: 50%;
+  const rating = place.averageRating ? place.averageRating.toFixed(1) : null;
+  const type = place.type.charAt(0).toUpperCase() + place.type.slice(1);
+  
+  return `<div class="place-marker-container" style="
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: ${style.size * 0.4}px;
-    font-weight: bold;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    cursor: pointer;
+    transform: ${isSelected ? "scale(1.2)" : "scale(1)"};
     transition: all 0.2s ease-in-out;
-    border: 2px solid ${isSelected ? "white" : "rgba(255, 255, 255, 0.8)"};
-    transform: ${isSelected ? "scale(1.1)" : "scale(1)"};
-  ">${rating?.toFixed(1) || ""}</div>
+  ">
+    <div style="
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: ${style.backgroundColor};
+      color: ${style.color};
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      white-space: nowrap;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    ">
+      ${place.name}
+    </div>
+    <div class="place-marker" style="
+      position: relative;
+      width: ${style.size}px;
+      height: ${style.size}px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: ${style.color};
+      background-color: ${style.backgroundColor};
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      font-weight: 500;
+      line-height: 1.2;
+      gap: 2px;
+    ">
+      <div style="font-size: 11px;">${type}</div>
+      ${rating ? `
+        <div style="
+          font-size: 13px;
+          font-weight: 600;
+        ">
+          ${rating}
+        </div>
+      ` : ''}
+    </div>
+  </div>
   <style>
-    .place-marker:hover {
-      transform: scale(1.1);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    .place-marker-container:hover {
+      transform: scale(1.2);
+      z-index: 1000;
+    }
+    .place-marker-container {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
     }
   </style>`;
 };
@@ -55,11 +120,11 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
 
   if (!place.latitude || !place.longitude) return null;
 
-  const markerStyle = getMarkerStyle(place.averageRating);
+  const markerStyle = getMarkerStyle(place.type);
 
   const icon = L.divIcon({
-    className: "custom-rating-marker",
-    html: createMarkerHtml(markerStyle, place.averageRating, isSelected),
+    className: "custom-marker",
+    html: createMarkerHtml(markerStyle, place, isSelected),
     iconSize: [markerStyle.size, markerStyle.size],
     iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
   });

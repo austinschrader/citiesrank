@@ -4,10 +4,10 @@
  * based on zoom level. Integrates with existing FiltersContext for filtering.
  */
 
-import { useMap } from "../context/MapContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { MapPlace } from "../types";
 import { useMemo } from "react";
+import { useMap } from "../context/MapContext";
+import { MapPlace } from "../types";
 import { MapMarker } from "./MapMarker";
 
 interface MapClusterProps {
@@ -19,24 +19,32 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
   const { zoom } = useMap();
   const { filters } = useFilters();
 
-  const visiblePlaces = useMemo(() => {
-    // Filter places based on zoom level
-    const getPlacesByLevel = () => {
+  const filterPlacesByZoom = (places: MapPlace[], zoom: number): MapPlace[] => {
+    return places.filter((place) => {
       if (zoom <= 3) {
-        return places.filter(place => place.type === "country");
+        // World view - countries only
+        return place.type === "country";
       } else if (zoom <= 5) {
-        return places.filter(place => place.type === "region" || place.type === "country");
+        // Continental view - countries and regions
+        return ["country", "region"].includes(place.type);
       } else if (zoom <= 8) {
-        return places.filter(place => place.type === "city" || place.type === "region");
+        // Country view - regions and cities
+        return ["region", "city"].includes(place.type);
+      } else if (zoom <= 11) {
+        // Regional view - cities and neighborhoods
+        return ["city", "neighborhood"].includes(place.type);
+      } else {
+        // Local view - neighborhoods and sights
+        return ["neighborhood", "sight"].includes(place.type);
       }
-      return places; // Show all places at high zoom levels
-    };
+    });
+  };
 
+  const visiblePlaces = useMemo(() => {
     // Apply existing filters from FiltersContext
-    return getPlacesByLevel().filter(place => {
+    return filterPlacesByZoom(places, zoom).filter((place) => {
       if (!place.latitude || !place.longitude) return false;
       if (filters.placeType && place.type !== filters.placeType) return false;
-      // Add other filter conditions as needed
       return true;
     });
   }, [places, zoom, filters]);
