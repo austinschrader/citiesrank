@@ -9,7 +9,7 @@ import type { MapPlace } from "@/features/map/types";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useMap } from "../context/MapContext";
 import { MapControls } from "./MapControls";
-import { MapMarker } from "./MapMarker";
+import { MapCluster } from "./MapCluster";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
 interface CityMapProps {
@@ -44,19 +44,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
         />
-        {places
-          .filter((place) => place.latitude && place.longitude)
-          .map((place) => (
-            <MapMarker
-              key={place.id}
-              place={place}
-              onSelect={(p) => {
-                selectPlace(p);
-                onPlaceSelect?.(p);
-              }}
-              isSelected={selectedPlace?.id === place.id}
-            />
-          ))}
+        <MapCluster places={places} onPlaceSelect={onPlaceSelect} />
         {selectedPlace && (
           <PlaceGeoJson
             key={`geojson-${selectedPlace.id}`}
