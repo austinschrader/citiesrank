@@ -15,31 +15,36 @@ import { Marker, Popup } from "react-leaflet";
 import { MapMarkerProps, MapPlace, MarkerStyle } from "../types";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
-const getMarkerStyle = (type?: string): MarkerStyle => {
-  let color = "#4b5563"; // Default gray
-  let backgroundColor = "#ffffff";
-  let size = 44; // Slightly larger for better readability
+const getMarkerStyle = (type?: string, rating?: number): MarkerStyle => {
+  // Type colors (elegant and distinct)
+  const typeColors = {
+    country: "#4f46e5",    // Deep purple-blue - regal/majestic
+    region: "#7c3aed",     // Vibrant purple - regional authority
+    city: "#0ea5e9",      // Sky-500 (urban/modern for cities)
+    neighborhood: "#f97316", // Orange-500 (warm/community for neighborhoods)
+    sight: "#6366f1",     // Indigo-500 (interesting/cultural for sights)
+  };
 
-  switch (type) {
-    case "region":
-      color = "#ffffff";
-      backgroundColor = "#2563eb"; // Blue-600
-      break;
-    case "city":
-      color = "#ffffff";
-      backgroundColor = "#059669"; // Emerald-600
-      break;
-    case "neighborhood":
-      color = "#ffffff";
-      backgroundColor = "#d97706"; // Amber-600
-      break;
-    case "sight":
-      color = "#ffffff";
-      backgroundColor = "#dc2626"; // Red-600
-      break;
-  }
+  // Rating colors (vibrant spectrum from great to bad)
+  const getRatingColor = (rating?: number) => {
+    if (!rating) return "#6b7280"; // Gray-500 for no rating
+    if (rating >= 4.8) return "#16a34a"; // Vibrant green
+    if (rating >= 4.5) return "#22c55e"; // Bright green
+    if (rating >= 4.2) return "#84cc16"; // Lime green
+    if (rating >= 3.8) return "#facc15"; // Vibrant yellow
+    if (rating >= 3.4) return "#f97316"; // Vibrant orange
+    return "#ef4444"; // Bright red
+  };
 
-  return { color, backgroundColor, size };
+  const typeColor = (type && type in typeColors) 
+    ? typeColors[type as keyof typeof typeColors]
+    : "#6b7280"; // Gray-500 default
+
+  return {
+    color: typeColor,
+    ratingColor: getRatingColor(rating),
+    size: 40 // Slightly smaller for cleaner look
+  };
 };
 
 const createMarkerHtml = (
@@ -48,7 +53,6 @@ const createMarkerHtml = (
   isSelected?: boolean
 ) => {
   const rating = place.averageRating ? place.averageRating.toFixed(1) : null;
-  const type = place.type.charAt(0).toUpperCase() + place.type.slice(1);
   
   return `<div class="place-marker-container" style="
     position: relative;
@@ -63,8 +67,8 @@ const createMarkerHtml = (
       top: -24px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: ${style.backgroundColor};
-      color: ${style.color};
+      background-color: ${style.color};
+      color: #ffffff;
       padding: 2px 8px;
       border-radius: 6px;
       font-size: 12px;
@@ -77,31 +81,32 @@ const createMarkerHtml = (
     ">
       ${place.name}
     </div>
-    <div class="place-marker" style="
+    <div class="place-marker-wrapper" style="
       position: relative;
       width: ${style.size}px;
       height: ${style.size}px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: ${style.color};
-      background-color: ${style.backgroundColor};
-      border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      font-weight: 500;
-      line-height: 1.2;
-      gap: 2px;
     ">
-      <div style="font-size: 11px;">${type}</div>
-      ${rating ? `
-        <div style="
-          font-size: 13px;
-          font-weight: 600;
-        ">
-          ${rating}
-        </div>
-      ` : ''}
+      <!-- Rating circle -->
+      <div class="place-marker" style="
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: ${style.ratingColor};
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      ">
+        ${rating ? `
+          <div style="
+            font-size: ${rating.length > 2 ? '13px' : '14px'};
+            font-weight: 600;
+            color: #ffffff;
+          ">
+            ${rating}
+          </div>
+        ` : ''}
+      </div>
     </div>
   </div>
   <style>
@@ -120,7 +125,7 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
 
   if (!place.latitude || !place.longitude) return null;
 
-  const markerStyle = getMarkerStyle(place.type);
+  const markerStyle = getMarkerStyle(place.type, place.averageRating);
 
   const icon = L.divIcon({
     className: "custom-marker",
