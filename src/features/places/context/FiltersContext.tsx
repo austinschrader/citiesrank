@@ -13,12 +13,19 @@ export type SortOrder =
   | "alphabetical-asc" 
   | "alphabetical-desc";
 
+export type PopulationCategory = 
+  | "village" // < 10,000
+  | "town" // 10,000 - 50,000
+  | "city" // 50,000 - 1,000,000
+  | "megacity"; // > 1,000,000
+
 export interface Filters {
   // Implemented filters
   search: string;
   placeType: CitiesTypeOptions | null;
   sort: SortOrder;
   averageRating: number | null;
+  populationCategory: PopulationCategory | null;
 
   // Display-only filters
   tags: string[];
@@ -42,12 +49,45 @@ const defaultFilters: Filters = {
   placeType: null,
   sort: "alphabetical-asc",
   averageRating: null,
+  populationCategory: null,
   tags: [],
   season: null,
   budget: null,
 };
 
 const FiltersContext = createContext<FiltersContextValue | null>(null);
+
+export const parsePopulation = (pop: string): number | null => {
+  if (!pop || pop.toLowerCase() === "n/a") return null;
+  
+  try {
+    // Remove commas and convert k/m suffixes
+    const normalized = pop.toLowerCase()
+      .replace(/,/g, "")
+      .replace("k", "000")
+      .replace("m", "000000");
+    
+    return parseFloat(normalized);
+  } catch {
+    return null;
+  }
+};
+
+export const isInPopulationRange = (population: string, category: PopulationCategory): boolean => {
+  const pop = parsePopulation(population);
+  if (pop === null) return false;
+
+  switch (category) {
+    case "village":
+      return pop < 10000;
+    case "town":
+      return pop >= 10000 && pop < 50000;
+    case "city":
+      return pop >= 50000 && pop < 1000000;
+    case "megacity":
+      return pop >= 1000000;
+  }
+};
 
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<Filters>(defaultFilters);
@@ -75,36 +115,25 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
   const getFilteredCities = useCallback(
     (
-      cityData: CitiesResponse[],
+      cities: CitiesResponse[],
       calculateMatchForCity: (city: CitiesResponse) => MatchScore
     ): (CitiesResponse & MatchScore)[] => {
-      if (!cityData) {
-        return [];
-      }
-
-      return cityData
+      return cities
         .filter((city) => {
-          // Apply implemented filters only
-          const matchesType =
-            !filters.placeType || city.type === filters.placeType;
+          // Apply filters
+          if (filters.search && !city.name.toLowerCase().includes(filters.search.toLowerCase())) {
+            return false;
+          }
 
-          const searchFields = [
-            city.name?.toLowerCase() || "",
-            city.country?.toLowerCase() || "",
-            city.description?.toLowerCase() || "",
-            city.type?.toLowerCase() || "",
-            ...(Array.isArray(city.tags)
-              ? city.tags.map(String).map((tag) => tag.toLowerCase())
-              : []),
-          ].filter(Boolean);
+          if (filters.placeType && city.type !== filters.placeType) {
+            return false;
+          }
 
-          const matchesSearch =
-            !filters.search ||
-            searchFields.some((field) =>
-              field.includes(filters.search.toLowerCase())
-            );
+          if (filters.populationCategory && !isInPopulationRange(city.population, filters.populationCategory)) {
+            return false;
+          }
 
-          return matchesType && matchesSearch;
+          return true;
         })
         .map((city) => {
           const matchScores = calculateMatchForCity(city);

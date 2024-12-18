@@ -21,6 +21,7 @@ import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
 import { PlaceSearch } from "./PlaceSearch";
 import { PlaceTypeFilter } from "./PlaceTypeFilter";
+import { PopulationFilter } from "./PopulationFilter";
 import { RatingFilter } from "./RatingFilter";
 
 interface FilterContentProps {
@@ -103,6 +104,9 @@ const FilterContent = ({
               setCollapsedSections(newCollapsed);
             }}
           />
+
+          {/* Population Filter */}
+          <PopulationFilter />
 
           {/* Rating Filter */}
           <RatingFilter />

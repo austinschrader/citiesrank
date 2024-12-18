@@ -34,6 +34,12 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
 
   const filterPlacesByZoom = (places: MapPlace[], zoom: number): MapPlace[] => {
     return places.filter((place) => {
+      // If population filter is active, always show cities regardless of zoom
+      if (filters.populationCategory && place.type === "city") {
+        return true;
+      }
+
+      // Otherwise apply normal zoom-based filtering
       if (zoom <= 3) {
         // World view - countries only
         return place.type === "country";

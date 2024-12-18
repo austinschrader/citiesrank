@@ -2,7 +2,7 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
+import { useFilters, isInPopulationRange, PopulationCategory } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -28,14 +28,16 @@ export const SplitExplorer = () => {
     Object.values(CitiesTypeOptions)
   );
 
-  // Filter places based on active types and rating
+  // Filter places based on active types, rating, and population
   const filteredPlaces = useMemo(() => {
     return cities.filter((place) => {
       const typeMatch = activeTypes.includes(place.type as CitiesTypeOptions);
       const ratingMatch = !filters.averageRating || (place.averageRating && place.averageRating >= filters.averageRating);
-      return typeMatch && ratingMatch;
+      const populationMatch = !filters.populationCategory || isInPopulationRange(place.population, filters.populationCategory);
+      
+      return typeMatch && ratingMatch && populationMatch;
     });
-  }, [cities, activeTypes, filters.averageRating]);
+  }, [cities, activeTypes, filters.averageRating, filters.populationCategory]);
 
   // Get paginated places
   const paginatedPlaces = useMemo(() => {
@@ -58,14 +60,17 @@ export const SplitExplorer = () => {
   }, [hasMore, isLoadingMore]);
 
   const handleTypeClick = (type: CitiesTypeOptions) => {
-    const newTypes = new Set(activeTypes);
-    if (newTypes.has(type)) {
-      newTypes.delete(type);
-    } else {
-      newTypes.add(type);
+    // Clear population filter if selecting a non-city type
+    if (type !== CitiesTypeOptions.city && filters.populationCategory) {
+      setFilters({ populationCategory: null });
     }
-    setActiveTypes(Array.from(newTypes));
-    setPage(1);
+
+    // Toggle the type in activeTypes
+    setActiveTypes((prev) =>
+      prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : [...prev, type]
+    );
   };
 
   const handleRatingChange = (value: string) => {
@@ -79,6 +84,17 @@ export const SplitExplorer = () => {
 
   const handlePlaceSelect = (place: MapPlace) => {
     setSelectedPlace(place);
+  };
+
+  const handlePopulationSelect = (category: PopulationCategory | null) => {
+    if (category) {
+      // When selecting a population category, only show cities
+      setActiveTypes([CitiesTypeOptions.city]);
+      setFilters({ populationCategory: category });
+    } else {
+      // When deselecting, keep only currently active types
+      setFilters({ populationCategory: null });
+    }
   };
 
   // Set default rating on mount
@@ -129,9 +145,9 @@ export const SplitExplorer = () => {
                   key={type}
                   onClick={() => handleTypeClick(type)}
                   className={cn(
-                    "px-3 py-1.5 rounded-full text-sm font-medium",
-                    "transition-colors duration-200",
-                    "hover:bg-accent hover:text-accent-foreground",
+                    "px-4 py-2 rounded-full text-sm font-medium",
+                    "transition-all duration-200",
+                    "hover:bg-accent hover:text-accent-foreground hover:scale-105",
                     "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
                     activeTypes.includes(type)
                       ? "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -164,6 +180,91 @@ export const SplitExplorer = () => {
               <span className="text-xs text-muted-foreground">
                 minimum rating out of 5.0
               </span>
+            </div>
+          </div>
+
+          {/* Population Filter */}
+          <div className="mt-4 space-y-2">
+            <div className="text-xs font-medium text-muted-foreground">
+              City Size
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handlePopulationSelect(
+                  filters.populationCategory === "village" ? null : "village" as PopulationCategory
+                )}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm font-medium",
+                  "transition-all duration-200",
+                  "hover:bg-accent hover:text-accent-foreground hover:scale-105",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  filters.populationCategory === "village"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted text-muted-foreground"
+                )}
+              >
+                <span className="flex items-center gap-2">
+                  <span role="img" aria-label="village">🏘️</span>
+                  <span>Village</span>
+                </span>
+              </button>
+              <button
+                onClick={() => handlePopulationSelect(
+                  filters.populationCategory === "town" ? null : "town" as PopulationCategory
+                )}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm font-medium",
+                  "transition-all duration-200",
+                  "hover:bg-accent hover:text-accent-foreground hover:scale-105",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  filters.populationCategory === "town"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted text-muted-foreground"
+                )}
+              >
+                <span className="flex items-center gap-2">
+                  <span role="img" aria-label="town">🏰</span>
+                  <span>Town</span>
+                </span>
+              </button>
+              <button
+                onClick={() => handlePopulationSelect(
+                  filters.populationCategory === "city" ? null : "city" as PopulationCategory
+                )}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm font-medium",
+                  "transition-all duration-200",
+                  "hover:bg-accent hover:text-accent-foreground hover:scale-105",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  filters.populationCategory === "city"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted text-muted-foreground"
+                )}
+              >
+                <span className="flex items-center gap-2">
+                  <span role="img" aria-label="city">🌆</span>
+                  <span>City</span>
+                </span>
+              </button>
+              <button
+                onClick={() => handlePopulationSelect(
+                  filters.populationCategory === "megacity" ? null : "megacity" as PopulationCategory
+                )}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm font-medium",
+                  "transition-all duration-200",
+                  "hover:bg-accent hover:text-accent-foreground hover:scale-105",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  filters.populationCategory === "megacity"
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted text-muted-foreground"
+                )}
+              >
+                <span className="flex items-center gap-2">
+                  <span role="img" aria-label="megacity">🌇</span>
+                  <span>Megacity</span>
+                </span>
+              </button>
             </div>
           </div>
         </div>
