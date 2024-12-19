@@ -10,7 +10,6 @@ import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { Building2, Globe2, Landmark, MapPin } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { MapLegend } from "./MapLegend";
 import { ResultsPanel } from "./ResultsPanel";
 
 const citySizeEmojis: Record<PopulationCategory, string> = {
@@ -197,10 +196,6 @@ export const SplitExplorer = () => {
               viewMode === "list" && "pointer-events-none"
             )}
           >
-            <MapLegend
-              isStatsMinimized={isStatsMinimized}
-              setIsStatsMinimized={setIsStatsMinimized}
-            />
             <CityMap className="h-full" />
           </div>
         </div>
