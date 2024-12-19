@@ -6,6 +6,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { ActiveFilters } from "@/features/explorer/components/filters/ActiveFilters";
 import { useCities } from "@/features/places/context/CitiesContext";
 import {
@@ -25,6 +33,7 @@ import {
   Map,
   MapPin,
   Search,
+  SlidersHorizontal,
   SplitSquareHorizontal,
   Star,
 } from "lucide-react";
@@ -451,6 +460,13 @@ const RatingFilter = ({
     </DropdownMenuContent>
   </DropdownMenu>
 );
+const getActiveFiltersCount = (filters: any) => {
+  let count = 0;
+  if (filters.populationCategory) count++;
+  if (filters.averageRating) count++;
+  if (filters.activeTypes.length > 0) count += filters.activeTypes.length;
+  return count;
+};
 
 export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
   const { cities } = useCities();
@@ -464,6 +480,7 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
     resetTypeFilters,
     resetPopulationFilter,
   } = useFilters();
+  const activeFiltersCount = getActiveFiltersCount(filters);
 
   const [isCitySizesExpanded, setIsCitySizesExpanded] = useState(false);
 
@@ -706,6 +723,71 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
             filters={filters}
             handleRatingChange={handleRatingChange}
           />
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "h-9 gap-2",
+                  activeFiltersCount > 0 && "bg-primary/5"
+                )}
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                All Filters
+                {activeFiltersCount > 0 && (
+                  <>
+                    <span className="mx-0.5 h-1 w-1 rounded-full bg-foreground/50" />
+                    <span className="text-xs font-medium">
+                      {activeFiltersCount}
+                    </span>
+                  </>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-xl z-[9999]">
+              <SheetHeader className="space-y-4 pb-4 border-b">
+                <div className="flex items-center justify-between">
+                  <SheetTitle>Filters</SheetTitle>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        resetTypeFilters();
+                        resetPopulationFilter();
+                        handleRatingChange(null);
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Reset all
+                    </Button>
+                    <Button size="sm">See {cities?.length ?? 0} places</Button>
+                  </div>
+                </div>
+                <SheetDescription className="text-base">
+                  Discover your perfect destination - whether you're a digital
+                  nomad seeking vibrant coworking spaces, a family planning the
+                  next adventure, or a traveler exploring the world's hidden
+                  gems.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-6 py-6">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Place Type</h3>
+                  <CitySizeFilter filters={filters} setFilters={setFilters} />
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Rating</h3>
+                  <div className="pl-1">
+                    <RatingFilter
+                      filters={filters}
+                      handleRatingChange={handleRatingChange}
+                    />
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
         {/* Active Filters */}
