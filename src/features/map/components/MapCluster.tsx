@@ -43,13 +43,13 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
       if (zoom <= 3) {
         // World view - countries only
         return place.type === "country";
-      } else if (zoom <= 5) {
+      } else if (zoom <= 6) {
         // Continental view - countries and regions
         return ["country", "region"].includes(place.type);
-      } else if (zoom <= 8) {
+      } else if (zoom <= 10) {
         // Country view - regions and cities
         return ["region", "city"].includes(place.type);
-      } else if (zoom <= 11) {
+      } else if (zoom <= 14) {
         // Regional view - cities and neighborhoods
         return ["city", "neighborhood"].includes(place.type);
       } else {

@@ -31,8 +31,10 @@ const BoundsTracker = ({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBo
     };
 
     map.on('moveend', handleMove);
-    // Initial bounds
-    handleMove();
+    // Set initial bounds immediately
+    requestAnimationFrame(() => {
+      handleMove();
+    });
 
     return () => {
       map.off('moveend', handleMove);
@@ -44,6 +46,11 @@ const BoundsTracker = ({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBo
 
 export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: CityMapProps) => {
   const { center, zoom, selectedPlace, selectPlace, setZoom } = useMap();
+
+  const handlePlaceSelect = (place: MapPlace) => {
+    selectPlace(place);
+    onPlaceSelect?.(place);
+  };
 
   return (
     <div className={className}>
@@ -69,7 +76,7 @@ export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: Ci
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
         />
-        <MapCluster places={places} onPlaceSelect={onPlaceSelect} />
+        <MapCluster places={places} onPlaceSelect={handlePlaceSelect} />
         {selectedPlace && (
           <PlaceGeoJson
             key={`geojson-${selectedPlace.id}`}

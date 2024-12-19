@@ -12,7 +12,6 @@ const DEFAULT_RATING = 4.6;
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const { filters, setFilters, handleTypeClick, handlePopulationSelect, resetFilters, getFilteredCities } = useFilters();
-  const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -47,25 +46,20 @@ export const SplitExplorer = () => {
   // Calculate places in current view
   const placesInView = useMemo(() => {
     if (!mapBounds) return filteredPlaces;
-
     return filteredPlaces.filter((place) => {
-      if (
-        typeof place.latitude !== "number" ||
-        typeof place.longitude !== "number"
-      )
-        return false;
+      if (!place.latitude || !place.longitude) return false;
       return mapBounds.contains([place.latitude, place.longitude]);
     });
   }, [filteredPlaces, mapBounds]);
 
   // Get paginated places
   const paginatedPlaces = useMemo(() => {
-    return filteredPlaces.slice(0, page * ITEMS_PER_PAGE);
-  }, [filteredPlaces, page]);
+    return placesInView.slice(0, page * ITEMS_PER_PAGE);
+  }, [placesInView, page]);
 
   const hasMore = useCallback(() => {
-    return paginatedPlaces.length < filteredPlaces.length;
-  }, [paginatedPlaces.length, filteredPlaces.length]);
+    return paginatedPlaces.length < placesInView.length;
+  }, [paginatedPlaces.length, placesInView.length]);
 
   const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
@@ -118,7 +112,7 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex">
       <ResultsPanel
-        filteredPlaces={filteredPlaces}
+        filteredPlaces={placesInView}
         paginatedPlaces={paginatedPlaces}
         filters={filters}
         setFilters={setFilters}
@@ -146,8 +140,16 @@ export const SplitExplorer = () => {
         <CityMap
           places={filteredPlaces}
           onBoundsChange={setMapBounds}
+          onPlaceSelect={(place) => {
+            // When a place is selected, ensure its type is included in activeTypes
+            if (!filters.activeTypes.includes(place.type as any)) {
+              setFilters({
+                ...filters,
+                activeTypes: [...filters.activeTypes, place.type as any]
+              });
+            }
+          }}
           className="h-full w-full"
-          onPlaceSelect={setSelectedPlace}
         />
       </div>
     </div>

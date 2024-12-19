@@ -10,6 +10,7 @@ import { MapPlace } from "@/features/map/types";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { LatLngTuple } from "leaflet";
 import React, { createContext, useContext, useMemo, useState } from "react";
+import L from "leaflet";
 
 interface MapState {
   zoom: number;
@@ -23,6 +24,10 @@ interface MapContextValue extends MapState {
   setCenter: (center: LatLngTuple) => void;
   selectPlace: (place: MapPlace | null) => void;
   resetView: () => void;
+  mapBounds: L.LatLngBounds | null;
+  setMapBounds: (bounds: L.LatLngBounds | null) => void;
+  visiblePlaces: MapPlace[];
+  setVisiblePlaces: (places: MapPlace[]) => void;
 }
 
 const DEFAULT_CENTER: LatLngTuple = [20, 0];
@@ -37,10 +42,17 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     geographicLevel: CitiesTypeOptions.country,
     selectedPlace: null,
   });
+  
+  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
+  const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
 
   const value = useMemo(
     () => ({
       ...state,
+      mapBounds,
+      setMapBounds,
+      visiblePlaces,
+      setVisiblePlaces,
       setZoom: (zoom: number) => {
         setState((prev) => ({
           ...prev,
@@ -58,8 +70,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
             ...prev,
             selectedPlace: place,
             center: bounds.center,
-            zoom: bounds.zoom,
-            geographicLevel: mapService.getGeographicLevel(bounds.zoom),
           }));
         } else {
           setState((prev) => ({ ...prev, selectedPlace: null }));
