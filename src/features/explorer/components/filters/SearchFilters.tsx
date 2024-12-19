@@ -2,22 +2,14 @@
 // Handles search, rating, and population filters for the ResultsPanel
 
 import { Input } from "@/components/ui/input";
-import { PopulationCategory } from "@/features/places/context/FiltersContext";
+import {
+  PopulationCategory,
+  useFilters,
+} from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { markerColors } from "@/lib/utils/colors";
 import { Star } from "lucide-react";
-
-interface SearchFiltersProps {
-  filters: {
-    search: string;
-    averageRating: number | null;
-    populationCategory: PopulationCategory | null;
-  };
-  setFilters: (filters: any) => void;
-  handleRatingChange: (value: string) => void;
-  handlePopulationSelect: (category: PopulationCategory | null) => void;
-}
 
 const citySizeEmojis: Record<PopulationCategory, string> = {
   megacity: "🌇",
@@ -26,12 +18,18 @@ const citySizeEmojis: Record<PopulationCategory, string> = {
   village: "🏡",
 };
 
-export function SearchFilters({
-  filters,
-  setFilters,
-  handleRatingChange,
-  handlePopulationSelect,
-}: SearchFiltersProps) {
+export function SearchFilters() {
+  const { filters, setFilters, handlePopulationSelect } = useFilters();
+
+  const handleRatingChange = (value: string) => {
+    const numValue = parseFloat(value);
+    if (!value) {
+      setFilters({ ...filters, averageRating: null });
+    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
+      setFilters({ ...filters, averageRating: numValue });
+    }
+  };
+
   return (
     <div className="space-y-3">
       {/* Search */}

@@ -2,13 +2,11 @@ import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
-import { RefObject } from "react";
+import { RefObject, useMemo } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
-import { useMemo } from "react";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
@@ -24,21 +22,11 @@ export const ResultsPanel = ({
   setIsResultsPanelCollapsed,
 }: ResultsPanelProps) => {
   const { visiblePlacesInView, numPrioritizedToShow } = useMap();
-  const { filters, setFilters, handlePopulationSelect } = useFilters();
 
   // Get paginated places from prioritized places
   const paginatedPlaces = useMemo(() => {
     return visiblePlacesInView.slice(0, numPrioritizedToShow);
   }, [visiblePlacesInView, numPrioritizedToShow]);
-
-  const handleRatingChange = (value: string) => {
-    const numValue = parseFloat(value);
-    if (!value) {
-      setFilters({ ...filters, averageRating: null });
-    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
-      setFilters({ ...filters, averageRating: numValue });
-    }
-  };
 
   return (
     <div className="relative flex">
@@ -75,12 +63,7 @@ export const ResultsPanel = ({
                 </div>
 
                 {/* Filters Section */}
-                <SearchFilters
-                  filters={filters}
-                  setFilters={setFilters}
-                  handleRatingChange={handleRatingChange}
-                  handlePopulationSelect={handlePopulationSelect}
-                />
+                <SearchFilters />
 
                 {/* Active Filters */}
                 <ActiveFilters />
