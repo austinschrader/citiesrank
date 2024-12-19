@@ -2,15 +2,15 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
+import { cn } from "@/lib/utils";
+import { Map, SplitSquareHorizontal } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapLegend } from "./MapLegend";
 import { ResultsPanel } from "./ResultsPanel";
-import { LayoutGrid, Map, SplitSquareHorizontal } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 15;
 
-type ViewMode = "list" | "split" | "map";
+type ViewMode = "split" | "map";
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
@@ -83,13 +83,16 @@ export const SplitExplorer = () => {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
+  useEffect(() => {
+    setIsResultsPanelCollapsed(viewMode === "map");
+  }, [viewMode]);
+
   const ViewModeToggle = () => (
     <div className="bg-background/95 backdrop-blur-sm border-b border-border/50 p-4">
       <div className="flex flex-col gap-4">
         <div className="flex justify-center">
           <div className="inline-flex rounded-lg p-1 bg-muted">
             {[
-              { mode: "list" as const, icon: LayoutGrid, label: "List view" },
               {
                 mode: "split" as const,
                 icon: SplitSquareHorizontal,
