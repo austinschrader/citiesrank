@@ -5,8 +5,12 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapLegend } from "./MapLegend";
 import { ResultsPanel } from "./ResultsPanel";
+import { LayoutGrid, Map, SplitSquareHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 15;
+
+type ViewMode = "list" | "split" | "map";
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
@@ -21,6 +25,7 @@ export const SplitExplorer = () => {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("split");
 
   // Get filtered places using context
   const filteredPlaces = useMemo(() => {
@@ -78,20 +83,59 @@ export const SplitExplorer = () => {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
+  const ViewModeToggle = () => (
+    <div className="bg-background/95 backdrop-blur-sm border-b border-border/50 p-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-center">
+          <div className="inline-flex rounded-lg p-1 bg-muted">
+            {[
+              { mode: "list" as const, icon: LayoutGrid, label: "List view" },
+              {
+                mode: "split" as const,
+                icon: SplitSquareHorizontal,
+                label: "Split view",
+              },
+              { mode: "map" as const, icon: Map, label: "Map view" },
+            ].map(({ mode, icon: Icon, label }) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-200",
+                  "text-sm font-medium",
+                  viewMode === mode
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                aria-label={label}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="capitalize">{mode}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="h-screen flex">
-      <ResultsPanel
-        isLoadingMore={isLoadingMore}
-        observerTarget={observerTarget}
-        isResultsPanelCollapsed={isResultsPanelCollapsed}
-        setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
-      />
-      <div className="flex-1 relative">
-        <MapLegend
-          isStatsMinimized={isStatsMinimized}
-          setIsStatsMinimized={setIsStatsMinimized}
+    <div className="h-screen flex flex-col">
+      <ViewModeToggle />
+      <div className="flex-1 flex">
+        <ResultsPanel
+          isLoadingMore={isLoadingMore}
+          observerTarget={observerTarget}
+          isResultsPanelCollapsed={isResultsPanelCollapsed}
+          setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
         />
-        <CityMap className="h-full" />
+        <div className="flex-1 relative">
+          <MapLegend
+            isStatsMinimized={isStatsMinimized}
+            setIsStatsMinimized={setIsStatsMinimized}
+          />
+          <CityMap className="h-full" />
+        </div>
       </div>
     </div>
   );
