@@ -33,13 +33,7 @@ export const Header = () => {
       to: "/",
       iconClass: "text-indigo-500",
     },
-    {
-      label: "Match",
-      icon: Compass,
-      to: "/explore",
-      description: "Filter by lifestyle, cost, climate & more",
-      iconClass: "text-emerald-500",
-    },
+
     {
       label: "Explorer",
       icon: Compass,
