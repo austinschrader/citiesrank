@@ -16,10 +16,12 @@ const populationCategories: { value: PopulationCategory; label: string; icon: st
 export function PopulationFilter() {
   const { filters, setFilters } = useFilters();
 
-  const handlePopulationSelect = (category: PopulationCategory) => {
+  const handleSelect = (category: PopulationCategory | null) => {
     setFilters({
-      populationCategory: filters.populationCategory === category ? null : category,
-      placeType: filters.populationCategory === category ? null : CitiesTypeOptions.city,
+      populationCategory: category,
+      activeTypes: category 
+        ? [CitiesTypeOptions.city]
+        : Object.values(CitiesTypeOptions),
     });
   };
 
@@ -28,7 +30,7 @@ export function PopulationFilter() {
       {populationCategories.map(({ value, label, icon }) => (
         <Button
           key={value}
-          onClick={() => handlePopulationSelect(value)}
+          onClick={() => handleSelect(value)}
           variant={filters.populationCategory === value ? "default" : "outline"}
           className="flex items-center gap-2 transition-all hover:scale-105"
           size="sm"
@@ -37,6 +39,15 @@ export function PopulationFilter() {
           <span>{label}</span>
         </Button>
       ))}
+      <Button
+        onClick={() => handleSelect(null)}
+        variant={filters.populationCategory === null ? "default" : "outline"}
+        className="flex items-center gap-2 transition-all hover:scale-105"
+        size="sm"
+      >
+        <span>🗺️</span>
+        <span>All</span>
+      </Button>
     </div>
   );
 }

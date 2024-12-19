@@ -1,4 +1,5 @@
 // file location: src/pages/places/PlaceDetailsPage.tsx
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -20,7 +21,6 @@ import { LocationMap } from "@/features/places/detail/shared/LocationMap";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import {
   CitiesResponse,
-  CitiesTypeOptions,
 } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import {
@@ -205,15 +205,14 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                     </h2>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                       <Select
-                        value={filters.placeType || "all"}
-                        onValueChange={(value) =>
-                          setFilter(
-                            "placeType",
-                            value === "all"
-                              ? null
-                              : (value as CitiesTypeOptions)
-                          )
-                        }
+                        value={filters.activeTypes.length === 1 ? filters.activeTypes[0] : "all"}
+                        onValueChange={(value: string) => {
+                          if (value === "all") {
+                            setFilter("activeTypes", Object.values(CitiesTypeOptions));
+                          } else {
+                            setFilter("activeTypes", [value as CitiesTypeOptions]);
+                          }
+                        }}
                       >
                         <SelectTrigger className="w-full sm:w-[140px]">
                           <SelectValue placeholder="All Types" />

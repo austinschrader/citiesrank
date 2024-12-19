@@ -143,6 +143,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         return {
           ...prev,
           populationCategory: null,
+          activeTypes: Object.values(CitiesTypeOptions),
         };
       }
     });

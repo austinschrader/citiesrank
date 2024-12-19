@@ -5,7 +5,7 @@
  */
 
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useEffect } from "react";
 import { useMap as useLeafletMap } from "react-leaflet";
 import { useMap } from "../context/MapContext";
 import { MapPlace } from "../types";
@@ -17,20 +17,24 @@ interface MapClusterProps {
 }
 
 export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
-  const { zoom, filterPlacesByZoom } = useMap();
+  const { zoom, filterPlacesByZoom, setMapBounds } = useMap();
   const { filters } = useFilters();
   const map = useLeafletMap();
-  const [mapPosition, setMapPosition] = useState(map.getCenter());
 
+  // Update map bounds when the map moves
   useEffect(() => {
     const onMoveEnd = () => {
-      setMapPosition(map.getCenter());
+      setMapBounds(map.getBounds());
     };
+    
+    // Set initial bounds
+    setMapBounds(map.getBounds());
+    
     map.on("moveend", onMoveEnd);
     return () => {
       map.off("moveend", onMoveEnd);
     };
-  }, [map]);
+  }, [map, setMapBounds]);
 
   const visiblePlaces = useMemo(() => {
     const bounds = map.getBounds();
@@ -43,14 +47,12 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
       });
 
     // Sort all places by average rating
-    const sorted = filtered.sort((a, b) => {
+    return filtered.sort((a, b) => {
       const ratingA = typeof a.averageRating === "number" ? a.averageRating : 0;
       const ratingB = typeof b.averageRating === "number" ? b.averageRating : 0;
       return ratingB - ratingA;
-    });
-
-    return sorted.slice(0, 40);
-  }, [places, zoom, filters, map, mapPosition, filterPlacesByZoom]);
+    }).slice(0, 40); // Limit to prevent performance issues
+  }, [places, zoom, filters, map, filterPlacesByZoom]);
 
   return (
     <>

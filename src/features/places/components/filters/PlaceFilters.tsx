@@ -15,6 +15,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { filterCategories } from "@/lib/data/places/filters/categories";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CategoryFilter } from "./CategoryFilter";
@@ -192,7 +193,7 @@ export const PlaceFilters = ({ variant }: PlaceFiltersProps) => {
   }, [user, showSignUpDialog]);
 
   const handleClearFilters = () => {
-    setFilter("placeType", null);
+    setFilter("activeTypes", Object.values(CitiesTypeOptions));
   };
 
   if (!variant) return null;
