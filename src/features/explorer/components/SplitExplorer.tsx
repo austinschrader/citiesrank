@@ -362,8 +362,8 @@ export const SplitExplorer = () => {
               
               {/* Active Filters Summary */}
               <div className={cn(
-                "flex gap-2 mt-2 flex-wrap transition-all duration-300",
-                isStatsMinimized ? "h-0 opacity-0" : "h-auto opacity-100"
+                "flex gap-2 mt-2 flex-wrap transition-all duration-150 overflow-hidden",
+                isStatsMinimized ? "max-h-0 opacity-0" : "max-h-24 opacity-100"
               )}>
                 {filters.averageRating && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
@@ -386,8 +386,8 @@ export const SplitExplorer = () => {
             
             {/* Type breakdown */}
             <div className={cn(
-              "transition-all duration-300 ease-in-out divide-y divide-border/50",
-              isStatsMinimized ? "h-0 opacity-0" : "opacity-100"
+              "transition-all duration-150 divide-y divide-border/50 overflow-hidden",
+              isStatsMinimized ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
             )}>
               {Object.entries(typeCounts).map(([type, count]) => count > 0 && (
                 <div 
