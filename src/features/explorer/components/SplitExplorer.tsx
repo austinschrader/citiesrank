@@ -187,9 +187,25 @@ export const SplitExplorer = () => {
   }, [hasMore, isLoadingMore, loadMore]);
 
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
+  const [isCitySizesExpanded, setIsCitySizesExpanded] = useState(false);
 
   // Colors from centralized config
   const typeColors = markerColors;
+  
+  const typeEmojis: Record<CitiesTypeOptions, string> = {
+    [CitiesTypeOptions.country]: '🌎',
+    [CitiesTypeOptions.region]: '🗺️',
+    [CitiesTypeOptions.city]: '🌆',
+    [CitiesTypeOptions.neighborhood]: '🏘️',
+    [CitiesTypeOptions.sight]: '🎯'
+  };
+
+  const citySizeEmojis: Record<PopulationCategory, string> = {
+    megacity: '🌇',
+    city: '🏙️',
+    town: '🏰',
+    village: '🏡'
+  };
 
   return (
     <div className="h-screen flex">
@@ -197,26 +213,6 @@ export const SplitExplorer = () => {
         <div className="shrink-0 p-4 border-b bg-card space-y-4">
           <h2 className="text-lg font-semibold">Discover Places</h2>
           
-          <div>
-            <div className="text-xs font-medium text-muted-foreground mb-2">Place Types</div>
-            <div className="flex flex-wrap gap-2">
-              {Object.values(CitiesTypeOptions).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => handleTypeClick(type)}
-                  className={cn(
-                    "px-4 py-2 rounded-full text-sm font-medium",
-                    activeTypes.includes(type)
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-accent"
-                  )}
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}s
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div>
             <div className="text-xs font-medium text-muted-foreground mb-2">Place Rating</div>
             <div className="flex items-baseline gap-2">
@@ -389,40 +385,132 @@ export const SplitExplorer = () => {
               "transition-all duration-150 divide-y divide-border/50 overflow-hidden",
               isStatsMinimized ? "max-h-0 opacity-0" : "max-h-[500px] opacity-100"
             )}>
-              {Object.entries(typeCounts).map(([type, count]) => count > 0 && (
-                <div 
-                  key={type}
-                  style={{ 
-                    '--marker-color': typeColors[type as keyof typeof typeColors]
-                  } as React.CSSProperties}
-                  className="px-5 py-3 flex items-center justify-between hover:bg-muted/50 transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full" style={{ 
-                      backgroundColor: 'var(--marker-color)',
-                      boxShadow: '0 0 0 2px var(--marker-color)'
-                    }} />
-                    <span className="text-sm font-medium capitalize" style={{ 
-                      color: 'var(--marker-color)'
-                    }}>
-                      {type}s
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium" style={{ 
-                      color: 'var(--marker-color)'
-                    }}>
-                      {count.toLocaleString()}
-                    </span>
-                    {mapBounds && typeCountsInView[type as CitiesTypeOptions] !== count && (
-                      <span className="text-xs" style={{ 
-                        color: 'var(--marker-color)',
-                        opacity: 0.8
-                      }}>
-                        ({typeCountsInView[type as CitiesTypeOptions]} in view)
-                      </span>
+              {Object.values(CitiesTypeOptions).map((type) => (
+                <div key={type}>
+                  <button 
+                    onClick={() => handleTypeClick(type)}
+                    style={{ 
+                      '--marker-color': typeColors[type as keyof typeof typeColors],
+                      backgroundColor: activeTypes.includes(type) 
+                        ? `${typeColors[type as keyof typeof typeColors]}15`
+                        : undefined
+                    } as React.CSSProperties}
+                    className={cn(
+                      "w-full px-5 py-3 flex items-center justify-between",
+                      "transition-all duration-200 ease-in-out",
+                      activeTypes.includes(type) 
+                        ? "hover:brightness-110" 
+                        : "hover:bg-accent/10",
+                      "cursor-pointer"
                     )}
-                  </div>
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "w-2 h-2 rounded-full transition-all duration-200",
+                        activeTypes.includes(type)
+                          ? "scale-125"
+                          : "opacity-40"
+                      )} style={{ 
+                        backgroundColor: 'var(--marker-color)',
+                        boxShadow: activeTypes.includes(type)
+                          ? '0 0 8px var(--marker-color)'
+                          : 'none'
+                      }} />
+                      <span className="text-lg mr-1" role="img" aria-label={`${type} emoji`}>
+                        {typeEmojis[type]}
+                      </span>
+                      <span className={cn(
+                        "text-sm font-medium capitalize transition-all duration-200",
+                      )} style={{
+                        color: activeTypes.includes(type)
+                          ? 'var(--marker-color)'
+                          : 'var(--muted-foreground)'
+                      }}>
+                        {type}s
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        "text-sm transition-all duration-200",
+                        activeTypes.includes(type)
+                          ? "font-semibold"
+                          : "font-medium text-muted-foreground"
+                      )} style={{
+                        color: activeTypes.includes(type)
+                          ? 'var(--marker-color)'
+                          : undefined
+                      }}>
+                        {typeCounts[type].toLocaleString()}
+                      </span>
+                      {mapBounds && typeCountsInView[type] !== typeCounts[type] && (
+                        <span className={cn(
+                          "text-xs transition-all duration-200",
+                          activeTypes.includes(type)
+                            ? "opacity-80"
+                            : "opacity-40"
+                        )} style={{
+                          color: activeTypes.includes(type)
+                            ? 'var(--marker-color)'
+                            : undefined
+                        }}>
+                          ({typeCountsInView[type]} in view)
+                        </span>
+                      )}
+                      {type === CitiesTypeOptions.city && activeTypes.includes(type) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsCitySizesExpanded(!isCitySizesExpanded);
+                          }}
+                          className="p-1 hover:bg-accent/50 rounded-full"
+                        >
+                          <ChevronUp
+                            className={cn(
+                              "w-4 h-4 transition-transform duration-200",
+                              !isCitySizesExpanded && "rotate-180"
+                            )}
+                            style={{
+                              color: activeTypes.includes(type)
+                                ? 'var(--marker-color)'
+                                : 'var(--muted-foreground)'
+                            }}
+                          />
+                        </button>
+                      )}
+                    </div>
+                  </button>
+                  
+                  {/* Nested City Size Filters */}
+                  {type === CitiesTypeOptions.city && activeTypes.includes(CitiesTypeOptions.city) && (
+                    <div className={cn(
+                      "divide-y divide-border/50 overflow-hidden transition-all duration-200",
+                      isCitySizesExpanded 
+                        ? "max-h-[200px] opacity-100" 
+                        : "max-h-0 opacity-0"
+                    )}>
+                      {(['megacity', 'city', 'town', 'village'] as const).map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => handlePopulationSelect(size as PopulationCategory)}
+                          className={cn(
+                            "w-full px-5 py-2 flex items-center justify-between",
+                            "transition-all duration-200 ease-in-out text-sm",
+                            "pl-7",
+                            filters.populationCategory === size
+                              ? "text-primary font-medium"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-base" role="img" aria-label={`${size} emoji`}>
+                              {citySizeEmojis[size as PopulationCategory]}
+                            </span>
+                            <span className="capitalize">{size}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
