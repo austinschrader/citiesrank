@@ -26,15 +26,6 @@ export const SplitExplorer = () => {
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
 
-  // Calculate active filter count
-  const activeFilterCount = useMemo(() => {
-    let count = 0;
-    if (filters.search) count++;
-    if (filters.averageRating) count++;
-    if (filters.populationCategory) count++;
-    return count;
-  }, [filters]);
-
   // Get filtered places using context
   const filteredPlaces = useMemo(() => {
     return getFilteredCities(cities, (city) => ({

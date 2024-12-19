@@ -44,6 +44,7 @@ interface FiltersContextValue {
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
   ) => (CitiesResponse & MatchScore)[];
+  getActiveFilterCount: () => number;
 }
 
 const DEFAULT_RATING = 4.6;
@@ -228,6 +229,16 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     [filters]
   );
 
+  const getActiveFilterCount = useCallback(() => {
+    let count = 0;
+    if (filters.search) count++;
+    if (filters.averageRating !== null) count++;
+    if (filters.populationCategory) count++;
+    // Check if not all types are selected
+    if (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length) count++;
+    return count;
+  }, [filters]);
+
   return (
     <FiltersContext.Provider
       value={{
@@ -238,6 +249,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         handleTypeClick,
         handlePopulationSelect,
         getFilteredCities,
+        getActiveFilterCount,
       }}
     >
       {children}

@@ -4,12 +4,9 @@
 import { Button } from "@/components/ui/button";
 import { useFilters } from "@/features/places/context/FiltersContext";
 
-interface ActiveFiltersProps {
-  activeFilterCount: number;
-}
-
-export function ActiveFilters({ activeFilterCount }: ActiveFiltersProps) {
-  const { filters, resetFilters } = useFilters();
+export function ActiveFilters() {
+  const { filters, resetFilters, getActiveFilterCount } = useFilters();
+  const activeFilterCount = getActiveFilterCount();
 
   if (activeFilterCount === 0) return null;
 

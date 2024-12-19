@@ -95,7 +95,8 @@ export const ResultsPanel = ({
                 />
 
                 {/* Active Filters */}
-                <ActiveFilters activeFilterCount={activeFilterCount} />
+                <ActiveFilters />
+
               </div>
 
               {/* Panel toggle button */}
