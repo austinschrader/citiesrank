@@ -60,6 +60,11 @@ export const ResultsPanel = ({
         >
           {/* Header Section with Flexbox Layout */}
           <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
+            {isLoadingMore && (
+              <div className="relative h-1 bg-muted overflow-hidden">
+                <div className="absolute inset-0 bg-primary/80 animate-loading-bar" />
+              </div>
+            )}
             <div className="p-4 flex justify-between items-start">
               <div className="space-y-4">
                 {/* Title and Results Count */}
@@ -122,9 +127,12 @@ export const ResultsPanel = ({
                   <span className="text-muted-foreground">places in view</span>
                 </div>
                 {isLoadingMore && (
-                  <span className="text-xs text-muted-foreground animate-pulse">
-                    Loading more...
-                  </span>
+                  <div className="flex items-center gap-2 bg-primary px-3 py-1.5 rounded-full">
+                    <div className="w-3 h-3 border-2 border-background border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm font-medium text-background">
+                      Loading more...
+                    </span>
+                  </div>
                 )}
               </div>
 
@@ -139,12 +147,13 @@ export const ResultsPanel = ({
               <div
                 ref={observerTarget}
                 className={cn(
-                  "h-16 flex items-center justify-center transition-opacity duration-200",
+                  "h-32 flex items-center justify-center transition-all duration-200",
                   isLoadingMore ? "opacity-100" : "opacity-0"
                 )}
               >
-                <div className="flex flex-col items-center gap-2">
-                  <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+                <div className="flex flex-col items-center gap-3 bg-primary px-6 py-4 rounded-xl">
+                  <div className="animate-spin h-10 w-10 border-[3px] border-background border-t-transparent rounded-full" />
+                  <span className="text-sm font-medium text-background animate-pulse">Loading more results...</span>
                 </div>
               </div>
             </div>
