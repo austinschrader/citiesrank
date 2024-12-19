@@ -384,7 +384,7 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
               <Button
                 variant={filters.activeTypes.length > 0 ? "default" : "outline"}
                 className={cn(
-                  "h-9 gap-2 w-[140px]",
+                  "h-9 gap-2 w-[180px]",
                   filters.activeTypes.length > 0 && "font-medium"
                 )}
               >
@@ -619,24 +619,6 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
             />
             <span className="text-sm text-muted-foreground">★</span>
           </div>
-
-          <select
-            value={filters.sort}
-            onChange={(e) =>
-              setFilters({
-                ...filters,
-                sort: e.target.value as SortOrder,
-              })
-            }
-            className="h-10 rounded-md border bg-background/60 px-3 py-1 text-sm w-[140px]"
-          >
-            <option value="match">Best Match</option>
-            <option value="popular">Most Popular</option>
-            <option value="alphabetical-asc">Name A to Z</option>
-            <option value="alphabetical-desc">Name Z to A</option>
-            <option value="cost-low">Cost: Low to High</option>
-            <option value="cost-high">Cost: High to Low</option>
-          </select>
         </div>
 
         {/* Active Filters */}
@@ -650,7 +632,30 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
           )}
         </div>
 
-        <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
+        {/* Right Side Controls */}
+        <div className="flex items-center gap-4">
+          <select
+            value={filters.sort}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                sort: e.target.value as SortOrder,
+              })
+            }
+            className="h-10 rounded-md border bg-background/60 px-3 py-1 text-sm w-[180px]"
+          >
+            <option value="match">Best Match</option>
+            <option value="popular">Most Popular</option>
+            <option value="alphabetical-asc">Name A to Z</option>
+            <option value="alphabetical-desc">Name Z to A</option>
+            <option value="cost-low">Cost: Low to High</option>
+            <option value="cost-high">Cost: High to Low</option>
+          </select>
+
+          <div className="h-6 w-px bg-border" />
+
+          <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
+        </div>
       </div>
     </div>
   );
