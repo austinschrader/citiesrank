@@ -1,17 +1,23 @@
-import { MapPlace } from "@/features/map/types";
+import { CityMap } from "@/features/map/components/CityMap";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ResultsPanel } from "./ResultsPanel";
 import { MapLegend } from "./MapLegend";
-import { CityMap } from "@/features/map/components/CityMap";
+import { ResultsPanel } from "./ResultsPanel";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 const DEFAULT_RATING = 4.6;
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const { filters, setFilters, handleTypeClick, handlePopulationSelect, resetFilters, getFilteredCities } = useFilters();
+  const {
+    filters,
+    setFilters,
+    handleTypeClick,
+    handlePopulationSelect,
+    resetFilters,
+    getFilteredCities,
+  } = useFilters();
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -145,7 +151,7 @@ export const SplitExplorer = () => {
             if (!filters.activeTypes.includes(place.type as any)) {
               setFilters({
                 ...filters,
-                activeTypes: [...filters.activeTypes, place.type as any]
+                activeTypes: [...filters.activeTypes, place.type as any],
               });
             }
           }}

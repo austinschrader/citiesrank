@@ -114,12 +114,12 @@ export const ResultsPanel = ({
               {/* Results count */}
               <div className="flex items-center justify-between text-sm px-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{filteredPlaces.length}</span>
-                  <span className="text-muted-foreground">places in view</span>
-                  <span className="text-muted-foreground">•</span>
                   <span className="text-muted-foreground">
                     {paginatedPlaces.length} loaded
                   </span>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="font-medium">{filteredPlaces.length}</span>
+                  <span className="text-muted-foreground">places in view</span>
                 </div>
                 {isLoadingMore && (
                   <span className="text-xs text-muted-foreground animate-pulse">
