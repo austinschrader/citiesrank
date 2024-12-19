@@ -26,7 +26,7 @@ interface MapContextValue extends MapState {
 }
 
 const DEFAULT_CENTER: LatLngTuple = [20, 0];
-const DEFAULT_ZOOM = 2;
+const DEFAULT_ZOOM = 3;
 
 export const MapContext = createContext<MapContextValue | null>(null);
 
