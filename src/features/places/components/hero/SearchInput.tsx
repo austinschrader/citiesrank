@@ -14,7 +14,7 @@ interface SearchInputProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setIsSearchFocused: (focused: boolean) => void;
-  handleSearch: (e: React.FormEvent) => void;
+  handleSearch: (e: React.FormEvent, selectedCity?: CitiesResponse) => void;
   currentType: CitiesTypeOptions;
 }
 
@@ -51,9 +51,12 @@ export const SearchInput = ({
             setIsSearchFocused(true);
             setShowSuggestions(true);
           }}
-          onBlur={() => {
-            setIsSearchFocused(false);
-            setShowSuggestions(false);
+          onBlur={(e) => {
+            // Use setTimeout to allow click events on suggestions to fire first
+            setTimeout(() => {
+              setIsSearchFocused(false);
+              setShowSuggestions(false);
+            }, 200);
           }}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -86,11 +89,14 @@ export const SearchInput = ({
                     className="w-full px-4 py-2 text-left hover:bg-gray-50 flex flex-col"
                     onClick={(e) => {
                       e.preventDefault();
-                      setSearchQuery(
-                        currentType === CitiesTypeOptions.country ? city.country : city.name
-                      );
+                      const selectedValue = currentType === CitiesTypeOptions.country ? city.country : city.name;
+                      setSearchQuery(selectedValue);
+                      handleSearch(e, city);
                       setShowSuggestions(false);
-                      handleSearch(e);
+                    }}
+                    onMouseDown={(e) => {
+                      // Prevent the input's onBlur from firing
+                      e.preventDefault();
                     }}
                   >
                     <div className="font-medium">
