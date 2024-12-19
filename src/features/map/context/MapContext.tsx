@@ -12,6 +12,14 @@ import { LatLngTuple } from "leaflet";
 import React, { createContext, useContext, useMemo, useState } from "react";
 import L from "leaflet";
 
+// Zoom level constants for place type visibility
+export const ZOOM_LEVELS = {
+  COUNTRY: 3,
+  REGION: 6,
+  CITY: 10,
+  NEIGHBORHOOD: 14,
+} as const;
+
 interface MapState {
   zoom: number;
   center: LatLngTuple;
@@ -28,6 +36,8 @@ interface MapContextValue extends MapState {
   setMapBounds: (bounds: L.LatLngBounds | null) => void;
   visiblePlaces: MapPlace[];
   setVisiblePlaces: (places: MapPlace[]) => void;
+  getVisiblePlaceTypes: (zoom: number) => CitiesTypeOptions[];
+  filterPlacesByZoom: (places: MapPlace[], zoom: number, populationCategoryActive?: boolean) => MapPlace[];
 }
 
 const DEFAULT_CENTER: LatLngTuple = [20, 0];
@@ -46,6 +56,36 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
 
+  // Get visible place types for current zoom level
+  const getVisiblePlaceTypes = (zoom: number): CitiesTypeOptions[] => {
+    if (zoom <= ZOOM_LEVELS.COUNTRY) {
+      return [CitiesTypeOptions.country];
+    } else if (zoom <= ZOOM_LEVELS.REGION) {
+      return [CitiesTypeOptions.country, CitiesTypeOptions.region];
+    } else if (zoom <= ZOOM_LEVELS.CITY) {
+      return [CitiesTypeOptions.region, CitiesTypeOptions.city];
+    } else if (zoom <= ZOOM_LEVELS.NEIGHBORHOOD) {
+      return [CitiesTypeOptions.city, CitiesTypeOptions.neighborhood];
+    } else {
+      return [CitiesTypeOptions.neighborhood, CitiesTypeOptions.sight];
+    }
+  };
+
+  // Filter places based on zoom level
+  const filterPlacesByZoom = (
+    places: MapPlace[], 
+    zoom: number, 
+    populationCategoryActive = false
+  ): MapPlace[] => {
+    const visibleTypes = getVisiblePlaceTypes(zoom);
+    return places.filter((place) => {
+      if (populationCategoryActive && place.type === CitiesTypeOptions.city) {
+        return true;
+      }
+      return visibleTypes.includes(place.type as CitiesTypeOptions);
+    });
+  };
+
   const value = useMemo(
     () => ({
       ...state,
@@ -53,6 +93,8 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       setMapBounds,
       visiblePlaces,
       setVisiblePlaces,
+      getVisiblePlaceTypes,
+      filterPlacesByZoom,
       setZoom: (zoom: number) => {
         setState((prev) => ({
           ...prev,
@@ -84,7 +126,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         });
       },
     }),
-    [state]
+    [state, mapBounds, visiblePlaces]
   );
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;

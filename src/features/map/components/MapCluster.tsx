@@ -17,7 +17,7 @@ interface MapClusterProps {
 }
 
 export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
-  const { zoom } = useMap();
+  const { zoom, filterPlacesByZoom } = useMap();
   const { filters } = useFilters();
   const map = useLeafletMap();
   const [mapPosition, setMapPosition] = useState(map.getCenter());
@@ -32,42 +32,15 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
     };
   }, [map]);
 
-  const filterPlacesByZoom = (places: MapPlace[], zoom: number): MapPlace[] => {
-    return places.filter((place) => {
-      // If population filter is active, always show cities regardless of zoom
-      if (filters.populationCategory && place.type === "city") {
-        return true;
-      }
-
-      // Otherwise apply normal zoom-based filtering
-      if (zoom <= 3) {
-        // World view - countries only
-        return place.type === "country";
-      } else if (zoom <= 6) {
-        // Continental view - countries and regions
-        return ["country", "region"].includes(place.type);
-      } else if (zoom <= 10) {
-        // Country view - regions and cities
-        return ["region", "city"].includes(place.type);
-      } else if (zoom <= 14) {
-        // Regional view - cities and neighborhoods
-        return ["city", "neighborhood"].includes(place.type);
-      } else {
-        // Local view - neighborhoods and sights
-        return ["neighborhood", "sight"].includes(place.type);
-      }
-    });
-  };
-
   const visiblePlaces = useMemo(() => {
     const bounds = map.getBounds();
 
-    const filtered = filterPlacesByZoom(places, zoom).filter((place) => {
-      if (!place.latitude || !place.longitude) return false;
-      if (!filters.activeTypes.includes(place.type as any)) return false;
-      // Check if place is within current map bounds
-      return bounds.contains([place.latitude, place.longitude]);
-    });
+    const filtered = filterPlacesByZoom(places, zoom, !!filters.populationCategory)
+      .filter((place) => {
+        if (!place.latitude || !place.longitude) return false;
+        if (!filters.activeTypes.includes(place.type as any)) return false;
+        return bounds.contains([place.latitude, place.longitude]);
+      });
 
     // Sort all places by average rating
     const sorted = filtered.sort((a, b) => {
@@ -77,7 +50,7 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
     });
 
     return sorted.slice(0, 40);
-  }, [places, zoom, filters, map, mapPosition]);
+  }, [places, zoom, filters, map, mapPosition, filterPlacesByZoom]);
 
   return (
     <>

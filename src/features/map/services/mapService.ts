@@ -4,6 +4,7 @@ import { LatLngTuple } from "leaflet";
 import { MapPlace } from "../types";
 import { getPlaceGeoJson } from "../utils/geoJsonUtils";
 import { calculateMapBounds } from "../utils/mapUtils";
+import { ZOOM_LEVELS } from "../context/MapContext";
 
 export class MapService {
   private static instance: MapService;
@@ -29,10 +30,10 @@ export class MapService {
   }
 
   getGeographicLevel(zoom: number): CitiesTypeOptions {
-    if (zoom <= 3) return CitiesTypeOptions.country;
-    if (zoom <= 6) return CitiesTypeOptions.region;
-    if (zoom <= 10) return CitiesTypeOptions.city;
-    if (zoom <= 14) return CitiesTypeOptions.neighborhood;
+    if (zoom <= ZOOM_LEVELS.COUNTRY) return CitiesTypeOptions.country;
+    if (zoom <= ZOOM_LEVELS.REGION) return CitiesTypeOptions.region;
+    if (zoom <= ZOOM_LEVELS.CITY) return CitiesTypeOptions.city;
+    if (zoom <= ZOOM_LEVELS.NEIGHBORHOOD) return CitiesTypeOptions.neighborhood;
     return CitiesTypeOptions.sight;
   }
 }
