@@ -29,12 +29,25 @@ export const ResultsPanel = ({
   const { getFilteredCities } = useFilters();
   const { prioritizedPlaces, visiblePlacesInView } = useMap();
 
+  // Get all filtered places for total count
+  const allFilteredPlaces = getFilteredCities(cities, () => ({
+    matchScore: 1,
+    attributeMatches: {
+      budget: 1,
+      crowds: 1,
+      tripLength: 1,
+      season: 1,
+      transit: 1,
+      accessibility: 1
+    }
+  }));
+
   // Use different data source based on view mode
   const displayPlaces = viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
 
   // Get the correct total count based on view mode
-  const totalPlaces = viewMode === "list" ? paginatedFilteredPlaces.length : visiblePlacesInView.length;
-  const placesInView = viewMode === "list" ? paginatedFilteredPlaces.length : visiblePlacesInView.length;
+  const totalPlaces = viewMode === "list" ? allFilteredPlaces.length : visiblePlacesInView.length;
+  const placesInView = viewMode === "list" ? totalPlaces : visiblePlacesInView.length;
 
   return (
     <div className="h-full flex">
@@ -66,7 +79,7 @@ export const ResultsPanel = ({
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold">Discover Places</h2>
                   <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                    {displayPlaces.length}
+                    {viewMode === "list" ? totalPlaces : displayPlaces.length}
                   </div>
                 </div>
 
