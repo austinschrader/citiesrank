@@ -134,8 +134,16 @@ export const MapLegend = ({
         >
           {Object.values(CitiesTypeOptions).map((type) => (
             <div key={type}>
-              <button
+              <div
                 onClick={() => handleTypeClick(type)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleTypeClick(type);
+                  }
+                }}
                 style={
                   {
                     "--marker-color": markerColors[type as keyof typeof markerColors],
@@ -240,7 +248,7 @@ export const MapLegend = ({
                       </button>
                     )}
                 </div>
-              </button>
+              </div>
 
               {/* Nested City Size Filters */}
               {type === CitiesTypeOptions.city &&
@@ -255,11 +263,19 @@ export const MapLegend = ({
                   >
                     {(["megacity", "city", "town", "village"] as const).map(
                       (size) => (
-                        <button
+                        <div
                           key={size}
                           onClick={() =>
                             handlePopulationSelect(size as PopulationCategory)
                           }
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              handlePopulationSelect(size as PopulationCategory);
+                            }
+                          }}
                           className={cn(
                             "w-full px-5 py-2 flex items-center justify-between",
                             "transition-all duration-200 ease-in-out text-sm",
@@ -291,7 +307,7 @@ export const MapLegend = ({
                             </span>
                             <span className="capitalize">{size}</span>
                           </div>
-                        </button>
+                        </div>
                       )
                     )}
                   </div>

@@ -17,7 +17,7 @@ interface MapClusterProps {
 }
 
 export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
-  const { zoom, filterPlacesByZoom, setMapBounds } = useMap();
+  const { zoom, setMapBounds, setVisiblePlaces, visiblePlacesInView, numPrioritizedToShow } = useMap();
   const { filters } = useFilters();
   const map = useLeafletMap();
 
@@ -36,27 +36,20 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
     };
   }, [map, setMapBounds]);
 
-  const visiblePlaces = useMemo(() => {
-    const bounds = map.getBounds();
+  // Update visible places when places prop changes
+  useEffect(() => {
+    setVisiblePlaces(places);
+  }, [places, setVisiblePlaces]);
 
-    const filtered = filterPlacesByZoom(places, zoom, !!filters.populationCategory)
-      .filter((place) => {
-        if (!place.latitude || !place.longitude) return false;
-        if (!filters.activeTypes.includes(place.type as any)) return false;
-        return bounds.contains([place.latitude, place.longitude]);
-      });
-
-    // Sort all places by average rating
-    return filtered.sort((a, b) => {
-      const ratingA = typeof a.averageRating === "number" ? a.averageRating : 0;
-      const ratingB = typeof b.averageRating === "number" ? b.averageRating : 0;
-      return ratingB - ratingA;
-    }).slice(0, 40); // Limit to prevent performance issues
-  }, [places, zoom, filters, map, filterPlacesByZoom]);
+  // Get the prioritized places to show on map
+  const placesToShow = useMemo(() => {
+    if (!visiblePlacesInView) return [];
+    return visiblePlacesInView.slice(0, numPrioritizedToShow);
+  }, [visiblePlacesInView, numPrioritizedToShow]);
 
   return (
     <>
-      {visiblePlaces.map((place) => (
+      {placesToShow.map((place: MapPlace) => (
         <MapMarker
           key={place.id}
           place={place}

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { PopulationCategory } from "@/features/places/context/FiltersContext";
@@ -41,6 +42,8 @@ export const ResultsPanel = ({
   isResultsPanelCollapsed,
   setIsResultsPanelCollapsed,
 }: ResultsPanelProps) => {
+  const { visiblePlacesInView } = useMap();
+
   return (
     <div className="relative flex">
       <div
@@ -71,7 +74,7 @@ export const ResultsPanel = ({
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold">Discover Places</h2>
                   <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                    {filteredPlaces.length}
+                    {visiblePlacesInView.length}
                   </div>
                 </div>
 
@@ -123,7 +126,9 @@ export const ResultsPanel = ({
                     {paginatedPlaces.length} loaded
                   </span>
                   <span className="text-muted-foreground">•</span>
-                  <span className="font-medium">{filteredPlaces.length}</span>
+                  <span className="font-medium">
+                    {visiblePlacesInView.length}
+                  </span>
                   <span className="text-muted-foreground">places in view</span>
                 </div>
                 {isLoadingMore && (
@@ -138,7 +143,7 @@ export const ResultsPanel = ({
 
               {/* Grid of cards */}
               <div className="grid grid-cols-2 gap-6 auto-rows-[minmax(min-content,max-content)]">
-                {paginatedPlaces.map((place) => (
+                {paginatedPlaces.map((place: MapPlace) => (
                   <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}
               </div>
@@ -148,12 +153,14 @@ export const ResultsPanel = ({
                 ref={observerTarget}
                 className={cn(
                   "h-32 flex items-center justify-center transition-all duration-200",
-                  isLoadingMore ? "opacity-100" : "opacity-0"
+                  isLoadingMore && paginatedPlaces.length < visiblePlacesInView.length ? "opacity-100" : "opacity-0"
                 )}
               >
                 <div className="flex flex-col items-center gap-3 bg-primary px-6 py-4 rounded-xl">
                   <div className="animate-spin h-10 w-10 border-[3px] border-background border-t-transparent rounded-full" />
-                  <span className="text-sm font-medium text-background animate-pulse">Loading more results...</span>
+                  <span className="text-sm font-medium text-background animate-pulse">
+                    Loading more results...
+                  </span>
                 </div>
               </div>
             </div>

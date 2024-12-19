@@ -1,11 +1,12 @@
 import { CityMap } from "@/features/map/components/CityMap";
+import { useMap } from "@/features/map/context/MapContext"; 
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapLegend } from "./MapLegend";
 import { ResultsPanel } from "./ResultsPanel";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 15;
 const DEFAULT_RATING = 4.6;
 
 export const SplitExplorer = () => {
@@ -18,8 +19,8 @@ export const SplitExplorer = () => {
     resetFilters,
     getFilteredCities,
   } = useFilters();
+  const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow } = useMap();
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
-  const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
@@ -49,49 +50,40 @@ export const SplitExplorer = () => {
     }));
   }, [cities, getFilteredCities]);
 
-  // Calculate places in current view
-  const placesInView = useMemo(() => {
-    if (!mapBounds) return filteredPlaces;
-    return filteredPlaces.filter((place) => {
-      if (!place.latitude || !place.longitude) return false;
-      return mapBounds.contains([place.latitude, place.longitude]);
-    });
-  }, [filteredPlaces, mapBounds]);
-
-  // Get paginated places
+  // Get paginated places from prioritized places
   const paginatedPlaces = useMemo(() => {
-    return placesInView.slice(0, page * ITEMS_PER_PAGE);
-  }, [placesInView, page]);
+    return visiblePlacesInView.slice(0, numPrioritizedToShow);
+  }, [visiblePlacesInView, numPrioritizedToShow]);
 
   const hasMore = useCallback(() => {
-    return paginatedPlaces.length < placesInView.length;
-  }, [paginatedPlaces.length, placesInView.length]);
+    return numPrioritizedToShow < visiblePlacesInView.length;
+  }, [numPrioritizedToShow, visiblePlacesInView.length]);
 
   const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
 
     setIsLoadingMore(true);
     setTimeout(() => {
-      setPage((p) => p + 1);
+      setNumPrioritizedToShow((prev) => prev + ITEMS_PER_PAGE);
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore]);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, ITEMS_PER_PAGE]);
 
-  const handleRatingChange = (value: string) => {
+  const handleRatingChange = useCallback((value: string) => {
     const numValue = parseFloat(value);
     if (!value) {
-      setFilters({ averageRating: null });
+      setFilters({ ...filters, averageRating: null });
     } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
-      setFilters({ averageRating: numValue });
+      setFilters({ ...filters, averageRating: numValue });
     }
-  };
+  }, [filters, setFilters]);
 
   // Set default rating on mount
   useEffect(() => {
     if (filters.averageRating === null) {
-      setFilters({ averageRating: DEFAULT_RATING });
+      setFilters({ ...filters, averageRating: DEFAULT_RATING });
     }
-  }, []);
+  }, [filters, setFilters]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -118,7 +110,7 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex">
       <ResultsPanel
-        filteredPlaces={placesInView}
+        filteredPlaces={visiblePlacesInView}
         paginatedPlaces={paginatedPlaces}
         filters={filters}
         setFilters={setFilters}
@@ -134,7 +126,7 @@ export const SplitExplorer = () => {
       <div className="flex-1 relative">
         <MapLegend
           filteredPlaces={filteredPlaces}
-          placesInView={placesInView}
+          placesInView={visiblePlacesInView}
           mapBounds={mapBounds}
           filters={filters}
           activeTypes={filters.activeTypes}
@@ -147,7 +139,6 @@ export const SplitExplorer = () => {
           places={filteredPlaces}
           onBoundsChange={setMapBounds}
           onPlaceSelect={(place) => {
-            // When a place is selected, ensure its type is included in activeTypes
             if (!filters.activeTypes.includes(place.type as any)) {
               setFilters({
                 ...filters,
