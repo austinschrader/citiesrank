@@ -73,30 +73,9 @@ export const ResultsPanel = ({
                 <div className="absolute inset-0 bg-primary/80 animate-loading-bar" />
               </div>
             )}
-            <div className="p-4 flex justify-between items-start">
-              <div className="space-y-4">
-                {/* Title and Results Count */}
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold">Discover Places</h2>
-                  <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                    {viewMode === "list" ? totalPlaces : displayPlaces.length}
-                  </div>
-                </div>
-
-                {/* Filters Section */}
-                <SearchFilters />
-
-                {/* Active Filters */}
-                <ActiveFilters />
-              </div>
-            </div>
-          </div>
-
-          {/* Results Grid */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="p-4 space-y-6">
+            <div className="p-4">
               {/* Results count */}
-              <div className="flex items-center justify-between text-sm px-1">
+              <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">
                     {displayPlaces.length} loaded
@@ -116,7 +95,12 @@ export const ResultsPanel = ({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
 
+          {/* Results Grid */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="p-4 space-y-6">
               {/* Grid of cards */}
               <div
                 className={cn(
