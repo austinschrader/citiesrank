@@ -2,22 +2,14 @@
 // Handles search, rating, and population filters for the ResultsPanel
 
 import { Input } from "@/components/ui/input";
-import { PopulationCategory } from "@/features/places/context/FiltersContext";
+import {
+  PopulationCategory,
+  useFilters,
+} from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { markerColors } from "@/lib/utils/colors";
 import { Star } from "lucide-react";
-
-interface SearchFiltersProps {
-  filters: {
-    search: string;
-    averageRating: number | null;
-    populationCategory: PopulationCategory | null;
-  };
-  setFilters: (filters: any) => void;
-  handleRatingChange: (value: string) => void;
-  handlePopulationSelect: (category: PopulationCategory | null) => void;
-}
 
 const citySizeEmojis: Record<PopulationCategory, string> = {
   megacity: "🌇",
@@ -26,12 +18,10 @@ const citySizeEmojis: Record<PopulationCategory, string> = {
   village: "🏡",
 };
 
-export function SearchFilters({
-  filters,
-  setFilters,
-  handleRatingChange,
-  handlePopulationSelect,
-}: SearchFiltersProps) {
+export function SearchFilters() {
+  const { filters, setFilters, handlePopulationSelect, handleRatingChange } =
+    useFilters();
+
   return (
     <div className="space-y-3">
       {/* Search */}
@@ -63,13 +53,23 @@ export function SearchFilters({
       <div className="grid grid-cols-2 gap-3">
         {/* Rating Filter */}
         <div className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Rating</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            Rating
+          </span>
           <div className="inline-flex items-center gap-1 bg-muted/50 rounded-md px-2">
             <Star className="h-3.5 w-3.5 text-muted-foreground fill-muted-foreground" />
             <Input
               type="number"
               value={filters.averageRating ?? ""}
-              onChange={(e) => handleRatingChange(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                const numValue = parseFloat(value);
+                if (!value) {
+                  handleRatingChange(null);
+                } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
+                  handleRatingChange(numValue);
+                }
+              }}
               className="w-12 h-7 text-center bg-transparent border-0 p-0 focus-visible:ring-0"
               min="0"
               max="5"
@@ -82,7 +82,9 @@ export function SearchFilters({
 
         {/* City Size Filter */}
         <div className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Size</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            Size
+          </span>
           <div className="flex flex-wrap gap-1">
             {Object.entries({
               village: { emoji: "🏘️", label: "Village" },
@@ -121,7 +123,11 @@ export function SearchFilters({
                       backgroundColor: markerColors[CitiesTypeOptions.city],
                     }}
                   />
-                  <span className="text-base" role="img" aria-label={`${size} emoji`}>
+                  <span
+                    className="text-base"
+                    role="img"
+                    aria-label={`${size} emoji`}
+                  >
                     {citySizeEmojis[size as PopulationCategory]}
                   </span>
                   <span className="capitalize">{size}</span>

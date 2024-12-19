@@ -1,24 +1,18 @@
+import { useMap } from "@/features/map/context/MapContext";
+import { useCities } from "@/features/places/context/CitiesContext";
+import {
+  PopulationCategory,
+  useFilters,
+} from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { markerColors } from "@/lib/utils/colors";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
-import { PopulationCategory } from "@/features/places/context/FiltersContext";
-import { MapPlace } from "@/features/map/types";
 import { useState } from "react";
 
 interface MapLegendProps {
-  filteredPlaces: MapPlace[];
-  placesInView: MapPlace[];
-  mapBounds: L.LatLngBounds | null;
-  filters: {
-    averageRating: number | null;
-    populationCategory: PopulationCategory | null;
-  };
-  activeTypes: CitiesTypeOptions[];
   isStatsMinimized: boolean;
   setIsStatsMinimized: (value: boolean) => void;
-  handleTypeClick: (type: CitiesTypeOptions) => void;
-  handlePopulationSelect: (category: PopulationCategory | null) => void;
 }
 
 const citySizeEmojis: Record<PopulationCategory, string> = {
@@ -37,33 +31,19 @@ const typeEmojis: Record<CitiesTypeOptions, string> = {
 };
 
 export const MapLegend = ({
-  filteredPlaces,
-  placesInView,
-  mapBounds,
-  filters,
-  activeTypes,
   isStatsMinimized,
   setIsStatsMinimized,
-  handleTypeClick,
-  handlePopulationSelect,
 }: MapLegendProps) => {
   const [isCitySizesExpanded, setIsCitySizesExpanded] = useState(false);
+  const { visiblePlacesInView: placesInView } = useMap();
+  const { cities: filteredPlaces } = useCities();
+  const { filters, handleTypeClick, handlePopulationSelect, getTypeCounts } =
+    useFilters();
+  const { mapBounds } = useMap();
 
   // Calculate counts by type
-  const typeCounts = Object.values(CitiesTypeOptions).reduce((acc, type) => {
-    acc[type] = filteredPlaces.filter(
-      (place) => place.type === type
-    ).length;
-    return acc;
-  }, {} as Record<CitiesTypeOptions, number>);
-
-  // Calculate type counts for places in view
-  const typeCountsInView = Object.values(CitiesTypeOptions).reduce((acc, type) => {
-    acc[type] = placesInView.filter(
-      (place) => place.type === type
-    ).length;
-    return acc;
-  }, {} as Record<CitiesTypeOptions, number>);
+  const typeCounts = getTypeCounts(filteredPlaces);
+  const typeCountsInView = getTypeCounts(placesInView);
 
   return (
     <div className="absolute left-4 top-4 z-10">
@@ -117,9 +97,10 @@ export const MapLegend = ({
                   filters.populationCategory.slice(1)}
               </span>
             )}
-            {activeTypes.length !== Object.values(CitiesTypeOptions).length && (
+            {filters.activeTypes.length !==
+              Object.values(CitiesTypeOptions).length && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                {activeTypes.length} types
+                {filters.activeTypes.length} types
               </span>
             )}
           </div>
@@ -134,12 +115,21 @@ export const MapLegend = ({
         >
           {Object.values(CitiesTypeOptions).map((type) => (
             <div key={type}>
-              <button
+              <div
                 onClick={() => handleTypeClick(type)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleTypeClick(type);
+                  }
+                }}
                 style={
                   {
-                    "--marker-color": markerColors[type as keyof typeof markerColors],
-                    backgroundColor: activeTypes.includes(type)
+                    "--marker-color":
+                      markerColors[type as keyof typeof markerColors],
+                    backgroundColor: filters.activeTypes.includes(type)
                       ? `${markerColors[type as keyof typeof markerColors]}15`
                       : undefined,
                   } as React.CSSProperties
@@ -147,7 +137,7 @@ export const MapLegend = ({
                 className={cn(
                   "w-full px-5 py-3 flex items-center justify-between",
                   "transition-all duration-200 ease-in-out",
-                  activeTypes.includes(type)
+                  filters.activeTypes.includes(type)
                     ? "hover:brightness-110"
                     : "hover:bg-accent/10",
                   "cursor-pointer"
@@ -157,11 +147,13 @@ export const MapLegend = ({
                   <div
                     className={cn(
                       "w-2 h-2 rounded-full transition-all duration-200",
-                      activeTypes.includes(type) ? "scale-125" : "opacity-40"
+                      filters.activeTypes.includes(type)
+                        ? "scale-125"
+                        : "opacity-40"
                     )}
                     style={{
                       backgroundColor: "var(--marker-color)",
-                      boxShadow: activeTypes.includes(type)
+                      boxShadow: filters.activeTypes.includes(type)
                         ? "0 0 8px var(--marker-color)"
                         : "none",
                     }}
@@ -178,7 +170,7 @@ export const MapLegend = ({
                       "text-sm font-medium capitalize transition-all duration-200"
                     )}
                     style={{
-                      color: activeTypes.includes(type)
+                      color: filters.activeTypes.includes(type)
                         ? "var(--marker-color)"
                         : "var(--muted-foreground)",
                     }}
@@ -190,12 +182,12 @@ export const MapLegend = ({
                   <span
                     className={cn(
                       "text-sm transition-all duration-200",
-                      activeTypes.includes(type)
+                      filters.activeTypes.includes(type)
                         ? "font-semibold"
                         : "font-medium text-muted-foreground"
                     )}
                     style={{
-                      color: activeTypes.includes(type)
+                      color: filters.activeTypes.includes(type)
                         ? "var(--marker-color)"
                         : undefined,
                     }}
@@ -206,10 +198,12 @@ export const MapLegend = ({
                     <span
                       className={cn(
                         "text-xs transition-all duration-200",
-                        activeTypes.includes(type) ? "opacity-80" : "opacity-40"
+                        filters.activeTypes.includes(type)
+                          ? "opacity-80"
+                          : "opacity-40"
                       )}
                       style={{
-                        color: activeTypes.includes(type)
+                        color: filters.activeTypes.includes(type)
                           ? "var(--marker-color)"
                           : undefined,
                       }}
@@ -218,7 +212,7 @@ export const MapLegend = ({
                     </span>
                   )}
                   {type === CitiesTypeOptions.city &&
-                    activeTypes.includes(type) && (
+                    filters.activeTypes.includes(type) && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -232,7 +226,7 @@ export const MapLegend = ({
                             !isCitySizesExpanded && "rotate-180"
                           )}
                           style={{
-                            color: activeTypes.includes(type)
+                            color: filters.activeTypes.includes(type)
                               ? "var(--marker-color)"
                               : "var(--muted-foreground)",
                           }}
@@ -240,11 +234,11 @@ export const MapLegend = ({
                       </button>
                     )}
                 </div>
-              </button>
+              </div>
 
               {/* Nested City Size Filters */}
               {type === CitiesTypeOptions.city &&
-                activeTypes.includes(CitiesTypeOptions.city) && (
+                filters.activeTypes.includes(CitiesTypeOptions.city) && (
                   <div
                     className={cn(
                       "divide-y divide-border/50 overflow-hidden transition-all duration-200",
@@ -255,11 +249,21 @@ export const MapLegend = ({
                   >
                     {(["megacity", "city", "town", "village"] as const).map(
                       (size) => (
-                        <button
+                        <div
                           key={size}
                           onClick={() =>
                             handlePopulationSelect(size as PopulationCategory)
                           }
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handlePopulationSelect(
+                                size as PopulationCategory
+                              );
+                            }
+                          }}
                           className={cn(
                             "w-full px-5 py-2 flex items-center justify-between",
                             "transition-all duration-200 ease-in-out text-sm",
@@ -291,7 +295,7 @@ export const MapLegend = ({
                             </span>
                             <span className="capitalize">{size}</span>
                           </div>
-                        </button>
+                        </div>
                       )
                     )}
                   </div>

@@ -13,7 +13,10 @@ import { ResultsGrid } from "@/features/places/components/results/ResultsGrid";
 import { MobileSearch } from "@/features/places/components/search/components/MobileSearch";
 import { MobileSearchBar } from "@/features/places/components/search/MobileSearchBar";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters, SortOrder } from "@/features/places/context/FiltersContext";
+import {
+  SortOrder,
+  useFilters,
+} from "@/features/places/context/FiltersContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
@@ -22,8 +25,7 @@ import { List, MapPin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
-  const { preferences, setPreferences, calculateMatchForCity } =
-    usePreferences();
+  const { calculateMatchForCity } = usePreferences();
   const { filters, setFilter, getFilteredCities } = useFilters();
   const {
     cities,
@@ -32,7 +34,6 @@ export const PlacesPage = () => {
 
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [isMobileSearchActive, setIsMobileSearchActive] = useState(false);
-  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Get filtered cities with match scores
@@ -73,12 +74,6 @@ export const PlacesPage = () => {
       searchInputRef.current.focus();
     }
   }, [isMobileSearchActive]);
-
-  const getCurrentLevelData = () => {
-    return filteredCities.filter(
-      (city) => city.latitude != null && city.longitude != null
-    );
-  };
 
   const handleCitySelect = (city: any) => {
     setFilter("search", city.name);
@@ -125,9 +120,7 @@ export const PlacesPage = () => {
           <div className="flex items-center gap-3 ml-auto relative z-[100]">
             <Select
               value={filters.sort}
-              onValueChange={(value: SortOrder) =>
-                setFilter("sort", value)
-              }
+              onValueChange={(value: SortOrder) => setFilter("sort", value)}
             >
               <SelectTrigger className="w-[120px] bg-background/50 backdrop-blur-sm">
                 <SelectValue>
@@ -194,11 +187,7 @@ export const PlacesPage = () => {
         {/* Results */}
         <div className="space-y-8">
           {viewMode === "map" ? (
-            <CityMap
-              places={getCurrentLevelData()}
-              onPlaceSelect={handleCitySelect}
-              className="h-[calc(100vh-10rem)] rounded-lg overflow-hidden shadow-lg"
-            />
+            <CityMap className="h-[calc(100vh-10rem)] rounded-lg overflow-hidden shadow-lg" />
           ) : (
             <ResultsGrid
               cities={getPaginatedData()}

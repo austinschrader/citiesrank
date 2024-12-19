@@ -1,32 +1,26 @@
-import { MapPlace } from "@/features/map/types";
+import { CityMap } from "@/features/map/components/CityMap";
+import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ResultsPanel } from "./ResultsPanel";
 import { MapLegend } from "./MapLegend";
-import { CityMap } from "@/features/map/components/CityMap";
+import { ResultsPanel } from "./ResultsPanel";
 
-const ITEMS_PER_PAGE = 12;
-const DEFAULT_RATING = 4.6;
+const ITEMS_PER_PAGE = 15;
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const { filters, setFilters, handleTypeClick, handlePopulationSelect, resetFilters, getFilteredCities } = useFilters();
-  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
-  const [page, setPage] = useState(1);
+  const { getFilteredCities } = useFilters();
+  const {
+    visiblePlacesInView,
+    numPrioritizedToShow,
+    setNumPrioritizedToShow,
+    setVisiblePlaces,
+  } = useMap();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
-
-  // Calculate active filter count
-  const activeFilterCount = useMemo(() => {
-    let count = 0;
-    if (filters.search) count++;
-    if (filters.averageRating) count++;
-    if (filters.populationCategory) count++;
-    return count;
-  }, [filters]);
 
   // Get filtered places using context
   const filteredPlaces = useMemo(() => {
@@ -43,49 +37,24 @@ export const SplitExplorer = () => {
     }));
   }, [cities, getFilteredCities]);
 
-  // Calculate places in current view
-  const placesInView = useMemo(() => {
-    if (!mapBounds) return filteredPlaces;
-    return filteredPlaces.filter((place) => {
-      if (!place.latitude || !place.longitude) return false;
-      return mapBounds.contains([place.latitude, place.longitude]);
-    });
-  }, [filteredPlaces, mapBounds]);
-
-  // Get paginated places
-  const paginatedPlaces = useMemo(() => {
-    return placesInView.slice(0, page * ITEMS_PER_PAGE);
-  }, [placesInView, page]);
+  // Update visible places in map context
+  useEffect(() => {
+    setVisiblePlaces(filteredPlaces);
+  }, [filteredPlaces, setVisiblePlaces]);
 
   const hasMore = useCallback(() => {
-    return paginatedPlaces.length < placesInView.length;
-  }, [paginatedPlaces.length, placesInView.length]);
+    return numPrioritizedToShow < visiblePlacesInView.length;
+  }, [numPrioritizedToShow, visiblePlacesInView.length]);
 
   const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
 
     setIsLoadingMore(true);
     setTimeout(() => {
-      setPage((p) => p + 1);
+      setNumPrioritizedToShow((prev) => prev + ITEMS_PER_PAGE);
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore]);
-
-  const handleRatingChange = (value: string) => {
-    const numValue = parseFloat(value);
-    if (!value) {
-      setFilters({ averageRating: null });
-    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
-      setFilters({ averageRating: numValue });
-    }
-  };
-
-  // Set default rating on mount
-  useEffect(() => {
-    if (filters.averageRating === null) {
-      setFilters({ averageRating: DEFAULT_RATING });
-    }
-  }, []);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -112,14 +81,6 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex">
       <ResultsPanel
-        filteredPlaces={placesInView}
-        paginatedPlaces={paginatedPlaces}
-        filters={filters}
-        setFilters={setFilters}
-        activeFilterCount={activeFilterCount}
-        clearAllFilters={resetFilters}
-        handleRatingChange={handleRatingChange}
-        handlePopulationSelect={handlePopulationSelect}
         isLoadingMore={isLoadingMore}
         observerTarget={observerTarget}
         isResultsPanelCollapsed={isResultsPanelCollapsed}
@@ -127,30 +88,10 @@ export const SplitExplorer = () => {
       />
       <div className="flex-1 relative">
         <MapLegend
-          filteredPlaces={filteredPlaces}
-          placesInView={placesInView}
-          mapBounds={mapBounds}
-          filters={filters}
-          activeTypes={filters.activeTypes}
           isStatsMinimized={isStatsMinimized}
           setIsStatsMinimized={setIsStatsMinimized}
-          handleTypeClick={handleTypeClick}
-          handlePopulationSelect={handlePopulationSelect}
         />
-        <CityMap
-          places={filteredPlaces}
-          onBoundsChange={setMapBounds}
-          onPlaceSelect={(place) => {
-            // When a place is selected, ensure its type is included in activeTypes
-            if (!filters.activeTypes.includes(place.type as any)) {
-              setFilters({
-                ...filters,
-                activeTypes: [...filters.activeTypes, place.type as any]
-              });
-            }
-          }}
-          className="h-full w-full"
-        />
+        <CityMap className="h-full" />
       </div>
     </div>
   );

@@ -4,21 +4,22 @@
  * based on zoom level. Integrates with existing FiltersContext for filtering.
  */
 
-import { useFilters } from "@/features/places/context/FiltersContext";
-import { useMemo, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useMap as useLeafletMap } from "react-leaflet";
 import { useMap } from "../context/MapContext";
 import { MapPlace } from "../types";
 import { MapMarker } from "./MapMarker";
 
-interface MapClusterProps {
-  places: MapPlace[];
-  onPlaceSelect?: (place: MapPlace) => void;
-}
+interface MapClusterProps {}
 
-export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
-  const { zoom, filterPlacesByZoom, setMapBounds } = useMap();
-  const { filters } = useFilters();
+export const MapCluster = ({}: MapClusterProps) => {
+  const {
+    setMapBounds,
+    setVisiblePlaces,
+    visiblePlaces,
+    prioritizedPlaces,
+    selectPlace,
+  } = useMap();
   const map = useLeafletMap();
 
   // Update map bounds when the map moves
@@ -26,43 +27,25 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
     const onMoveEnd = () => {
       setMapBounds(map.getBounds());
     };
-    
+
     // Set initial bounds
     setMapBounds(map.getBounds());
-    
+
     map.on("moveend", onMoveEnd);
     return () => {
       map.off("moveend", onMoveEnd);
     };
   }, [map, setMapBounds]);
 
-  const visiblePlaces = useMemo(() => {
-    const bounds = map.getBounds();
-
-    const filtered = filterPlacesByZoom(places, zoom, !!filters.populationCategory)
-      .filter((place) => {
-        if (!place.latitude || !place.longitude) return false;
-        if (!filters.activeTypes.includes(place.type as any)) return false;
-        return bounds.contains([place.latitude, place.longitude]);
-      });
-
-    // Sort all places by average rating
-    return filtered.sort((a, b) => {
-      const ratingA = typeof a.averageRating === "number" ? a.averageRating : 0;
-      const ratingB = typeof b.averageRating === "number" ? b.averageRating : 0;
-      return ratingB - ratingA;
-    }).slice(0, 40); // Limit to prevent performance issues
-  }, [places, zoom, filters, map, filterPlacesByZoom]);
+  // Update visible places when visiblePlaces changes
+  useEffect(() => {
+    setVisiblePlaces(visiblePlaces);
+  }, [visiblePlaces, setVisiblePlaces]);
 
   return (
     <>
-      {visiblePlaces.map((place) => (
-        <MapMarker
-          key={place.id}
-          place={place}
-          onSelect={() => onPlaceSelect?.(place)}
-          isSelected={false}
-        />
+      {prioritizedPlaces.map((place: MapPlace) => (
+        <MapMarker key={place.id} place={place} onSelect={selectPlace} />
       ))}
     </>
   );
