@@ -3,12 +3,14 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ActiveFilters } from "@/features/explorer/components/filters/ActiveFilters";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
+import { markerColors } from "@/lib/utils/colors";
 import {
   PopulationCategory,
   SortOrder,
@@ -25,6 +27,7 @@ import {
   MapPin,
   SplitSquareHorizontal,
   Star,
+  ChevronUp,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapLegend } from "./MapLegend";
@@ -73,6 +76,8 @@ export const SplitExplorer = () => {
     handlePopulationSelect,
     handleRatingChange,
     handleTypeClick,
+    resetTypeFilters,
+    resetPopulationFilter,
   } = useFilters();
   const {
     visiblePlacesInView,
@@ -86,6 +91,7 @@ export const SplitExplorer = () => {
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [isCitySizesExpanded, setIsCitySizesExpanded] = useState(false);
 
   // Get filtered places using context
   const filteredPlaces = useMemo(() => {
@@ -303,47 +309,184 @@ export const SplitExplorer = () => {
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-[320px] p-2">
-                    <div className="space-y-3">
-                      <div className="px-2">
-                        <h4 className="font-medium leading-none text-muted-foreground">
-                          Discover Places By Type
-                        </h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          From countries and regions to local neighborhoods
-                        </p>
+                  <DropdownMenuContent align="start" className="w-[320px] p-0 bg-background/95 backdrop-blur-sm">
+                    <div className="divide-y divide-border/50">
+                      <div className="px-5 py-4">
+                        <h4 className="font-semibold text-lg">Discover Places By Type</h4>
+                        <p className="text-sm text-muted-foreground mt-1">From countries and regions to local neighborhoods</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {Object.entries(placeTypeIcons).map(
-                          ([type, { icon: Icon, label, emoji }]) => (
-                            <button
-                              key={type}
-                              onClick={() =>
-                                handleTypeClick(type as CitiesTypeOptions)
+                      <div className="divide-y divide-border/50">
+                        {Object.values(CitiesTypeOptions).map((type) => (
+                          <div key={type}>
+                            <div
+                              onClick={() => handleTypeClick(type)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  handleTypeClick(type);
+                                }
+                              }}
+                              style={
+                                {
+                                  "--marker-color": markerColors[type as keyof typeof markerColors],
+                                  backgroundColor: filters.activeTypes.includes(type)
+                                    ? `${markerColors[type as keyof typeof markerColors]}15`
+                                    : undefined,
+                                } as React.CSSProperties
                               }
                               className={cn(
-                                "flex items-center gap-2 px-3 py-2 rounded-lg transition-all",
-                                "hover:bg-accent hover:text-accent-foreground",
-                                filters.activeTypes.includes(
-                                  type as CitiesTypeOptions
-                                )
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-card hover:bg-accent/50"
+                                "w-full px-5 py-3 flex items-center justify-between",
+                                "transition-all duration-200 ease-in-out",
+                                filters.activeTypes.includes(type)
+                                  ? "hover:brightness-110"
+                                  : "hover:bg-accent/10",
+                                "cursor-pointer"
                               )}
                             >
-                              <span
-                                className="text-xl"
-                                role="img"
-                                aria-label={label}
-                              >
-                                {emoji}
-                              </span>
-                              <span className="text-sm font-medium">
-                                {label}
-                              </span>
-                            </button>
-                          )
-                        )}
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={cn(
+                                    "w-2 h-2 rounded-full transition-all duration-200",
+                                    filters.activeTypes.includes(type)
+                                      ? "scale-125"
+                                      : "opacity-40"
+                                  )}
+                                  style={{
+                                    backgroundColor: "var(--marker-color)",
+                                    boxShadow: filters.activeTypes.includes(type)
+                                      ? "0 0 8px var(--marker-color)"
+                                      : "none",
+                                  }}
+                                />
+                                <span className="text-lg" role="img" aria-label={`${type} emoji`}>
+                                  {placeTypeIcons[type].emoji}
+                                </span>
+                                <span
+                                  className="text-sm font-medium capitalize transition-all duration-200"
+                                  style={{
+                                    color: filters.activeTypes.includes(type)
+                                      ? "var(--marker-color)"
+                                      : "var(--muted-foreground)",
+                                  }}
+                                >
+                                  {type}s
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {type === CitiesTypeOptions.city &&
+                                  filters.activeTypes.includes(type) && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsCitySizesExpanded(!isCitySizesExpanded);
+                                      }}
+                                      className="p-1 hover:bg-accent/50 rounded-full"
+                                    >
+                                      <ChevronUp
+                                        className={cn(
+                                          "w-4 h-4 transition-transform duration-200",
+                                          !isCitySizesExpanded && "rotate-180"
+                                        )}
+                                        style={{
+                                          color: filters.activeTypes.includes(type)
+                                            ? "var(--marker-color)"
+                                            : "var(--muted-foreground)",
+                                        }}
+                                      />
+                                    </button>
+                                  )}
+                              </div>
+                            </div>
+
+                            {/* Nested City Size Filters */}
+                            {type === CitiesTypeOptions.city &&
+                              filters.activeTypes.includes(CitiesTypeOptions.city) && (
+                                <div
+                                  className={cn(
+                                    "divide-y divide-border/50 overflow-hidden transition-all duration-200",
+                                    isCitySizesExpanded
+                                      ? "max-h-[200px] opacity-100"
+                                      : "max-h-0 opacity-0"
+                                  )}
+                                >
+                                  {(["megacity", "city", "town", "village"] as const).map(
+                                    (size) => (
+                                      <div
+                                        key={size}
+                                        onClick={() =>
+                                          handlePopulationSelect(
+                                            filters.populationCategory === size
+                                              ? null
+                                              : (size as PopulationCategory)
+                                          )
+                                        }
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            handlePopulationSelect(
+                                              filters.populationCategory === size
+                                                ? null
+                                                : (size as PopulationCategory)
+                                            );
+                                          }
+                                        }}
+                                        className={cn(
+                                          "w-full px-5 py-2 flex items-center justify-between",
+                                          "transition-all duration-200 ease-in-out text-sm",
+                                          "pl-7",
+                                          filters.populationCategory === size
+                                            ? "text-primary font-medium"
+                                            : "text-muted-foreground hover:text-foreground"
+                                        )}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <div
+                                            className={cn(
+                                              "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                                              filters.populationCategory === size
+                                                ? "opacity-100 scale-125"
+                                                : "opacity-40"
+                                            )}
+                                            style={{
+                                              backgroundColor:
+                                                markerColors[CitiesTypeOptions.city],
+                                            }}
+                                          />
+                                          <span
+                                            className="text-base"
+                                            role="img"
+                                            aria-label={`${size} emoji`}
+                                          >
+                                            {sizeTypeIcons[size].emoji}
+                                          </span>
+                                          <span className="capitalize">{size}</span>
+                                        </div>
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              )}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="p-3 bg-muted/50 flex items-center justify-between gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => resetTypeFilters()}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          Reset
+                        </Button>
+                        <DropdownMenuItem onSelect={() => {}}>
+                          <Button size="sm">
+                            Done
+                          </Button>
+                        </DropdownMenuItem>
                       </div>
                     </div>
                   </DropdownMenuContent>
@@ -404,17 +547,13 @@ export const SplitExplorer = () => {
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-[320px] p-2">
-                    <div className="space-y-3">
-                      <div className="px-2">
-                        <h4 className="font-medium leading-none text-muted-foreground">
-                          Filter Cities by Population Size
-                        </h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          From small villages to bustling megacities
-                        </p>
+                  <DropdownMenuContent align="start" className="w-[320px] p-0 bg-background/95 backdrop-blur-sm">
+                    <div className="divide-y divide-border/50">
+                      <div className="px-5 py-4">
+                        <h4 className="font-semibold text-lg">Filter by Population Size</h4>
+                        <p className="text-sm text-muted-foreground mt-1">From small villages to bustling megacities</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="divide-y divide-border/50">
                         {Object.entries(sizeTypeIcons).map(
                           ([size, { icon: Icon, label, emoji }]) => (
                             <button
@@ -426,27 +565,69 @@ export const SplitExplorer = () => {
                                     : (size as PopulationCategory)
                                 )
                               }
+                              style={
+                                {
+                                  "--marker-color": markerColors[CitiesTypeOptions.city],
+                                  backgroundColor: filters.populationCategory === size
+                                    ? `${markerColors[CitiesTypeOptions.city]}15`
+                                    : undefined,
+                                } as React.CSSProperties
+                              }
                               className={cn(
-                                "flex items-center gap-2 px-3 py-2 rounded-lg transition-all",
-                                "hover:bg-accent hover:text-accent-foreground",
+                                "w-full px-5 py-3 flex items-center justify-between",
+                                "transition-all duration-200 ease-in-out",
                                 filters.populationCategory === size
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-card hover:bg-accent/50"
+                                  ? "hover:brightness-110"
+                                  : "hover:bg-accent/10"
                               )}
                             >
-                              <span
-                                className="text-xl"
-                                role="img"
-                                aria-label={label}
-                              >
-                                {emoji}
-                              </span>
-                              <span className="text-sm font-medium">
-                                {label}
-                              </span>
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={cn(
+                                    "w-2 h-2 rounded-full transition-all duration-200",
+                                    filters.populationCategory === size
+                                      ? "scale-125"
+                                      : "opacity-40"
+                                  )}
+                                  style={{
+                                    backgroundColor: "var(--marker-color)",
+                                    boxShadow: filters.populationCategory === size
+                                      ? "0 0 8px var(--marker-color)"
+                                      : "none",
+                                  }}
+                                />
+                                <span className="text-lg" role="img" aria-label={label}>
+                                  {emoji}
+                                </span>
+                                <span
+                                  className="text-sm font-medium capitalize transition-all duration-200"
+                                  style={{
+                                    color: filters.populationCategory === size
+                                      ? "var(--marker-color)"
+                                      : "var(--muted-foreground)",
+                                  }}
+                                >
+                                  {label}
+                                </span>
+                              </div>
                             </button>
                           )
                         )}
+                      </div>
+                      <div className="p-3 bg-muted/50 flex items-center justify-between gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => resetPopulationFilter()}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          Reset
+                        </Button>
+                        <DropdownMenuItem onSelect={() => {}}>
+                          <Button size="sm">
+                            Done
+                          </Button>
+                        </DropdownMenuItem>
                       </div>
                     </div>
                   </DropdownMenuContent>
