@@ -46,7 +46,7 @@ export const ResultsPanel = ({
       <div
         className={cn(
           "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
-          isResultsPanelCollapsed ? "w-0" : "w-[500px]"
+          isResultsPanelCollapsed ? "w-0" : "w-[800px]"
         )}
       >
         {/* Panel Content */}
@@ -128,9 +128,9 @@ export const ResultsPanel = ({
               </div>
 
               {/* Grid of cards */}
-              <div className="grid grid-cols-2 gap-4 auto-rows-[minmax(min-content,max-content)]">
+              <div className="grid grid-cols-2 gap-6 auto-rows-[minmax(min-content,max-content)]">
                 {paginatedPlaces.map((place) => (
-                  <PlaceCard key={place.id} city={place} variant="compact" />
+                  <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}
               </div>
 
