@@ -60,6 +60,7 @@ interface FiltersContextValue {
   resetFilters: () => void;
   handleTypeClick: (type: CitiesTypeOptions) => void;
   handlePopulationSelect: (category: PopulationCategory | null) => void;
+  handleRatingChange: (rating: number | null) => void;
   getFilteredCities: (
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
@@ -190,6 +191,13 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const handleRatingChange = useCallback((rating: number | null) => {
+    setFiltersState((prev) => ({
+      ...prev,
+      averageRating: rating,
+    }));
+  }, []);
+
   useEffect(() => {
     return () => {
       resetFilters();
@@ -275,6 +283,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       resetFilters,
       handleTypeClick,
       handlePopulationSelect,
+      handleRatingChange,
       getFilteredCities,
       getActiveFilterCount,
       getTypeCounts,
@@ -284,6 +293,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       setFilter,
       handleTypeClick,
       handlePopulationSelect,
+      handleRatingChange,
       getFilteredCities,
       getActiveFilterCount,
       getTypeCounts,

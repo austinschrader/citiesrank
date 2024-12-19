@@ -19,16 +19,7 @@ const citySizeEmojis: Record<PopulationCategory, string> = {
 };
 
 export function SearchFilters() {
-  const { filters, setFilters, handlePopulationSelect } = useFilters();
-
-  const handleRatingChange = (value: string) => {
-    const numValue = parseFloat(value);
-    if (!value) {
-      setFilters({ ...filters, averageRating: null });
-    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
-      setFilters({ ...filters, averageRating: numValue });
-    }
-  };
+  const { filters, setFilters, handlePopulationSelect, handleRatingChange } = useFilters();
 
   return (
     <div className="space-y-3">
@@ -69,7 +60,15 @@ export function SearchFilters() {
             <Input
               type="number"
               value={filters.averageRating ?? ""}
-              onChange={(e) => handleRatingChange(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                const numValue = parseFloat(value);
+                if (!value) {
+                  handleRatingChange(null);
+                } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
+                  handleRatingChange(numValue);
+                }
+              }}
               className="w-12 h-7 text-center bg-transparent border-0 p-0 focus-visible:ring-0"
               min="0"
               max="5"

@@ -11,7 +11,12 @@ const ITEMS_PER_PAGE = 15;
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const { filters, setFilters, getFilteredCities } = useFilters();
-  const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow, setVisiblePlaces } = useMap();
+  const {
+    visiblePlacesInView,
+    numPrioritizedToShow,
+    setNumPrioritizedToShow,
+    setVisiblePlaces,
+  } = useMap();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
