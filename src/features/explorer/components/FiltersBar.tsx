@@ -68,128 +68,6 @@ const sizeTypeIcons = {
   megacity: { icon: Building2, label: "Megacities", emoji: "🌇" },
 };
 
-// {/* City Size Filter */}
-// <div className="flex items-center gap-2">
-// <DropdownMenu>
-//   <DropdownMenuTrigger asChild>
-//     <Button
-//       variant={
-//         filters.populationCategory ? "default" : "outline"
-//       }
-//       className={cn(
-//         "h-9 gap-2 w-[140px]",
-//         filters.populationCategory && "font-medium"
-//       )}
-//     >
-//       <Building2 className="h-4 w-4 shrink-0" />
-//       <span className="truncate max-w-[90px] block">
-//         {filters.populationCategory
-//           ? sizeTypeIcons[filters.populationCategory].label
-//           : "City Size"}
-//       </span>
-//     </Button>
-//   </DropdownMenuTrigger>
-//   <DropdownMenuContent
-//     align="start"
-//     className="w-[320px] p-0 bg-background/95 backdrop-blur-sm"
-//   >
-//     <div className="divide-y divide-border/50">
-//       <div className="px-5 py-4">
-//         <h4 className="font-semibold text-lg">
-//           Filter by Population Size
-//         </h4>
-//         <p className="text-sm text-muted-foreground mt-1">
-//           From small villages to bustling megacities
-//         </p>
-//       </div>
-//       <div className="divide-y divide-border/50">
-//         {Object.entries(sizeTypeIcons).map(
-//           ([size, { icon: Icon, label, emoji }]) => (
-//             <button
-//               key={size}
-//               onClick={() =>
-//                 handlePopulationSelect(
-//                   filters.populationCategory === size
-//                     ? null
-//                     : (size as PopulationCategory)
-//                 )
-//               }
-//               style={
-//                 {
-//                   "--marker-color":
-//                     markerColors[CitiesTypeOptions.city],
-//                   backgroundColor:
-//                     filters.populationCategory === size
-//                       ? `${
-//                           markerColors[CitiesTypeOptions.city]
-//                         }15`
-//                       : undefined,
-//                 } as React.CSSProperties
-//               }
-//               className={cn(
-//                 "w-full px-5 py-3 flex items-center justify-between",
-//                 "transition-all duration-200 ease-in-out",
-//                 filters.populationCategory === size
-//                   ? "hover:brightness-110"
-//                   : "hover:bg-accent/10"
-//               )}
-//             >
-//               <div className="flex items-center gap-3">
-//                 <div
-//                   className={cn(
-//                     "w-2 h-2 rounded-full transition-all duration-200",
-//                     filters.populationCategory === size
-//                       ? "scale-125"
-//                       : "opacity-40"
-//                   )}
-//                   style={{
-//                     backgroundColor: "var(--marker-color)",
-//                     boxShadow:
-//                       filters.populationCategory === size
-//                         ? "0 0 8px var(--marker-color)"
-//                         : "none",
-//                   }}
-//                 />
-//                 <span
-//                   className="text-lg"
-//                   role="img"
-//                   aria-label={label}
-//                 >
-//                   {emoji}
-//                 </span>
-//                 <span
-//                   className="text-sm font-medium capitalize transition-all duration-200"
-//                   style={{
-//                     color:
-//                       filters.populationCategory === size
-//                         ? "var(--marker-color)"
-//                         : "var(--muted-foreground)",
-//                   }}
-//                 >
-//                   {label}
-//                 </span>
-//               </div>
-//             </button>
-//           )
-//         )}
-//       </div>
-//       <div className="p-3 bg-muted/50 flex items-center justify-between gap-2">
-//         <Button
-//           variant="ghost"
-//           size="sm"
-//           onClick={() => resetPopulationFilter()}
-//           className="text-muted-foreground hover:text-foreground"
-//         >
-//           Reset
-//         </Button>
-//         <DropdownMenuItem onSelect={() => {}}>
-//           <Button size="sm">Done</Button>
-//         </DropdownMenuItem>
-//       </div>
-//     </div>
-//   </DropdownMenuContent>
-// </DropdownMenu>
-// </div>
 const CitySizeFilter = ({
   filters,
   setFilters,
@@ -744,25 +622,13 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full sm:max-w-xl z-[9999]">
+            <SheetContent
+              side="right"
+              className="w-full sm:max-w-xl z-[9999] flex flex-col"
+            >
               <SheetHeader className="space-y-4 pb-4 border-b">
                 <div className="flex items-center justify-between">
                   <SheetTitle>Filters</SheetTitle>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        resetTypeFilters();
-                        resetPopulationFilter();
-                        handleRatingChange(null);
-                      }}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      Reset all
-                    </Button>
-                    <Button size="sm">See {cities?.length ?? 0} places</Button>
-                  </div>
                 </div>
                 <SheetDescription className="text-base">
                   Discover your perfect destination - whether you're a digital
@@ -771,9 +637,86 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
                   gems.
                 </SheetDescription>
               </SheetHeader>
-              <div className="space-y-6 py-6">
+              <div className="flex-1 space-y-6 py-6 overflow-y-auto">
                 <div className="space-y-4">
                   <h3 className="text-sm font-medium">Place Type</h3>
+                  <div className="divide-y divide-border/50">
+                    {Object.values(CitiesTypeOptions).map((type) => (
+                      <div key={type}>
+                        <div
+                          onClick={() => handleTypeClick(type)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleTypeClick(type);
+                            }
+                          }}
+                          style={
+                            {
+                              "--marker-color":
+                                markerColors[type as keyof typeof markerColors],
+                              backgroundColor: filters.activeTypes.includes(
+                                type
+                              )
+                                ? `${
+                                    markerColors[
+                                      type as keyof typeof markerColors
+                                    ]
+                                  }15`
+                                : undefined,
+                            } as React.CSSProperties
+                          }
+                          className={cn(
+                            "w-full px-5 py-3 flex items-center justify-between",
+                            "transition-all duration-200 ease-in-out",
+                            filters.activeTypes.includes(type)
+                              ? "hover:brightness-110"
+                              : "hover:bg-accent/10",
+                            "cursor-pointer"
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={cn(
+                                "w-2 h-2 rounded-full transition-all duration-200",
+                                filters.activeTypes.includes(type)
+                                  ? "opacity-100 scale-125"
+                                  : "opacity-40"
+                              )}
+                              style={{
+                                backgroundColor: "var(--marker-color)",
+                                boxShadow: filters.activeTypes.includes(type)
+                                  ? "0 0 8px var(--marker-color)"
+                                  : "none",
+                              }}
+                            />
+                            <span
+                              className="text-lg"
+                              role="img"
+                              aria-label={`${type} emoji`}
+                            >
+                              {placeTypeIcons[type].emoji}
+                            </span>
+                            <span
+                              className="text-sm font-medium capitalize transition-all duration-200"
+                              style={{
+                                color: filters.activeTypes.includes(type)
+                                  ? "var(--marker-color)"
+                                  : "var(--muted-foreground)",
+                              }}
+                            >
+                              {type}s
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">City Size</h3>
                   <CitySizeFilter filters={filters} setFilters={setFilters} />
                 </div>
                 <div className="space-y-4">
@@ -785,6 +728,21 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
                     />
                   </div>
                 </div>
+              </div>
+              <div className="pt-6 border-t flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    resetTypeFilters();
+                    resetPopulationFilter();
+                    handleRatingChange(null);
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Reset all
+                </Button>
+                <Button size="sm">See {cities?.length ?? 0} places</Button>
               </div>
             </SheetContent>
           </Sheet>
