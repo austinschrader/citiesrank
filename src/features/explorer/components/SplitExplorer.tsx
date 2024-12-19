@@ -11,9 +11,7 @@ const ITEMS_PER_PAGE = 15;
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const { filters, setFilters, getFilteredCities } = useFilters();
-  const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow } =
-    useMap();
-  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
+  const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow, setVisiblePlaces } = useMap();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
@@ -34,6 +32,11 @@ export const SplitExplorer = () => {
     }));
   }, [cities, getFilteredCities]);
 
+  // Update visible places in map context
+  useEffect(() => {
+    setVisiblePlaces(filteredPlaces);
+  }, [filteredPlaces, setVisiblePlaces]);
+
   // Get paginated places from prioritized places
   const paginatedPlaces = useMemo(() => {
     return visiblePlacesInView.slice(0, numPrioritizedToShow);
@@ -51,7 +54,7 @@ export const SplitExplorer = () => {
       setNumPrioritizedToShow((prev) => prev + ITEMS_PER_PAGE);
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, ITEMS_PER_PAGE]);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -89,19 +92,7 @@ export const SplitExplorer = () => {
           isStatsMinimized={isStatsMinimized}
           setIsStatsMinimized={setIsStatsMinimized}
         />
-        <CityMap
-          places={filteredPlaces}
-          onBoundsChange={setMapBounds}
-          onPlaceSelect={(place) => {
-            if (!filters.activeTypes.includes(place.type as any)) {
-              setFilters({
-                ...filters,
-                activeTypes: [...filters.activeTypes, place.type as any],
-              });
-            }
-          }}
-          className="h-full w-full"
-        />
+        <CityMap className="h-full" />
       </div>
     </div>
   );

@@ -15,19 +15,17 @@ import { useEffect } from "react";
 import L from "leaflet";
 
 interface CityMapProps {
-  places: MapPlace[];
-  onPlaceSelect?: (place: MapPlace) => void;
-  onBoundsChange?: (bounds: L.LatLngBounds) => void;
   className?: string;
 }
 
-const BoundsTracker = ({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBounds) => void }) => {
+const BoundsTracker = () => {
   const map = useLeafletMap();
+  const { setMapBounds } = useMap();
 
   useEffect(() => {
     const handleMove = () => {
       const bounds = map.getBounds();
-      onBoundsChange(bounds);
+      setMapBounds(bounds);
     };
 
     map.on('moveend', handleMove);
@@ -39,18 +37,13 @@ const BoundsTracker = ({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBo
     return () => {
       map.off('moveend', handleMove);
     };
-  }, [map, onBoundsChange]);
+  }, [map, setMapBounds]);
 
   return null;
 };
 
-export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: CityMapProps) => {
-  const { center, zoom, selectedPlace, selectPlace, setZoom } = useMap();
-
-  const handlePlaceSelect = (place: MapPlace) => {
-    selectPlace(place);
-    onPlaceSelect?.(place);
-  };
+export const CityMap = ({ className }: CityMapProps) => {
+  const { center, zoom, selectedPlace, selectPlace, setZoom, visiblePlaces } = useMap();
 
   return (
     <div className={className}>
@@ -66,7 +59,7 @@ export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: Ci
         ]}
         maxBoundsViscosity={1.0}
       >
-        {onBoundsChange && <BoundsTracker onBoundsChange={onBoundsChange} />}
+        <BoundsTracker />
         <MapControls
           onZoomChange={setZoom}
           defaultCenter={[20, 0]}
@@ -76,7 +69,7 @@ export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: Ci
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
         />
-        <MapCluster places={places} onPlaceSelect={handlePlaceSelect} />
+        <MapCluster places={visiblePlaces} onPlaceSelect={selectPlace} />
         {selectedPlace && (
           <PlaceGeoJson
             key={`geojson-${selectedPlace.id}`}
