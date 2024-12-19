@@ -4,31 +4,37 @@
  * Used by: Hero.tsx
  */
 
-import { CitiesTypeOptions } from '@/lib/types/pocketbase-types';
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 export const PLACE_TYPES = [
   {
     id: CitiesTypeOptions.country,
     label: "Countries",
-    placeholder: "Search for countries to explore...",
-    header: "Find your perfect country to call home",
+    placeholder: "Search countries to visit...",
+    header: "Discover amazing countries to explore",
   },
   {
     id: CitiesTypeOptions.region,
     label: "Regions",
-    placeholder: "Find your perfect region...",
-    header: "Discover the best region for your lifestyle",
+    placeholder: "Find scenic regions...",
+    header: "Explore fascinating regions and areas",
   },
   {
     id: CitiesTypeOptions.city,
     label: "Cities",
-    placeholder: "Discover cities worldwide...",
-    header: "Find your perfect city to live in",
+    placeholder: "Find exciting cities...",
+    header: "Discover vibrant cities to visit",
+  },
+  {
+    id: CitiesTypeOptions.neighborhood,
+    label: "Districts",
+    placeholder: "Find local areas to explore...",
+    header: "Discover authentic local neighborhoods",
   },
   {
     id: CitiesTypeOptions.sight,
     label: "Sights",
-    placeholder: "Explore amazing attractions...",
-    header: "Explore the world's most amazing places",
+    placeholder: "Find must-see attractions...",
+    header: "Explore unforgettable sights and landmarks",
   },
 ] as const;

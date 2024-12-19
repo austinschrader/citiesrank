@@ -1,34 +1,60 @@
-import { Button } from "@/components/ui/button";
-import { useMap } from "@/features/map/context/MapContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
+import { ViewMode } from "./SplitExplorer";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useMap } from "@/features/map/context/MapContext";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
   observerTarget: RefObject<HTMLDivElement>;
   isResultsPanelCollapsed: boolean;
   setIsResultsPanelCollapsed: (value: boolean) => void;
+  viewMode: ViewMode;
+  paginatedFilteredPlaces: any[]; // TODO: Add proper type
 }
 
 export const ResultsPanel = ({
   isLoadingMore,
   observerTarget,
   isResultsPanelCollapsed,
-  setIsResultsPanelCollapsed,
+  viewMode,
+  paginatedFilteredPlaces,
 }: ResultsPanelProps) => {
-  const { prioritizedPlaces, visiblePlacesInView, visiblePlaces } = useMap();
+  const { cities } = useCities();
+  const { getFilteredCities } = useFilters();
+  const { prioritizedPlaces, visiblePlacesInView } = useMap();
+
+  // Get all filtered places for total count
+  const allFilteredPlaces = getFilteredCities(cities, () => ({
+    matchScore: 1,
+    attributeMatches: {
+      budget: 1,
+      crowds: 1,
+      tripLength: 1,
+      season: 1,
+      transit: 1,
+      accessibility: 1
+    }
+  }));
+
+  // Use different data source based on view mode
+  const displayPlaces = viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+
+  // Get the correct total count based on view mode
+  const totalPlaces = viewMode === "list" ? allFilteredPlaces.length : visiblePlacesInView.length;
+  const placesInView = viewMode === "list" ? totalPlaces : visiblePlacesInView.length;
 
   return (
-    <div className="relative flex">
+    <div className="h-full flex">
       <div
         className={cn(
           "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
-          isResultsPanelCollapsed ? "w-0" : "w-[800px]"
+          isResultsPanelCollapsed ? "w-0" : "w-full"
         )}
       >
         {/* Panel Content */}
@@ -47,57 +73,16 @@ export const ResultsPanel = ({
                 <div className="absolute inset-0 bg-primary/80 animate-loading-bar" />
               </div>
             )}
-            <div className="p-4 flex justify-between items-start">
-              <div className="space-y-4">
-                {/* Title and Results Count */}
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-semibold">Discover Places</h2>
-                  <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                    {visiblePlaces.length}
-                  </div>
-                </div>
-
-                {/* Filters Section */}
-                <SearchFilters />
-
-                {/* Active Filters */}
-                <ActiveFilters />
-              </div>
-
-              {/* Panel toggle button */}
-              <Button
-                onClick={() =>
-                  setIsResultsPanelCollapsed(!isResultsPanelCollapsed)
-                }
-                size="icon"
-                aria-label={
-                  isResultsPanelCollapsed
-                    ? "Expand results panel"
-                    : "Collapse results panel"
-                }
-              >
-                <ChevronRight
-                  className={cn(
-                    "transition-transform duration-200",
-                    !isResultsPanelCollapsed && "rotate-180"
-                  )}
-                />
-              </Button>
-            </div>
-          </div>
-
-          {/* Results Grid */}
-          <div className="grow overflow-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-muted">
-            <div className="p-4 space-y-6">
+            <div className="p-4">
               {/* Results count */}
-              <div className="flex items-center justify-between text-sm px-1">
+              <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">
-                    {prioritizedPlaces.length} loaded
+                    {displayPlaces.length} loaded
                   </span>
                   <span className="text-muted-foreground">•</span>
                   <span className="font-medium">
-                    {visiblePlacesInView.length}
+                    {placesInView}
                   </span>
                   <span className="text-muted-foreground">places in view</span>
                 </div>
@@ -110,10 +95,22 @@ export const ResultsPanel = ({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
 
+          {/* Results Grid */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="p-4 space-y-6">
               {/* Grid of cards */}
-              <div className="grid grid-cols-2 gap-6 auto-rows-[minmax(min-content,max-content)]">
-                {prioritizedPlaces.map((place: MapPlace) => (
+              <div
+                className={cn(
+                  "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
+                  viewMode === "list"
+                    ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                    : "grid-cols-2"
+                )}
+              >
+                {displayPlaces.map((place) => (
                   <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}
               </div>
@@ -123,8 +120,7 @@ export const ResultsPanel = ({
                 ref={observerTarget}
                 className={cn(
                   "h-32 flex items-center justify-center transition-all duration-200",
-                  isLoadingMore &&
-                    prioritizedPlaces.length < visiblePlacesInView.length
+                  isLoadingMore && displayPlaces.length < cities.length
                     ? "opacity-100"
                     : "opacity-0"
                 )}
@@ -140,18 +136,6 @@ export const ResultsPanel = ({
           </div>
         </div>
       </div>
-
-      {/* Collapse/Expand button when panel is collapsed */}
-      {isResultsPanelCollapsed && (
-        <Button
-          onClick={() => setIsResultsPanelCollapsed(false)}
-          size="icon"
-          className="absolute z-50 top-1/2 -translate-y-1/2 left-2"
-          aria-label="Expand results panel"
-        >
-          <ChevronRight />
-        </Button>
-      )}
     </div>
   );
 };

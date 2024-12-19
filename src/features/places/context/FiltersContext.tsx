@@ -58,6 +58,8 @@ interface FiltersContextValue {
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
   setFilters: (filters: Partial<Filters>) => void;
   resetFilters: () => void;
+  resetTypeFilters: () => void;
+  resetPopulationFilter: () => void;
   handleTypeClick: (type: CitiesTypeOptions) => void;
   handlePopulationSelect: (category: PopulationCategory | null) => void;
   handleRatingChange: (rating: number | null) => void;
@@ -149,6 +151,23 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       season: null,
       budget: null,
     });
+  }, []);
+
+  const resetTypeFilters = useCallback(() => {
+    setFiltersState((prev) => ({
+      ...prev,
+      activeTypes: Object.values(CitiesTypeOptions),
+    }));
+  }, []);
+
+  const resetPopulationFilter = useCallback(() => {
+    setFiltersState((prev) => ({
+      ...prev,
+      populationCategory: null,
+      activeTypes: prev.activeTypes.includes(CitiesTypeOptions.city) 
+        ? Object.values(CitiesTypeOptions)
+        : prev.activeTypes,
+    }));
   }, []);
 
   const handleTypeClick = useCallback((type: CitiesTypeOptions) => {
@@ -281,6 +300,8 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       setFilter,
       setFilters,
       resetFilters,
+      resetTypeFilters,
+      resetPopulationFilter,
       handleTypeClick,
       handlePopulationSelect,
       handleRatingChange,
@@ -291,6 +312,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     [
       filters,
       setFilter,
+      setFilters,
+      resetFilters,
+      resetTypeFilters,
+      resetPopulationFilter,
       handleTypeClick,
       handlePopulationSelect,
       handleRatingChange,

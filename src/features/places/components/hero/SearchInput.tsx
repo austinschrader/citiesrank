@@ -8,15 +8,17 @@
 import { useCities } from "@/features/places/context/CitiesContext";
 import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SearchInputProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   setIsSearchFocused: (focused: boolean) => void;
-  handleSearch: (e: React.FormEvent) => void;
+  handleSearch: (e: React.FormEvent, selectedCity?: CitiesResponse) => void;
   currentType: CitiesTypeOptions;
 }
+
+const ITEMS_PER_PAGE = 20;
 
 export const SearchInput = ({
   searchQuery,
@@ -26,17 +28,35 @@ export const SearchInput = ({
   currentType,
 }: SearchInputProps) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [numItemsToShow, setNumItemsToShow] = useState(ITEMS_PER_PAGE);
   const { cityStatus, typeSpecificLists } = useCities();
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Get suggestions based on current type and search query
-  const suggestions = typeSpecificLists[currentType]
-    ?.filter(
-      (city) =>
-        !searchQuery ||
-        city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        city.country.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .slice(0, 5) || [];
+  // Get filtered suggestions based on search query
+  const filteredSuggestions = typeSpecificLists[currentType]?.filter(
+    (city) =>
+      !searchQuery ||
+      city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      city.country.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
+  // Get paginated suggestions
+  const suggestions = filteredSuggestions.slice(0, numItemsToShow);
+
+  // Handle scroll in suggestions list
+  const handleScroll = () => {
+    if (!suggestionsRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = suggestionsRef.current;
+    if (scrollHeight - scrollTop <= clientHeight * 1.5) {
+      setNumItemsToShow((prev) => Math.min(prev + ITEMS_PER_PAGE, filteredSuggestions.length));
+    }
+  };
+
+  // Reset pagination when search query or type changes
+  useEffect(() => {
+    setNumItemsToShow(ITEMS_PER_PAGE);
+  }, [searchQuery, currentType]);
 
   return (
     <div className="relative z-50">
@@ -51,9 +71,11 @@ export const SearchInput = ({
             setIsSearchFocused(true);
             setShowSuggestions(true);
           }}
-          onBlur={() => {
-            setIsSearchFocused(false);
-            setShowSuggestions(false);
+          onBlur={(e) => {
+            setTimeout(() => {
+              setIsSearchFocused(false);
+              setShowSuggestions(false);
+            }, 200);
           }}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -75,36 +97,49 @@ export const SearchInput = ({
 
       {/* Suggestions */}
       {showSuggestions && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
+        <div 
+          ref={suggestionsRef}
+          className="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 max-h-[400px] overflow-y-auto"
+          onScroll={handleScroll}
+        >
           {cityStatus.loading ? (
             <div className="p-4 text-center text-gray-500">Loading...</div>
-          ) : suggestions.length > 0 ? (
-            <ul className="py-2">
-              {suggestions.map((city) => (
-                <li key={city.id}>
-                  <button
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50 flex flex-col"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSearchQuery(
-                        currentType === CitiesTypeOptions.country ? city.country : city.name
-                      );
-                      setShowSuggestions(false);
-                      handleSearch(e);
-                    }}
-                  >
-                    <div className="font-medium">
-                      {currentType === CitiesTypeOptions.country ? city.country : city.name}
-                    </div>
-                    {currentType !== CitiesTypeOptions.country && (
-                      <div className="text-sm text-gray-500">
-                        {city.country}
+          ) : filteredSuggestions.length > 0 ? (
+            <>
+              <ul className="py-2">
+                {suggestions.map((city) => (
+                  <li key={city.id}>
+                    <button
+                      className="w-full px-4 py-2 text-left hover:bg-gray-50 flex flex-col"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const selectedValue = currentType === CitiesTypeOptions.country ? city.country : city.name;
+                        setSearchQuery(selectedValue);
+                        handleSearch(e, city);
+                        setShowSuggestions(false);
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      <div className="font-medium">
+                        {currentType === CitiesTypeOptions.country ? city.country : city.name}
                       </div>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                      {currentType !== CitiesTypeOptions.country && (
+                        <div className="text-sm text-gray-500">
+                          {city.country}
+                        </div>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {numItemsToShow < filteredSuggestions.length && (
+                <div className="p-2 text-center text-sm text-gray-500">
+                  Scroll for more...
+                </div>
+              )}
+            </>
           ) : (
             <div className="p-4 text-center text-gray-500">
               No {currentType}s found

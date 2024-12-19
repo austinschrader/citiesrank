@@ -8,7 +8,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { CitiesTypeOptions } from '@/lib/types/pocketbase-types';
+import { CitiesResponse, CitiesTypeOptions } from '@/lib/types/pocketbase-types';
 import { createSlug } from '../../utils/placeUtils';
 
 export const useSearchForm = () => {
@@ -19,7 +19,7 @@ export const useSearchForm = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent, selectedCity?: CitiesResponse) => {
     e.preventDefault();
     
     if (!searchQuery.trim()) return;
@@ -29,12 +29,14 @@ export const useSearchForm = () => {
       return;
     }
 
-    navigate(`/places/${activeTab}/${createSlug(searchQuery)}`, {
+    const searchData = selectedCity || {
+      name: searchQuery,
+      type: activeTab
+    };
+
+    navigate(`/places/${activeTab}/${createSlug(selectedCity?.name || searchQuery)}`, {
       state: { 
-        placeData: {
-          name: searchQuery,
-          type: activeTab
-        }
+        placeData: searchData
       }
     });
   };

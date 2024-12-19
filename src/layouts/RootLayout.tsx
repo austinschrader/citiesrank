@@ -12,10 +12,10 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
   const { user } = useAuth();
 
   return (
-    <div className="h-screen flex flex-col bg-background font-sans antialiased">
+    <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
       <Header />
       {!user && <SignUpBanner show={false} />}
-      <main className="flex-1 overflow-hidden">{children}</main>
+      <main className="flex-1 relative">{children}</main>
     </div>
   );
 };
