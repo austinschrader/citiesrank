@@ -64,7 +64,7 @@ export const MapCluster = ({ places, onPlaceSelect }: MapClusterProps) => {
 
     const filtered = filterPlacesByZoom(places, zoom).filter((place) => {
       if (!place.latitude || !place.longitude) return false;
-      if (filters.placeType && place.type !== filters.placeType) return false;
+      if (!filters.activeTypes.includes(place.type as any)) return false;
       // Check if place is within current map bounds
       return bounds.contains([place.latitude, place.longitude]);
     });
