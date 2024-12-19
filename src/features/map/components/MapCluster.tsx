@@ -17,8 +17,7 @@ export const MapCluster = ({}: MapClusterProps) => {
     setMapBounds,
     setVisiblePlaces,
     visiblePlaces,
-    visiblePlacesInView,
-    numPrioritizedToShow,
+    prioritizedPlaces,
     selectPlace,
   } = useMap();
   const map = useLeafletMap();
@@ -43,15 +42,9 @@ export const MapCluster = ({}: MapClusterProps) => {
     setVisiblePlaces(visiblePlaces);
   }, [visiblePlaces, setVisiblePlaces]);
 
-  // Get the prioritized places to show on map
-  const placesToShow = useMemo(() => {
-    if (!visiblePlacesInView) return [];
-    return visiblePlacesInView.slice(0, numPrioritizedToShow);
-  }, [visiblePlacesInView, numPrioritizedToShow]);
-
   return (
     <>
-      {placesToShow.map((place: MapPlace) => (
+      {prioritizedPlaces.map((place: MapPlace) => (
         <MapMarker key={place.id} place={place} onSelect={selectPlace} />
       ))}
     </>

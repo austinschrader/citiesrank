@@ -4,7 +4,7 @@ import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
-import { RefObject, useMemo } from "react";
+import { RefObject } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
 
@@ -21,12 +21,7 @@ export const ResultsPanel = ({
   isResultsPanelCollapsed,
   setIsResultsPanelCollapsed,
 }: ResultsPanelProps) => {
-  const { visiblePlacesInView, numPrioritizedToShow } = useMap();
-
-  // Get paginated places from prioritized places
-  const paginatedPlaces = useMemo(() => {
-    return visiblePlacesInView.slice(0, numPrioritizedToShow);
-  }, [visiblePlacesInView, numPrioritizedToShow]);
+  const { prioritizedPlaces, visiblePlacesInView, visiblePlaces } = useMap();
 
   return (
     <div className="relative flex">
@@ -58,7 +53,7 @@ export const ResultsPanel = ({
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold">Discover Places</h2>
                   <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                    {visiblePlacesInView.length}
+                    {visiblePlaces.length}
                   </div>
                 </div>
 
@@ -98,7 +93,7 @@ export const ResultsPanel = ({
               <div className="flex items-center justify-between text-sm px-1">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">
-                    {paginatedPlaces.length} loaded
+                    {prioritizedPlaces.length} loaded
                   </span>
                   <span className="text-muted-foreground">•</span>
                   <span className="font-medium">
@@ -118,7 +113,7 @@ export const ResultsPanel = ({
 
               {/* Grid of cards */}
               <div className="grid grid-cols-2 gap-6 auto-rows-[minmax(min-content,max-content)]">
-                {paginatedPlaces.map((place: MapPlace) => (
+                {prioritizedPlaces.map((place: MapPlace) => (
                   <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}
               </div>
@@ -129,7 +124,7 @@ export const ResultsPanel = ({
                 className={cn(
                   "h-32 flex items-center justify-center transition-all duration-200",
                   isLoadingMore &&
-                    paginatedPlaces.length < visiblePlacesInView.length
+                    prioritizedPlaces.length < visiblePlacesInView.length
                     ? "opacity-100"
                     : "opacity-0"
                 )}
@@ -137,7 +132,7 @@ export const ResultsPanel = ({
                 <div className="flex flex-col items-center gap-3 bg-primary px-6 py-4 rounded-xl">
                   <div className="animate-spin h-10 w-10 border-[3px] border-background border-t-transparent rounded-full" />
                   <span className="text-sm font-medium text-background animate-pulse">
-                    Loading more results...
+                    Loading more places...
                   </span>
                 </div>
               </div>

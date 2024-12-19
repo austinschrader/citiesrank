@@ -3,7 +3,7 @@ import {
   CitiesResponse,
   CitiesTypeOptions,
 } from "@/lib/types/pocketbase-types";
-import { createContext, useCallback, useContext, useState, useEffect } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type SortOrder = 
   | "match" 
@@ -45,6 +45,7 @@ interface FiltersContextValue {
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
   ) => (CitiesResponse & MatchScore)[];
   getActiveFilterCount: () => number;
+  getTypeCounts: (places: CitiesResponse[]) => Record<CitiesTypeOptions, number>;
 }
 
 const DEFAULT_RATING = 4.6;
@@ -239,19 +240,38 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     return count;
   }, [filters]);
 
+  const getTypeCounts = useCallback((places: CitiesResponse[]) => {
+    return Object.values(CitiesTypeOptions).reduce((acc, type) => {
+      acc[type] = places.filter((place) => place.type === type).length;
+      return acc;
+    }, {} as Record<CitiesTypeOptions, number>);
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      filters,
+      setFilter,
+      setFilters,
+      resetFilters,
+      handleTypeClick,
+      handlePopulationSelect,
+      getFilteredCities,
+      getActiveFilterCount,
+      getTypeCounts,
+    }),
+    [
+      filters,
+      setFilter,
+      handleTypeClick,
+      handlePopulationSelect,
+      getFilteredCities,
+      getActiveFilterCount,
+      getTypeCounts,
+    ]
+  );
+
   return (
-    <FiltersContext.Provider
-      value={{
-        filters,
-        setFilter,
-        setFilters,
-        resetFilters,
-        handleTypeClick,
-        handlePopulationSelect,
-        getFilteredCities,
-        getActiveFilterCount,
-      }}
-    >
+    <FiltersContext.Provider value={value}>
       {children}
     </FiltersContext.Provider>
   );

@@ -47,6 +47,7 @@ interface MapContextValue extends MapState {
   visiblePlacesInView: MapPlace[];
   numPrioritizedToShow: number;
   setNumPrioritizedToShow: React.Dispatch<React.SetStateAction<number>>;
+  prioritizedPlaces: MapPlace[];
   getVisiblePlacesForCurrentView: (allPlaces: MapPlace[]) => MapPlace[];
   getVisiblePlaceTypes: (zoom: number) => CitiesTypeOptions[];
   filterPlacesByZoom: (
@@ -238,6 +239,11 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     [state.zoom, mapBounds, filters]
   );
 
+  const prioritizedPlaces = useMemo(() => {
+    if (!visiblePlacesInView) return [];
+    return visiblePlacesInView.slice(0, numPrioritizedToShow);
+  }, [visiblePlacesInView, numPrioritizedToShow]);
+
   const value = useMemo(() => ({
     ...state,
     setZoom,
@@ -251,6 +257,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     visiblePlacesInView,
     numPrioritizedToShow,
     setNumPrioritizedToShow,
+    prioritizedPlaces,
     getVisiblePlacesForCurrentView,
     getVisiblePlaceTypes,
     filterPlacesByZoom,
@@ -263,6 +270,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     visiblePlaces,
     visiblePlacesInView,
     numPrioritizedToShow,
+    prioritizedPlaces,
     getVisiblePlacesForCurrentView,
   ]);
 

@@ -36,24 +36,12 @@ export const MapLegend = ({
   const [isCitySizesExpanded, setIsCitySizesExpanded] = useState(false);
   const { visiblePlacesInView: placesInView } = useMap();
   const { cities: filteredPlaces } = useCities();
-  const { filters, handleTypeClick, handlePopulationSelect } = useFilters();
+  const { filters, handleTypeClick, handlePopulationSelect, getTypeCounts } = useFilters();
   const { mapBounds } = useMap();
 
   // Calculate counts by type
-  const typeCounts = Object.values(CitiesTypeOptions).reduce((acc, type) => {
-    acc[type] = filteredPlaces.filter(
-      (place) => place.type === type
-    ).length;
-    return acc;
-  }, {} as Record<CitiesTypeOptions, number>);
-
-  // Calculate type counts for places in view
-  const typeCountsInView = Object.values(CitiesTypeOptions).reduce((acc, type) => {
-    acc[type] = placesInView.filter(
-      (place) => place.type === type
-    ).length;
-    return acc;
-  }, {} as Record<CitiesTypeOptions, number>);
+  const typeCounts = getTypeCounts(filteredPlaces);
+  const typeCountsInView = getTypeCounts(placesInView);
 
   return (
     <div className="absolute left-4 top-4 z-10">
