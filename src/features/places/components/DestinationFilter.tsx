@@ -49,12 +49,17 @@ export const DestinationFilter = () => {
         {destinationTypes.map(({ type, label, icon: Icon }) => (
           <button
             key={type}
-            onClick={() => setFilter('placeType', filters.placeType === type ? null : type)}
+            onClick={() => {
+              const newTypes = filters.activeTypes.includes(type)
+                ? filters.activeTypes.filter(t => t !== type)
+                : [...filters.activeTypes, type];
+              setFilter('activeTypes', newTypes.length ? newTypes : Object.values(CitiesTypeOptions));
+            }}
             className={cn(
               "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
               "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
               "disabled:pointer-events-none disabled:opacity-50",
-              filters.placeType === type
+              filters.activeTypes.includes(type)
                 ? "bg-primary text-primary-foreground shadow hover:bg-primary/90"
                 : "hover:bg-accent hover:text-accent-foreground"
             )}

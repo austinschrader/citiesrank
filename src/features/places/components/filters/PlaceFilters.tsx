@@ -15,12 +15,15 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { filterCategories } from "@/lib/data/places/filters/categories";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CategoryFilter } from "./CategoryFilter";
 import { FilterSearch } from "./FilterSearch";
 import { PlaceSearch } from "./PlaceSearch";
 import { PlaceTypeFilter } from "./PlaceTypeFilter";
+import { PopulationFilter } from "./PopulationFilter";
+import { RatingFilter } from "./RatingFilter";
 
 interface FilterContentProps {
   cities: any[];
@@ -103,7 +106,13 @@ const FilterContent = ({
             }}
           />
 
-          {/* Display-Only Filters */}
+          {/* Population Filter */}
+          <PopulationFilter />
+
+          {/* Rating Filter */}
+          <RatingFilter />
+
+          {/* Category Filters */}
           {filterCategories.map((category) => (
             <CategoryFilter
               key={category.id}
@@ -184,7 +193,7 @@ export const PlaceFilters = ({ variant }: PlaceFiltersProps) => {
   }, [user, showSignUpDialog]);
 
   const handleClearFilters = () => {
-    setFilter("placeType", null);
+    setFilter("activeTypes", Object.values(CitiesTypeOptions));
   };
 
   if (!variant) return null;

@@ -6,20 +6,51 @@
  */
 
 import type { MapPlace } from "@/features/map/types";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, useMap as useLeafletMap } from "react-leaflet";
 import { useMap } from "../context/MapContext";
 import { MapControls } from "./MapControls";
-import { MapMarker } from "./MapMarker";
+import { MapCluster } from "./MapCluster";
 import { PlaceGeoJson } from "./PlaceGeoJson";
+import { useEffect } from "react";
+import L from "leaflet";
 
 interface CityMapProps {
   places: MapPlace[];
   onPlaceSelect?: (place: MapPlace) => void;
+  onBoundsChange?: (bounds: L.LatLngBounds) => void;
   className?: string;
 }
 
-export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
+const BoundsTracker = ({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBounds) => void }) => {
+  const map = useLeafletMap();
+
+  useEffect(() => {
+    const handleMove = () => {
+      const bounds = map.getBounds();
+      onBoundsChange(bounds);
+    };
+
+    map.on('moveend', handleMove);
+    // Set initial bounds immediately
+    requestAnimationFrame(() => {
+      handleMove();
+    });
+
+    return () => {
+      map.off('moveend', handleMove);
+    };
+  }, [map, onBoundsChange]);
+
+  return null;
+};
+
+export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: CityMapProps) => {
   const { center, zoom, selectedPlace, selectPlace, setZoom } = useMap();
+
+  const handlePlaceSelect = (place: MapPlace) => {
+    selectPlace(place);
+    onPlaceSelect?.(place);
+  };
 
   return (
     <div className={className}>
@@ -35,6 +66,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
         ]}
         maxBoundsViscosity={1.0}
       >
+        {onBoundsChange && <BoundsTracker onBoundsChange={onBoundsChange} />}
         <MapControls
           onZoomChange={setZoom}
           defaultCenter={[20, 0]}
@@ -44,19 +76,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
         />
-        {places
-          .filter((place) => place.latitude && place.longitude)
-          .map((place) => (
-            <MapMarker
-              key={place.id}
-              place={place}
-              onSelect={(p) => {
-                selectPlace(p);
-                onPlaceSelect?.(p);
-              }}
-              isSelected={selectedPlace?.id === place.id}
-            />
-          ))}
+        <MapCluster places={places} onPlaceSelect={handlePlaceSelect} />
         {selectedPlace && (
           <PlaceGeoJson
             key={`geojson-${selectedPlace.id}`}

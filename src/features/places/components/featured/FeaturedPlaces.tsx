@@ -4,6 +4,7 @@ import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
 import { usePagination } from "@/features/places/hooks/usePagination";
 import { useEffect, useState } from "react";
 import { PlaceCard } from "../cards/PlaceCard";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 export const FeaturedPlaces = () => {
   const { cities } = useCities();
@@ -141,7 +142,7 @@ export const FeaturedPlaces = () => {
           return true;
       }
     })
-    .filter((city) => !filters.placeType || city.type === filters.placeType);
+    .filter((city) => filters.activeTypes.includes(city.type as CitiesTypeOptions));
 
   const {
     getPaginatedData,

@@ -48,6 +48,7 @@ export interface PlaceGeoJsonProps {
 // Style configuration types
 export interface MarkerStyle {
   color: string;
+  ratingColor: string;
   size: number;
   className?: string;
 }
