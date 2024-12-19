@@ -2,23 +2,15 @@
 // Displays active filters and clear all button in ResultsPanel
 
 import { Button } from "@/components/ui/button";
-import { PopulationCategory } from "@/features/places/context/FiltersContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 
 interface ActiveFiltersProps {
-  filters: {
-    search: string;
-    averageRating: number | null;
-    populationCategory: PopulationCategory | null;
-  };
   activeFilterCount: number;
-  clearAllFilters: () => void;
 }
 
-export function ActiveFilters({
-  filters,
-  activeFilterCount,
-  clearAllFilters,
-}: ActiveFiltersProps) {
+export function ActiveFilters({ activeFilterCount }: ActiveFiltersProps) {
+  const { filters, resetFilters } = useFilters();
+
   if (activeFilterCount === 0) return null;
 
   return (
@@ -46,7 +38,7 @@ export function ActiveFilters({
           variant="ghost"
           size="sm"
           className="h-6 px-2 text-xs hover:bg-destructive/10 hover:text-destructive"
-          onClick={clearAllFilters}
+          onClick={resetFilters}
         >
           Clear all
         </Button>

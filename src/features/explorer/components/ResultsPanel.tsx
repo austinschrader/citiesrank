@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { PopulationCategory } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
@@ -10,18 +11,7 @@ import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
 
 interface ResultsPanelProps {
-  filteredPlaces: MapPlace[];
   paginatedPlaces: MapPlace[];
-  filters: {
-    search: string;
-    averageRating: number | null;
-    populationCategory: PopulationCategory | null;
-  };
-  setFilters: (filters: any) => void;
-  activeFilterCount: number;
-  clearAllFilters: () => void;
-  handleRatingChange: (value: string) => void;
-  handlePopulationSelect: (category: PopulationCategory | null) => void;
   isLoadingMore: boolean;
   observerTarget: RefObject<HTMLDivElement>;
   isResultsPanelCollapsed: boolean;
@@ -29,20 +19,38 @@ interface ResultsPanelProps {
 }
 
 export const ResultsPanel = ({
-  filteredPlaces,
   paginatedPlaces,
-  filters,
-  setFilters,
-  activeFilterCount,
-  clearAllFilters,
-  handleRatingChange,
-  handlePopulationSelect,
   isLoadingMore,
   observerTarget,
   isResultsPanelCollapsed,
   setIsResultsPanelCollapsed,
 }: ResultsPanelProps) => {
   const { visiblePlacesInView } = useMap();
+  const { cities: filteredPlaces } = useCities();
+  const { 
+    filters, 
+    setFilters, 
+    resetFilters,
+    handlePopulationSelect,
+  } = useFilters();
+
+  const handleRatingChange = (value: string) => {
+    const numValue = parseFloat(value);
+    if (!value) {
+      setFilters({ ...filters, averageRating: null });
+    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
+      setFilters({ ...filters, averageRating: numValue });
+    }
+  };
+
+  // Calculate active filter count
+  const activeFilterCount = (() => {
+    let count = 0;
+    if (filters.search) count++;
+    if (filters.averageRating) count++;
+    if (filters.populationCategory) count++;
+    return count;
+  })();
 
   return (
     <div className="relative flex">
@@ -87,11 +95,7 @@ export const ResultsPanel = ({
                 />
 
                 {/* Active Filters */}
-                <ActiveFilters
-                  filters={filters}
-                  activeFilterCount={activeFilterCount}
-                  clearAllFilters={clearAllFilters}
-                />
+                <ActiveFilters activeFilterCount={activeFilterCount} />
               </div>
 
               {/* Panel toggle button */}

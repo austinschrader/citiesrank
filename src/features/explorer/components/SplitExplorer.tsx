@@ -7,7 +7,6 @@ import { MapLegend } from "./MapLegend";
 import { ResultsPanel } from "./ResultsPanel";
 
 const ITEMS_PER_PAGE = 15;
-const DEFAULT_RATING = 4.6;
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
@@ -82,13 +81,6 @@ export const SplitExplorer = () => {
     [filters, setFilters]
   );
 
-  // Set default rating on mount
-  useEffect(() => {
-    if (filters.averageRating === null) {
-      setFilters({ ...filters, averageRating: DEFAULT_RATING });
-    }
-  }, [filters, setFilters]);
-
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -114,14 +106,7 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex">
       <ResultsPanel
-        filteredPlaces={visiblePlacesInView}
         paginatedPlaces={paginatedPlaces}
-        filters={filters}
-        setFilters={setFilters}
-        activeFilterCount={activeFilterCount}
-        clearAllFilters={resetFilters}
-        handleRatingChange={handleRatingChange}
-        handlePopulationSelect={handlePopulationSelect}
         isLoadingMore={isLoadingMore}
         observerTarget={observerTarget}
         isResultsPanelCollapsed={isResultsPanelCollapsed}

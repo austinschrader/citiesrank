@@ -46,6 +46,8 @@ interface FiltersContextValue {
   ) => (CitiesResponse & MatchScore)[];
 }
 
+const DEFAULT_RATING = 4.6;
+
 const defaultFilters: Filters = {
   search: "",
   activeTypes: Object.values(CitiesTypeOptions),
@@ -94,6 +96,14 @@ export const isInPopulationRange = (population: string, category: PopulationCate
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<Filters>(defaultFilters);
 
+  // Set default rating only on mount
+  useEffect(() => {
+    setFiltersState(prev => ({
+      ...prev,
+      averageRating: DEFAULT_RATING
+    }));
+  }, []); // Empty dependency array means this only runs once on mount
+
   const setFilter = useCallback(
     <K extends keyof Filters>(key: K, value: Filters[K]) => {
       setFiltersState((prev) => ({ ...prev, [key]: value }));
@@ -101,12 +111,21 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  const updateFilters = useCallback((newFilters: Partial<Filters>) => {
+  const setFilters = useCallback((newFilters: Partial<Filters>) => {
     setFiltersState((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFiltersState(defaultFilters);
+    setFiltersState({
+      search: "",
+      activeTypes: Object.values(CitiesTypeOptions),
+      sort: "alphabetical-asc",
+      averageRating: null,
+      populationCategory: null,
+      tags: [],
+      season: null,
+      budget: null,
+    });
   }, []);
 
   const handleTypeClick = useCallback((type: CitiesTypeOptions) => {
@@ -214,7 +233,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       value={{
         filters,
         setFilter,
-        setFilters: updateFilters,
+        setFilters,
         resetFilters,
         handleTypeClick,
         handlePopulationSelect,
