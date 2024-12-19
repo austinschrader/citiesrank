@@ -1,11 +1,6 @@
 import { MapPlace } from "@/features/map/types";
 import { useCities } from "@/features/places/context/CitiesContext";
-import {
-  isInPopulationRange,
-  PopulationCategory,
-  useFilters,
-} from "@/features/places/context/FiltersContext";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ResultsPanel } from "./ResultsPanel";
 import { MapLegend } from "./MapLegend";
@@ -16,20 +11,14 @@ const DEFAULT_RATING = 4.6;
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const { filters, setFilters } = useFilters();
+  const { filters, setFilters, handleTypeClick, handlePopulationSelect, resetFilters, getFilteredCities } = useFilters();
   const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null);
-  const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
-
-  // Use all place types by default
-  const [activeTypes, setActiveTypes] = useState<CitiesTypeOptions[]>(
-    Object.values(CitiesTypeOptions)
-  );
 
   // Calculate active filter count
   const activeFilterCount = useMemo(() => {
@@ -40,43 +29,20 @@ export const SplitExplorer = () => {
     return count;
   }, [filters]);
 
-  // Clear all filters
-  const clearAllFilters = useCallback(() => {
-    setFilters({
-      search: "",
-      averageRating: null,
-      populationCategory: null,
-    });
-    setActiveTypes(Object.values(CitiesTypeOptions));
-  }, [setFilters]);
-
-  // Filter places based on active types, rating, population, and search
+  // Get filtered places using context
   const filteredPlaces = useMemo(() => {
-    return cities.filter((place) => {
-      const typeMatch = activeTypes.includes(place.type as CitiesTypeOptions);
-      const ratingMatch =
-        !filters.averageRating ||
-        (place.averageRating && place.averageRating >= filters.averageRating);
-      const populationMatch =
-        !filters.populationCategory ||
-        isInPopulationRange(place.population, filters.populationCategory);
-      const searchMatch =
-        !filters.search ||
-        place.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        place.description
-          ?.toLowerCase()
-          .includes(filters.search.toLowerCase()) ||
-        place.type?.toLowerCase().includes(filters.search.toLowerCase());
-
-      return typeMatch && ratingMatch && populationMatch && searchMatch;
-    });
-  }, [
-    cities,
-    activeTypes,
-    filters.averageRating,
-    filters.populationCategory,
-    filters.search,
-  ]);
+    return getFilteredCities(cities, (city) => ({
+      matchScore: 1,
+      attributeMatches: {
+        budget: 1,
+        crowds: 1,
+        tripLength: 1,
+        season: 1,
+        transit: 1,
+        accessibility: 1,
+      },
+    }));
+  }, [cities, getFilteredCities]);
 
   // Calculate places in current view
   const placesInView = useMemo(() => {
@@ -120,34 +86,6 @@ export const SplitExplorer = () => {
     }
   };
 
-  const handlePopulationSelect = (category: PopulationCategory | null) => {
-    if (category) {
-      setActiveTypes([CitiesTypeOptions.city]);
-      setFilters({ populationCategory: category });
-    } else {
-      setFilters({ populationCategory: null });
-    }
-  };
-
-  const handleTypeClick = (type: CitiesTypeOptions) => {
-    // Clear population filter if selecting a non-city type
-    if (type !== CitiesTypeOptions.city && filters.populationCategory) {
-      setFilters({ populationCategory: null });
-    }
-
-    // Toggle the type in activeTypes
-    setActiveTypes((prev) => {
-      const newTypes = prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type];
-
-      // If all types are removed, restore all types
-      return newTypes.length === 0
-        ? Object.values(CitiesTypeOptions)
-        : newTypes;
-    });
-  };
-
   // Set default rating on mount
   useEffect(() => {
     if (filters.averageRating === null) {
@@ -185,7 +123,7 @@ export const SplitExplorer = () => {
         filters={filters}
         setFilters={setFilters}
         activeFilterCount={activeFilterCount}
-        clearAllFilters={clearAllFilters}
+        clearAllFilters={resetFilters}
         handleRatingChange={handleRatingChange}
         handlePopulationSelect={handlePopulationSelect}
         isLoadingMore={isLoadingMore}
@@ -199,7 +137,7 @@ export const SplitExplorer = () => {
           placesInView={placesInView}
           mapBounds={mapBounds}
           filters={filters}
-          activeTypes={activeTypes}
+          activeTypes={filters.activeTypes}
           isStatsMinimized={isStatsMinimized}
           setIsStatsMinimized={setIsStatsMinimized}
           handleTypeClick={handleTypeClick}

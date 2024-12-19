@@ -22,7 +22,7 @@ export type PopulationCategory =
 export interface Filters {
   // Implemented filters
   search: string;
-  placeType: CitiesTypeOptions | null;
+  activeTypes: CitiesTypeOptions[];
   sort: SortOrder;
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
@@ -38,6 +38,8 @@ interface FiltersContextValue {
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
   setFilters: (filters: Partial<Filters>) => void;
   resetFilters: () => void;
+  handleTypeClick: (type: CitiesTypeOptions) => void;
+  handlePopulationSelect: (category: PopulationCategory | null) => void;
   getFilteredCities: (
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
@@ -46,7 +48,7 @@ interface FiltersContextValue {
 
 const defaultFilters: Filters = {
   search: "",
-  placeType: null,
+  activeTypes: Object.values(CitiesTypeOptions),
   sort: "alphabetical-asc",
   averageRating: null,
   populationCategory: null,
@@ -107,6 +109,45 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     setFiltersState(defaultFilters);
   }, []);
 
+  const handleTypeClick = useCallback((type: CitiesTypeOptions) => {
+    setFiltersState((prev) => {
+      // Clear population filter if selecting a non-city type
+      const updates: Partial<Filters> = {};
+      if (type !== CitiesTypeOptions.city && prev.populationCategory) {
+        updates.populationCategory = null;
+      }
+
+      // Toggle the type in activeTypes
+      const newTypes = prev.activeTypes.includes(type)
+        ? prev.activeTypes.filter((t) => t !== type)
+        : [...prev.activeTypes, type];
+
+      // If all types are removed, restore all types
+      updates.activeTypes = newTypes.length === 0
+        ? Object.values(CitiesTypeOptions)
+        : newTypes;
+
+      return { ...prev, ...updates };
+    });
+  }, []);
+
+  const handlePopulationSelect = useCallback((category: PopulationCategory | null) => {
+    setFiltersState((prev) => {
+      if (category) {
+        return {
+          ...prev,
+          activeTypes: [CitiesTypeOptions.city],
+          populationCategory: category,
+        };
+      } else {
+        return {
+          ...prev,
+          populationCategory: null,
+        };
+      }
+    });
+  }, []);
+
   useEffect(() => {
     return () => {
       resetFilters();
@@ -125,7 +166,11 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             return false;
           }
 
-          if (filters.placeType && city.type !== filters.placeType) {
+          if (!filters.activeTypes.includes(city.type as CitiesTypeOptions)) {
+            return false;
+          }
+
+          if (filters.averageRating && (!city.averageRating || city.averageRating < filters.averageRating)) {
             return false;
           }
 
@@ -170,6 +215,8 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         setFilter,
         setFilters: updateFilters,
         resetFilters,
+        handleTypeClick,
+        handlePopulationSelect,
         getFilteredCities,
       }}
     >
