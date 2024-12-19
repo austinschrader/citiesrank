@@ -3,15 +3,10 @@
  * Compact version of PlaceCard used in popups and tight spaces
  */
 import { ImageGallery } from "@/components/gallery/ImageGallery";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import {
-  getMatchColor,
-  getPlaceTypeInfo,
-} from "@/features/places/utils/placeUtils";
+import { getPlaceTypeInfo } from "@/features/places/utils/placeUtils";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 
 interface CompactPlaceCardProps {
@@ -50,14 +45,14 @@ export const CompactPlaceCard = ({ city, onClick }: CompactPlaceCardProps) => {
         {city.description}
       </p>
 
-      {"matchScore" in city && typeof city.matchScore === "number" && (
+      {/* {"matchScore" in city && typeof city.matchScore === "number" && (
         <Badge
           variant="secondary"
           className={cn("text-xs", getMatchColor(city.matchScore))}
         >
           {city.matchScore.toFixed(0)}% Match
         </Badge>
-      )}
+      )} */}
     </div>
   );
 };
