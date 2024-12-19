@@ -44,7 +44,7 @@ export const Header = () => {
       label: "Explorer",
       icon: Compass,
       to: "/explorer",
-      description: "Interactive map and place discovery",
+      description: "Interactive map with advanced filters and search",
       iconClass: "text-blue-500",
     },
   ];
@@ -55,11 +55,13 @@ export const Header = () => {
         <div className="h-16 flex items-center px-4">
           {/* Logo section - only show on desktop */}
           <div className="flex-none hidden md:block">
-            <Link
-              to="/"
-              className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text hover:opacity-80 transition-opacity"
-            >
-              CitiesRank
+            <Link to="/" className="flex flex-col">
+              <span className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text hover:opacity-80 transition-opacity">
+                CitiesRank
+              </span>
+              <span className="text-sm text-muted-foreground">
+                Find your perfect place with intelligent filters
+              </span>
             </Link>
           </div>
 
@@ -74,8 +76,13 @@ export const Header = () => {
                     size="sm"
                     className="text-sm font-semibold text-gray-900 hover:bg-gray-50/50 flex items-center gap-2 group relative transition-all duration-200 ease-in-out"
                   >
-                    <item.icon className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 group-hover:scale-110`} strokeWidth={2.5} />
-                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
+                    <item.icon
+                      className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 group-hover:scale-110`}
+                      strokeWidth={2.5}
+                    />
+                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">
+                      {item.label}
+                    </span>
                     {item.description && (
                       <div className="absolute hidden group-hover:block top-full left-1/2 transform -translate-x-1/2 mt-1 w-64 p-3 bg-white text-xs text-gray-600 rounded-lg shadow-lg border whitespace-normal z-50">
                         {item.description}
@@ -95,8 +102,13 @@ export const Header = () => {
                     size="sm"
                     className="text-sm font-medium text-gray-900 hover:bg-gray-50/50 flex items-center gap-2 transition-all duration-200 ease-in-out"
                   >
-                    <item.icon className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 hover:scale-110`} strokeWidth={2.5} />
-                    <span className="hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
+                    <item.icon
+                      className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 hover:scale-110`}
+                      strokeWidth={2.5}
+                    />
+                    <span className="hover:translate-x-0.5 transition-transform duration-200">
+                      {item.label}
+                    </span>
                   </Button>
                 </Link>
               ))}
@@ -186,22 +198,37 @@ export const Header = () => {
                 className="flex items-center justify-center"
               >
                 <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                  <item.icon className={`h-5 w-5 ${item.iconClass}`} strokeWidth={2.5} />
+                  <item.icon
+                    className={`h-5 w-5 ${item.iconClass}`}
+                    strokeWidth={2.5}
+                  />
                   <span className="text-[10px] font-medium">{item.label}</span>
                 </div>
               </Link>
             ))}
             {user ? (
               <>
-                <Link to="/favorites" className="flex items-center justify-center">
+                <Link
+                  to="/favorites"
+                  className="flex items-center justify-center"
+                >
                   <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <Bookmark className="h-5 w-5 text-pink-500" strokeWidth={2.5} />
+                    <Bookmark
+                      className="h-5 w-5 text-pink-500"
+                      strokeWidth={2.5}
+                    />
                     <span className="text-[10px] font-medium">Saved</span>
                   </div>
                 </Link>
-                <Link to="/profile" className="flex items-center justify-center">
+                <Link
+                  to="/profile"
+                  className="flex items-center justify-center"
+                >
                   <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <UserCircle className="h-5 w-5 text-indigo-500" strokeWidth={2.5} />
+                    <UserCircle
+                      className="h-5 w-5 text-indigo-500"
+                      strokeWidth={2.5}
+                    />
                     <span className="text-[10px] font-medium">Profile</span>
                   </div>
                 </Link>
