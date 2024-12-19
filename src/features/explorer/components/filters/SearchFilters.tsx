@@ -19,7 +19,8 @@ const citySizeEmojis: Record<PopulationCategory, string> = {
 };
 
 export function SearchFilters() {
-  const { filters, setFilters, handlePopulationSelect, handleRatingChange } = useFilters();
+  const { filters, setFilters, handlePopulationSelect, handleRatingChange } =
+    useFilters();
 
   return (
     <div className="space-y-3">
