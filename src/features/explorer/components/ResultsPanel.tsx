@@ -1,4 +1,4 @@
-import { useMap } from "@/features/map/context/MapContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,8 @@ import { RefObject } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
 import { ViewMode } from "./SplitExplorer";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useMap } from "@/features/map/context/MapContext";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
@@ -13,6 +15,7 @@ interface ResultsPanelProps {
   isResultsPanelCollapsed: boolean;
   setIsResultsPanelCollapsed: (value: boolean) => void;
   viewMode: ViewMode;
+  paginatedFilteredPlaces: any[]; // TODO: Add proper type
 }
 
 export const ResultsPanel = ({
@@ -20,11 +23,21 @@ export const ResultsPanel = ({
   observerTarget,
   isResultsPanelCollapsed,
   viewMode,
+  paginatedFilteredPlaces,
 }: ResultsPanelProps) => {
-  const { prioritizedPlaces, visiblePlacesInView, visiblePlaces } = useMap();
+  const { cities } = useCities();
+  const { getFilteredCities } = useFilters();
+  const { prioritizedPlaces, visiblePlacesInView } = useMap();
+
+  // Use different data source based on view mode
+  const displayPlaces = viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+
+  // Get the correct total count based on view mode
+  const totalPlaces = viewMode === "list" ? paginatedFilteredPlaces.length : visiblePlacesInView.length;
+  const placesInView = viewMode === "list" ? paginatedFilteredPlaces.length : visiblePlacesInView.length;
 
   return (
-    <div className="relative flex">
+    <div className="h-full flex">
       <div
         className={cn(
           "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
@@ -53,7 +66,7 @@ export const ResultsPanel = ({
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold">Discover Places</h2>
                   <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                    {visiblePlaces.length}
+                    {displayPlaces.length}
                   </div>
                 </div>
 
@@ -67,17 +80,17 @@ export const ResultsPanel = ({
           </div>
 
           {/* Results Grid */}
-          <div className="grow overflow-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-muted">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-6">
               {/* Results count */}
               <div className="flex items-center justify-between text-sm px-1">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">
-                    {prioritizedPlaces.length} loaded
+                    {displayPlaces.length} loaded
                   </span>
                   <span className="text-muted-foreground">•</span>
                   <span className="font-medium">
-                    {visiblePlacesInView.length}
+                    {placesInView}
                   </span>
                   <span className="text-muted-foreground">places in view</span>
                 </div>
@@ -100,7 +113,7 @@ export const ResultsPanel = ({
                     : "grid-cols-2"
                 )}
               >
-                {prioritizedPlaces.map((place: MapPlace) => (
+                {displayPlaces.map((place) => (
                   <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}
               </div>
@@ -110,8 +123,7 @@ export const ResultsPanel = ({
                 ref={observerTarget}
                 className={cn(
                   "h-32 flex items-center justify-center transition-all duration-200",
-                  isLoadingMore &&
-                    prioritizedPlaces.length < visiblePlacesInView.length
+                  isLoadingMore && displayPlaces.length < cities.length
                     ? "opacity-100"
                     : "opacity-0"
                 )}

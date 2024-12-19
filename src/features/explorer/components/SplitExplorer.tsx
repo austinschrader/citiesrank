@@ -21,6 +21,7 @@ export const SplitExplorer = () => {
     setNumPrioritizedToShow,
     setVisiblePlaces,
   } = useMap();
+  const [numFilteredToShow, setNumFilteredToShow] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
@@ -42,6 +43,11 @@ export const SplitExplorer = () => {
     }));
   }, [cities, getFilteredCities]);
 
+  // Get paginated filtered places
+  const paginatedFilteredPlaces = useMemo(() => {
+    return filteredPlaces.slice(0, numFilteredToShow);
+  }, [filteredPlaces, numFilteredToShow]);
+
   // Update visible places in map context
   useEffect(() => {
     setVisiblePlaces(filteredPlaces);
@@ -51,19 +57,32 @@ export const SplitExplorer = () => {
     setIsResultsPanelCollapsed(viewMode === "map");
   }, [viewMode]);
 
+  // Reset pagination when view changes
+  useEffect(() => {
+    setNumPrioritizedToShow(ITEMS_PER_PAGE);
+    setNumFilteredToShow(ITEMS_PER_PAGE);
+  }, [viewMode, setNumPrioritizedToShow]);
+
   const hasMore = useCallback(() => {
+    if (viewMode === "list") {
+      return numFilteredToShow < filteredPlaces.length;
+    }
     return numPrioritizedToShow < visiblePlacesInView.length;
-  }, [numPrioritizedToShow, visiblePlacesInView.length]);
+  }, [numPrioritizedToShow, visiblePlacesInView.length, numFilteredToShow, filteredPlaces.length, viewMode]);
 
   const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
 
     setIsLoadingMore(true);
     setTimeout(() => {
-      setNumPrioritizedToShow((prev) => prev + ITEMS_PER_PAGE);
+      if (viewMode === "list") {
+        setNumFilteredToShow((prev) => prev + ITEMS_PER_PAGE);
+      } else {
+        setNumPrioritizedToShow((prev) => prev + ITEMS_PER_PAGE);
+      }
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow]);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, viewMode]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -126,14 +145,16 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex flex-col">
       <ViewModeToggle />
-      <div
-        className={cn("flex-1 flex", viewMode === "list" && "justify-center")}
-      >
+      <div className="flex-1 flex overflow-hidden">
         <div
+          key={viewMode}
           className={cn(
-            "transition-all duration-300",
-            viewMode === "list" ? "flex-1" : "w-[800px]",
-            viewMode === "map" && "w-0"
+            "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden",
+            viewMode === "map"
+              ? "w-0 invisible"
+              : viewMode === "list"
+              ? "w-full"
+              : "w-[800px]"
           )}
         >
           <ResultsPanel
@@ -142,17 +163,33 @@ export const SplitExplorer = () => {
             isResultsPanelCollapsed={isResultsPanelCollapsed}
             setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
             viewMode={viewMode}
+            paginatedFilteredPlaces={paginatedFilteredPlaces}
           />
         </div>
-        {viewMode !== "list" && (
-          <div className="flex-1 relative">
+        <div
+          key={`map-${viewMode}`}
+          className={cn(
+            "relative transition-all duration-300 ease-in-out overflow-hidden",
+            viewMode === "list"
+              ? "w-0 invisible"
+              : viewMode === "map"
+              ? "w-full"
+              : "flex-1"
+          )}
+        >
+          <div
+            className={cn(
+              "absolute inset-0",
+              viewMode === "list" && "pointer-events-none"
+            )}
+          >
             <MapLegend
               isStatsMinimized={isStatsMinimized}
               setIsStatsMinimized={setIsStatsMinimized}
             />
             <CityMap className="h-full" />
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
