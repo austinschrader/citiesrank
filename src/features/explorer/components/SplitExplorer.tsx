@@ -53,18 +53,6 @@ export const SplitExplorer = () => {
     }, 500);
   }, [hasMore, isLoadingMore, setNumPrioritizedToShow, ITEMS_PER_PAGE]);
 
-  const handleRatingChange = useCallback(
-    (value: string) => {
-      const numValue = parseFloat(value);
-      if (!value) {
-        setFilters({ ...filters, averageRating: null });
-      } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
-        setFilters({ ...filters, averageRating: numValue });
-      }
-    },
-    [filters, setFilters]
-  );
-
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
