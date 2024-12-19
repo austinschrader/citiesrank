@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 const ITEMS_PER_PAGE = 12;
 const DEFAULT_RATING = 4.6;
@@ -18,7 +19,7 @@ export const SplitExplorer = () => {
   const { filters, setFilters } = useFilters();
   const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [mapBounds, setMapBounds] = useState<any>(null);
+  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -38,6 +39,61 @@ export const SplitExplorer = () => {
       return typeMatch && ratingMatch && populationMatch;
     });
   }, [cities, activeTypes, filters.averageRating, filters.populationCategory]);
+
+  // Calculate counts by type
+  const typeCounts = useMemo(() => {
+    const counts: Record<CitiesTypeOptions, number> = {
+      [CitiesTypeOptions.country]: 0,
+      [CitiesTypeOptions.region]: 0,
+      [CitiesTypeOptions.city]: 0,
+      [CitiesTypeOptions.neighborhood]: 0,
+      [CitiesTypeOptions.sight]: 0,
+    };
+    
+    filteredPlaces.forEach((place) => {
+      if (place.type) {
+        counts[place.type as CitiesTypeOptions]++;
+      }
+    });
+    
+    return counts;
+  }, [filteredPlaces]);
+
+  // Calculate places in current view
+  const placesInView = useMemo(() => {
+    if (!mapBounds) return filteredPlaces;
+    
+    return filteredPlaces.filter(place => {
+      if (typeof place.latitude !== 'number' || typeof place.longitude !== 'number') return false;
+      return mapBounds.contains([place.latitude, place.longitude]);
+    });
+  }, [filteredPlaces, mapBounds]);
+
+  // Calculate type counts for places in view
+  const typeCountsInView = useMemo(() => {
+    const counts: Record<CitiesTypeOptions, number> = {
+      [CitiesTypeOptions.country]: 0,
+      [CitiesTypeOptions.region]: 0,
+      [CitiesTypeOptions.city]: 0,
+      [CitiesTypeOptions.neighborhood]: 0,
+      [CitiesTypeOptions.sight]: 0,
+    };
+    
+    placesInView.forEach((place) => {
+      if (place.type) {
+        counts[place.type as CitiesTypeOptions]++;
+      }
+    });
+    
+    return counts;
+  }, [placesInView]);
+
+  // Debug log
+  useEffect(() => {
+    console.log('Total cities:', cities.length);
+    console.log('Filtered places:', filteredPlaces.length);
+    console.log('Type counts:', typeCounts);
+  }, [cities.length, filteredPlaces.length, typeCounts]);
 
   // Get paginated places
   const paginatedPlaces = useMemo(() => {
@@ -66,11 +122,14 @@ export const SplitExplorer = () => {
     }
 
     // Toggle the type in activeTypes
-    setActiveTypes((prev) =>
-      prev.includes(type)
+    setActiveTypes((prev) => {
+      const newTypes = prev.includes(type)
         ? prev.filter((t) => t !== type)
-        : [...prev, type]
-    );
+        : [...prev, type];
+      
+      // If all types are removed, restore all types
+      return newTypes.length === 0 ? Object.values(CitiesTypeOptions) : newTypes;
+    });
   };
 
   const handleRatingChange = (value: string) => {
@@ -126,19 +185,25 @@ export const SplitExplorer = () => {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
+  const [isStatsMinimized, setIsStatsMinimized] = useState(false);
+
+  // Type colors matching MapMarker.tsx
+  const typeColors = {
+    country: "#4f46e5",    // Deep purple-blue
+    region: "#7c3aed",     // Vibrant purple
+    city: "#0ea5e9",       // Sky blue
+    neighborhood: "#f97316", // Orange
+    sight: "#6366f1",      // Indigo
+  };
+
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
-      {/* Left Panel */}
-      <div className="w-[500px] h-full flex flex-col border-r">
-        {/* Filter Tags */}
-        <div className="p-4 border-b bg-card">
-          <h2 className="text-lg font-semibold mb-3 text-card-foreground">Discover Places</h2>
+    <div className="h-screen flex">
+      <div className="w-[500px] flex flex-col border-r">
+        <div className="shrink-0 p-4 border-b bg-card space-y-4">
+          <h2 className="text-lg font-semibold">Discover Places</h2>
           
-          {/* Place Types */}
-          <div className="space-y-2">
-            <div className="text-xs font-medium text-muted-foreground">
-              Place Types
-            </div>
+          <div>
+            <div className="text-xs font-medium text-muted-foreground mb-2">Place Types</div>
             <div className="flex flex-wrap gap-2">
               {Object.values(CitiesTypeOptions).map((type) => (
                 <button
@@ -146,12 +211,9 @@ export const SplitExplorer = () => {
                   onClick={() => handleTypeClick(type)}
                   className={cn(
                     "px-4 py-2 rounded-full text-sm font-medium",
-                    "transition-all duration-200",
-                    "hover:bg-accent hover:text-accent-foreground hover:scale-105",
-                    "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
                     activeTypes.includes(type)
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-muted text-muted-foreground"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-accent"
                   )}
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}s
@@ -160,34 +222,22 @@ export const SplitExplorer = () => {
             </div>
           </div>
 
-          {/* Rating Filter */}
-          <div className="mt-4 space-y-2">
-            <div className="text-xs font-medium text-muted-foreground">
-              Place Rating
-            </div>
+          <div>
+            <div className="text-xs font-medium text-muted-foreground mb-2">Place Rating</div>
             <div className="flex items-baseline gap-2">
               <Input
-                id="rating-filter"
                 type="number"
-                placeholder="4.6"
                 value={filters.averageRating ?? ""}
                 onChange={(e) => handleRatingChange(e.target.value)}
                 className="w-16 h-8 text-right"
-                min="0"
-                max="5"
-                step="0.1"
+                min="0" max="5" step="0.1"
               />
-              <span className="text-xs text-muted-foreground">
-                minimum rating out of 5.0
-              </span>
+              <span className="text-xs text-muted-foreground">minimum rating out of 5.0</span>
             </div>
           </div>
 
-          {/* Population Filter */}
-          <div className="mt-4 space-y-2">
-            <div className="text-xs font-medium text-muted-foreground">
-              City Size
-            </div>
+          <div>
+            <div className="text-xs font-medium text-muted-foreground mb-2">City Size</div>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => handlePopulationSelect(
@@ -269,35 +319,126 @@ export const SplitExplorer = () => {
           </div>
         </div>
 
-        {/* Places Grid */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="grow overflow-auto p-4">
           <div className="grid grid-cols-2 gap-4">
             {paginatedPlaces.map((place) => (
-              <div
-                key={place.id}
-                className="transform transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
-              >
-                <PlaceCard city={place} variant="compact" />
-              </div>
+              <PlaceCard key={place.id} city={place} variant="compact" />
             ))}
           </div>
-          {/* Load more trigger */}
           <div ref={observerTarget} className="h-10" />
-          {/* Loading indicator */}
           {isLoadingMore && (
-            <div className="flex justify-center py-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-            </div>
+            <div className="animate-spin h-6 w-6 border-b-2 border-primary mx-auto my-4" />
           )}
         </div>
       </div>
 
-      {/* Right Panel - Map */}
-      <div className="flex-1 h-full">
+      <div className="grow relative">
+        <div className="absolute left-4 top-4 z-10">
+          <div className="bg-background/95 backdrop-blur-sm rounded-2xl shadow-lg border border-border/50 w-[280px]">
+            {/* Header with total count */}
+            <div className="px-5 py-4 border-b border-border/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-semibold">
+                      {filteredPlaces.length}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {filteredPlaces.length === 1 ? 'place' : 'places'}
+                    </span>
+                  </div>
+                  {mapBounds && placesInView.length !== filteredPlaces.length && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {placesInView.length} in current view
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => setIsStatsMinimized(!isStatsMinimized)}
+                  className="p-1 hover:bg-accent rounded-full transition-colors"
+                >
+                  {isStatsMinimized ? (
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                  )}
+                </button>
+              </div>
+              
+              {/* Active Filters Summary */}
+              <div className={cn(
+                "flex gap-2 mt-2 flex-wrap transition-all duration-300",
+                isStatsMinimized ? "h-0 opacity-0" : "h-auto opacity-100"
+              )}>
+                {filters.averageRating && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    <Star className="w-3 h-3 mr-1" />
+                    {filters.averageRating}+
+                  </span>
+                )}
+                {filters.populationCategory && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    {filters.populationCategory.charAt(0).toUpperCase() + filters.populationCategory.slice(1)}
+                  </span>
+                )}
+                {activeTypes.length !== Object.values(CitiesTypeOptions).length && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                    {activeTypes.length} types
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            {/* Type breakdown */}
+            <div className={cn(
+              "transition-all duration-300 ease-in-out divide-y divide-border/50",
+              isStatsMinimized ? "h-0 opacity-0" : "opacity-100"
+            )}>
+              {Object.entries(typeCounts).map(([type, count]) => count > 0 && (
+                <div 
+                  key={type}
+                  style={{ 
+                    '--marker-color': typeColors[type as keyof typeof typeColors]
+                  } as React.CSSProperties}
+                  className="px-5 py-3 flex items-center justify-between hover:bg-muted/50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full" style={{ 
+                      backgroundColor: 'var(--marker-color)',
+                      boxShadow: '0 0 0 2px var(--marker-color)'
+                    }} />
+                    <span className="text-sm font-medium capitalize" style={{ 
+                      color: 'var(--marker-color)'
+                    }}>
+                      {type}s
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium" style={{ 
+                      color: 'var(--marker-color)'
+                    }}>
+                      {count.toLocaleString()}
+                    </span>
+                    {mapBounds && typeCountsInView[type as CitiesTypeOptions] !== count && (
+                      <span className="text-xs" style={{ 
+                        color: 'var(--marker-color)',
+                        opacity: 0.8
+                      }}>
+                        ({typeCountsInView[type as CitiesTypeOptions]} in view)
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <CityMap
           places={filteredPlaces}
           onPlaceSelect={handlePlaceSelect}
           className="h-full w-full"
+          onBoundsChange={setMapBounds}
         />
       </div>
     </div>

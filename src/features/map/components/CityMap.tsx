@@ -6,19 +6,43 @@
  */
 
 import type { MapPlace } from "@/features/map/types";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, useMap as useLeafletMap } from "react-leaflet";
 import { useMap } from "../context/MapContext";
 import { MapControls } from "./MapControls";
 import { MapCluster } from "./MapCluster";
 import { PlaceGeoJson } from "./PlaceGeoJson";
+import { useEffect } from "react";
+import L from "leaflet";
 
 interface CityMapProps {
   places: MapPlace[];
   onPlaceSelect?: (place: MapPlace) => void;
+  onBoundsChange?: (bounds: L.LatLngBounds) => void;
   className?: string;
 }
 
-export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
+const BoundsTracker = ({ onBoundsChange }: { onBoundsChange: (bounds: L.LatLngBounds) => void }) => {
+  const map = useLeafletMap();
+
+  useEffect(() => {
+    const handleMove = () => {
+      const bounds = map.getBounds();
+      onBoundsChange(bounds);
+    };
+
+    map.on('moveend', handleMove);
+    // Initial bounds
+    handleMove();
+
+    return () => {
+      map.off('moveend', handleMove);
+    };
+  }, [map, onBoundsChange]);
+
+  return null;
+};
+
+export const CityMap = ({ places, onPlaceSelect, onBoundsChange, className }: CityMapProps) => {
   const { center, zoom, selectedPlace, selectPlace, setZoom } = useMap();
 
   return (
@@ -35,6 +59,7 @@ export const CityMap = ({ places, onPlaceSelect, className }: CityMapProps) => {
         ]}
         maxBoundsViscosity={1.0}
       >
+        {onBoundsChange && <BoundsTracker onBoundsChange={onBoundsChange} />}
         <MapControls
           onZoomChange={setZoom}
           defaultCenter={[20, 0]}
