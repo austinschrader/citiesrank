@@ -14,36 +14,28 @@ import ReactDOMServer from "react-dom/server";
 import { Marker, Popup } from "react-leaflet";
 import { MapMarkerProps, MapPlace, MarkerStyle } from "../types";
 import { PlaceGeoJson } from "./PlaceGeoJson";
+import { markerColors, ratingColors } from "@/lib/utils/colors";
 
 const getMarkerStyle = (type?: string, rating?: number): MarkerStyle => {
-  // Type colors (elegant and distinct)
-  const typeColors = {
-    country: "#4f46e5",    // Deep purple-blue - regal/majestic
-    region: "#7c3aed",     // Vibrant purple - regional authority
-    city: "#0ea5e9",      // Sky-500 (urban/modern for cities)
-    neighborhood: "#f97316", // Orange-500 (warm/community for neighborhoods)
-    sight: "#6366f1",     // Indigo-500 (interesting/cultural for sights)
-  };
-
-  // Rating colors (vibrant spectrum from great to bad)
+  // Rating colors from centralized config
   const getRatingColor = (rating?: number) => {
-    if (!rating) return "#6b7280"; // Gray-500 for no rating
-    if (rating >= 4.8) return "#16a34a"; // Vibrant green
-    if (rating >= 4.5) return "#22c55e"; // Bright green
-    if (rating >= 4.2) return "#84cc16"; // Lime green
-    if (rating >= 3.8) return "#facc15"; // Vibrant yellow
-    if (rating >= 3.4) return "#f97316"; // Vibrant orange
-    return "#ef4444"; // Bright red
+    if (!rating) return ratingColors.none;
+    if (rating >= 4.8) return ratingColors.best;
+    if (rating >= 4.5) return ratingColors.great;
+    if (rating >= 4.2) return ratingColors.good;
+    if (rating >= 3.8) return ratingColors.okay;
+    if (rating >= 3.4) return ratingColors.fair;
+    return ratingColors.poor;
   };
 
-  const typeColor = (type && type in typeColors) 
-    ? typeColors[type as keyof typeof typeColors]
-    : "#6b7280"; // Gray-500 default
+  const typeColor = (type && type in markerColors) 
+    ? markerColors[type as keyof typeof markerColors]
+    : markerColors.default;
 
   return {
     color: typeColor,
     ratingColor: getRatingColor(rating),
-    size: 40 // Slightly smaller for cleaner look
+    size: 40
   };
 };
 

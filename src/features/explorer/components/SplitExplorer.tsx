@@ -4,6 +4,7 @@ import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters, isInPopulationRange, PopulationCategory } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
+import { markerColors } from "@/lib/utils/colors";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -187,14 +188,8 @@ export const SplitExplorer = () => {
 
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
 
-  // Type colors matching MapMarker.tsx
-  const typeColors = {
-    country: "#4f46e5",    // Deep purple-blue
-    region: "#7c3aed",     // Vibrant purple
-    city: "#0ea5e9",       // Sky blue
-    neighborhood: "#f97316", // Orange
-    sight: "#6366f1",      // Indigo
-  };
+  // Colors from centralized config
+  const typeColors = markerColors;
 
   return (
     <div className="h-screen flex">
