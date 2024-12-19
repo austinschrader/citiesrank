@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
-import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
@@ -26,13 +25,7 @@ export const ResultsPanel = ({
   setIsResultsPanelCollapsed,
 }: ResultsPanelProps) => {
   const { visiblePlacesInView } = useMap();
-  const { cities: filteredPlaces } = useCities();
-  const { 
-    filters, 
-    setFilters, 
-    resetFilters,
-    handlePopulationSelect,
-  } = useFilters();
+  const { filters, setFilters, handlePopulationSelect } = useFilters();
 
   const handleRatingChange = (value: string) => {
     const numValue = parseFloat(value);
@@ -42,15 +35,6 @@ export const ResultsPanel = ({
       setFilters({ ...filters, averageRating: numValue });
     }
   };
-
-  // Calculate active filter count
-  const activeFilterCount = (() => {
-    let count = 0;
-    if (filters.search) count++;
-    if (filters.averageRating) count++;
-    if (filters.populationCategory) count++;
-    return count;
-  })();
 
   return (
     <div className="relative flex">
@@ -96,7 +80,6 @@ export const ResultsPanel = ({
 
                 {/* Active Filters */}
                 <ActiveFilters />
-
               </div>
 
               {/* Panel toggle button */}
@@ -158,7 +141,10 @@ export const ResultsPanel = ({
                 ref={observerTarget}
                 className={cn(
                   "h-32 flex items-center justify-center transition-all duration-200",
-                  isLoadingMore && paginatedPlaces.length < visiblePlacesInView.length ? "opacity-100" : "opacity-0"
+                  isLoadingMore &&
+                    paginatedPlaces.length < visiblePlacesInView.length
+                    ? "opacity-100"
+                    : "opacity-0"
                 )}
               >
                 <div className="flex flex-col items-center gap-3 bg-primary px-6 py-4 rounded-xl">

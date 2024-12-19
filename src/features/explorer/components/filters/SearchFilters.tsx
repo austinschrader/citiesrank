@@ -63,7 +63,9 @@ export function SearchFilters({
       <div className="grid grid-cols-2 gap-3">
         {/* Rating Filter */}
         <div className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Rating</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            Rating
+          </span>
           <div className="inline-flex items-center gap-1 bg-muted/50 rounded-md px-2">
             <Star className="h-3.5 w-3.5 text-muted-foreground fill-muted-foreground" />
             <Input
@@ -82,7 +84,9 @@ export function SearchFilters({
 
         {/* City Size Filter */}
         <div className="space-y-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Size</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            Size
+          </span>
           <div className="flex flex-wrap gap-1">
             {Object.entries({
               village: { emoji: "🏘️", label: "Village" },
@@ -121,7 +125,11 @@ export function SearchFilters({
                       backgroundColor: markerColors[CitiesTypeOptions.city],
                     }}
                   />
-                  <span className="text-base" role="img" aria-label={`${size} emoji`}>
+                  <span
+                    className="text-base"
+                    role="img"
+                    aria-label={`${size} emoji`}
+                  >
                     {citySizeEmojis[size as PopulationCategory]}
                   </span>
                   <span className="capitalize">{size}</span>

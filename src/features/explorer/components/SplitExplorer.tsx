@@ -10,14 +10,7 @@ const ITEMS_PER_PAGE = 15;
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const {
-    filters,
-    setFilters,
-    handleTypeClick,
-    handlePopulationSelect,
-    resetFilters,
-    getFilteredCities,
-  } = useFilters();
+  const { filters, setFilters, getFilteredCities } = useFilters();
   const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow } =
     useMap();
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
