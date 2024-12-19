@@ -1,13 +1,14 @@
+import { useMap } from "@/features/map/context/MapContext";
+import { useCities } from "@/features/places/context/CitiesContext";
+import {
+  PopulationCategory,
+  useFilters,
+} from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { markerColors } from "@/lib/utils/colors";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
-import { PopulationCategory } from "@/features/places/context/FiltersContext";
-import { MapPlace } from "@/features/map/types";
 import { useState } from "react";
-import { useMap } from "@/features/map/context/MapContext";
-import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
 
 interface MapLegendProps {
   isStatsMinimized: boolean;
@@ -36,7 +37,8 @@ export const MapLegend = ({
   const [isCitySizesExpanded, setIsCitySizesExpanded] = useState(false);
   const { visiblePlacesInView: placesInView } = useMap();
   const { cities: filteredPlaces } = useCities();
-  const { filters, handleTypeClick, handlePopulationSelect, getTypeCounts } = useFilters();
+  const { filters, handleTypeClick, handlePopulationSelect, getTypeCounts } =
+    useFilters();
   const { mapBounds } = useMap();
 
   // Calculate counts by type
@@ -95,7 +97,8 @@ export const MapLegend = ({
                   filters.populationCategory.slice(1)}
               </span>
             )}
-            {filters.activeTypes.length !== Object.values(CitiesTypeOptions).length && (
+            {filters.activeTypes.length !==
+              Object.values(CitiesTypeOptions).length && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
                 {filters.activeTypes.length} types
               </span>
@@ -117,14 +120,15 @@ export const MapLegend = ({
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     handleTypeClick(type);
                   }
                 }}
                 style={
                   {
-                    "--marker-color": markerColors[type as keyof typeof markerColors],
+                    "--marker-color":
+                      markerColors[type as keyof typeof markerColors],
                     backgroundColor: filters.activeTypes.includes(type)
                       ? `${markerColors[type as keyof typeof markerColors]}15`
                       : undefined,
@@ -143,7 +147,9 @@ export const MapLegend = ({
                   <div
                     className={cn(
                       "w-2 h-2 rounded-full transition-all duration-200",
-                      filters.activeTypes.includes(type) ? "scale-125" : "opacity-40"
+                      filters.activeTypes.includes(type)
+                        ? "scale-125"
+                        : "opacity-40"
                     )}
                     style={{
                       backgroundColor: "var(--marker-color)",
@@ -192,7 +198,9 @@ export const MapLegend = ({
                     <span
                       className={cn(
                         "text-xs transition-all duration-200",
-                        filters.activeTypes.includes(type) ? "opacity-80" : "opacity-40"
+                        filters.activeTypes.includes(type)
+                          ? "opacity-80"
+                          : "opacity-40"
                       )}
                       style={{
                         color: filters.activeTypes.includes(type)
@@ -249,9 +257,11 @@ export const MapLegend = ({
                           role="button"
                           tabIndex={0}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
+                            if (e.key === "Enter" || e.key === " ") {
                               e.preventDefault();
-                              handlePopulationSelect(size as PopulationCategory);
+                              handlePopulationSelect(
+                                size as PopulationCategory
+                              );
                             }
                           }}
                           className={cn(

@@ -1,8 +1,29 @@
-// file location: src/features/map/context/MapContext.tsx
 /**
  * Global map state provider used by map components to share state and interactions.
  * Manages zoom, center, selected place and geographic level. Used by CityMap and
  * its child components via useMap hook.
+ */
+
+/**
+ * MapContext manages all map-related state and operations.
+ * It takes filtered places from FiltersContext and applies map-specific
+ * filtering (bounds, zoom) and pagination.
+ * 
+ * Responsibilities:
+ * 1. Map State Management
+ *    - Zoom level, center coordinates
+ *    - Selected place
+ *    - Map bounds
+ * 
+ * 2. Map-Specific Place Filtering
+ *    - Filter places by zoom level
+ *    - Filter places by map bounds
+ *    - Handle place pagination
+ * 
+ * Does NOT handle:
+ *  - Raw city data (handled by CitiesContext)
+ *  - User-defined filters (handled by FiltersContext)
+ *  - UI components or interactions
  */
 
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";

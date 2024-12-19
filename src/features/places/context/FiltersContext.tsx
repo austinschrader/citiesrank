@@ -1,3 +1,23 @@
+/**
+ * FiltersContext manages all filtering and sorting logic for places.
+ * 
+ * Responsibilities:
+ * 1. Filter State Management
+ *    - Search query, active types, ratings, etc.
+ *    - Filter operations (setting filters, resetting)
+ * 2. Filter Operations
+ *    - Handle type selection
+ *    - Handle population category selection
+ * 3. Filtered Data
+ *    - Calculate filtered places list
+ *    - Calculate type counts
+ * 
+ * Does NOT handle:
+ * - Raw city data (handled by CitiesContext)
+ * - Map-specific filtering (handled by MapContext)
+ * - UI state or interactions
+ */
+
 import { MatchScore } from "@/features/preferences/types";
 import {
   CitiesResponse,
