@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { cn } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
@@ -21,7 +19,6 @@ export const ResultsPanel = ({
   isLoadingMore,
   observerTarget,
   isResultsPanelCollapsed,
-  setIsResultsPanelCollapsed,
   viewMode,
 }: ResultsPanelProps) => {
   const { prioritizedPlaces, visiblePlacesInView, visiblePlaces } = useMap();
@@ -66,28 +63,6 @@ export const ResultsPanel = ({
                 {/* Active Filters */}
                 <ActiveFilters />
               </div>
-
-              {/* Panel toggle button - only show in list view */}
-              {viewMode === "list" && (
-                <Button
-                  onClick={() =>
-                    setIsResultsPanelCollapsed(!isResultsPanelCollapsed)
-                  }
-                  size="icon"
-                  aria-label={
-                    isResultsPanelCollapsed
-                      ? "Expand results panel"
-                      : "Collapse results panel"
-                  }
-                >
-                  <ChevronRight
-                    className={cn(
-                      "transition-transform duration-200",
-                      !isResultsPanelCollapsed && "rotate-180"
-                    )}
-                  />
-                </Button>
-              )}
             </div>
           </div>
 
@@ -117,10 +92,14 @@ export const ResultsPanel = ({
               </div>
 
               {/* Grid of cards */}
-              <div className={cn(
-                "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
-                viewMode === "list" ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" : "grid-cols-2"
-              )}>
+              <div
+                className={cn(
+                  "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
+                  viewMode === "list"
+                    ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                    : "grid-cols-2"
+                )}
+              >
                 {prioritizedPlaces.map((place: MapPlace) => (
                   <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}
@@ -148,18 +127,6 @@ export const ResultsPanel = ({
           </div>
         </div>
       </div>
-
-      {/* Collapse/Expand button when panel is collapsed */}
-      {isResultsPanelCollapsed && (
-        <Button
-          onClick={() => setIsResultsPanelCollapsed(false)}
-          size="icon"
-          className="absolute z-50 top-1/2 -translate-y-1/2 left-2"
-          aria-label="Expand results panel"
-        >
-          <ChevronRight />
-        </Button>
-      )}
     </div>
   );
 };
