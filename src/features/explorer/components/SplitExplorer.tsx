@@ -37,11 +37,6 @@ export const SplitExplorer = () => {
     setVisiblePlaces(filteredPlaces);
   }, [filteredPlaces, setVisiblePlaces]);
 
-  // Get paginated places from prioritized places
-  const paginatedPlaces = useMemo(() => {
-    return visiblePlacesInView.slice(0, numPrioritizedToShow);
-  }, [visiblePlacesInView, numPrioritizedToShow]);
-
   const hasMore = useCallback(() => {
     return numPrioritizedToShow < visiblePlacesInView.length;
   }, [numPrioritizedToShow, visiblePlacesInView.length]);
@@ -81,7 +76,6 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex">
       <ResultsPanel
-        paginatedPlaces={paginatedPlaces}
         isLoadingMore={isLoadingMore}
         observerTarget={observerTarget}
         isResultsPanelCollapsed={isResultsPanelCollapsed}

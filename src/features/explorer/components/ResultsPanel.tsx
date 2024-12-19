@@ -8,9 +8,9 @@ import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
+import { useMemo } from "react";
 
 interface ResultsPanelProps {
-  paginatedPlaces: MapPlace[];
   isLoadingMore: boolean;
   observerTarget: RefObject<HTMLDivElement>;
   isResultsPanelCollapsed: boolean;
@@ -18,14 +18,18 @@ interface ResultsPanelProps {
 }
 
 export const ResultsPanel = ({
-  paginatedPlaces,
   isLoadingMore,
   observerTarget,
   isResultsPanelCollapsed,
   setIsResultsPanelCollapsed,
 }: ResultsPanelProps) => {
-  const { visiblePlacesInView } = useMap();
+  const { visiblePlacesInView, numPrioritizedToShow } = useMap();
   const { filters, setFilters, handlePopulationSelect } = useFilters();
+
+  // Get paginated places from prioritized places
+  const paginatedPlaces = useMemo(() => {
+    return visiblePlacesInView.slice(0, numPrioritizedToShow);
+  }, [visiblePlacesInView, numPrioritizedToShow]);
 
   const handleRatingChange = (value: string) => {
     const numValue = parseFloat(value);
