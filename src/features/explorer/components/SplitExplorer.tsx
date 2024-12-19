@@ -47,6 +47,7 @@ export const SplitExplorer = () => {
       averageRating: null,
       populationCategory: null,
     });
+    setActiveTypes(Object.values(CitiesTypeOptions));
   }, [setFilters]);
 
   // Filter places based on active types, rating, population, and search
