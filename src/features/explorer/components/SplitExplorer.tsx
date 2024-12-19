@@ -263,155 +263,140 @@ export const SplitExplorer = () => {
           isResultsPanelCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
         )}>
           {/* Header Section */}
-          <div className="shrink-0 p-4 border-b bg-background/50 backdrop-blur-sm space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <span>Discover Places</span>
-                  <div className="flex items-center gap-2">
-                    <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                      {filteredPlaces.length}
+          <div className="shrink-0 p-4 border-b bg-background/50 backdrop-blur-sm">
+            {/* Title and Results Count */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold">Discover Places</h2>
+                <div className="text-xs font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {filteredPlaces.length}
+                </div>
+              </div>
+              {activeFilterCount > 0 && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  className={cn(
+                    "h-6 px-3 text-xs relative group",
+                    "bg-foreground text-background hover:bg-foreground/90",
+                    "transition-all duration-200"
+                  )}
+                  onClick={clearAllFilters}
+                >
+                  <span className="relative pr-4">
+                    Filters({activeFilterCount})
+                    <span className={cn(
+                      "absolute right-[-4px] top-1/2 -translate-y-1/2",
+                      "text-lg leading-none opacity-0 group-hover:opacity-100",
+                      "transition-opacity duration-200 font-medium"
+                    )}>
+                      ×
+                    </span>
+                  </span>
+                  <div className="absolute invisible group-hover:visible bg-popover text-popover-foreground px-3 py-2 rounded-md shadow-md -bottom-20 left-0 w-48 text-xs z-50">
+                    <div className="space-y-1">
+                      {filters.search && <div>Search: "{filters.search}"</div>}
+                      {filters.averageRating && <div>Rating: ≥{filters.averageRating}</div>}
+                      {filters.populationCategory && <div>Size: {filters.populationCategory}</div>}
                     </div>
-                    {activeFilterCount > 0 && (
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className={cn(
-                          "h-6 px-3 text-xs relative group",
-                          "bg-foreground text-background hover:bg-foreground/90",
-                          "transition-all duration-200"
-                        )}
-                        onClick={clearAllFilters}
-                      >
-                        <span className="relative pr-4">
-                          Filters({activeFilterCount})
-                          <span className={cn(
-                            "absolute right-[-4px] top-1/2 -translate-y-1/2",
-                            "text-lg leading-none opacity-0 group-hover:opacity-100",
-                            "transition-opacity duration-200 font-medium"
-                          )}>
-                            ×
-                          </span>
-                        </span>
-                        <div className="absolute invisible group-hover:visible bg-popover text-popover-foreground px-3 py-2 rounded-md shadow-md -bottom-20 left-0 w-48 text-xs z-50">
-                          <div className="space-y-1">
-                            {filters.search && <div>Search: "{filters.search}"</div>}
-                            {filters.averageRating && <div>Rating: ≥{filters.averageRating}</div>}
-                            {filters.populationCategory && <div>Size: {filters.populationCategory}</div>}
-                          </div>
-                        </div>
-                      </Button>
-                    )}
                   </div>
-                </h2>
+                </Button>
+              )}
+            </div>
+
+            {/* Filters Section */}
+            <div className="space-y-4">
+              {/* Search */}
+              <div className="relative">
                 <Input
                   type="text"
                   placeholder="Search places..."
-                  className="w-[200px]"
+                  className="w-full pl-9"
                   value={filters.search || ""}
                   onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                 />
+                <svg
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </div>
 
-              {/* Rating Filter */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
+              {/* Rating and Size Filters */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Rating Filter */}
+                <div className="space-y-2">
                   <span className="text-sm font-medium">Minimum Rating</span>
-                  <div className="flex items-center gap-1">
+                  <div className="inline-flex items-center gap-1 bg-muted/50 rounded-md px-2">
+                    <Star className="h-3.5 w-3.5 text-muted-foreground fill-muted-foreground" />
                     <Input
                       type="number"
                       value={filters.averageRating ?? ""}
                       onChange={(e) => handleRatingChange(e.target.value)}
-                      className="w-16 h-8 text-right"
+                      className="w-12 h-7 text-center bg-transparent border-0 p-0 focus-visible:ring-0"
                       min="0"
                       max="5"
                       step="0.1"
+                      placeholder="0.0"
                     />
-                    <span className="text-sm text-muted-foreground">/5.0</span>
+                    <span className="text-xs text-muted-foreground">/5</span>
                   </div>
                 </div>
-              </div>
 
-              {/* City Size Filter */}
-              <div className="space-y-2">
-                <span className="text-sm font-medium">City Size</span>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => handlePopulationSelect(
-                      filters.populationCategory === "village" ? null : "village" as PopulationCategory
-                    )}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium",
-                      "transition-all duration-200",
-                      "hover:bg-accent hover:text-accent-foreground",
-                      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                      filters.populationCategory === "village"
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span role="img" aria-label="village">🏘️</span>
-                      <span>Village</span>
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => handlePopulationSelect(
-                      filters.populationCategory === "town" ? null : "town" as PopulationCategory
-                    )}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium",
-                      "transition-all duration-200",
-                      "hover:bg-accent hover:text-accent-foreground",
-                      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                      filters.populationCategory === "town"
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span role="img" aria-label="town">🏰</span>
-                      <span>Town</span>
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => handlePopulationSelect(
-                      filters.populationCategory === "city" ? null : "city" as PopulationCategory
-                    )}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium",
-                      "transition-all duration-200",
-                      "hover:bg-accent hover:text-accent-foreground",
-                      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                      filters.populationCategory === "city"
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span role="img" aria-label="city">🌆</span>
-                      <span>City</span>
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => handlePopulationSelect(
-                      filters.populationCategory === "megacity" ? null : "megacity" as PopulationCategory
-                    )}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium",
-                      "transition-all duration-200",
-                      "hover:bg-accent hover:text-accent-foreground",
-                      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                      filters.populationCategory === "megacity"
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <span role="img" aria-label="megacity">🌇</span>
-                      <span>Megacity</span>
-                    </span>
-                  </button>
+                {/* City Size Filter */}
+                <div className="space-y-2">
+                  <span className="text-sm font-medium">City Size</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries({
+                      village: { emoji: "🏘️", label: "Village" },
+                      town: { emoji: "🏰", label: "Town" },
+                      city: { emoji: "🌆", label: "City" },
+                      megacity: { emoji: "🌇", label: "Megacity" }
+                    }).map(([size, { emoji, label }]) => (
+                      <button
+                        key={size}
+                        onClick={() => handlePopulationSelect(
+                          filters.populationCategory === size ? null : size as PopulationCategory
+                        )}
+                        className={cn(
+                          "px-2 py-1 rounded-md text-sm font-medium",
+                          "transition-all duration-200",
+                          "hover:bg-accent hover:text-accent-foreground",
+                          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                          filters.populationCategory === size
+                            ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                            : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                        )}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div
+                            className={cn(
+                              "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                              filters.populationCategory === size
+                                ? "opacity-100 scale-125"
+                                : "opacity-40"
+                            )}
+                            style={{ 
+                              backgroundColor: typeColors[CitiesTypeOptions.city]
+                            }}
+                          />
+                          <span className="text-base" role="img" aria-label={`${size} emoji`}>
+                            {citySizeEmojis[size as PopulationCategory]}
+                          </span>
+                          <span className="capitalize">{size}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -438,24 +423,24 @@ export const SplitExplorer = () => {
               {(filters.averageRating || filters.populationCategory || filters.search || activeTypes.length !== Object.values(CitiesTypeOptions).length) && (
                 <div className="flex flex-wrap gap-2">
                   {filters.averageRating && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary gap-1">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary gap-1">
                       <Star className="w-3 h-3" />
                       {filters.averageRating}+
                     </span>
                   )}
                   {filters.populationCategory && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
                       {citySizeEmojis[filters.populationCategory]}
                       <span className="ml-1 capitalize">{filters.populationCategory}</span>
                     </span>
                   )}
                   {filters.search && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
                       "{filters.search}"
                     </span>
                   )}
                   {activeTypes.length !== Object.values(CitiesTypeOptions).length && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-primary/10 text-primary">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-primary/10 text-primary">
                       {activeTypes.length} types
                     </span>
                   )}
@@ -665,6 +650,17 @@ export const SplitExplorer = () => {
                           )}
                         >
                           <div className="flex items-center gap-2">
+                            <div
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                                filters.populationCategory === size
+                                  ? "opacity-100 scale-125"
+                                  : "opacity-40"
+                              )}
+                              style={{ 
+                                backgroundColor: typeColors[CitiesTypeOptions.city]
+                              }}
+                            />
                             <span className="text-base" role="img" aria-label={`${size} emoji`}>
                               {citySizeEmojis[size as PopulationCategory]}
                             </span>
