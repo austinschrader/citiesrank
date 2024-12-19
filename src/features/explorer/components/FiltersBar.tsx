@@ -13,6 +13,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { ActiveFilters } from "@/features/explorer/components/filters/ActiveFilters";
 import { useCities } from "@/features/places/context/CitiesContext";
@@ -639,7 +640,14 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
               </SheetHeader>
               <div className="flex-1 space-y-6 py-6 overflow-y-auto">
                 <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Place Type</h3>
+                  <div className="px-5 py-4 -mx-6 -mt-4 border-b">
+                    <h4 className="font-semibold text-lg">
+                      Discover Places By Type
+                    </h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      From countries and regions to local neighborhoods
+                    </p>
+                  </div>
                   <div className="divide-y divide-border/50">
                     {Object.values(CitiesTypeOptions).map((type) => (
                       <div key={type}>
@@ -657,9 +665,7 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
                             {
                               "--marker-color":
                                 markerColors[type as keyof typeof markerColors],
-                              backgroundColor: filters.activeTypes.includes(
-                                type
-                              )
+                              backgroundColor: filters.activeTypes.includes(type)
                                 ? `${
                                     markerColors[
                                       type as keyof typeof markerColors
@@ -716,16 +722,108 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <h3 className="text-sm font-medium">City Size</h3>
+                  <div className="px-5 py-4 -mx-6 border-y">
+                    <h4 className="font-semibold text-lg">City Size</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      From small villages to bustling megacities
+                    </p>
+                  </div>
                   <CitySizeFilter filters={filters} setFilters={setFilters} />
                 </div>
                 <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Rating</h3>
-                  <div className="pl-1">
-                    <RatingFilter
-                      filters={filters}
-                      handleRatingChange={handleRatingChange}
-                    />
+                  <div className="px-5 py-4 -mx-6 border-y">
+                    <h4 className="font-semibold text-lg">Filter by Rating</h4>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Find the highest-rated places around the world
+                    </p>
+                  </div>
+                  <div className="p-5 -mx-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Star
+                            className={cn(
+                              "h-5 w-5",
+                              filters.averageRating
+                                ? "text-yellow-500 fill-yellow-500"
+                                : "text-muted-foreground"
+                            )}
+                          />
+                          <span className="text-sm font-medium">
+                            {filters.averageRating
+                              ? `${filters.averageRating}+`
+                              : "Any rating"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <Input
+                          type="range"
+                          min="1"
+                          max="5"
+                          step="0.1"
+                          value={filters.averageRating ?? 1}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            handleRatingChange(value === 1 ? null : value);
+                          }}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between px-1">
+                          {[1, 2, 3, 4, 5].map((rating) => (
+                            <button
+                              key={rating}
+                              onClick={() =>
+                                handleRatingChange(
+                                  filters.averageRating === rating ? null : rating
+                                )
+                              }
+                              className={cn(
+                                "flex flex-col items-center gap-1 transition-colors",
+                                filters.averageRating === rating
+                                  ? "text-primary"
+                                  : "text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              <Star
+                                className={cn(
+                                  "h-4 w-4",
+                                  filters.averageRating === rating
+                                    ? "text-yellow-500 fill-yellow-500"
+                                    : "text-muted-foreground"
+                                )}
+                              />
+                              <span className="text-xs">{rating}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mt-4">
+                        {[4.9, 4.75, 4.5, 4].map((rating) => (
+                          <Button
+                            key={rating}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRatingChange(rating)}
+                            className={cn(
+                              "justify-start gap-2",
+                              filters.averageRating === rating &&
+                                "bg-primary text-primary-foreground hover:bg-primary/90"
+                            )}
+                          >
+                            <Star
+                              className={cn(
+                                "h-3.5 w-3.5",
+                                filters.averageRating === rating
+                                  ? "text-primary-foreground fill-primary-foreground"
+                                  : "text-yellow-500 fill-yellow-500"
+                              )}
+                            />
+                            {rating}+ Stars
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -742,7 +840,9 @@ export const FiltersBar = ({ viewMode, setViewMode }: FiltersBarProps) => {
                 >
                   Reset all
                 </Button>
-                <Button size="sm">See {cities?.length ?? 0} places</Button>
+                <SheetClose asChild>
+                  <Button size="sm">See {cities?.length ?? 0} places</Button>
+                </SheetClose>
               </div>
             </SheetContent>
           </Sheet>
