@@ -6,8 +6,8 @@ import { PopulationCategory } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
-import { SearchFilters } from "./SearchFilters";
-import { ActiveFilters } from "./ActiveFilters";
+import { SearchFilters } from "./filters/SearchFilters";
+import { ActiveFilters } from "./filters/ActiveFilters";
 
 interface ResultsPanelProps {
   filteredPlaces: MapPlace[];
