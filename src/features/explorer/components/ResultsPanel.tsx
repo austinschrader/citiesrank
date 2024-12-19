@@ -7,12 +7,14 @@ import { ChevronRight } from "lucide-react";
 import { RefObject } from "react";
 import { ActiveFilters } from "./filters/ActiveFilters";
 import { SearchFilters } from "./filters/SearchFilters";
+import { ViewMode } from "./SplitExplorer";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
   observerTarget: RefObject<HTMLDivElement>;
   isResultsPanelCollapsed: boolean;
   setIsResultsPanelCollapsed: (value: boolean) => void;
+  viewMode: ViewMode;
 }
 
 export const ResultsPanel = ({
@@ -20,6 +22,7 @@ export const ResultsPanel = ({
   observerTarget,
   isResultsPanelCollapsed,
   setIsResultsPanelCollapsed,
+  viewMode,
 }: ResultsPanelProps) => {
   const { prioritizedPlaces, visiblePlacesInView, visiblePlaces } = useMap();
 
@@ -28,7 +31,7 @@ export const ResultsPanel = ({
       <div
         className={cn(
           "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
-          isResultsPanelCollapsed ? "w-0" : "w-[800px]"
+          isResultsPanelCollapsed ? "w-0" : "w-full"
         )}
       >
         {/* Panel Content */}
@@ -64,25 +67,27 @@ export const ResultsPanel = ({
                 <ActiveFilters />
               </div>
 
-              {/* Panel toggle button */}
-              <Button
-                onClick={() =>
-                  setIsResultsPanelCollapsed(!isResultsPanelCollapsed)
-                }
-                size="icon"
-                aria-label={
-                  isResultsPanelCollapsed
-                    ? "Expand results panel"
-                    : "Collapse results panel"
-                }
-              >
-                <ChevronRight
-                  className={cn(
-                    "transition-transform duration-200",
-                    !isResultsPanelCollapsed && "rotate-180"
-                  )}
-                />
-              </Button>
+              {/* Panel toggle button - only show in list view */}
+              {viewMode === "list" && (
+                <Button
+                  onClick={() =>
+                    setIsResultsPanelCollapsed(!isResultsPanelCollapsed)
+                  }
+                  size="icon"
+                  aria-label={
+                    isResultsPanelCollapsed
+                      ? "Expand results panel"
+                      : "Collapse results panel"
+                  }
+                >
+                  <ChevronRight
+                    className={cn(
+                      "transition-transform duration-200",
+                      !isResultsPanelCollapsed && "rotate-180"
+                    )}
+                  />
+                </Button>
+              )}
             </div>
           </div>
 
@@ -112,7 +117,10 @@ export const ResultsPanel = ({
               </div>
 
               {/* Grid of cards */}
-              <div className="grid grid-cols-2 gap-6 auto-rows-[minmax(min-content,max-content)]">
+              <div className={cn(
+                "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
+                viewMode === "list" ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5" : "grid-cols-2"
+              )}>
                 {prioritizedPlaces.map((place: MapPlace) => (
                   <PlaceCard key={place.id} city={place} variant="basic" />
                 ))}

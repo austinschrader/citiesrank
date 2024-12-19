@@ -3,14 +3,14 @@ import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { Map, SplitSquareHorizontal } from "lucide-react";
+import { LayoutGrid, Map, SplitSquareHorizontal } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapLegend } from "./MapLegend";
 import { ResultsPanel } from "./ResultsPanel";
 
 const ITEMS_PER_PAGE = 15;
 
-type ViewMode = "split" | "map";
+export type ViewMode = "list" | "split" | "map";
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
@@ -46,6 +46,10 @@ export const SplitExplorer = () => {
   useEffect(() => {
     setVisiblePlaces(filteredPlaces);
   }, [filteredPlaces, setVisiblePlaces]);
+
+  useEffect(() => {
+    setIsResultsPanelCollapsed(viewMode === "map");
+  }, [viewMode]);
 
   const hasMore = useCallback(() => {
     return numPrioritizedToShow < visiblePlacesInView.length;
@@ -83,16 +87,13 @@ export const SplitExplorer = () => {
     };
   }, [hasMore, isLoadingMore, loadMore]);
 
-  useEffect(() => {
-    setIsResultsPanelCollapsed(viewMode === "map");
-  }, [viewMode]);
-
   const ViewModeToggle = () => (
     <div className="bg-background/95 backdrop-blur-sm border-b border-border/50 p-4">
       <div className="flex flex-col gap-4">
         <div className="flex justify-center">
           <div className="inline-flex rounded-lg p-1 bg-muted">
             {[
+              { mode: "list" as const, icon: LayoutGrid, label: "List view" },
               {
                 mode: "split" as const,
                 icon: SplitSquareHorizontal,
@@ -125,20 +126,33 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex flex-col">
       <ViewModeToggle />
-      <div className="flex-1 flex">
-        <ResultsPanel
-          isLoadingMore={isLoadingMore}
-          observerTarget={observerTarget}
-          isResultsPanelCollapsed={isResultsPanelCollapsed}
-          setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
-        />
-        <div className="flex-1 relative">
-          <MapLegend
-            isStatsMinimized={isStatsMinimized}
-            setIsStatsMinimized={setIsStatsMinimized}
+      <div
+        className={cn("flex-1 flex", viewMode === "list" && "justify-center")}
+      >
+        <div
+          className={cn(
+            "transition-all duration-300",
+            viewMode === "list" ? "flex-1" : "w-[800px]",
+            viewMode === "map" && "w-0"
+          )}
+        >
+          <ResultsPanel
+            isLoadingMore={isLoadingMore}
+            observerTarget={observerTarget}
+            isResultsPanelCollapsed={isResultsPanelCollapsed}
+            setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
+            viewMode={viewMode}
           />
-          <CityMap className="h-full" />
         </div>
+        {viewMode !== "list" && (
+          <div className="flex-1 relative">
+            <MapLegend
+              isStatsMinimized={isStatsMinimized}
+              setIsStatsMinimized={setIsStatsMinimized}
+            />
+            <CityMap className="h-full" />
+          </div>
+        )}
       </div>
     </div>
   );
