@@ -1,5 +1,5 @@
 import { CityMap } from "@/features/map/components/CityMap";
-import { useMap } from "@/features/map/context/MapContext"; 
+import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -19,7 +19,8 @@ export const SplitExplorer = () => {
     resetFilters,
     getFilteredCities,
   } = useFilters();
-  const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow } = useMap();
+  const { visiblePlacesInView, numPrioritizedToShow, setNumPrioritizedToShow } =
+    useMap();
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -69,14 +70,17 @@ export const SplitExplorer = () => {
     }, 500);
   }, [hasMore, isLoadingMore, setNumPrioritizedToShow, ITEMS_PER_PAGE]);
 
-  const handleRatingChange = useCallback((value: string) => {
-    const numValue = parseFloat(value);
-    if (!value) {
-      setFilters({ ...filters, averageRating: null });
-    } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
-      setFilters({ ...filters, averageRating: numValue });
-    }
-  }, [filters, setFilters]);
+  const handleRatingChange = useCallback(
+    (value: string) => {
+      const numValue = parseFloat(value);
+      if (!value) {
+        setFilters({ ...filters, averageRating: null });
+      } else if (!isNaN(numValue) && numValue >= 0 && numValue <= 5) {
+        setFilters({ ...filters, averageRating: numValue });
+      }
+    },
+    [filters, setFilters]
+  );
 
   // Set default rating on mount
   useEffect(() => {
@@ -125,15 +129,8 @@ export const SplitExplorer = () => {
       />
       <div className="flex-1 relative">
         <MapLegend
-          filteredPlaces={filteredPlaces}
-          placesInView={visiblePlacesInView}
-          mapBounds={mapBounds}
-          filters={filters}
-          activeTypes={filters.activeTypes}
           isStatsMinimized={isStatsMinimized}
           setIsStatsMinimized={setIsStatsMinimized}
-          handleTypeClick={handleTypeClick}
-          handlePopulationSelect={handlePopulationSelect}
         />
         <CityMap
           places={filteredPlaces}
