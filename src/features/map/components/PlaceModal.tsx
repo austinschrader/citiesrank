@@ -166,9 +166,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
             <div className="space-y-2">
               <div className="flex items-start sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold">{place.name}</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold">
+                    {place.name}
+                  </h2>
                   <p className="text-sm sm:text-base text-muted-foreground">
-                    {place.country || ''}
+                    {place.country || ""}
                   </p>
                 </div>
                 {user && (
