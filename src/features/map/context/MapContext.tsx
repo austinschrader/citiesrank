@@ -41,6 +41,8 @@ import { MapPlace } from "../types";
 import { getPlaceGeoJson } from "../utils/geoJsonUtils";
 import { calculateMapBounds } from "../utils/mapUtils";
 
+export type ViewMode = "list" | "split" | "map";
+
 // Zoom level constants for place type visibility
 export const ZOOM_LEVELS = {
   COUNTRY: 3,
@@ -82,6 +84,8 @@ interface MapContextValue extends MapState {
     zoom: number;
   };
   getGeographicLevel: (zoom: number) => CitiesTypeOptions;
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
 }
 
 const DEFAULT_CENTER: LatLngTuple = [20, 0];
@@ -108,6 +112,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     activeTypes: Object.values(CitiesTypeOptions),
     populationCategory: false,
   });
+  const [viewMode, setViewMode] = useState<ViewMode>("split");
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -265,35 +270,41 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     return visiblePlacesInView.slice(0, numPrioritizedToShow);
   }, [visiblePlacesInView, numPrioritizedToShow]);
 
-  const value = useMemo(() => ({
-    ...state,
-    setZoom,
-    setCenter,
-    selectPlace,
-    resetView,
-    mapBounds,
-    setMapBounds,
-    visiblePlaces,
-    setVisiblePlaces,
-    visiblePlacesInView,
-    numPrioritizedToShow,
-    setNumPrioritizedToShow,
-    prioritizedPlaces,
-    getVisiblePlacesForCurrentView,
-    getVisiblePlaceTypes,
-    filterPlacesByZoom,
-    getPlaceGeoJson,
-    calculateMapBounds,
-    getGeographicLevel,
-  }), [
-    state,
-    mapBounds,
-    visiblePlaces,
-    visiblePlacesInView,
-    numPrioritizedToShow,
-    prioritizedPlaces,
-    getVisiblePlacesForCurrentView,
-  ]);
+  const value = useMemo(
+    () => ({
+      ...state,
+      setZoom,
+      setCenter,
+      selectPlace,
+      resetView,
+      mapBounds,
+      setMapBounds,
+      visiblePlaces,
+      setVisiblePlaces,
+      visiblePlacesInView,
+      numPrioritizedToShow,
+      setNumPrioritizedToShow,
+      prioritizedPlaces,
+      getVisiblePlacesForCurrentView,
+      getVisiblePlaceTypes,
+      filterPlacesByZoom,
+      getPlaceGeoJson,
+      calculateMapBounds,
+      getGeographicLevel,
+      viewMode,
+      setViewMode,
+    }),
+    [
+      state,
+      mapBounds,
+      visiblePlaces,
+      visiblePlacesInView,
+      numPrioritizedToShow,
+      prioritizedPlaces,
+      getVisiblePlacesForCurrentView,
+      viewMode,
+    ]
+  );
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }
