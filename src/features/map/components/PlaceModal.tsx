@@ -4,13 +4,9 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
-import { useRelatedPlaces } from "@/features/places/hooks/useRelatedPlaces";
 import { getPlaceImage } from "@/lib/cloudinary";
-
 import { cn } from "@/lib/utils";
 import {
-  ArrowLeft,
-  ArrowRight,
   Bookmark,
   ChevronLeft,
   ChevronRight,
@@ -60,16 +56,13 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [direction, setDirection] = useState<-1 | 0 | 1>(0);
   const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loadedPlaces, setLoadedPlaces] = useState<MapPlace[]>([initialPlace]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { visiblePlacesInView } = useMap();
-
-  const { isFavorited, refresh } = useFavoriteStatus(currentPlace.id);
+  const { isFavorited } = useFavoriteStatus(currentPlace.id);
   const { user } = useAuth();
-  const { relatedPlaces } = useRelatedPlaces(currentPlace);
 
   // Preload images
   useEffect(() => {
@@ -79,7 +72,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         return getPlaceImage(`${baseUrl}-${i + 1}`, "wide");
       });
 
-      // Preload images
       await Promise.all(
         images.map((url) => {
           return new Promise((resolve) => {
@@ -170,10 +162,9 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [isOpen, navigateToPlace, navigateImages, onClose]);
 
-  // Touch event handlers with better momentum detection
+  // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length !== 1) return;
-
     setTouchStart({
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
@@ -193,7 +184,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       (p) => p.id === currentPlace.id
     );
 
-    // Handle horizontal swipes for navigation with velocity check
     if (Math.abs(xDiff) > Math.abs(yDiff)) {
       if (
         (Math.abs(xDiff) > SWIPE_THRESHOLD || velocity > 0.5) &&
@@ -206,9 +196,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         }
         setTouchStart(null);
       }
-    }
-    // Handle vertical swipe up for closing
-    else if (
+    } else if (
       yDiff > SWIPE_UP_THRESHOLD &&
       Math.abs(xDiff) < SWIPE_THRESHOLD / 2
     ) {
@@ -236,10 +224,16 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     </div>
   );
 
+  const currentIndex = visiblePlacesInView.findIndex(
+    (p) => p.id === currentPlace.id
+  );
+  const isFirstPlace = currentIndex === 0;
+  const isLastPlace = currentIndex === visiblePlacesInView.length - 1;
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-7xl p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95  overflow-hidden">
+        <DialogContent className="max-w-7xl p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95 overflow-hidden">
           <div
             className="relative h-full w-full z-9999"
             onTouchStart={handleTouchStart}
@@ -264,119 +258,72 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     className="w-full h-full object-cover opacity-90 transition-opacity duration-300"
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
               </div>
 
-              {/* Top Navigation Bar - Mobile controls for place navigation and modal close */}
-              <div className="absolute top-4 inset-x-0 flex items-center justify-center z-30">
-                <div className="flex items-center gap-3 bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
-                  <button
-                    className="transition-colors disabled:opacity-50"
+              {/* Place Navigation - Top */}
+              <div className="absolute top-4 inset-x-4 flex items-center justify-between z-30">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
                     onClick={() => navigateToPlace("prev")}
-                    disabled={
-                      visiblePlacesInView.findIndex(
-                        (p) => p.id === currentPlace.id
-                      ) === 0
-                    }
+                    disabled={isFirstPlace}
                   >
-                    Previous
-                  </button>
-                  <div className="w-px h-4 bg-white/20" />
-                  <button className="transition-colors" onClick={onClose}>
-                    <ChevronUp className="w-5 h-5" />
-                  </button>
-                  <div className="w-px h-4 bg-white/20" />
-                  <button
-                    className="transition-colors disabled:opacity-50"
+                    <ChevronLeft className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Previous Place</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
                     onClick={() => navigateToPlace("next")}
-                    disabled={
-                      visiblePlacesInView.findIndex(
-                        (p) => p.id === currentPlace.id
-                      ) ===
-                      visiblePlacesInView.length - 1
-                    }
+                    disabled={isLastPlace}
                   >
-                    Next
-                  </button>
+                    <span className="text-sm">Next Place</span>
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
                 </div>
-              </div>
 
-              {/* Image Navigation Buttons */}
-              <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 flex justify-between items-center z-20">
-                <button
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200"
-                  onClick={() => navigateToPlace("prev")}
-                  disabled={
-                    visiblePlacesInView.findIndex(
-                      (p) => p.id === currentPlace.id
-                    ) === 0
-                  }
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                  <span className="text-sm font-medium hidden sm:inline">
-                    Previous place
-                  </span>
-                </button>
-                <button
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200"
-                  onClick={() => navigateToPlace("next")}
-                  disabled={
-                    visiblePlacesInView.findIndex(
-                      (p) => p.id === currentPlace.id
-                    ) ===
-                    visiblePlacesInView.length - 1
-                  }
-                >
-                  <span className="text-sm font-medium hidden sm:inline">
-                    Next place
-                  </span>
-                  <ChevronRight className="w-6 h-6" />
+                <button className="transition-colors" onClick={onClose}>
+                  <ChevronUp className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Side Navigation for Places */}
-              <div className="absolute top-1/2 left-12 right-12 -translate-y-1/2 flex justify-between items-center pointer-events-none z-10">
-                {" "}
+              {/* Image Navigation - Center */}
+              <div className="absolute inset-y-0 left-4 right-4 flex items-center justify-between">
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-12 w-12 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 pointer-events-auto hidden sm:flex"
-                  onClick={() => navigateToPlace("prev")}
-                  disabled={
-                    visiblePlacesInView.findIndex(
-                      (p) => p.id === currentPlace.id
-                    ) === 0
-                  }
+                  className="group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
+                  onClick={() => navigateImages("prev")}
                 >
-                  <ArrowLeft className="w-6 h-6 text-white" />
+                  <div className="flex items-center gap-2 px-2">
+                    <ChevronLeft className="w-4 h-4 text-white" />
+                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
+                      Previous Photo
+                    </span>
+                  </div>
                 </Button>
                 <Button
                   variant="ghost"
-                  size="icon"
-                  className="h-12 w-12 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 pointer-events-auto hidden sm:flex"
-                  onClick={() => navigateToPlace("next")}
-                  disabled={
-                    visiblePlacesInView.findIndex(
-                      (p) => p.id === currentPlace.id
-                    ) ===
-                    visiblePlacesInView.length - 1
-                  }
+                  className="group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
+                  onClick={() => navigateImages("next")}
                 >
-                  <ArrowRight className="w-6 h-6 text-white" />
+                  <div className="flex items-center gap-2 px-2">
+                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
+                      Next Photo
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-white" />
+                  </div>
                 </Button>
               </div>
 
-              {/* Content Overlay */}
-              <div className="absolute inset-x-0 bottom-[280px] flex flex-col items-center gap-3">
-                {/* Image Navigation */}
-                <div className="flex items-center gap-4">
-                  <button
-                    className="p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200"
-                    onClick={() => navigateImages("prev")}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <div className="flex justify-center gap-1">
+              {/* Content Section - Bottom */}
+              <div className="absolute inset-x-0 bottom-0 pb-6">
+                {/* Image Navigation Dots */}
+                <div className="flex justify-center mb-8">
+                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
                     {preloadedImages.map((_, index) => (
                       <button
                         key={index}
@@ -390,16 +337,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       />
                     ))}
                   </div>
-                  <button
-                    className="p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200"
-                    onClick={() => navigateImages("next")}
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
                 </div>
-                {/* Content Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-6 space-y-6">
-                  {/* Place Title & Actions */}
+
+                {/* Main Content */}
+                <div className="px-6 space-y-6">
+                  {/* Title Section */}
                   <div className="flex items-start justify-between">
                     <div>
                       <h1 className="text-3xl font-bold text-white">
@@ -468,8 +410,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   </p>
 
                   {/* Navigation Hint */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 mb-4">
-                    <div className="flex items-center gap-2 text-white/50 text-sm">
+                  <div className="flex justify-center mt-8">
+                    <div className="flex items-center gap-2 text-white/50 text-sm bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
                       <Navigation className="w-4 h-4" />
                       <span className="hidden sm:inline">
                         Navigate with arrow keys or swipe
