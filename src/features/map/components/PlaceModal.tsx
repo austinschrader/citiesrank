@@ -8,6 +8,7 @@ import { getPlaceImage } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
+  Camera,
   ChevronLeft,
   ChevronRight,
   Info,
@@ -16,7 +17,6 @@ import {
   Shuffle,
   Star,
   X,
-  Camera,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -421,7 +421,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       }}
                     >
                       <ChevronLeft className="w-4 h-4 mr-2" />
-                      Previous
+                      Previous Place
                     </Button>
 
                     <Button
@@ -452,7 +452,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         handleImageNavigation("next");
                       }}
                     >
-                      Next
+                      Next Place
                       {navigation.isRandomMode ? (
                         <Shuffle className="w-4 h-4 ml-2" />
                       ) : (
