@@ -11,6 +11,7 @@ import {
   Camera,
   ChevronLeft,
   ChevronRight,
+  Heart,
   Info,
   LucideIcon,
   MapPin,
@@ -346,16 +347,16 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       size="icon"
                       onClick={() => setShowSaveDialog(true)}
                       className={cn(
-                        "h-10 w-10 rounded-full transition-all duration-300",
+                        "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/20",
                         isFavorited
-                          ? "bg-white/20 text-white hover:bg-white/30"
-                          : "bg-black/30 backdrop-blur-md hover:bg-black/50 border border-white/20"
+                          ? "bg-white/20 text-rose-500 hover:bg-white/30"
+                          : "bg-black/30 hover:bg-black/50"
                       )}
                     >
-                      <Star
+                      <Heart
                         className={cn(
-                          "h-5 w-5 text-white",
-                          isFavorited && "fill-white"
+                          "h-5 w-5",
+                          isFavorited ? "fill-rose-500" : "text-rose-500"
                         )}
                       />
                     </Button>
