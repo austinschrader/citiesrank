@@ -72,6 +72,14 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     direction: 0,
     isRandomMode: false,
   });
+  // Client-side place history for random mode navigation
+  // TODO: Move place history to server-side to:
+  // 1. Persist across sessions
+  // 2. Sync across devices
+  // 3. Enable analytics on exploration patterns
+  // 4. Support "continue where you left off" feature
+  const [placeHistory, setPlaceHistory] = useState<MapPlace[]>([initialPlace]);
+  const [historyIndex, setHistoryIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const [showHints, setShowHints] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -242,12 +250,27 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
     let nextPlace: MapPlace;
     if (navigation.isRandomMode) {
-      // Get random place excluding current one
-      const availablePlaces = visiblePlacesInView.filter(
-        (_, i) => i !== currentIndex
-      );
-      const randomIndex = Math.floor(Math.random() * availablePlaces.length);
-      nextPlace = availablePlaces[randomIndex];
+      if (direction === "prev" && historyIndex > 0) {
+        // Go back in history
+        nextPlace = placeHistory[historyIndex - 1];
+        setHistoryIndex((prev) => prev - 1);
+      } else {
+        // Get random place excluding current one
+        const availablePlaces = visiblePlacesInView.filter(
+          (_, i) => i !== currentIndex
+        );
+        const randomIndex = Math.floor(Math.random() * availablePlaces.length);
+        nextPlace = availablePlaces[randomIndex];
+
+        // Add to history if going forward
+        if (direction === "next") {
+          setPlaceHistory((prev) => [
+            ...prev.slice(0, historyIndex + 1),
+            nextPlace,
+          ]);
+          setHistoryIndex((prev) => prev + 1);
+        }
+      }
     } else {
       const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
       // Handle wrapping around at the ends
@@ -270,6 +293,14 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       setIsTransitioning(false);
     }
   };
+
+  // Reset history when random mode changes
+  useEffect(() => {
+    if (navigation.isRandomMode) {
+      setPlaceHistory([currentPlace]);
+      setHistoryIndex(0);
+    }
+  }, [navigation.isRandomMode]);
 
   const StatBadge: React.FC<StatBadgeProps> = ({
     icon: Icon,
