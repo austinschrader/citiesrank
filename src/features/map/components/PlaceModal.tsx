@@ -454,7 +454,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 border border-white/20"
+                      className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
                       onClick={() => {
                         setNavigation((prev) => ({ ...prev, direction: -1 }));
                         navigateToPlace("prev");
@@ -486,7 +486,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 border border-white/20"
+                      className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
                       onClick={() => {
                         setNavigation((prev) => ({ ...prev, direction: 1 }));
                         navigateToPlace("next");
