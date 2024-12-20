@@ -11,17 +11,15 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  DollarSign,
   Globe,
   LucideIcon,
-  Navigation,
   Shield,
   Star,
-  Users,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
+import { SocialShareMenu } from "./SocialShareMenu";
 
 interface PlaceModalProps {
   place: MapPlace;
@@ -267,9 +265,115 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
               </div>
 
-              {/* Place Navigation - Top */}
-              <div className="absolute top-4 inset-x-4 flex items-center justify-between z-30">
-                <div className="flex items-center gap-2">
+              {/* Close Button */}
+              <button
+                className="absolute top-4 right-4 z-30 transition-colors"
+                onClick={onClose}
+              >
+                <ChevronUp className="w-5 h-5" />
+              </button>
+
+              {/* Main Content Area */}
+              <div className="absolute inset-x-0 top-0 z-20 pt-12 px-5">
+                {/* Title and Rating */}
+                <div
+                  onClick={handleViewDetails}
+                  className="group cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-3xl font-bold text-white leading-tight group-hover:underline">
+                      {currentPlace.name}
+                    </h1>
+                    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                      <Star className="w-3.5 h-3.5 text-yellow-500" />
+                      <span className="text-sm font-medium text-white">
+                        {currentPlace.averageRating?.toFixed(1) || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <Globe className="w-4 h-4 text-white/70" />
+                    <p className="text-white/70">{currentPlace.country}</p>
+                  </div>
+                </div>
+
+                {/* Actions Bar */}
+                <div className="flex items-center gap-2 mt-3 pb-3 border-b border-white/10">
+                  <SocialShareMenu place={currentPlace} />
+                  {user && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowSaveDialog(true)}
+                      className={cn(
+                        "h-8 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200",
+                        isFavorited && "bg-white/20"
+                      )}
+                    >
+                      <Star
+                        className={cn(
+                          "w-3.5 h-3.5 mr-1.5",
+                          isFavorited && "fill-white"
+                        )}
+                      />
+                      <span className="text-xs">
+                        {isFavorited ? "Saved" : "Save"}
+                      </span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Image Navigation - Center (Hidden on mobile) */}
+              <div className="absolute inset-y-0 left-4 right-4 hidden sm:flex items-center justify-between pointer-events-none">
+                <Button
+                  variant="ghost"
+                  className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
+                  onClick={() => navigateImages("prev")}
+                >
+                  <div className="flex items-center gap-2 px-2">
+                    <ChevronLeft className="w-4 h-4 text-white" />
+                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
+                      Previous Photo
+                    </span>
+                  </div>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
+                  onClick={() => navigateImages("next")}
+                >
+                  <div className="flex items-center gap-2 px-2">
+                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
+                      Next Photo
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-white" />
+                  </div>
+                </Button>
+              </div>
+
+              {/* Bottom Navigation Area */}
+              <div className="absolute inset-x-0 bottom-0 pb-6">
+                {/* Image Navigation Dots */}
+                <div className="flex justify-center mb-4">
+                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
+                    {preloadedImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={cn(
+                          "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                          currentImageIndex === index
+                            ? "bg-white w-3"
+                            : "bg-white/50 hover:bg-white/75"
+                        )}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Place Navigation */}
+                <div className="px-6 flex items-center justify-between">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -290,132 +394,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     <span className="text-sm">Next Place</span>
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-                </div>
-
-                <button className="transition-colors" onClick={onClose}>
-                  <ChevronUp className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Image Navigation - Center */}
-              <div className="absolute inset-y-0 left-4 right-4 flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  className="group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
-                  onClick={() => navigateImages("prev")}
-                >
-                  <div className="flex items-center gap-2 px-2">
-                    <ChevronLeft className="w-4 h-4 text-white" />
-                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
-                      Previous Photo
-                    </span>
-                  </div>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
-                  onClick={() => navigateImages("next")}
-                >
-                  <div className="flex items-center gap-2 px-2">
-                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
-                      Next Photo
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-white" />
-                  </div>
-                </Button>
-              </div>
-
-              {/* Content Section - Bottom */}
-              <div className="absolute inset-x-0 bottom-0 pb-6">
-                {/* Image Navigation Dots */}
-                <div className="flex justify-center mb-8">
-                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
-                    {preloadedImages.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={cn(
-                          "w-1.5 h-1.5 rounded-full transition-all duration-200",
-                          currentImageIndex === index
-                            ? "bg-white w-3"
-                            : "bg-white/50 hover:bg-white/75"
-                        )}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Main Content */}
-                <div className="px-6 space-y-6">
-                  {/* Title Section */}
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h1 className="text-3xl font-bold text-white">
-                        {currentPlace.name}
-                      </h1>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Globe className="w-4 h-4 text-white/70" />
-                        <p className="text-white/70">{currentPlace.country}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={handleViewDetails}
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs text-muted-foreground hover:text-foreground"
-                      >
-                        More details
-                        <ChevronRight className="w-3 h-3 ml-0.5" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatBadge
-                      icon={Star}
-                      value={currentPlace.averageRating?.toFixed(1) || "N/A"}
-                      label="Rating"
-                      color="text-yellow-500"
-                    />
-                    <StatBadge
-                      icon={Users}
-                      value={currentPlace.population?.toLocaleString() || "N/A"}
-                      label="Population"
-                      color="text-blue-500"
-                    />
-                    <StatBadge
-                      icon={Shield}
-                      value={currentPlace.safetyScore?.toFixed(1) || "N/A"}
-                      label="Safety"
-                      color="text-green-500"
-                    />
-                    <StatBadge
-                      icon={DollarSign}
-                      value={currentPlace.cost?.toFixed(1) || "N/A"}
-                      label="Cost"
-                      color="text-red-500"
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-white/90 text-sm leading-relaxed max-w-3xl">
-                    {currentPlace.description}
-                  </p>
-
-                  {/* Navigation Hint */}
-                  <div className="flex justify-center mt-8">
-                    <div className="flex items-center gap-2 text-white/50 text-sm bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
-                      <Navigation className="w-4 h-4" />
-                      <span className="hidden sm:inline">
-                        Navigate with arrow keys or swipe
-                      </span>
-                      <span className="sm:hidden">
-                        Swipe to explore more places
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
