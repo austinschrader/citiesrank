@@ -23,25 +23,25 @@ const mockCollections: Collection[] = [
   {
     id: "1",
     name: "Christmas Markets 2024",
-    imageUrl: "/api/placeholder/400/400",
+    imageUrl: "strasbourg-france-1",
     placeCount: 12,
   },
   {
     id: "2",
     name: "German Castles",
-    imageUrl: "/api/placeholder/400/400",
+    imageUrl: "trier-germany-1",
     placeCount: 8,
   },
   {
     id: "3",
     name: "Mediterranean Summer",
-    imageUrl: "/api/placeholder/400/400",
+    imageUrl: "portofino-italy-3",
     placeCount: 15,
   },
   {
     id: "4",
     name: "Hidden Gems",
-    imageUrl: "/api/placeholder/400/400",
+    imageUrl: "cochem-germany-1",
     placeCount: 23,
   },
 ];
