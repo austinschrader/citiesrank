@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
 import { useRelatedPlaces } from "@/features/places/hooks/useRelatedPlaces";
 import { getPlaceImage } from "@/lib/cloudinary";
+
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
@@ -63,6 +65,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { visiblePlacesInView } = useMap();
 
   const { isFavorited, refresh } = useFavoriteStatus(currentPlace.id);
   const { user } = useAuth();
@@ -98,16 +101,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     const isNext = direction === "next";
     setDirection(isNext ? 1 : -1);
 
-    let nextPlace: MapPlace;
-    if (isNext && relatedPlaces.length > 0) {
-      nextPlace = relatedPlaces[0];
-      setLoadedPlaces((prev) => [...prev, nextPlace]);
-    } else {
-      const currentIndex = loadedPlaces.findIndex(
-        (p) => p.id === currentPlace.id
-      );
-      nextPlace = loadedPlaces[currentIndex - 1];
-    }
+    const currentIndex = visiblePlacesInView.findIndex(
+      (p) => p.id === currentPlace.id
+    );
+    const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
+    const nextPlace = visiblePlacesInView[nextIndex];
 
     if (nextPlace) {
       setTimeout(() => {
@@ -265,7 +263,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               </div>
 
-              {/* Top Navigation Bar */}
+              {/* Top Navigation Bar - Mobile controls for place navigation and modal close */}
+
               <div className="absolute top-4 inset-x-0 flex flex-col items-center gap-4">
                 {/* Nav Controls */}
                 <div className="flex items-center gap-3 bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
@@ -316,28 +315,30 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
               {/* Image Navigation Buttons */}
               <button
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200"
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200 z-20" // Add z-20
                 onClick={() => navigateImages("prev")}
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white/70 hover:text-white transition-all duration-200 z-20" // Add z-20
                 onClick={() => navigateImages("next")}
               >
                 <ChevronRight className="w-6 h-6" />
               </button>
 
               {/* Side Navigation for Places */}
-              <div className="absolute top-1/2 left-4 right-4 -translate-y-1/2 flex justify-between items-center pointer-events-none">
+              <div className="absolute top-1/2 left-12 right-12 -translate-y-1/2 flex justify-between items-center pointer-events-none z-10">
+                {" "}
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-12 w-12 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 pointer-events-auto hidden sm:flex"
                   onClick={() => navigateToPlace("prev")}
                   disabled={
-                    loadedPlaces.findIndex((p) => p.id === currentPlace.id) ===
-                    0
+                    visiblePlacesInView.findIndex(
+                      (p) => p.id === currentPlace.id
+                    ) === 0
                   }
                 >
                   <ArrowLeft className="w-6 h-6 text-white" />
@@ -347,7 +348,12 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   size="icon"
                   className="h-12 w-12 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 pointer-events-auto hidden sm:flex"
                   onClick={() => navigateToPlace("next")}
-                  disabled={relatedPlaces.length === 0}
+                  disabled={
+                    visiblePlacesInView.findIndex(
+                      (p) => p.id === currentPlace.id
+                    ) ===
+                    visiblePlacesInView.length - 1
+                  }
                 >
                   <ArrowRight className="w-6 h-6 text-white" />
                 </Button>
