@@ -7,13 +7,7 @@ import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
 import { createSlug } from "@/features/places/utils/placeUtils";
 import { getPlaceImage } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Globe,
-  LucideIcon,
-  Star,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, LucideIcon, Star } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
@@ -277,7 +271,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <DialogContent
           className={cn(
-            "max-w-7xl w-full p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95 overflow-hidden",
+            "max-w-none w-screen h-screen p-0 m-0 bg-black/95 overflow-hidden",
             "data-[state=open]:slide-in-from-bottom-full",
             "sm:data-[state=open]:slide-in-from-bottom-0"
           )}
@@ -326,15 +320,15 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               <div className="absolute inset-x-0 top-0 z-20 px-5">
                 {/* Title Section */}
                 <div className="flex flex-col pt-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="h-8 w-8 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20"
-                      >
-                        <ChevronLeft className="h-5 w-5 text-white" />
-                      </Button>
+                  <div className="flex items-center gap-3 mb-3">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={onClose}
+                      className="h-8 w-8 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20"
+                    >
+                      <ChevronLeft className="h-5 w-5 text-white" />
+                    </Button>
                     <div className="flex items-center gap-2">
                       <SocialShareMenu place={currentPlace} />
                       {user && (
@@ -359,20 +353,20 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         </Button>
                       )}
                     </div>
+                  </div>
+                  <div className="flex items-baseline gap-3">
+                    <h1
+                      onClick={handleViewDetails}
+                      className="text-3xl font-bold text-white leading-tight cursor-pointer hover:underline select-none"
+                    >
+                      {currentPlace.name}
+                    </h1>
+                    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                      <Star className="w-3 h-3 text-yellow-500" />
+                      <span className="text-sm font-medium text-white">
+                        {currentPlace.averageRating?.toFixed(1) || "N/A"}
+                      </span>
                     </div>
-                    <div className="flex items-baseline gap-3">
-                      <h1
-                        onClick={handleViewDetails}
-                        className="text-3xl font-bold text-white leading-tight cursor-pointer hover:underline select-none"
-                      >
-                        {currentPlace.name}
-                      </h1>
-                      <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
-                        <Star className="w-3 h-3 text-yellow-500" />
-                        <span className="text-sm font-medium text-white">
-                          {currentPlace.averageRating?.toFixed(1) || "N/A"}
-                        </span>
-                      </div>
                   </div>
                 </div>
               </div>
