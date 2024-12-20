@@ -5,7 +5,7 @@
  * Uses MapContext for state management and Leaflet for map rendering.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -14,7 +14,16 @@ import {
 import { useMap } from "../context/MapContext";
 import { MapCluster } from "./MapCluster";
 import { MapControls } from "./MapControls";
+import { MapLegend } from "./MapLegend";
 import { PlaceGeoJson } from "./PlaceGeoJson";
+import { useFilters } from "@/features/places/context/FiltersContext";
+import { Button } from "@/components/ui/button";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { Filter, Loader2, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+
+const pageSizeOptions = [15, 25, 50, 100];
 
 interface CityMapProps {
   className?: string;
@@ -46,40 +55,136 @@ const BoundsTracker = () => {
 
 export const CityMap = ({ className }: CityMapProps) => {
   const { center, zoom, selectedPlace, setZoom } = useMap();
+  const { cities } = useCities();
+  const { filters, getFilteredCities, resetFilters } = useFilters();
+  const {
+    visiblePlacesInView,
+    numPrioritizedToShow,
+    setNumPrioritizedToShow,
+    viewMode,
+  } = useMap();
+
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
+
+  const filteredCities = getFilteredCities(cities, () => ({ 
+    matchScore: 1, 
+    attributeMatches: {
+      budget: 1,
+      crowds: 1,
+      tripLength: 1,
+      season: 1,
+      transit: 1,
+      accessibility: 1
+    } 
+  }));
+
+  // Check if any filters are active
+  const hasActiveFilters = 
+    filters.search || 
+    filters.averageRating || 
+    filters.populationCategory || 
+    (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length);
+
+  const hasMore = useCallback(() => {
+    return numPrioritizedToShow < visiblePlacesInView.length;
+  }, [numPrioritizedToShow, visiblePlacesInView.length]);
+
+  const loadMore = useCallback(() => {
+    if (!hasMore() || isLoadingMore) return;
+
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setNumPrioritizedToShow((prev) => prev + itemsPerPage);
+      setIsLoadingMore(false);
+    }, 500);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, itemsPerPage]);
 
   return (
     <div className={className}>
-      <MapContainer
-        center={center}
-        zoom={zoom}
-        scrollWheelZoom={true}
-        zoomControl={false}
-        className="h-full w-full rounded-xl relative z-0"
-        maxBounds={[
-          [-90, -180],
-          [90, 180],
-        ]}
-        maxBoundsViscosity={1.0}
-      >
-        <BoundsTracker />
-        <MapControls
-          onZoomChange={setZoom}
-          defaultCenter={[20, 0]}
-          defaultZoom={2}
-        />
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-        />
-        {/* Map Markers */}
-        <MapCluster />
-        {selectedPlace && (
-          <PlaceGeoJson
-            key={`geojson-${selectedPlace.id}`}
-            place={selectedPlace}
+      <div className="relative h-full w-full">
+        <MapContainer
+          center={center}
+          zoom={zoom}
+          scrollWheelZoom={true}
+          zoomControl={false}
+          className="h-full w-full rounded-xl relative z-0"
+          maxBounds={[
+            [-90, -180],
+            [90, 180],
+          ]}
+          maxBoundsViscosity={1.0}
+        >
+          <BoundsTracker />
+          <MapControls
+            onZoomChange={setZoom}
+            defaultCenter={[20, 0]}
+            defaultZoom={2}
           />
-        )}
-      </MapContainer>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+          />
+          {/* Map Markers */}
+          <MapCluster />
+          {selectedPlace && (
+            <PlaceGeoJson
+              key={`geojson-${selectedPlace.id}`}
+              place={selectedPlace}
+            />
+          )}
+        </MapContainer>
+
+        {/* Status Indicator */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10]">
+          <div className="flex flex-col items-center gap-2">
+            {isLoadingMore ? (
+              <div className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-full",
+                "bg-background/95 backdrop-blur-sm shadow-lg border",
+                "text-foreground animate-in fade-in slide-in-from-top-2"
+              )}>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Loading more places...</span>
+              </div>
+            ) : hasMore() ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadMore}
+                className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                <span>Load more places</span>
+              </Button>
+            ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <div className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full",
+                  "bg-background/95 backdrop-blur-sm shadow-lg border",
+                  "text-muted-foreground"
+                )}>
+                  <span>All {visiblePlacesInView.length} places loaded</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetFilters}
+                  className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
+                >
+                  <Filter className="w-4 h-4 mr-2" />
+                  <span>Clear filters</span>
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Map Legend */}
+        <div className="absolute top-4 left-4 z-[10]">
+          <MapLegend />
+        </div>
+      </div>
     </div>
   );
 };

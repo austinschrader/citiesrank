@@ -32,34 +32,45 @@ const getMarkerStyle = (type?: string, rating?: number) => {
 const createMarkerHtml = (
   style: ReturnType<typeof getMarkerStyle>,
   place: MapPlace,
-  isSelected?: boolean
+  isSelected?: boolean,
+  isHovered?: boolean
 ) => {
   const rating = place.averageRating ? place.averageRating.toFixed(1) : null;
+  const scale = isSelected ? (isHovered ? 1.25 : 1.2) : isHovered ? 1.05 : 1;
 
   return `<div class="place-marker-container" style="
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: ${isSelected ? "scale(1.2)" : "scale(1)"};
-    transition: all 0.2s ease-in-out;
+    transform: scale(${scale});
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   ">
-    <div style="
+    <div class="place-marker-label" style="
       position: absolute;
-      top: -24px;
+      top: -26px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: ${style.color};
+      background-color: ${style.color}${isHovered ? "" : "ee"};
       color: #ffffff;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: ${isHovered ? "4px 12px" : "3px 10px"};
+      border-radius: 8px;
+      font-family: ui-rounded, -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      box-shadow: 0 ${isHovered ? "4px 12px" : "2px 8px"} rgba(0,0,0,${
+    isHovered ? "0.15" : "0.12"
+  });
       white-space: nowrap;
-      max-width: 200px;
+      max-width: 240px;
       overflow: hidden;
       text-overflow: ellipsis;
+      backdrop-filter: blur(8px);
+      -webkit-font-smoothing: antialiased;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     ">
       ${place.name}
     </div>
@@ -67,6 +78,7 @@ const createMarkerHtml = (
       position: relative;
       width: ${style.size}px;
       height: ${style.size}px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     ">
       <div class="place-marker" style="
         position: absolute;
@@ -76,7 +88,10 @@ const createMarkerHtml = (
         justify-content: center;
         background-color: ${style.ratingColor};
         border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        box-shadow: 0 ${isHovered ? "4px 12px" : "2px 4px"} rgba(0,0,0,${
+    isHovered ? "0.2" : "0.15"
+  });
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       ">
         ${
           rating
@@ -85,6 +100,7 @@ const createMarkerHtml = (
             font-size: ${rating.length > 2 ? "13px" : "14px"};
             font-weight: 600;
             color: #ffffff;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           ">
             ${rating}
           </div>
@@ -98,6 +114,7 @@ const createMarkerHtml = (
 
 export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   if (!place.latitude || !place.longitude) return null;
 
@@ -105,13 +122,12 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
 
   const icon = L.divIcon({
     className: "custom-marker",
-    html: createMarkerHtml(markerStyle, place, isSelected),
+    html: createMarkerHtml(markerStyle, place, isSelected, isHovered),
     iconSize: [markerStyle.size, markerStyle.size],
     iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
   });
 
   const handleMarkerClick = (e: L.LeafletMouseEvent) => {
-    // Prevent event from propagating to map
     L.DomEvent.stopPropagation(e);
     setShowModal(true);
     if (onSelect) {
@@ -126,21 +142,17 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
         icon={icon}
         eventHandlers={{
           click: handleMarkerClick,
-          mouseover: (e) => {
-            const el = e.target.getElement();
-            el.style.zIndex = "1000";
-          },
-          mouseout: (e) => {
-            const el = e.target.getElement();
-            el.style.zIndex = "";
-          },
+          mouseover: () => setIsHovered(true),
+          mouseout: () => setIsHovered(false),
         }}
       />
-      <PlaceModal
-        place={place}
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-      />
+      {showModal && (
+        <PlaceModal
+          place={place}
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+        />
+      )}
     </>
   );
 };

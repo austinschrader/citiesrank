@@ -24,7 +24,11 @@ const placeTypeIcons = {
   },
   [CitiesTypeOptions.region]: { icon: null, label: "Regions", emoji: "🗺️" },
   [CitiesTypeOptions.city]: { icon: null, label: "Cities", emoji: "🌆" },
-  [CitiesTypeOptions.neighborhood]: { icon: null, label: "Neighborhoods", emoji: "🏘️" },
+  [CitiesTypeOptions.neighborhood]: {
+    icon: null,
+    label: "Neighborhoods",
+    emoji: "🏘️",
+  },
   [CitiesTypeOptions.sight]: { icon: null, label: "Sights", emoji: "🗽" },
 } as const;
 
@@ -63,7 +67,9 @@ export const FiltersSheet = () => {
     setFilters({ ...filters, averageRating: rating });
   };
 
-  const handlePopulationSelect = (size: "megacity" | "city" | "town" | "village" | null) => {
+  const handlePopulationSelect = (
+    size: "megacity" | "city" | "town" | "village" | null
+  ) => {
     setFilters({ ...filters, populationCategory: size });
   };
 
@@ -72,10 +78,7 @@ export const FiltersSheet = () => {
       <SheetTrigger asChild>
         <Button
           variant="outline"
-          className={cn(
-            "h-9 gap-2",
-            activeFiltersCount > 0 && "bg-primary/5"
-          )}
+          className={cn("h-9 gap-2", activeFiltersCount > 0 && "bg-primary/5")}
         >
           <SlidersHorizontal className="h-4 w-4" />
           All Filters
@@ -97,15 +100,15 @@ export const FiltersSheet = () => {
           </div>
           <SheetDescription className="text-base">
             Discover your perfect destination - whether you're a digital nomad
-            seeking vibrant coworking spaces, a family planning the next adventure,
-            or a traveler exploring the world's hidden gems.
+            seeking vibrant coworking spaces, a family planning the next
+            adventure, or a traveler exploring the world's hidden gems.
           </SheetDescription>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto">
           <div className="space-y-6">
             <div>
               <div className="px-6 py-4 border-b">
-                <h4 className="font-semibold text-lg">Discover Places By Type</h4>
+                <h4 className="font-medium">Discover Places By Type</h4>
                 <p className="text-sm text-muted-foreground mt-1">
                   From countries and regions to local neighborhoods
                 </p>
@@ -126,15 +129,11 @@ export const FiltersSheet = () => {
                       style={
                         {
                           "--marker-color":
-                            markerColors[type as keyof typeof markerColors],
+                            markerColors[type as CitiesTypeOptions],
                           backgroundColor: filters.activeTypes.includes(type)
-                            ? `${
-                                markerColors[
-                                  type as keyof typeof markerColors
-                                ]
-                              }15`
+                            ? `${markerColors[type as CitiesTypeOptions]}15`
                             : undefined,
-                        } as React.CSSProperties
+                        } as React.CSSProperties & { "--marker-color": string }
                       }
                       className={cn(
                         "w-full px-6 py-3 flex items-center justify-between",
