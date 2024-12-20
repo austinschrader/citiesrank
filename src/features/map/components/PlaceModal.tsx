@@ -128,28 +128,16 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
       switch (e.key) {
         case "ArrowLeft":
-          if (e.target === document.body) {
-            navigateToPlace("prev");
-            e.preventDefault();
-          }
+          navigateImages("prev");
+          e.preventDefault();
           break;
         case "ArrowRight":
-          if (e.target === document.body) {
-            navigateToPlace("next");
-            e.preventDefault();
-          }
+          navigateImages("next");
+          e.preventDefault();
           break;
         case "ArrowUp":
-          if (e.target === document.body) {
-            onClose();
-            e.preventDefault();
-          }
-          break;
-        case "Space":
-          if (e.target === document.body) {
-            navigateImages("next");
-            e.preventDefault();
-          }
+          onClose();
+          e.preventDefault();
           break;
         case "Escape":
           onClose();
@@ -160,7 +148,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isOpen, navigateToPlace, navigateImages, onClose]);
+  }, [isOpen, navigateImages, onClose]);
 
   // Touch event handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -173,33 +161,26 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart || isTransitioning || e.touches.length !== 1) return;
+    if (!touchStart || e.touches.length !== 1) return;
 
     const xDiff = touchStart.x - e.touches[0].clientX;
     const yDiff = touchStart.y - e.touches[0].clientY;
     const timeDiff = Date.now() - touchStart.timestamp;
     const velocity = Math.abs(xDiff / timeDiff);
 
-    const currentIndex = visiblePlacesInView.findIndex(
-      (p) => p.id === currentPlace.id
-    );
-
+    // Handle horizontal swipes for image navigation
     if (Math.abs(xDiff) > Math.abs(yDiff)) {
-      if (
-        (Math.abs(xDiff) > SWIPE_THRESHOLD || velocity > 0.5) &&
-        !isTransitioning
-      ) {
-        if (xDiff > 0 && currentIndex < visiblePlacesInView.length - 1) {
-          navigateToPlace("next");
-        } else if (xDiff < 0 && currentIndex > 0) {
-          navigateToPlace("prev");
+      if (Math.abs(xDiff) > SWIPE_THRESHOLD || velocity > 0.5) {
+        if (xDiff > 0) {
+          navigateImages("next");
+        } else {
+          navigateImages("prev");
         }
         setTouchStart(null);
       }
-    } else if (
-      yDiff > SWIPE_UP_THRESHOLD &&
-      Math.abs(xDiff) < SWIPE_THRESHOLD / 2
-    ) {
+    }
+    // Handle vertical swipe up for closing
+    else if (yDiff > SWIPE_UP_THRESHOLD && Math.abs(xDiff) < SWIPE_THRESHOLD / 2) {
       onClose();
       setTouchStart(null);
     }
