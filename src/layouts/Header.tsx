@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Bookmark, Compass, Home, LogOut, UserCircle } from "lucide-react";
+import { Bookmark, Home, LogOut, UserCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
@@ -31,15 +31,8 @@ export const Header = () => {
       mobileLabel: "Home",
       icon: Home,
       to: "/",
-      iconClass: "text-indigo-500",
-    },
-
-    {
-      label: "Explorer",
-      icon: Compass,
-      to: "/explorer",
       description: "Interactive map with advanced filters and search",
-      iconClass: "text-blue-500",
+      iconClass: "text-indigo-500",
     },
   ];
 

@@ -18,7 +18,7 @@ const sizeTypeIcons = {
   megacity: { icon: Building2, label: "Megacities", emoji: "🌇" },
 } as const;
 
-export const CitySizeSheet = () => {
+export const CitySizeDropdown = () => {
   const { filters, handlePopulationSelect } = useFilters();
 
   return (

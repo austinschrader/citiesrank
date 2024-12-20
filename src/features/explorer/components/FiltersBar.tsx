@@ -1,10 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { ActiveFilters } from "@/features/explorer/components/filters/ActiveFilters";
-import { CitySizeSheet } from "@/features/explorer/components/filters/CitySizeSheet";
+import { CitySizeDropdown } from "@/features/explorer/components/filters/CitySizeSheet";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
 import { PlaceTypesSheet } from "@/features/explorer/components/filters/PlaceTypesSheet";
 import { RatingFilter } from "@/features/explorer/components/filters/RatingFilter";
 import { SortControl } from "@/features/explorer/components/filters/SortControl";
+import { TravelStyleDropdown } from "@/features/explorer/components/filters/TravelStyleDropdown";
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { Search } from "lucide-react";
@@ -43,7 +44,8 @@ export const FiltersBar = () => {
         <div className="hidden sm:flex sm:flex-1 sm:items-center sm:gap-3">
           <div className="flex items-center gap-3">
             <PlaceTypesSheet />
-            <CitySizeSheet />
+            <CitySizeDropdown />
+            <TravelStyleDropdown />
             <RatingFilter />
             <FiltersSheet />
           </div>

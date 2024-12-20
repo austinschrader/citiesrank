@@ -1,6 +1,6 @@
 /**
  * FiltersContext manages all filtering and sorting logic for places.
- * 
+ *
  * Responsibilities:
  * 1. Filter State Management
  *    - Search query, active types, ratings, etc.
@@ -11,29 +11,39 @@
  * 3. Filtered Data
  *    - Calculate filtered places list
  *    - Calculate type counts
- * 
+ *
  * Does NOT handle:
  * - Raw city data (handled by CitiesContext)
  * - Map-specific filtering (handled by MapContext)
  * - UI state or interactions
  */
 
+import { travelStyles } from "@/features/explorer/components/filters/TravelStyleDropdown";
 import { MatchScore } from "@/features/preferences/types";
+import { TravelStyle } from "@/features/places/types/travel";
 import {
   CitiesResponse,
   CitiesTypeOptions,
 } from "@/lib/types/pocketbase-types";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useTagIdentifiers } from "@/features/places/hooks/useTagIdentifiers";
 
-export type SortOrder = 
-  | "match" 
-  | "popular" 
-  | "cost-low" 
-  | "cost-high" 
-  | "alphabetical-asc" 
+export type SortOrder =
+  | "match"
+  | "popular"
+  | "cost-low"
+  | "cost-high"
+  | "alphabetical-asc"
   | "alphabetical-desc";
 
-export type PopulationCategory = 
+export type PopulationCategory =
   | "village" // < 10,000
   | "town" // 10,000 - 50,000
   | "city" // 50,000 - 1,000,000
@@ -46,6 +56,7 @@ export interface Filters {
   sort: SortOrder;
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
+  travelStyle: TravelStyle | null;
 
   // Display-only filters
   tags: string[];
@@ -60,15 +71,19 @@ interface FiltersContextValue {
   resetFilters: () => void;
   resetTypeFilters: () => void;
   resetPopulationFilter: () => void;
+  resetTravelStyleFilter: () => void;
   handleTypeClick: (type: CitiesTypeOptions) => void;
   handlePopulationSelect: (category: PopulationCategory | null) => void;
+  handleTravelStyleSelect: (style: TravelStyle | null) => Promise<void>;
   handleRatingChange: (rating: number | null) => void;
   getFilteredCities: (
     cities: CitiesResponse[],
     calculateMatchForCity: (city: CitiesResponse) => MatchScore
   ) => (CitiesResponse & MatchScore)[];
   getActiveFilterCount: () => number;
-  getTypeCounts: (places: CitiesResponse[]) => Record<CitiesTypeOptions, number>;
+  getTypeCounts: (
+    places: CitiesResponse[]
+  ) => Record<CitiesTypeOptions, number>;
 }
 
 const DEFAULT_RATING = 4.6;
@@ -79,6 +94,7 @@ const defaultFilters: Filters = {
   sort: "alphabetical-asc",
   averageRating: null,
   populationCategory: null,
+  travelStyle: null,
   tags: [],
   season: null,
   budget: null,
@@ -88,21 +104,25 @@ const FiltersContext = createContext<FiltersContextValue | null>(null);
 
 export const parsePopulation = (pop: string): number | null => {
   if (!pop || pop.toLowerCase() === "n/a") return null;
-  
+
   try {
     // Remove commas and convert k/m suffixes
-    const normalized = pop.toLowerCase()
+    const normalized = pop
+      .toLowerCase()
       .replace(/,/g, "")
       .replace("k", "000")
       .replace("m", "000000");
-    
+
     return parseFloat(normalized);
   } catch {
     return null;
   }
 };
 
-export const isInPopulationRange = (population: string, category: PopulationCategory): boolean => {
+export const isInPopulationRange = (
+  population: string,
+  category: PopulationCategory
+): boolean => {
   const pop = parsePopulation(population);
   if (pop === null) return false;
 
@@ -120,12 +140,13 @@ export const isInPopulationRange = (population: string, category: PopulationCate
 
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<Filters>(defaultFilters);
+  const { tagIdToIdentifier } = useTagIdentifiers();
 
   // Set default rating only on mount
   useEffect(() => {
-    setFiltersState(prev => ({
+    setFiltersState((prev) => ({
       ...prev,
-      averageRating: DEFAULT_RATING
+      averageRating: DEFAULT_RATING,
     }));
   }, []); // Empty dependency array means this only runs once on mount
 
@@ -147,6 +168,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       sort: "alphabetical-asc",
       averageRating: null,
       populationCategory: null,
+      travelStyle: null,
       tags: [],
       season: null,
       budget: null,
@@ -164,11 +186,25 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     setFiltersState((prev) => ({
       ...prev,
       populationCategory: null,
-      activeTypes: prev.activeTypes.includes(CitiesTypeOptions.city) 
+      activeTypes: prev.activeTypes.includes(CitiesTypeOptions.city)
         ? Object.values(CitiesTypeOptions)
         : prev.activeTypes,
     }));
   }, []);
+
+  const handleTravelStyleSelect = useCallback(async (style: TravelStyle | null) => {
+    // Simulate a small delay to show loading state
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    setFiltersState((prev) => ({
+      ...prev,
+      travelStyle: style,
+    }));
+  }, []);
+
+  const resetTravelStyleFilter = useCallback(() => {
+    handleTravelStyleSelect(null);
+  }, [handleTravelStyleSelect]);
 
   const handleTypeClick = useCallback((type: CitiesTypeOptions) => {
     setFiltersState((prev) => {
@@ -184,31 +220,33 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         : [...prev.activeTypes, type];
 
       // If all types are removed, restore all types
-      updates.activeTypes = newTypes.length === 0
-        ? Object.values(CitiesTypeOptions)
-        : newTypes;
+      updates.activeTypes =
+        newTypes.length === 0 ? Object.values(CitiesTypeOptions) : newTypes;
 
       return { ...prev, ...updates };
     });
   }, []);
 
-  const handlePopulationSelect = useCallback((category: PopulationCategory | null) => {
-    setFiltersState((prev) => {
-      if (category) {
-        return {
-          ...prev,
-          activeTypes: [CitiesTypeOptions.city],
-          populationCategory: category,
-        };
-      } else {
-        return {
-          ...prev,
-          populationCategory: null,
-          activeTypes: Object.values(CitiesTypeOptions),
-        };
-      }
-    });
-  }, []);
+  const handlePopulationSelect = useCallback(
+    (category: PopulationCategory | null) => {
+      setFiltersState((prev) => {
+        if (category) {
+          return {
+            ...prev,
+            activeTypes: [CitiesTypeOptions.city],
+            populationCategory: category,
+          };
+        } else {
+          return {
+            ...prev,
+            populationCategory: null,
+            activeTypes: Object.values(CitiesTypeOptions),
+          };
+        }
+      });
+    },
+    []
+  );
 
   const handleRatingChange = useCallback((rating: number | null) => {
     setFiltersState((prev) => ({
@@ -227,54 +265,156 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     (
       cities: CitiesResponse[],
       calculateMatchForCity: (city: CitiesResponse) => MatchScore
-    ): (CitiesResponse & MatchScore)[] => {
+    ) => {
       return cities
         .filter((city) => {
-          // Apply filters
-          if (filters.search && !city.name.toLowerCase().includes(filters.search.toLowerCase())) {
+          // Apply existing filters
+          if (
+            filters.activeTypes.length > 0 &&
+            !filters.activeTypes.includes(city.type)
+          ) {
             return false;
           }
 
-          if (!filters.activeTypes.includes(city.type as CitiesTypeOptions)) {
+          if (filters.populationCategory) {
+            const population = parsePopulation(city.population);
+            if (
+              !population ||
+              !isInPopulationRange(city.population, filters.populationCategory)
+            ) {
+              return false;
+            }
+          }
+
+          if (
+            filters.averageRating &&
+            (!city.averageRating || city.averageRating < filters.averageRating)
+          ) {
             return false;
           }
 
-          if (filters.averageRating && (!city.averageRating || city.averageRating < filters.averageRating)) {
-            return false;
-          }
+          // Apply travel style filtering
+          if (filters.travelStyle) {
+            console.log('Filtering for travel style:', filters.travelStyle);
+            console.log('City:', city.name);
 
-          if (filters.populationCategory && !isInPopulationRange(city.population, filters.populationCategory)) {
-            return false;
+            // Convert tag IDs to identifiers
+            const cityTagIdentifiers = city.tags?.map((tagId) =>
+              tagIdToIdentifier[tagId]
+            ) || [];
+            console.log('City tag identifiers:', cityTagIdentifiers);
+
+            const style = travelStyles[filters.travelStyle];
+            console.log('Style tags:', style.tags);
+
+            // Check tags
+            const hasMatchingTags = style.tags.some((tag) =>
+              cityTagIdentifiers.includes(tag)
+            );
+            console.log('Has matching tags:', hasMatchingTags);
+            if (!hasMatchingTags) return false;
+
+            // Check minimum rating
+            if (
+              style.criteria.minRating &&
+              (!city.averageRating ||
+                city.averageRating < style.criteria.minRating)
+            ) {
+              console.log('Failed rating check:', city.averageRating);
+              return false;
+            }
+
+            // Check crowd level
+            if (style.criteria.crowdLevel) {
+              const { min, max } = style.criteria.crowdLevel;
+              if (min && city.crowdLevel < min) {
+                console.log('Failed min crowd level:', city.crowdLevel);
+                return false;
+              }
+              if (max && city.crowdLevel > max) {
+                console.log('Failed max crowd level:', city.crowdLevel);
+                return false;
+              }
+            }
+
+            // Check accessibility
+            if (style.criteria.accessibility) {
+              const { min, max } = style.criteria.accessibility;
+              if (min && city.accessibility < min) {
+                console.log('Failed min accessibility:', city.accessibility);
+                return false;
+              }
+              if (max && city.accessibility > max) {
+                console.log('Failed max accessibility:', city.accessibility);
+                return false;
+              }
+            }
+
+            // Check safety score
+            if (
+              style.criteria.safetyScore &&
+              (!city.safetyScore || city.safetyScore < style.criteria.safetyScore)
+            ) {
+              console.log('Failed safety score:', city.safetyScore);
+              return false;
+            }
+
+            // Check preferred scores
+            if (style.criteria.preferredScores) {
+              const scores = style.criteria.preferredScores;
+              let matchesPreferredScores = true;
+
+              if (scores.walkScore && (!city.walkScore || city.walkScore < scores.walkScore)) {
+                console.log('Failed walk score:', city.walkScore);
+                matchesPreferredScores = false;
+              }
+              if (
+                scores.transitScore &&
+                (!city.transitScore || city.transitScore < scores.transitScore)
+              ) {
+                console.log('Failed transit score:', city.transitScore);
+                matchesPreferredScores = false;
+              }
+              if (scores.interesting && (!city.interesting || city.interesting < scores.interesting)) {
+                console.log('Failed interesting score:', city.interesting);
+                matchesPreferredScores = false;
+              }
+
+              if (!matchesPreferredScores) return false;
+            }
+
+            console.log('City passed all filters:', city.name);
           }
 
           return true;
         })
         .map((city) => {
-          const matchScores = calculateMatchForCity(city);
+          const matchScore = calculateMatchForCity(city);
           return {
             ...city,
-            ...matchScores,
+            ...matchScore,
           };
         })
         .sort((a, b) => {
-          switch (filters.sort) {
-            case "cost-low":
-              return (a.cost || 0) - (b.cost || 0);
-            case "cost-high":
-              return (b.cost || 0) - (a.cost || 0);
-            case "popular":
-              return (b.crowdLevel || 0) - (a.crowdLevel || 0);
-            case "alphabetical-asc":
-              return a.name.localeCompare(b.name);
-            case "alphabetical-desc":
-              return b.name.localeCompare(a.name);
-            case "match":
-            default:
-              return (b.matchScore || 0) - (a.matchScore || 0);
+          if (filters.sort === "match") {
+            return b.matchScore - a.matchScore;
           }
+          if (filters.sort === "popular") {
+            return (b.averageRating || 0) - (a.averageRating || 0);
+          }
+          if (filters.sort === "cost-low") {
+            return (a.costIndex || 0) - (b.costIndex || 0);
+          }
+          if (filters.sort === "cost-high") {
+            return (b.costIndex || 0) - (a.costIndex || 0);
+          }
+          if (filters.sort === "alphabetical-asc") {
+            return a.name.localeCompare(b.name);
+          }
+          return b.name.localeCompare(a.name);
         });
     },
-    [filters]
+    [filters, parsePopulation, isInPopulationRange, tagIdToIdentifier]
   );
 
   const getActiveFilterCount = useCallback(() => {
@@ -282,8 +422,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     if (filters.search) count++;
     if (filters.averageRating !== null) count++;
     if (filters.populationCategory) count++;
+    if (filters.travelStyle) count++;
     // Check if not all types are selected
-    if (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length) count++;
+    if (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length)
+      count++;
     return count;
   }, [filters]);
 
@@ -302,8 +444,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       resetFilters,
       resetTypeFilters,
       resetPopulationFilter,
+      resetTravelStyleFilter,
       handleTypeClick,
       handlePopulationSelect,
+      handleTravelStyleSelect,
       handleRatingChange,
       getFilteredCities,
       getActiveFilterCount,
@@ -316,8 +460,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       resetFilters,
       resetTypeFilters,
       resetPopulationFilter,
+      resetTravelStyleFilter,
       handleTypeClick,
       handlePopulationSelect,
+      handleTravelStyleSelect,
       handleRatingChange,
       getFilteredCities,
       getActiveFilterCount,
@@ -326,9 +472,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <FiltersContext.Provider value={value}>
-      {children}
-    </FiltersContext.Provider>
+    <FiltersContext.Provider value={value}>{children}</FiltersContext.Provider>
   );
 }
 
