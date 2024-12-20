@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { getImageUrl } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
 import { Check, FolderPlus } from "lucide-react";
 import React, { useState } from "react";
@@ -18,30 +19,35 @@ interface SaveCollectionsDialogProps {
   placeId: string;
 }
 
+const christmasMarketImage = getImageUrl("strasbourg-france-1", "thumbnail");
+const italyImage = getImageUrl("portofino-italy-3", "thumbnail");
+const germanyImage = getImageUrl("trier-germany-1", "thumbnail");
+const franceImage = getImageUrl("strasbourg-france-1", "thumbnail");
+
 // Mock data for collections
 const mockCollections: Collection[] = [
   {
     id: "1",
     name: "Christmas Markets 2024",
-    imageUrl: "strasbourg-france-1",
+    imageUrl: christmasMarketImage,
     placeCount: 12,
   },
   {
     id: "2",
     name: "German Castles",
-    imageUrl: "trier-germany-1",
+    imageUrl: germanyImage,
     placeCount: 8,
   },
   {
     id: "3",
     name: "Mediterranean Summer",
-    imageUrl: "portofino-italy-3",
+    imageUrl: italyImage,
     placeCount: 15,
   },
   {
     id: "4",
     name: "Hidden Gems",
-    imageUrl: "cochem-germany-1",
+    imageUrl: franceImage,
     placeCount: 23,
   },
 ];

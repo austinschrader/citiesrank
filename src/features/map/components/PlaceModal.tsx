@@ -12,6 +12,7 @@ import {
   Bookmark,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   DollarSign,
   Globe,
   LucideIcon,
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
+import { SocialShareMenu } from "./SocialShareMenu";
 
 interface PlaceModalProps {
   place: MapPlace;
@@ -40,6 +42,12 @@ interface StatBadgeProps {
 const SWIPE_THRESHOLD = 50;
 const SWIPE_UP_THRESHOLD = 100;
 
+interface TouchStartState {
+  x: number;
+  y: number;
+  timestamp: number;
+}
+
 export const PlaceModal: React.FC<PlaceModalProps> = ({
   place: initialPlace,
   isOpen,
@@ -48,9 +56,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 }) => {
   const [currentPlace, setCurrentPlace] = useState<MapPlace>(initialPlace);
   const [direction, setDirection] = useState<-1 | 0 | 1>(0);
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loadedPlaces, setLoadedPlaces] = useState<MapPlace[]>([initialPlace]);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -87,52 +93,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     loadImages();
   }, [currentPlace]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-    });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart || isTransitioning) return;
-
-    const xDiff = touchStart.x - e.touches[0].clientX;
-    const yDiff = touchStart.y - e.touches[0].clientY;
-
-    // Handle horizontal swipes for navigation
-    if (
-      Math.abs(xDiff) > Math.abs(yDiff) &&
-      Math.abs(xDiff) > SWIPE_THRESHOLD
-    ) {
-      if (xDiff > 0 && relatedPlaces.length > 0) {
-        navigateToPlace("next");
-      } else if (xDiff < 0 && loadedPlaces.length > 1) {
-        navigateToPlace("prev");
-      }
-      setTouchStart(null);
-    }
-    // Handle vertical swipe up for closing
-    else if (yDiff > SWIPE_UP_THRESHOLD) {
-      onClose();
-      setTouchStart(null);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setTouchStart(null);
-  };
-
-  const navigateImages = (direction: "next" | "prev") => {
-    if (direction === "next") {
-      setCurrentImageIndex((prev) => (prev + 1) % preloadedImages.length);
-    } else {
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? preloadedImages.length - 1 : prev - 1
-      );
-    }
-  };
-
   const navigateToPlace = (direction: "next" | "prev") => {
     setIsTransitioning(true);
     const isNext = direction === "next";
@@ -161,6 +121,104 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     }
   };
 
+  const navigateImages = (direction: "next" | "prev") => {
+    if (direction === "next") {
+      setCurrentImageIndex((prev) => (prev + 1) % preloadedImages.length);
+    } else {
+      setCurrentImageIndex((prev) =>
+        prev === 0 ? preloadedImages.length - 1 : prev - 1
+      );
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          if (e.target === document.body) {
+            navigateToPlace("prev");
+            e.preventDefault();
+          }
+          break;
+        case "ArrowRight":
+          if (e.target === document.body) {
+            navigateToPlace("next");
+            e.preventDefault();
+          }
+          break;
+        case "ArrowUp":
+          if (e.target === document.body) {
+            onClose();
+            e.preventDefault();
+          }
+          break;
+        case "Space":
+          if (e.target === document.body) {
+            navigateImages("next");
+            e.preventDefault();
+          }
+          break;
+        case "Escape":
+          onClose();
+          e.preventDefault();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [isOpen, navigateToPlace, navigateImages, onClose]);
+
+  // Touch event handlers with better momentum detection
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+
+    setTouchStart({
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      timestamp: Date.now(),
+    });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart || isTransitioning || e.touches.length !== 1) return;
+
+    const xDiff = touchStart.x - e.touches[0].clientX;
+    const yDiff = touchStart.y - e.touches[0].clientY;
+    const timeDiff = Date.now() - touchStart.timestamp;
+    const velocity = Math.abs(xDiff / timeDiff);
+
+    // Handle horizontal swipes for navigation with velocity check
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      if (
+        (Math.abs(xDiff) > SWIPE_THRESHOLD || velocity > 0.5) &&
+        !isTransitioning
+      ) {
+        if (xDiff > 0 && relatedPlaces.length > 0) {
+          navigateToPlace("next");
+        } else if (xDiff < 0 && loadedPlaces.length > 1) {
+          navigateToPlace("prev");
+        }
+        setTouchStart(null);
+      }
+    }
+    // Handle vertical swipe up for closing
+    else if (
+      yDiff > SWIPE_UP_THRESHOLD &&
+      Math.abs(xDiff) < SWIPE_THRESHOLD / 2
+    ) {
+      onClose();
+      setTouchStart(null);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setTouchStart(null);
+  };
+
   const StatBadge: React.FC<StatBadgeProps> = ({
     icon: Icon,
     value,
@@ -179,9 +237,9 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-7xl p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95">
+        <DialogContent className="max-w-7xl p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95  overflow-hidden">
           <div
-            className="relative h-full w-full"
+            className="relative h-full w-full z-9999"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -207,20 +265,53 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
               </div>
 
-              {/* Image Navigation Dots */}
-              <div className="absolute top-4 inset-x-0 flex justify-center gap-1">
-                {preloadedImages.map((_, index) => (
+              {/* Top Navigation Bar */}
+              <div className="absolute top-4 inset-x-0 flex flex-col items-center gap-4">
+                {/* Nav Controls */}
+                <div className="flex items-center gap-3 bg-black/30 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
                   <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={cn(
-                      "w-1.5 h-1.5 rounded-full transition-all duration-200",
-                      currentImageIndex === index
-                        ? "bg-white w-3"
-                        : "bg-white/50 hover:bg-white/75"
-                    )}
-                  />
-                ))}
+                    className="text-white/70 hover:text-white transition-colors disabled:opacity-50"
+                    onClick={() => navigateToPlace("prev")}
+                    disabled={
+                      loadedPlaces.findIndex(
+                        (p) => p.id === currentPlace.id
+                      ) === 0
+                    }
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                  <div className="w-px h-4 bg-white/20" />
+                  <button
+                    className="text-white/70 hover:text-white transition-colors"
+                    onClick={onClose}
+                  >
+                    <ChevronUp className="w-5 h-5" />
+                  </button>
+                  <div className="w-px h-4 bg-white/20" />
+                  <button
+                    className="text-white/70 hover:text-white transition-colors disabled:opacity-50"
+                    onClick={() => navigateToPlace("next")}
+                    disabled={relatedPlaces.length === 0}
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Image Dots */}
+                <div className="flex justify-center gap-1">
+                  {preloadedImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={cn(
+                        "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                        currentImageIndex === index
+                          ? "bg-white w-3"
+                          : "bg-white/50 hover:bg-white/75"
+                      )}
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Image Navigation Buttons */}
@@ -276,21 +367,26 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {user && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/20"
-                        onClick={() => setShowSaveDialog(true)}
-                      >
-                        <Bookmark
-                          className={cn(
-                            "w-5 h-5",
-                            isFavorited ? "fill-white text-white" : "text-white"
-                          )}
-                        />
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {user && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/20"
+                          onClick={() => setShowSaveDialog(true)}
+                        >
+                          <Bookmark
+                            className={cn(
+                              "w-5 h-5",
+                              isFavorited
+                                ? "fill-white text-white"
+                                : "text-white"
+                            )}
+                          />
+                        </Button>
+                      )}
+                      <SocialShareMenu place={currentPlace} />
+                    </div>
                   </div>
                 </div>
 
