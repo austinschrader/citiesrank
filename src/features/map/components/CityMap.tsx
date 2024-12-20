@@ -14,6 +14,7 @@ import {
 import { useMap } from "../context/MapContext";
 import { MapCluster } from "./MapCluster";
 import { MapControls } from "./MapControls";
+import { MapLegend } from "./MapLegend";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
 interface CityMapProps {
@@ -49,37 +50,42 @@ export const CityMap = ({ className }: CityMapProps) => {
 
   return (
     <div className={className}>
-      <MapContainer
-        center={center}
-        zoom={zoom}
-        scrollWheelZoom={true}
-        zoomControl={false}
-        className="h-full w-full rounded-xl relative z-0"
-        maxBounds={[
-          [-90, -180],
-          [90, 180],
-        ]}
-        maxBoundsViscosity={1.0}
-      >
-        <BoundsTracker />
-        <MapControls
-          onZoomChange={setZoom}
-          defaultCenter={[20, 0]}
-          defaultZoom={2}
-        />
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-        />
-        {/* Map Markers */}
-        <MapCluster />
-        {selectedPlace && (
-          <PlaceGeoJson
-            key={`geojson-${selectedPlace.id}`}
-            place={selectedPlace}
+      <div className="relative h-full w-full">
+        <MapContainer
+          center={center}
+          zoom={zoom}
+          scrollWheelZoom={true}
+          zoomControl={false}
+          className="h-full w-full rounded-xl relative z-0"
+          maxBounds={[
+            [-90, -180],
+            [90, 180],
+          ]}
+          maxBoundsViscosity={1.0}
+        >
+          <BoundsTracker />
+          <MapControls
+            onZoomChange={setZoom}
+            defaultCenter={[20, 0]}
+            defaultZoom={2}
           />
-        )}
-      </MapContainer>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+          />
+          {/* Map Markers */}
+          <MapCluster />
+          {selectedPlace && (
+            <PlaceGeoJson
+              key={`geojson-${selectedPlace.id}`}
+              place={selectedPlace}
+            />
+          )}
+        </MapContainer>
+        <div className="absolute top-4 left-4 z-[10]">
+          <MapLegend />
+        </div>
+      </div>
     </div>
   );
 };
