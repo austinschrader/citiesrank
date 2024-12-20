@@ -49,8 +49,17 @@ export const SplitExplorer = () => {
 
   // Update visible places in map context
   useEffect(() => {
-    setVisiblePlaces(filteredPlaces);
-  }, [filteredPlaces, setVisiblePlaces]);
+    if (cities.length > 0) {
+      setVisiblePlaces(filteredPlaces);
+    }
+  }, [cities, filteredPlaces, setVisiblePlaces]);
+
+  // Set initial visible places
+  useEffect(() => {
+    if (cities.length > 0 && viewMode === "map") {
+      setVisiblePlaces(filteredPlaces);
+    }
+  }, [cities.length, viewMode]);
 
   useEffect(() => {
     setIsResultsPanelCollapsed(viewMode === "map");

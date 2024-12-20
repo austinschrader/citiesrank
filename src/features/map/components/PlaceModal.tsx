@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
@@ -11,17 +11,14 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  DollarSign,
   Globe,
   LucideIcon,
-  Navigation,
-  Shield,
   Star,
-  Users,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
+import { SocialShareMenu } from "./SocialShareMenu";
 
 interface PlaceModalProps {
   place: MapPlace;
@@ -60,10 +57,40 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [isRandomMode, setIsRandomMode] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const contentRef = useRef<HTMLDivElement>(null);
   const { visiblePlacesInView } = useMap();
   const { isFavorited } = useFavoriteStatus(currentPlace.id);
   const { user } = useAuth();
+
+  const [lastTap, setLastTap] = useState(0);
+  const DOUBLE_TAP_DELAY = 300; // milliseconds
+
+  const handleDoubleTap = (e: React.TouchEvent) => {
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTap;
+
+    if (tapLength < DOUBLE_TAP_DELAY && tapLength > 0) {
+      // Double tap detected
+      e.preventDefault();
+      if (user) {
+        setShowSaveDialog(true);
+      }
+    }
+
+    setLastTap(currentTime);
+  };
+
+  // Handle viewport changes
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Preload images
   useEffect(() => {
@@ -72,12 +99,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         if (currentPlace.type === "city") {
           // For cities, use the format: paris-france-1, paris-france-2, etc.
           const baseUrl = currentPlace.imageUrl.replace(/-\d+$/, "");
-          return getPlaceImage(`${baseUrl}-${i + 1}`, "wide");
+          return getPlaceImage(`${baseUrl}-${i + 1}`, isMobile ? "mobile" : "wide");
         } else {
           // For non-cities, append -1, -2, etc. to the base imageUrl
           // TODO get 4 images for non-cities
-          // return getPlaceImage(`${currentPlace.imageUrl}-${i + 1}`, "wide");
-          return getPlaceImage(currentPlace.imageUrl, "wide");
+          return getPlaceImage(currentPlace.imageUrl, isMobile ? "mobile" : "wide");
         }
       });
 
@@ -95,7 +121,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     };
 
     loadImages();
-  }, [currentPlace]);
+  }, [currentPlace, isMobile]);
 
   const navigateToPlace = (direction: "next" | "prev") => {
     setIsTransitioning(true);
@@ -105,8 +131,19 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     const currentIndex = visiblePlacesInView.findIndex(
       (p) => p.id === currentPlace.id
     );
-    const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
-    const nextPlace = visiblePlacesInView[nextIndex];
+
+    let nextPlace: MapPlace;
+    if (isRandomMode) {
+      // Get random place excluding current one
+      const availablePlaces = visiblePlacesInView.filter(
+        (_, i) => i !== currentIndex
+      );
+      const randomIndex = Math.floor(Math.random() * availablePlaces.length);
+      nextPlace = availablePlaces[randomIndex];
+    } else {
+      const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
+      nextPlace = visiblePlacesInView[nextIndex];
+    }
 
     if (nextPlace) {
       setTimeout(() => {
@@ -232,196 +269,213 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent
-          className={cn(
-            "max-w-7xl w-full p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95 overflow-hidden",
-            "data-[state=open]:slide-in-from-bottom-full",
-            "sm:data-[state=open]:slide-in-from-bottom-0"
-          )}
-        >
-          <div
-            className="relative h-full w-full z-9999"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+      <Dialog.Root open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <Dialog.Content
+            className={cn(
+              "fixed left-0 top-0 z-50 w-full h-[100vh] sm:h-[100vh] bg-black/95 overflow-hidden",
+              "data-[state=open]:slide-in-from-bottom-full",
+              "sm:data-[state=open]:slide-in-from-bottom-0"
+            )}
           >
-            {/* Main Content */}
             <div
-              ref={contentRef}
-              className={cn(
-                "h-full w-full transition-all duration-300",
-                isTransitioning && direction === 1 && "opacity-0 scale-95",
-                isTransitioning && direction === -1 && "opacity-0 scale-95"
-              )}
+              className="relative h-full w-full z-9999"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             >
-              {/* Background Image */}
-              <div className="absolute inset-0">
-                {preloadedImages[currentImageIndex] && (
-                  <img
-                    src={preloadedImages[currentImageIndex]}
-                    alt={`${currentPlace.name} ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover opacity-90 transition-opacity duration-300"
-                  />
+              {/* Main Content */}
+              <div
+                ref={contentRef}
+                className={cn(
+                  "h-full w-full transition-all duration-300",
+                  isTransitioning && direction === 1 && "opacity-0 scale-95",
+                  isTransitioning && direction === -1 && "opacity-0 scale-95"
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-              </div>
-
-              {/* Place Navigation - Top */}
-              <div className="absolute top-4 inset-x-4 flex items-center justify-between z-30">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-9 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
-                    onClick={() => navigateToPlace("prev")}
-                    disabled={isFirstPlace}
-                  >
-                    <ChevronLeft className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Previous Place</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-9 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
-                    onClick={() => navigateToPlace("next")}
-                    disabled={isLastPlace}
-                  >
-                    <span className="text-sm">Next Place</span>
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-
-                <button className="transition-colors" onClick={onClose}>
-                  <ChevronUp className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Image Navigation - Center */}
-              <div className="absolute inset-y-0 left-4 right-4 flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  className="group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
-                  onClick={() => navigateImages("prev")}
-                >
-                  <div className="flex items-center gap-2 px-2">
-                    <ChevronLeft className="w-4 h-4 text-white" />
-                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
-                      Previous Photo
-                    </span>
-                  </div>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
-                  onClick={() => navigateImages("next")}
-                >
-                  <div className="flex items-center gap-2 px-2">
-                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
-                      Next Photo
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-white" />
-                  </div>
-                </Button>
-              </div>
-
-              {/* Content Section - Bottom */}
-              <div className="absolute inset-x-0 bottom-0 pb-6">
-                {/* Image Navigation Dots */}
-                <div className="flex justify-center mb-8">
-                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
-                    {preloadedImages.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  {preloadedImages[currentImageIndex] && (
+                    <div
+                      className="relative w-full h-full overflow-hidden"
+                      onTouchStart={handleDoubleTap}
+                    >
+                      <img
+                        src={preloadedImages[currentImageIndex]}
+                        alt={currentPlace.name}
                         className={cn(
-                          "w-1.5 h-1.5 rounded-full transition-all duration-200",
-                          currentImageIndex === index
-                            ? "bg-white w-3"
-                            : "bg-white/50 hover:bg-white/75"
+                          "w-full h-full object-cover transition-transform duration-300",
+                          direction === 1 &&
+                            isTransitioning &&
+                            "translate-x-full",
+                          direction === -1 &&
+                            isTransitioning &&
+                            "-translate-x-full"
                         )}
                       />
-                    ))}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Main Content Area */}
+                <div className="absolute inset-x-0 top-0 z-20 px-5">
+                  {/* Title Section */}
+                  <div className="flex flex-col pt-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onClose}
+                        className="h-8 w-8 rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20"
+                      >
+                        <ChevronLeft className="h-5 w-5 text-white" />
+                      </Button>
+                      <div className="flex items-center gap-2">
+                        <SocialShareMenu place={currentPlace} />
+                        {user && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowSaveDialog(true)}
+                            className={cn(
+                              "h-7 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200",
+                              isFavorited && "bg-white/20"
+                            )}
+                          >
+                            <Star
+                              className={cn(
+                                "w-3 h-3 mr-1",
+                                isFavorited && "fill-white"
+                              )}
+                            />
+                            <span className="text-xs">
+                              {isFavorited ? "Saved" : "Save"}
+                            </span>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-baseline gap-3">
+                      <h1
+                        onClick={handleViewDetails}
+                        className="text-3xl font-bold text-white leading-tight cursor-pointer hover:underline select-none"
+                      >
+                        {currentPlace.name}
+                      </h1>
+                      <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                        <Star className="w-3 h-3 text-yellow-500" />
+                        <span className="text-sm font-medium text-white">
+                          {currentPlace.averageRating?.toFixed(1) || "N/A"}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Main Content */}
-                <div className="px-6 space-y-6">
-                  {/* Title Section */}
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h1 className="text-3xl font-bold text-white">
-                        {currentPlace.name}
-                      </h1>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Globe className="w-4 h-4 text-white/70" />
-                        <p className="text-white/70">{currentPlace.country}</p>
-                      </div>
+                {/* Image Navigation - Center (Hidden on mobile) */}
+                <div className="absolute inset-y-0 left-4 right-4 hidden sm:flex items-center justify-between pointer-events-none">
+                  <Button
+                    variant="ghost"
+                    className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-8"
+                    onClick={() => navigateImages("prev")}
+                  >
+                    <div className="flex items-center gap-2 px-2">
+                      <ChevronLeft className="w-4 h-4 text-white" />
+                      <span className="text-xs hidden group-hover:inline text-white whitespace-nowrap">
+                        Previous Photo
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-8"
+                    onClick={() => navigateImages("next")}
+                  >
+                    <div className="flex items-center gap-2 px-2">
+                      <span className="text-xs hidden group-hover:inline text-white whitespace-nowrap">
+                        Next Photo
+                      </span>
+                      <ChevronRight className="w-4 h-4 text-white" />
+                    </div>
+                  </Button>
+                </div>
+
+                {/* Bottom Navigation Area */}
+                <div className="absolute inset-x-0 bottom-0 pb-5">
+                  {/* Image Navigation Dots */}
+                  <div className="flex justify-center mb-3">
+                    <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1">
+                      {preloadedImages.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={cn(
+                            "w-1.5 h-1.5 rounded-full transition-all duration-200",
+                            currentImageIndex === index
+                              ? "bg-white w-2.5"
+                              : "bg-white/50 hover:bg-white/75"
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Place Navigation */}
+                  <div className="px-5 flex flex-col items-center gap-2">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <button
+                        onClick={() => setIsRandomMode(!isRandomMode)}
+                        className={cn(
+                          "text-xs px-3 py-1 rounded-full transition-colors",
+                          isRandomMode
+                            ? "bg-white text-black/80 hover:bg-white/90"
+                            : "bg-black/40 text-white hover:bg-black/50"
+                        )}
+                      >
+                        {isRandomMode ? "Random On" : "Random Off"}
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between w-full">
                       <Button
-                        onClick={handleViewDetails}
                         variant="ghost"
                         size="sm"
-                        className="text-xs text-muted-foreground hover:text-foreground"
+                        className={cn(
+                          "h-8 px-3 rounded-full transition-colors",
+                          !isRandomMode && isFirstPlace
+                            ? "bg-white/5 text-white/40 cursor-not-allowed"
+                            : "bg-white/10 text-white hover:bg-white/20 active:bg-white/30"
+                        )}
+                        onClick={() => navigateToPlace("prev")}
+                        disabled={!isRandomMode && isFirstPlace}
                       >
-                        More details
-                        <ChevronRight className="w-3 h-3 ml-0.5" />
+                        <ChevronLeft className="w-3.5 h-3.5 mr-1.5" />
+                        <span className="text-xs">Previous Place</span>
                       </Button>
-                    </div>
-                  </div>
-
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatBadge
-                      icon={Star}
-                      value={currentPlace.averageRating?.toFixed(1) || "N/A"}
-                      label="Rating"
-                      color="text-yellow-500"
-                    />
-                    <StatBadge
-                      icon={Users}
-                      value={currentPlace.population?.toLocaleString() || "N/A"}
-                      label="Population"
-                      color="text-blue-500"
-                    />
-                    <StatBadge
-                      icon={Shield}
-                      value={currentPlace.safetyScore?.toFixed(1) || "N/A"}
-                      label="Safety"
-                      color="text-green-500"
-                    />
-                    <StatBadge
-                      icon={DollarSign}
-                      value={currentPlace.cost?.toFixed(1) || "N/A"}
-                      label="Cost"
-                      color="text-red-500"
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-white/90 text-sm leading-relaxed max-w-3xl">
-                    {currentPlace.description}
-                  </p>
-
-                  {/* Navigation Hint */}
-                  <div className="flex justify-center mt-8">
-                    <div className="flex items-center gap-2 text-white/50 text-sm bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
-                      <Navigation className="w-4 h-4" />
-                      <span className="hidden sm:inline">
-                        Navigate with arrow keys or swipe
-                      </span>
-                      <span className="sm:hidden">
-                        Swipe to explore more places
-                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                          "h-8 px-3 rounded-full transition-colors",
+                          !isRandomMode && isLastPlace
+                            ? "bg-white/5 text-white/40 cursor-not-allowed"
+                            : "bg-white/10 text-white hover:bg-white/20 active:bg-white/30"
+                        )}
+                        onClick={() => navigateToPlace("next")}
+                        disabled={!isRandomMode && isLastPlace}
+                      >
+                        <span className="text-xs">Next Place</span>
+                        <ChevronRight className="w-3.5 h-3.5 ml-1.5" />
+                      </Button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       {/* Save Collections Dialog */}
       <SaveCollectionsDialog
