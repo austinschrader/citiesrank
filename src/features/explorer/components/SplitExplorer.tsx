@@ -44,8 +44,6 @@ const sizeTypeIcons = {
   megacity: { icon: Building2, label: "Megacities", emoji: "🌇" },
 };
 
-export type ViewMode = "list" | "split" | "map";
-
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const {
@@ -63,13 +61,13 @@ export const SplitExplorer = () => {
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     setVisiblePlaces,
+    viewMode,
   } = useMap();
   const [numFilteredToShow, setNumFilteredToShow] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>("split");
 
   // Get filtered places using context
   const filteredPlaces = useMemo(() => {
@@ -157,7 +155,7 @@ export const SplitExplorer = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <FiltersBar viewMode={viewMode} setViewMode={setViewMode} />
+      <FiltersBar />
       <div className="flex-1 flex overflow-hidden">
         <div
           key={viewMode}
@@ -175,7 +173,6 @@ export const SplitExplorer = () => {
             observerTarget={observerTarget}
             isResultsPanelCollapsed={isResultsPanelCollapsed}
             setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
-            viewMode={viewMode}
             paginatedFilteredPlaces={paginatedFilteredPlaces}
           />
         </div>

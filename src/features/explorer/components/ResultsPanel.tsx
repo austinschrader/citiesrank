@@ -1,20 +1,15 @@
-import { useFilters } from "@/features/places/context/FiltersContext";
-import { MapPlace } from "@/features/map/types";
+import { useMap } from "@/features/map/context/MapContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { RefObject } from "react";
-import { ActiveFilters } from "./filters/ActiveFilters";
-import { SearchFilters } from "./filters/SearchFilters";
-import { ViewMode } from "./SplitExplorer";
-import { useCities } from "@/features/places/context/CitiesContext";
-import { useMap } from "@/features/map/context/MapContext";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
   observerTarget: RefObject<HTMLDivElement>;
   isResultsPanelCollapsed: boolean;
   setIsResultsPanelCollapsed: (value: boolean) => void;
-  viewMode: ViewMode;
   paginatedFilteredPlaces: any[]; // TODO: Add proper type
 }
 
@@ -22,12 +17,11 @@ export const ResultsPanel = ({
   isLoadingMore,
   observerTarget,
   isResultsPanelCollapsed,
-  viewMode,
   paginatedFilteredPlaces,
 }: ResultsPanelProps) => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
-  const { prioritizedPlaces, visiblePlacesInView } = useMap();
+  const { prioritizedPlaces, visiblePlacesInView, viewMode } = useMap();
 
   // Get all filtered places for total count
   const allFilteredPlaces = getFilteredCities(cities, () => ({
@@ -38,16 +32,19 @@ export const ResultsPanel = ({
       tripLength: 1,
       season: 1,
       transit: 1,
-      accessibility: 1
-    }
+      accessibility: 1,
+    },
   }));
 
   // Use different data source based on view mode
-  const displayPlaces = viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+  const displayPlaces =
+    viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
 
   // Get the correct total count based on view mode
-  const totalPlaces = viewMode === "list" ? allFilteredPlaces.length : visiblePlacesInView.length;
-  const placesInView = viewMode === "list" ? totalPlaces : visiblePlacesInView.length;
+  const totalPlaces =
+    viewMode === "list" ? allFilteredPlaces.length : visiblePlacesInView.length;
+  const placesInView =
+    viewMode === "list" ? totalPlaces : visiblePlacesInView.length;
 
   return (
     <div className="h-full flex">
@@ -81,9 +78,7 @@ export const ResultsPanel = ({
                     {displayPlaces.length} loaded
                   </span>
                   <span className="text-muted-foreground">•</span>
-                  <span className="font-medium">
-                    {placesInView}
-                  </span>
+                  <span className="font-medium">{placesInView}</span>
                   <span className="text-muted-foreground">places in view</span>
                 </div>
                 {isLoadingMore && (
