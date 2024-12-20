@@ -8,18 +8,18 @@
  * MapContext manages all map-related state and operations.
  * It takes filtered places from FiltersContext and applies map-specific
  * filtering (bounds, zoom) and pagination.
- * 
+ *
  * Responsibilities:
  * 1. Map State Management
  *    - Zoom level, center coordinates
  *    - Selected place
  *    - Map bounds
- * 
+ *
  * 2. Map-Specific Place Filtering
  *    - Filter places by zoom level
  *    - Filter places by map bounds
  *    - Handle place pagination
- * 
+ *
  * Does NOT handle:
  *  - Raw city data (handled by CitiesContext)
  *  - User-defined filters (handled by FiltersContext)
@@ -103,7 +103,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
+    []
+  );
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState<number>(15);
   const [filters, setFilters] = useState<{
     activeTypes: CitiesTypeOptions[];
@@ -184,50 +186,53 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const calculatePlaceScore = useCallback((place: MapPlace): number => {
-    let score = 0;
+  const calculatePlaceScore = useCallback(
+    (place: MapPlace): number => {
+      let score = 0;
 
-    // Factor 1: Rating (0-5 points)
-    const rating =
-      typeof place.averageRating === "number" ? place.averageRating : 0;
-    score += rating;
+      // Factor 1: Rating (0-5 points)
+      const rating =
+        typeof place.averageRating === "number" ? place.averageRating : 0;
+      score += rating;
 
-    // Factor 2: Place type importance (0-3 points)
-    switch (place.type) {
-      case CitiesTypeOptions.country:
-        score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 3 : 1;
-        break;
-      case CitiesTypeOptions.region:
-        score +=
-          state.zoom > ZOOM_LEVELS.COUNTRY && state.zoom <= ZOOM_LEVELS.REGION
-            ? 3
-            : 1;
-        break;
-      case CitiesTypeOptions.city:
-        score +=
-          state.zoom > ZOOM_LEVELS.REGION && state.zoom <= ZOOM_LEVELS.CITY
-            ? 3
-            : 1;
-        break;
-      case CitiesTypeOptions.neighborhood:
-        score += state.zoom > ZOOM_LEVELS.CITY ? 3 : 0;
-        break;
-      case CitiesTypeOptions.sight:
-        score += state.zoom > ZOOM_LEVELS.NEIGHBORHOOD ? 3 : 0;
-        break;
-    }
-
-    // Factor 3: Population size for cities (0-2 points)
-    if (place.type === CitiesTypeOptions.city && place.population) {
-      const population = parseInt(place.population as string, 10);
-      if (!isNaN(population)) {
-        if (population >= 1000000) score += 2;
-        else if (population >= 100000) score += 1;
+      // Factor 2: Place type importance (0-3 points)
+      switch (place.type) {
+        case CitiesTypeOptions.country:
+          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 3 : 1;
+          break;
+        case CitiesTypeOptions.region:
+          score +=
+            state.zoom > ZOOM_LEVELS.COUNTRY && state.zoom <= ZOOM_LEVELS.REGION
+              ? 3
+              : 1;
+          break;
+        case CitiesTypeOptions.city:
+          score +=
+            state.zoom > ZOOM_LEVELS.REGION && state.zoom <= ZOOM_LEVELS.CITY
+              ? 3
+              : 1;
+          break;
+        case CitiesTypeOptions.neighborhood:
+          score += state.zoom > ZOOM_LEVELS.CITY ? 3 : 0;
+          break;
+        case CitiesTypeOptions.sight:
+          score += state.zoom > ZOOM_LEVELS.NEIGHBORHOOD ? 3 : 0;
+          break;
       }
-    }
 
-    return score;
-  }, [state.zoom]);
+      // Factor 3: Population size for cities (0-2 points)
+      if (place.type === CitiesTypeOptions.city && place.population) {
+        const population = parseInt(place.population as string, 10);
+        if (!isNaN(population)) {
+          if (population >= 1000000) score += 2;
+          else if (population >= 100000) score += 1;
+        }
+      }
+
+      return score;
+    },
+    [state.zoom]
+  );
 
   useEffect(() => {
     if (mapBounds && visiblePlaces.length > 0) {
@@ -247,7 +252,11 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       if (!mapBounds) return allPlaces;
 
       // Filter by current zoom level and bounds
-      return filterPlacesByZoom(allPlaces, state.zoom, filters.populationCategory)
+      return filterPlacesByZoom(
+        allPlaces,
+        state.zoom,
+        filters.populationCategory
+      )
         .filter((place) => {
           if (!place.latitude || !place.longitude) return false;
           return mapBounds.contains([place.latitude, place.longitude]);

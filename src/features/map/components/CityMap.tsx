@@ -136,7 +136,7 @@ export const CityMap = ({ className }: CityMapProps) => {
         </MapContainer>
 
         {/* Status Indicator */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10]">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
           <div className="flex flex-col items-center gap-2">
             {isLoadingMore ? (
               <div className={cn(
@@ -158,22 +158,25 @@ export const CityMap = ({ className }: CityMapProps) => {
                 <span>Load more places</span>
               </Button>
             ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-center gap-2">
                 <div className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-full",
                   "bg-background/95 backdrop-blur-sm shadow-lg border",
-                  "text-muted-foreground"
+                  "text-muted-foreground text-sm sm:text-base"
                 )}>
-                  <span>All {visiblePlacesInView.length} places loaded</span>
+                  <span className="whitespace-nowrap">All {visiblePlacesInView.length} places loaded</span>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={resetFilters}
-                  className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
+                  className={cn(
+                    "rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent",
+                    "text-sm sm:text-base px-3 sm:px-4"
+                  )}
                 >
-                  <Filter className="w-4 h-4 mr-2" />
-                  <span>Clear filters</span>
+                  <Filter className="w-4 h-4 mr-1.5 sm:mr-2" />
+                  <span className="whitespace-nowrap">Clear filters</span>
                 </Button>
               </div>
             ) : null}
