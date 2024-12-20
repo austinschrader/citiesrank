@@ -31,7 +31,7 @@ const SIZES: Record<
   standard: { width: 800, height: 600, quality: 80 },
   large: { width: 1600, height: 1200, quality: 85 },
   wide: { width: 2400, height: 1600, quality: 90 },
-  mobile: { width: 400, height: 300, quality: 70 },
+  mobile: { width: 412, height: 915, quality: 90 },
   tablet: { width: 800, height: 600, quality: 80 },
   desktop: { width: 1600, height: 1200, quality: 100 },
   fullscreen: { width: 2400, height: 1600, quality: 90 },
