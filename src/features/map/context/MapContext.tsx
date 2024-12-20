@@ -112,7 +112,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     activeTypes: Object.values(CitiesTypeOptions),
     populationCategory: false,
   });
-  const [viewMode, setViewMode] = useState<ViewMode>("split");
+  const [viewMode, setViewMode] = useState<ViewMode>("map");
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -230,25 +230,17 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   }, [state.zoom]);
 
   useEffect(() => {
-    if (!mapBounds || !visiblePlaces.length) return;
+    if (mapBounds && visiblePlaces.length > 0) {
+      const placesInView = getVisiblePlacesForCurrentView(visiblePlaces);
+      setVisiblePlacesInView(placesInView);
+    }
+  }, [mapBounds, visiblePlaces]);
 
-    // First filter by bounds
-    const inBoundsPlaces = visiblePlaces.filter((place) => {
-      if (!place.latitude || !place.longitude) return false;
-      return mapBounds.contains([place.latitude, place.longitude]);
-    });
-
-    // Then score and sort
-    const scoredPlaces = inBoundsPlaces
-      .map((place) => ({
-        ...place,
-        score: calculatePlaceScore(place),
-      }))
-      .sort((a, b) => b.score - a.score)
-      .map(({ score, ...place }) => place);
-
-    setVisiblePlacesInView(scoredPlaces);
-  }, [mapBounds, visiblePlaces, calculatePlaceScore]);
+  useEffect(() => {
+    if (viewMode === "map") {
+      setNumPrioritizedToShow(15);
+    }
+  }, [viewMode]);
 
   const getVisiblePlacesForCurrentView = useCallback(
     (allPlaces: MapPlace[]): MapPlace[] => {

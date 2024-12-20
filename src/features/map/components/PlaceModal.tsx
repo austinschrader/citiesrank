@@ -317,14 +317,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 )}
               </div>
 
-              {/* Close Button */}
-              <button
-                className="absolute top-4 right-4 z-30 transition-colors text-white/90 hover:text-white"
-                onClick={onClose}
-              >
-                <ChevronUp className="w-5 h-5" />
-              </button>
-
               {/* Main Content Area */}
               <div className="absolute inset-x-0 top-0 z-20 px-5">
                 {/* Title Section */}
