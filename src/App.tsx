@@ -8,7 +8,6 @@ import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { HomePage } from "@/pages/HomePage";
 import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
@@ -27,9 +26,8 @@ function App() {
                 <FavoritesProvider>
                   <RootLayout>
                     <Routes>
-                      <Route path="/" element={<HomePage />} />
+                      <Route path="/" element={<ExplorerPage />} />
                       <Route path="/explore" element={<PlacesPage />} />
-                      <Route path="/explorer" element={<ExplorerPage />} />
                       <Route path="/favorites" element={<FavoritesPage />} />
                       <Route path="/profile" element={<ProfilePage />} />
                       <Route

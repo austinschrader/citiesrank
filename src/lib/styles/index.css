@@ -89,8 +89,8 @@ button:focus-visible {
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 32% 75%;
+    --input: 214.3 35% 70%;
     --ring: 222.2 84% 4.9%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -116,8 +116,8 @@ button:focus-visible {
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 217.2 32% 18%;
+    --input: 217.2 35% 21%;
     --ring: 212.7 26.8% 83.9%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -133,6 +133,19 @@ button:focus-visible {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    @apply border-input;
+  }
+
+  .btn,
+  button:not(.unstyled),
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    @apply border-input hover:border-input/80;
   }
 }
 
