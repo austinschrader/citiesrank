@@ -2,60 +2,17 @@ import { FiltersBar } from "@/features/explorer/components/FiltersBar";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
-import {
-  PopulationCategory,
-  useFilters,
-} from "@/features/places/context/FiltersContext";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { Building2, Globe2, Landmark, MapPin } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PageSizeSelect } from "./PageSizeSelect";
 import { ResultsPanel } from "./ResultsPanel";
 
-const citySizeEmojis: Record<PopulationCategory, string> = {
-  megacity: "🌇",
-  city: "🏙️",
-  town: "🏰",
-  village: "🏡",
-};
-
-const ITEMS_PER_PAGE = 15;
-
-const placeTypeIcons = {
-  [CitiesTypeOptions.country]: {
-    icon: Globe2,
-    label: "Countries",
-    emoji: "🌎",
-  },
-  [CitiesTypeOptions.region]: { icon: MapPin, label: "Regions", emoji: "🗺️" },
-  [CitiesTypeOptions.city]: { icon: Building2, label: "Cities", emoji: "🌆" },
-  [CitiesTypeOptions.neighborhood]: {
-    icon: Landmark,
-    label: "Neighborhoods",
-    emoji: "🏘️",
-  },
-  [CitiesTypeOptions.sight]: { icon: MapPin, label: "Sights", emoji: "🗽" },
-};
-
-const sizeTypeIcons = {
-  village: { icon: Building2, label: "Villages", emoji: "🏘️" },
-  town: { icon: Building2, label: "Towns", emoji: "🏰" },
-  city: { icon: Building2, label: "Cities", emoji: "🌆" },
-  megacity: { icon: Building2, label: "Megacities", emoji: "🌇" },
-};
+const pageSizeOptions = [15, 25, 50, 100];
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const {
-    getFilteredCities,
-    filters,
-    setFilters,
-    handlePopulationSelect,
-    handleRatingChange,
-    handleTypeClick,
-    resetTypeFilters,
-    resetPopulationFilter,
-  } = useFilters();
+  const { getFilteredCities } = useFilters();
   const {
     visiblePlacesInView,
     numPrioritizedToShow,
@@ -63,11 +20,13 @@ export const SplitExplorer = () => {
     setVisiblePlaces,
     viewMode,
   } = useMap();
-  const [numFilteredToShow, setNumFilteredToShow] = useState(ITEMS_PER_PAGE);
+  const [numFilteredToShow, setNumFilteredToShow] = useState(
+    pageSizeOptions[0]
+  );
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
-  const [isStatsMinimized, setIsStatsMinimized] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
 
   // Get filtered places using context
   const filteredPlaces = useMemo(() => {
@@ -100,8 +59,8 @@ export const SplitExplorer = () => {
 
   // Reset pagination when view changes
   useEffect(() => {
-    setNumPrioritizedToShow(ITEMS_PER_PAGE);
-    setNumFilteredToShow(ITEMS_PER_PAGE);
+    setNumPrioritizedToShow(pageSizeOptions[0]);
+    setNumFilteredToShow(pageSizeOptions[0]);
   }, [viewMode, setNumPrioritizedToShow]);
 
   const hasMore = useCallback(() => {
@@ -123,13 +82,13 @@ export const SplitExplorer = () => {
     setIsLoadingMore(true);
     setTimeout(() => {
       if (viewMode === "list") {
-        setNumFilteredToShow((prev) => prev + ITEMS_PER_PAGE);
+        setNumFilteredToShow((prev) => prev + itemsPerPage);
       } else {
-        setNumPrioritizedToShow((prev) => prev + ITEMS_PER_PAGE);
+        setNumPrioritizedToShow((prev) => prev + itemsPerPage);
       }
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, viewMode]);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, viewMode, itemsPerPage]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -155,45 +114,64 @@ export const SplitExplorer = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <FiltersBar />
-      <div className="flex-1 flex overflow-hidden">
-        <div
-          key={viewMode}
-          className={cn(
-            "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden",
-            viewMode === "map"
-              ? "w-0 invisible"
-              : viewMode === "list"
-              ? "w-full"
-              : "w-[800px]"
-          )}
-        >
-          <ResultsPanel
-            isLoadingMore={isLoadingMore}
-            observerTarget={observerTarget}
-            isResultsPanelCollapsed={isResultsPanelCollapsed}
-            setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
-            paginatedFilteredPlaces={paginatedFilteredPlaces}
-          />
+      <div className="flex flex-col h-full">
+        <FiltersBar />
+        <div className="flex items-center justify-between px-4 py-2 border-b">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              {filteredPlaces.length} places found
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <PageSizeSelect
+              value={itemsPerPage}
+              onChange={(newSize) => {
+                setItemsPerPage(newSize);
+                setNumFilteredToShow(newSize);
+                setNumPrioritizedToShow(newSize);
+              }}
+            />
+          </div>
         </div>
-        <div
-          key={`map-${viewMode}`}
-          className={cn(
-            "relative transition-all duration-300 ease-in-out overflow-hidden",
-            viewMode === "list"
-              ? "w-0 invisible"
-              : viewMode === "map"
-              ? "w-full"
-              : "flex-1"
-          )}
-        >
+        <div className="flex-1 flex overflow-hidden">
           <div
+            key={viewMode}
             className={cn(
-              "absolute inset-0",
-              viewMode === "list" && "pointer-events-none"
+              "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden",
+              viewMode === "map"
+                ? "w-0 invisible"
+                : viewMode === "list"
+                ? "w-full"
+                : "w-[800px]"
             )}
           >
-            <CityMap className="h-full" />
+            <ResultsPanel
+              isLoadingMore={isLoadingMore}
+              observerTarget={observerTarget}
+              isResultsPanelCollapsed={isResultsPanelCollapsed}
+              setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
+              paginatedFilteredPlaces={paginatedFilteredPlaces}
+            />
+          </div>
+          <div
+            key={`map-${viewMode}`}
+            className={cn(
+              "relative transition-all duration-300 ease-in-out overflow-hidden",
+              viewMode === "list"
+                ? "w-0 invisible"
+                : viewMode === "map"
+                ? "w-full"
+                : "flex-1"
+            )}
+          >
+            <div
+              className={cn(
+                "absolute inset-0",
+                viewMode === "list" && "pointer-events-none"
+              )}
+            >
+              <CityMap className="h-full" />
+            </div>
           </div>
         </div>
       </div>
