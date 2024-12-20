@@ -57,14 +57,20 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const totalImages = 4;
 
   const getImageUrl = (index: number) => {
-    const baseUrl = place.imageUrl.replace(/-\d+$/, "");
-    return `${baseUrl}-${index + 1}`;
+    // Cities have format: cityname-country-1
+    if (place.type === "city") {
+      const baseUrl = place.imageUrl.replace(/-\d+$/, "");
+      return getPlaceImage(`${baseUrl}-${index + 1}`, "wide");
+    }
+
+    // Other types just use their base name with different seeds
+    return getPlaceImage(place.imageUrl, "wide");
   };
 
   useEffect(() => {
     if (isOpen) {
       const imageUrls = Array.from({ length: totalImages }, (_, i) =>
-        getPlaceImage(getImageUrl(i), "wide")
+        getImageUrl(i)
       );
 
       imageUrls.forEach((url) => {
@@ -74,7 +80,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
       setPreloadedImages(imageUrls);
     }
-  }, [isOpen, place.imageUrl]);
+  }, [isOpen, place.imageUrl, place.type]);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % totalImages);
@@ -109,6 +115,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       console.error("Error toggling favorite:", error);
     }
   };
+
+  console.log(place.imageUrl);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
