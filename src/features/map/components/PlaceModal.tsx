@@ -69,7 +69,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [lastTap, setLastTap] = useState(0);
   const [navigation, setNavigation] = useState<NavigationState>({
     direction: 0,
-    isRandomMode: true,
+    isRandomMode: false,
   });
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const [showHints, setShowHints] = useState(true);
@@ -229,6 +229,46 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [isOpen, onClose, handleImageNavigation]);
+
+  const navigateToPlace = (direction: "next" | "prev") => {
+    setIsTransitioning(true);
+    const isNext = direction === "next";
+    setNavigation((prev) => ({ ...prev, direction: isNext ? 1 : -1 }));
+
+    const currentIndex = visiblePlacesInView.findIndex(
+      (p) => p.id === currentPlace.id
+    );
+
+    let nextPlace: MapPlace;
+    if (navigation.isRandomMode) {
+      // Get random place excluding current one
+      const availablePlaces = visiblePlacesInView.filter(
+        (_, i) => i !== currentIndex
+      );
+      const randomIndex = Math.floor(Math.random() * availablePlaces.length);
+      nextPlace = availablePlaces[randomIndex];
+    } else {
+      const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
+      // Handle wrapping around at the ends
+      if (nextIndex < 0) {
+        nextPlace = visiblePlacesInView[visiblePlacesInView.length - 1];
+      } else if (nextIndex >= visiblePlacesInView.length) {
+        nextPlace = visiblePlacesInView[0];
+      } else {
+        nextPlace = visiblePlacesInView[nextIndex];
+      }
+    }
+
+    if (nextPlace) {
+      setTimeout(() => {
+        setCurrentPlace(nextPlace);
+        setIsTransitioning(false);
+        onPlaceSelect?.(nextPlace);
+      }, 300);
+    } else {
+      setIsTransitioning(false);
+    }
+  };
 
   const StatBadge: React.FC<StatBadgeProps> = ({
     icon: Icon,
@@ -417,7 +457,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 border border-white/20"
                       onClick={() => {
                         setNavigation((prev) => ({ ...prev, direction: -1 }));
-                        handleImageNavigation("prev");
+                        navigateToPlace("prev");
                       }}
                     >
                       <ChevronLeft className="w-4 h-4 mr-2" />
@@ -449,7 +489,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 border border-white/20"
                       onClick={() => {
                         setNavigation((prev) => ({ ...prev, direction: 1 }));
-                        handleImageNavigation("next");
+                        navigateToPlace("next");
                       }}
                     >
                       Next Place
@@ -469,7 +509,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               <Button
                 variant="ghost"
                 size="lg"
-                onClick={() => handleImageNavigation("prev")}
+                onClick={() => navigateToPlace("prev")}
                 className="pointer-events-auto h-12 w-12 rounded-full bg-black/20 
                   backdrop-blur-md hover:bg-black/40 border border-white/10"
               >
@@ -478,7 +518,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               <Button
                 variant="ghost"
                 size="lg"
-                onClick={() => handleImageNavigation("next")}
+                onClick={() => navigateToPlace("next")}
                 className="pointer-events-auto h-12 w-12 rounded-full bg-black/20 
                   backdrop-blur-md hover:bg-black/40 border border-white/10"
               >
