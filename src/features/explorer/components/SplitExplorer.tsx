@@ -5,7 +5,6 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { PageSizeSelect } from "./PageSizeSelect";
 import { ResultsPanel } from "./ResultsPanel";
 
 const pageSizeOptions = [15, 25, 50, 100];
@@ -122,16 +121,6 @@ export const SplitExplorer = () => {
               {filteredPlaces.length} places found
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <PageSizeSelect
-              value={itemsPerPage}
-              onChange={(newSize) => {
-                setItemsPerPage(newSize);
-                setNumFilteredToShow(newSize);
-                setNumPrioritizedToShow(newSize);
-              }}
-            />
-          </div>
         </div>
         <div className="flex-1 flex overflow-hidden">
           <div
@@ -151,6 +140,12 @@ export const SplitExplorer = () => {
               isResultsPanelCollapsed={isResultsPanelCollapsed}
               setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
               paginatedFilteredPlaces={paginatedFilteredPlaces}
+              itemsPerPage={itemsPerPage}
+              onPageSizeChange={(newSize) => {
+                setItemsPerPage(newSize);
+                setNumFilteredToShow(newSize);
+                setNumPrioritizedToShow(newSize);
+              }}
             />
           </div>
           <div

@@ -1,5 +1,6 @@
 import { useMap } from "@/features/map/context/MapContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { PageSizeSelect } from "./PageSizeSelect"; 
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ interface ResultsPanelProps {
   isResultsPanelCollapsed: boolean;
   setIsResultsPanelCollapsed: (value: boolean) => void;
   paginatedFilteredPlaces: any[]; // TODO: Add proper type
+  itemsPerPage: number;
+  onPageSizeChange: (size: number) => void;
 }
 
 export const ResultsPanel = ({
@@ -18,6 +21,8 @@ export const ResultsPanel = ({
   observerTarget,
   isResultsPanelCollapsed,
   paginatedFilteredPlaces,
+  itemsPerPage,
+  onPageSizeChange,
 }: ResultsPanelProps) => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
@@ -71,7 +76,7 @@ export const ResultsPanel = ({
               </div>
             )}
             <div className="p-4">
-              {/* Results count */}
+              {/* Results count and page size selector */}
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">
@@ -81,14 +86,20 @@ export const ResultsPanel = ({
                   <span className="font-medium">{placesInView}</span>
                   <span className="text-muted-foreground">places in view</span>
                 </div>
-                {isLoadingMore && (
-                  <div className="flex items-center gap-2 bg-primary px-3 py-1.5 rounded-full">
-                    <div className="w-3 h-3 border-2 border-background border-t-transparent rounded-full animate-spin" />
-                    <span className="text-sm font-medium text-background">
-                      Loading more...
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center gap-4">
+                  <PageSizeSelect
+                    value={itemsPerPage}
+                    onChange={onPageSizeChange}
+                  />
+                  {isLoadingMore && (
+                    <div className="flex items-center gap-2 bg-primary px-3 py-1.5 rounded-full">
+                      <div className="w-3 h-3 border-2 border-background border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm font-medium text-background">
+                        Loading more...
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
