@@ -403,7 +403,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 </div>
 
                 {/* Bottom Navigation Area */}
-                <div className="absolute inset-x-0 bottom-0 pb-5">
+                <div className="absolute inset-x-0 bottom-0 pb-5 z-50">
                   {/* Image Navigation Dots */}
                   <div className="flex justify-center mb-3">
                     <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1">
