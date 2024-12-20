@@ -346,11 +346,12 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     alt={currentPlace.name}
                     className="w-full h-full object-cover transition-all duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
                   {/* Usage Hints */}
                   {isMobile && (
                     <div
                       className={cn(
-                        "absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm text-white/90 text-xs flex flex-col items-center gap-1.5 transition-all duration-500",
+                        "absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm text-white text-xs flex flex-col items-center gap-1.5 transition-all duration-500",
                         showHints
                           ? "opacity-100 translate-y-0"
                           : "opacity-0 pointer-events-none translate-y-1"
@@ -364,7 +365,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         <ChevronRight className="w-3.5 h-3.5" />
                       </div>
                       {user && (
-                        <span className="font-medium text-white/70">
+                        <span className="font-medium text-white">
                           Double tap to save
                         </span>
                       )}
@@ -460,76 +461,91 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
             </div>
 
             {/* Place Information */}
-            <div className="absolute bottom-0 inset-x-0">
-              {/* Content container with gradient background */}
-              <div className="relative bg-[linear-gradient(to_top,rgba(0,0,0,0.65)_0%,rgba(0,0,0,0.5)_20%,rgba(0,0,0,0.3)_40%,rgba(0,0,0,0.1)_80%,rgba(0,0,0,0)_100%)] backdrop-blur-[1px] p-4 sm:p-6">
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                      {currentPlace.name}
-                    </h2>
-                  </div>
+            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6">
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-white drop-shadow-sm" />
+                  <span className="text-xs sm:text-sm font-medium text-white drop-shadow-sm">
+                    {currentPlace.country || "Location details"}
+                  </span>
+                </div>
 
-                  {currentPlace.description && (
-                    <p className="text-base sm:text-lg text-white font-medium leading-relaxed max-w-2xl">
-                      {currentPlace.description}
-                    </p>
+                <div className="flex items-baseline gap-3">
+                  <Button
+                    variant="ghost"
+                    className="text-xl sm:text-2xl font-bold text-white leading-tight px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/50 border border-white/20 drop-shadow-sm"
+                    onClick={handleDetailsView}
+                  >
+                    {currentPlace.name}
+                  </Button>
+                  {currentPlace.averageRating && (
+                    <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full drop-shadow-sm">
+                      <Star className="w-3 h-3 text-yellow-500" />
+                      <span className="text-sm font-medium text-white">
+                        {currentPlace.averageRating.toFixed(1)}
+                      </span>
+                    </div>
                   )}
                 </div>
 
-                {/* Place Navigation */}
-                <div className="flex flex-col items-center gap-2 mt-4">
-                  <div className="flex items-center justify-between w-full gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
-                      onClick={() => {
-                        setNavigation((prev) => ({ ...prev, direction: -1 }));
-                        navigateToPlace("prev");
-                      }}
-                    >
-                      <ChevronLeft className="w-4 h-4 mr-2" />
-                      Previous Place
-                    </Button>
+                {currentPlace.description && (
+                  <p className="text-sm sm:text-base text-white font-medium max-w-2xl drop-shadow-sm">
+                    {currentPlace.description}
+                  </p>
+                )}
+              </div>
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        setNavigation((prev) => ({
-                          ...prev,
-                          isRandomMode: !prev.isRandomMode,
-                        }))
-                      }
-                      className={cn(
-                        "h-9 w-9 rounded-full backdrop-blur-md border border-white/20",
-                        navigation.isRandomMode
-                          ? "bg-white/20 text-white hover:bg-white/30"
-                          : "bg-black/30 hover:bg-black/50"
-                      )}
-                    >
-                      <Shuffle className="h-4 w-4 text-white" />
-                    </Button>
+              {/* Place Navigation */}
+              <div className="flex flex-col items-center gap-2 mt-4">
+                <div className="flex items-center justify-between w-full gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 px-4 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
+                    onClick={() => {
+                      setNavigation((prev) => ({ ...prev, direction: -1 }));
+                      navigateToPlace("prev");
+                    }}
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-2" />
+                    Previous Place
+                  </Button>
 
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-9 px-4 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
-                      onClick={() => {
-                        setNavigation((prev) => ({ ...prev, direction: 1 }));
-                        navigateToPlace("next");
-                      }}
-                    >
-                      Next Place
-                      {navigation.isRandomMode ? (
-                        <Shuffle className="w-4 h-4 ml-2" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      )}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      setNavigation((prev) => ({
+                        ...prev,
+                        isRandomMode: !prev.isRandomMode,
+                      }))
+                    }
+                    className={cn(
+                      "h-9 w-9 rounded-full backdrop-blur-sm border border-white/20",
+                      navigation.isRandomMode
+                        ? "bg-white/20 text-white hover:bg-white/30"
+                        : "bg-black/40 hover:bg-black/50"
+                    )}
+                  >
+                    <Shuffle className="h-4 w-4 text-white" />
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 px-4 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
+                    onClick={() => {
+                      setNavigation((prev) => ({ ...prev, direction: 1 }));
+                      navigateToPlace("next");
+                    }}
+                  >
+                    Next Place
+                    {navigation.isRandomMode ? (
+                      <Shuffle className="w-4 h-4 ml-2" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    )}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -540,8 +556,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 variant="ghost"
                 size="lg"
                 onClick={() => handleImageNavigation("prev")}
-                className="pointer-events-auto h-12 w-12 rounded-full bg-black/20 
-                  backdrop-blur-md hover:bg-black/40 border border-white/10"
+                className="pointer-events-auto h-12 w-12 rounded-full bg-black/40 
+                  backdrop-blur-sm hover:bg-black/50 border border-white/10"
               >
                 <ChevronLeft className="h-6 w-6 text-white" />
               </Button>
@@ -549,8 +565,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 variant="ghost"
                 size="lg"
                 onClick={() => handleImageNavigation("next")}
-                className="pointer-events-auto h-12 w-12 rounded-full bg-black/20 
-                  backdrop-blur-md hover:bg-black/40 border border-white/10"
+                className="pointer-events-auto h-12 w-12 rounded-full bg-black/40 
+                  backdrop-blur-sm hover:bg-black/50 border border-white/10"
               >
                 <ChevronRight className="h-6 w-6 text-white" />
               </Button>
