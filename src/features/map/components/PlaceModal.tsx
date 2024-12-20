@@ -68,8 +68,16 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   useEffect(() => {
     const loadImages = async () => {
       const images = Array.from({ length: 4 }, (_, i) => {
-        const baseUrl = currentPlace.imageUrl.replace(/-\d+$/, "");
-        return getPlaceImage(`${baseUrl}-${i + 1}`, "wide");
+        if (currentPlace.type === "city") {
+          // For cities, use the format: paris-france-1, paris-france-2, etc.
+          const baseUrl = currentPlace.imageUrl.replace(/-\d+$/, "");
+          return getPlaceImage(`${baseUrl}-${i + 1}`, "wide");
+        } else {
+          // For non-cities, append -1, -2, etc. to the base imageUrl
+          // TODO get 4 images for non-cities
+          // return getPlaceImage(`${currentPlace.imageUrl}-${i + 1}`, "wide");
+          return getPlaceImage(currentPlace.imageUrl, "wide");
+        }
       });
 
       await Promise.all(
@@ -180,7 +188,10 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       }
     }
     // Handle vertical swipe up for closing
-    else if (yDiff > SWIPE_UP_THRESHOLD && Math.abs(xDiff) < SWIPE_THRESHOLD / 2) {
+    else if (
+      yDiff > SWIPE_UP_THRESHOLD &&
+      Math.abs(xDiff) < SWIPE_THRESHOLD / 2
+    ) {
       onClose();
       setTouchStart(null);
     }
