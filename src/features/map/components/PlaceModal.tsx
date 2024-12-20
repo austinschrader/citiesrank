@@ -4,10 +4,10 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
+import { createSlug } from "@/features/places/utils/placeUtils";
 import { getPlaceImage } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
 import {
-  Bookmark,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
@@ -20,8 +20,8 @@ import {
   Users,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
-import { SocialShareMenu } from "./SocialShareMenu";
 
 interface PlaceModalProps {
   place: MapPlace;
@@ -52,6 +52,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   onClose,
   onPlaceSelect,
 }) => {
+  const navigate = useNavigate();
   const [currentPlace, setCurrentPlace] = useState<MapPlace>(initialPlace);
   const [direction, setDirection] = useState<-1 | 0 | 1>(0);
   const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
@@ -222,10 +223,23 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const isFirstPlace = currentIndex === 0;
   const isLastPlace = currentIndex === visiblePlacesInView.length - 1;
 
+  const handleViewDetails = () => {
+    navigate(`/places/${currentPlace.type}/${createSlug(currentPlace.name)}`, {
+      state: { placeData: currentPlace },
+    });
+    onClose();
+  };
+
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-7xl p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95 overflow-hidden">
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent
+          className={cn(
+            "max-w-7xl w-full p-0 gap-0 h-[100vh] sm:h-[100vh] w-full bg-black/95 overflow-hidden",
+            "data-[state=open]:slide-in-from-bottom-full",
+            "sm:data-[state=open]:slide-in-from-bottom-0"
+          )}
+        >
           <div
             className="relative h-full w-full z-9999"
             onTouchStart={handleTouchStart}
@@ -344,27 +358,16 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         <p className="text-white/70">{currentPlace.country}</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <div className="flex items-center gap-2">
-                        {user && (
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/20"
-                            onClick={() => setShowSaveDialog(true)}
-                          >
-                            <Bookmark
-                              className={cn(
-                                "w-5 h-5",
-                                isFavorited
-                                  ? "fill-white text-white"
-                                  : "text-white"
-                              )}
-                            />
-                          </Button>
-                        )}
-                        <SocialShareMenu place={currentPlace} />
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={handleViewDetails}
+                        variant="ghost"
+                        size="sm"
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        More details
+                        <ChevronRight className="w-3 h-3 ml-0.5" />
+                      </Button>
                     </div>
                   </div>
 

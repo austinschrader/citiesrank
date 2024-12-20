@@ -13,14 +13,14 @@ import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOv
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
 import { PlaceCardProps } from "@/features/places/types";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { createSlug } from "../../utils/placeUtils";
+import { PlaceModal } from "@/features/map/components/PlaceModal";
 
 export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [showControls, setShowControls] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button")) return;
@@ -30,9 +30,7 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
       return;
     }
 
-    navigate(`/places/${city.type}/${createSlug(city.name)}`, {
-      state: { placeData: city },
-    });
+    setShowModal(true);
   };
 
   // Render compact variant if specified
@@ -78,6 +76,11 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         city={city.name}
         country={city.country}
         imageNumber={1}
+      />
+      <PlaceModal
+        place={city}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
       />
     </>
   );
