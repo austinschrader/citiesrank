@@ -112,13 +112,13 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl p-0 gap-0 h-[90vh]">
+      <DialogContent className="max-w-6xl p-0 gap-0 h-[90vh] sm:h-[95vh] md:h-[90vh] w-full">
         {/* Image Gallery */}
-        <div className="relative h-[75vh] bg-muted">
+        <div className="relative h-[50vh] sm:h-[60vh] md:h-[75vh] bg-muted">
           {preloadedImages[currentImageIndex] && (
             <img
               src={preloadedImages[currentImageIndex]}
-              alt={`${place.name} view ${currentImageIndex + 1}`}
+              alt={`${place.name} ${currentImageIndex + 1}`}
               className="w-full h-full object-cover"
             />
           )}
@@ -127,30 +127,30 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
           <Button
             variant="secondary"
             size="icon"
-            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90 w-8 h-8 sm:w-10 sm:h-10"
             onClick={prevImage}
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
           <Button
             variant="secondary"
             size="icon"
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background/90 w-8 h-8 sm:w-10 sm:h-10"
             onClick={nextImage}
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
 
           {/* Navigation Dots */}
-          <div className="absolute inset-x-0 bottom-4 flex items-center justify-center gap-2">
+          <div className="absolute inset-x-0 bottom-2 sm:bottom-4 flex items-center justify-center gap-1 sm:gap-2">
             {Array.from({ length: totalImages }).map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
                 className={cn(
-                  "w-2 h-2 rounded-full transition-all",
+                  "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all",
                   currentImageIndex === index
-                    ? "bg-white w-4"
+                    ? "bg-white w-3 sm:w-4"
                     : "bg-white/50 hover:bg-white/75"
                 )}
                 aria-label={`View image ${index + 1}`}
@@ -160,14 +160,14 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         </div>
 
         {/* Info Section */}
-        <div className="p-6 bg-background">
-          <div className="space-y-6">
+        <div className="p-4 sm:p-6 bg-background overflow-y-auto max-h-[40vh] sm:max-h-[35vh] md:max-h-[25vh]">
+          <div className="space-y-4 sm:space-y-6">
             {/* Header and Description */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-start sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold">{place.name}</h2>
-                  <p className="text-muted-foreground">
+                  <h2 className="text-xl sm:text-2xl font-bold">{place.name}</h2>
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {place.country || ''}
                   </p>
                 </div>
@@ -176,14 +176,14 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     size="icon"
                     variant="secondary"
                     className={cn(
-                      "rounded-full",
+                      "rounded-full shrink-0",
                       isFavorited && "bg-red-500/20 hover:bg-red-500/30"
                     )}
                     onClick={toggleFavorite}
                   >
                     <Heart
                       className={cn(
-                        "w-5 h-5",
+                        "w-4 h-4 sm:w-5 sm:h-5",
                         isFavorited && "fill-red-500 text-red-500"
                       )}
                     />
@@ -196,7 +196,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               <StatCard
                 icon={Star}
                 label="Rating"
