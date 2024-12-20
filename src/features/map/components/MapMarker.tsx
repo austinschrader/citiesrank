@@ -1,23 +1,12 @@
-// file location: src/features/map/components/MapMarker.tsx
-/**
- * Renders an interactive marker on the map for a specific place.
- * Handles marker styling, click events, and popup displays.
- * Integrates with the parent CityMap component for place selection.
- */
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { getCountryCode } from "@/lib/utils/countryUtils";
-import * as Flags from "country-flag-icons/react/3x2";
-import L from "leaflet";
-import { Building, Building2, Landmark, MapPin } from "lucide-react";
-import { useState } from "react";
-import ReactDOMServer from "react-dom/server";
-import { Marker, Popup } from "react-leaflet";
-import { MapMarkerProps, MapPlace, MarkerStyle } from "../types";
-import { PlaceGeoJson } from "./PlaceGeoJson";
+import { PlaceModal } from "@/features/map/components/PlaceModal";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
+import L from "leaflet";
+import { useState } from "react";
+import { Marker } from "react-leaflet";
+import { MapMarkerProps, MapPlace } from "../types";
 
-const getMarkerStyle = (type?: string, rating?: number): MarkerStyle => {
-  // Rating colors from centralized config
+// Helper functions
+const getMarkerStyle = (type?: string, rating?: number) => {
   const getRatingColor = (rating?: number) => {
     if (!rating) return ratingColors.none;
     if (rating >= 4.8) return ratingColors.best;
@@ -28,24 +17,25 @@ const getMarkerStyle = (type?: string, rating?: number): MarkerStyle => {
     return ratingColors.poor;
   };
 
-  const typeColor = (type && type in markerColors) 
-    ? markerColors[type as keyof typeof markerColors]
-    : markerColors.default;
+  const typeColor =
+    type && type in markerColors
+      ? markerColors[type as keyof typeof markerColors]
+      : markerColors.default;
 
   return {
     color: typeColor,
     ratingColor: getRatingColor(rating),
-    size: 40
+    size: 40,
   };
 };
 
 const createMarkerHtml = (
-  style: MarkerStyle,
+  style: ReturnType<typeof getMarkerStyle>,
   place: MapPlace,
   isSelected?: boolean
 ) => {
   const rating = place.averageRating ? place.averageRating.toFixed(1) : null;
-  
+
   return `<div class="place-marker-container" style="
     position: relative;
     display: flex;
@@ -78,7 +68,6 @@ const createMarkerHtml = (
       width: ${style.size}px;
       height: ${style.size}px;
     ">
-      <!-- Rating circle -->
       <div class="place-marker" style="
         position: absolute;
         inset: 0;
@@ -89,31 +78,26 @@ const createMarkerHtml = (
         border-radius: 50%;
         box-shadow: 0 2px 4px rgba(0,0,0,0.15);
       ">
-        ${rating ? `
+        ${
+          rating
+            ? `
           <div style="
-            font-size: ${rating.length > 2 ? '13px' : '14px'};
+            font-size: ${rating.length > 2 ? "13px" : "14px"};
             font-weight: 600;
             color: #ffffff;
           ">
             ${rating}
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     </div>
-  </div>
-  <style>
-    .place-marker-container:hover {
-      transform: scale(1.2);
-      z-index: 1000;
-    }
-    .place-marker-container {
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-    }
-  </style>`;
+  </div>`;
 };
 
 export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
-  const [showGeoJson, setShowGeoJson] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   if (!place.latitude || !place.longitude) return null;
 
@@ -126,9 +110,13 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
     iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
   });
 
-  const handleClick = () => {
-    setShowGeoJson(!showGeoJson);
-    onSelect?.(place);
+  const handleMarkerClick = (e: L.LeafletMouseEvent) => {
+    // Prevent event from propagating to map
+    L.DomEvent.stopPropagation(e);
+    setShowModal(true);
+    if (onSelect) {
+      onSelect(place);
+    }
   };
 
   return (
@@ -137,7 +125,7 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
         position={[place.latitude, place.longitude]}
         icon={icon}
         eventHandlers={{
-          click: handleClick,
+          click: handleMarkerClick,
           mouseover: (e) => {
             const el = e.target.getElement();
             el.style.zIndex = "1000";
@@ -147,14 +135,12 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
             el.style.zIndex = "";
           },
         }}
-      >
-        <Popup>
-          <div className="p-3 min-w-[320px]">
-            <PlaceCard city={place} variant="compact" />
-          </div>
-        </Popup>
-      </Marker>
-      {showGeoJson && <PlaceGeoJson place={place} />}
+      />
+      <PlaceModal
+        place={place}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </>
   );
 };
