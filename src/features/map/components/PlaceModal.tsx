@@ -274,9 +274,13 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
           <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
           <Dialog.Content
             className={cn(
-              "fixed left-0 top-0 z-50 w-full h-[100vh] sm:h-[100vh] bg-black/95 overflow-hidden",
+              "fixed left-0 top-0 z-50 w-full h-[100vh] bg-black/95 overflow-hidden",
               "data-[state=open]:slide-in-from-bottom-full",
-              "sm:data-[state=open]:slide-in-from-bottom-0"
+              "sm:data-[state=open]:slide-in-from-bottom-0",
+              "pb-[env(safe-area-inset-bottom)]",
+              "pt-[env(safe-area-inset-top)]",
+              "pl-[env(safe-area-inset-left)]",
+              "pr-[env(safe-area-inset-right)]"
             )}
           >
             <div
@@ -403,7 +407,12 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 </div>
 
                 {/* Bottom Navigation Area */}
-                <div className="absolute inset-x-0 bottom-0 pb-5 z-50">
+                <div className={cn(
+                  "absolute inset-x-0 bottom-0 z-50",
+                  "pb-5 sm:pb-5",
+                  // Add extra padding on mobile to account for native navigation bar
+                  isMobile ? "pb-[calc(2.5rem+env(safe-area-inset-bottom))]" : ""
+                )}>
                   {/* Image Navigation Dots */}
                   <div className="flex justify-center mb-3">
                     <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1">
