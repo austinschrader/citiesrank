@@ -37,9 +37,9 @@ export const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-[50] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto">
-        <div className="h-16 flex items-center px-4">
+    <header className="sticky top-0 z-[50] w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="max-w-[calc(100%-4rem)] mx-auto">
+        <div className="h-16 flex items-center">
           {/* Logo section - only show on desktop */}
           <div className="flex-none hidden md:block">
             <Link to="/" className="flex flex-col">
@@ -71,7 +71,7 @@ export const Header = () => {
                       {item.label}
                     </span>
                     {item.description && (
-                      <div className="absolute hidden group-hover:block top-full left-1/2 transform -translate-x-1/2 mt-1 w-64 p-3 bg-white text-xs text-gray-600 rounded-lg shadow-lg border whitespace-normal z-50">
+                      <div className="absolute hidden group-hover:block top-full left-1/2 transform -translate-x-1/2 mt-1 w-64 p-3 bg-white dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-border/40 whitespace-normal z-[100]">
                         {item.description}
                       </div>
                     )}
