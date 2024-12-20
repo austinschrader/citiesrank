@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronUp,
   Globe,
   LucideIcon,
   Star,
@@ -57,10 +56,29 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [isRandomMode, setIsRandomMode] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const { visiblePlacesInView } = useMap();
   const { isFavorited } = useFavoriteStatus(currentPlace.id);
   const { user } = useAuth();
+
+  const [lastTap, setLastTap] = useState(0);
+  const DOUBLE_TAP_DELAY = 300; // milliseconds
+
+  const handleDoubleTap = (e: React.TouchEvent) => {
+    const currentTime = Date.now();
+    const tapLength = currentTime - lastTap;
+
+    if (tapLength < DOUBLE_TAP_DELAY && tapLength > 0) {
+      // Double tap detected
+      e.preventDefault();
+      if (user) {
+        setShowSaveDialog(true);
+      }
+    }
+
+    setLastTap(currentTime);
+  };
 
   // Preload images
   useEffect(() => {
@@ -69,12 +87,12 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         if (currentPlace.type === "city") {
           // For cities, use the format: paris-france-1, paris-france-2, etc.
           const baseUrl = currentPlace.imageUrl.replace(/-\d+$/, "");
-          return getPlaceImage(`${baseUrl}-${i + 1}`, "wide");
+          return getPlaceImage(`${baseUrl}-${i + 1}`, "mobile");
         } else {
           // For non-cities, append -1, -2, etc. to the base imageUrl
           // TODO get 4 images for non-cities
           // return getPlaceImage(`${currentPlace.imageUrl}-${i + 1}`, "wide");
-          return getPlaceImage(currentPlace.imageUrl, "wide");
+          return getPlaceImage(currentPlace.imageUrl, "mobile");
         }
       });
 
@@ -102,8 +120,19 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     const currentIndex = visiblePlacesInView.findIndex(
       (p) => p.id === currentPlace.id
     );
-    const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
-    const nextPlace = visiblePlacesInView[nextIndex];
+
+    let nextPlace: MapPlace;
+    if (isRandomMode) {
+      // Get random place excluding current one
+      const availablePlaces = visiblePlacesInView.filter(
+        (_, i) => i !== currentIndex
+      );
+      const randomIndex = Math.floor(Math.random() * availablePlaces.length);
+      nextPlace = availablePlaces[randomIndex];
+    } else {
+      const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
+      nextPlace = visiblePlacesInView[nextIndex];
+    }
 
     if (nextPlace) {
       setTimeout(() => {
@@ -255,31 +284,36 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               {/* Background Image */}
               <div className="absolute inset-0">
                 {preloadedImages[currentImageIndex] && (
-                  <img
-                    src={preloadedImages[currentImageIndex]}
-                    alt={`${currentPlace.name} ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover opacity-90 transition-opacity duration-300"
-                  />
+                  <div
+                    className="relative w-full h-full overflow-hidden"
+                    onTouchStart={handleDoubleTap}
+                  >
+                    <img
+                      src={preloadedImages[currentImageIndex]}
+                      alt={currentPlace.name}
+                      className={cn(
+                        "w-full h-full object-cover transition-transform duration-300",
+                        direction === 1 &&
+                          isTransitioning &&
+                          "translate-x-full",
+                        direction === -1 &&
+                          isTransitioning &&
+                          "-translate-x-full"
+                      )}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+                  </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
               </div>
 
-              {/* Close Button */}
-              <button
-                className="absolute top-4 right-4 z-30 transition-colors"
-                onClick={onClose}
-              >
-                <ChevronUp className="w-5 h-5" />
-              </button>
-
               {/* Main Content Area */}
-              <div className="absolute inset-x-0 top-0 z-20 pt-12 px-5">
+              <div className="absolute inset-x-0 top-0 z-20 px-5">
                 {/* Title Section */}
-                <div className="flex flex-col">
-                  <div className="flex items-baseline gap-3">
+                <div className="flex flex-col pt-4">
+                  <div className="flex items-baseline gap-3 pr-12">
                     <h1
                       onClick={handleViewDetails}
-                      className="text-3xl font-bold text-white leading-tight cursor-pointer hover:underline"
+                      className="text-3xl font-bold text-white leading-tight cursor-pointer hover:underline select-none"
                     >
                       {currentPlace.name}
                     </h1>
@@ -374,27 +408,52 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 </div>
 
                 {/* Place Navigation */}
-                <div className="px-5 flex items-center justify-between">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
-                    onClick={() => navigateToPlace("prev")}
-                    disabled={isFirstPlace}
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5 mr-1.5" />
-                    <span className="text-xs">Previous Place</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
-                    onClick={() => navigateToPlace("next")}
-                    disabled={isLastPlace}
-                  >
-                    <span className="text-xs">Next Place</span>
-                    <ChevronRight className="w-3.5 h-3.5 ml-1.5" />
-                  </Button>
+                <div className="px-5 flex flex-col items-center gap-2">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <button
+                      onClick={() => setIsRandomMode(!isRandomMode)}
+                      className={cn(
+                        "text-xs px-3 py-1 rounded-full transition-colors",
+                        isRandomMode
+                          ? "bg-white text-black/80 hover:bg-white/90"
+                          : "bg-black/40 text-white hover:bg-black/50"
+                      )}
+                    >
+                      {isRandomMode ? "Random On" : "Random Off"}
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between w-full">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "h-8 px-3 rounded-full transition-colors",
+                        !isRandomMode && isFirstPlace
+                          ? "bg-white/5 text-white/40 cursor-not-allowed"
+                          : "bg-white/10 text-white hover:bg-white/20 active:bg-white/30"
+                      )}
+                      onClick={() => navigateToPlace("prev")}
+                      disabled={!isRandomMode && isFirstPlace}
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5 mr-1.5" />
+                      <span className="text-xs">Previous Place</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "h-8 px-3 rounded-full transition-colors",
+                        !isRandomMode && isLastPlace
+                          ? "bg-white/5 text-white/40 cursor-not-allowed"
+                          : "bg-white/10 text-white hover:bg-white/20 active:bg-white/30"
+                      )}
+                      onClick={() => navigateToPlace("next")}
+                      disabled={!isRandomMode && isLastPlace}
+                    >
+                      <span className="text-xs">Next Place</span>
+                      <ChevronRight className="w-3.5 h-3.5 ml-1.5" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
