@@ -58,6 +58,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [isRandomMode, setIsRandomMode] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const contentRef = useRef<HTMLDivElement>(null);
   const { visiblePlacesInView } = useMap();
   const { isFavorited } = useFavoriteStatus(currentPlace.id);
@@ -81,6 +82,16 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     setLastTap(currentTime);
   };
 
+  // Handle viewport changes
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Preload images
   useEffect(() => {
     const loadImages = async () => {
@@ -88,12 +99,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         if (currentPlace.type === "city") {
           // For cities, use the format: paris-france-1, paris-france-2, etc.
           const baseUrl = currentPlace.imageUrl.replace(/-\d+$/, "");
-          return getPlaceImage(`${baseUrl}-${i + 1}`, "mobile");
+          return getPlaceImage(`${baseUrl}-${i + 1}`, isMobile ? "mobile" : "wide");
         } else {
           // For non-cities, append -1, -2, etc. to the base imageUrl
           // TODO get 4 images for non-cities
-          // return getPlaceImage(`${currentPlace.imageUrl}-${i + 1}`, "wide");
-          return getPlaceImage(currentPlace.imageUrl, "mobile");
+          return getPlaceImage(currentPlace.imageUrl, isMobile ? "mobile" : "wide");
         }
       });
 
@@ -111,7 +121,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     };
 
     loadImages();
-  }, [currentPlace]);
+  }, [currentPlace, isMobile]);
 
   const navigateToPlace = (direction: "next" | "prev") => {
     setIsTransitioning(true);
