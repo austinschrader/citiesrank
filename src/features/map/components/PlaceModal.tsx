@@ -1,4 +1,9 @@
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
@@ -341,7 +346,30 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     alt={currentPlace.name}
                     className="w-full h-full object-cover transition-all duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                  {/* Usage Hints */}
+                  {isMobile && (
+                    <div
+                      className={cn(
+                        "absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm text-white/90 text-xs flex flex-col items-center gap-1.5 transition-all duration-500",
+                        showHints
+                          ? "opacity-100 translate-y-0"
+                          : "opacity-0 pointer-events-none translate-y-1"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span className="font-medium">
+                          Swipe for more photos
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </div>
+                      {user && (
+                        <span className="font-medium text-white/70">
+                          Double tap to save
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -358,13 +386,48 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 >
                   <X className="h-5 w-5 text-white" />
                 </Button>
-                <div className="flex items-center gap-2">
+
+                <div className="flex items-center gap-3">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-full px-2 py-1 h-auto hover:bg-black/50 border border-white/20"
+                      >
+                        <Camera className="h-3.5 w-3.5 text-white/80" />
+                        <span className="text-sm text-white/80 tabular-nums">
+                          {currentImageIndex + 1}/{preloadedImages.length}
+                        </span>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-3 bg-black/80 backdrop-blur-md border-white/20"
+                      align="center"
+                      sideOffset={5}
+                    >
+                      <div className="flex gap-2 items-center">
+                        {preloadedImages.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentImageIndex(index)}
+                            className={cn(
+                              "w-2.5 h-2.5 rounded-full transition-all duration-300",
+                              currentImageIndex === index
+                                ? "bg-white w-6"
+                                : "bg-white/50 hover:bg-white/80"
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      setShowHints(false); // Reset first
-                      setTimeout(() => setShowHints(true), 0); // Then show on next tick
+                      setShowHints(false);
+                      setTimeout(() => setShowHints(true), 0);
                     }}
                     className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-md 
                       hover:bg-black/50 border border-white/20"
@@ -397,90 +460,25 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
             </div>
 
             {/* Place Information */}
-            <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6">
-              {/* Mobile Navigation Controls */}
-              {isMobile && (
-                <div className="flex flex-col items-center gap-2 mb-4">
-                  {/* Usage Hints */}
-                  <div
-                    className={cn(
-                      "text-white/80 text-xs flex flex-col items-center gap-1.5 transition-opacity duration-500",
-                      showHints
-                        ? "opacity-100"
-                        : "opacity-0 pointer-events-none"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                      <span className="font-medium">Swipe to navigate</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </div>
-                    {user && (
-                      <span className="font-medium">Double tap to save</span>
-                    )}
+            <div className="absolute bottom-0 inset-x-0">
+              {/* Content container with gradient background */}
+              <div className="relative bg-[linear-gradient(to_top,rgba(0,0,0,0.65)_0%,rgba(0,0,0,0.5)_20%,rgba(0,0,0,0.3)_40%,rgba(0,0,0,0.1)_80%,rgba(0,0,0,0)_100%)] backdrop-blur-[1px] p-4 sm:p-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                      {currentPlace.name}
+                    </h2>
                   </div>
-                </div>
-              )}
 
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-white/80" />
-                  <span className="text-xs sm:text-sm text-white/80">
-                    {currentPlace.country || "Location details"}
-                  </span>
-                </div>
-
-                <div className="flex items-baseline gap-3">
-                  <Button
-                    variant="ghost"
-                    className="text-xl sm:text-2xl font-bold text-white leading-tight px-3 py-1.5 rounded-full bg-black/30 backdrop-blur-md hover:bg-black/50 border border-white/20"
-                    onClick={handleDetailsView}
-                  >
-                    {currentPlace.name}
-                  </Button>
-                  {currentPlace.averageRating && (
-                    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
-                      <Star className="w-3 h-3 text-yellow-500" />
-                      <span className="text-sm font-medium text-white">
-                        {currentPlace.averageRating.toFixed(1)}
-                      </span>
-                    </div>
+                  {currentPlace.description && (
+                    <p className="text-base sm:text-lg text-white font-medium leading-relaxed max-w-2xl">
+                      {currentPlace.description}
+                    </p>
                   )}
                 </div>
 
-                {currentPlace.description && (
-                  <p className="text-sm sm:text-base text-white/90 max-w-2xl line-clamp-2">
-                    {currentPlace.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Image Navigation */}
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5 bg-black/30 backdrop-blur-md rounded-full px-3 py-1.5">
-                    {preloadedImages.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={cn(
-                          "w-2 h-2 rounded-full transition-all duration-300",
-                          currentImageIndex === index
-                            ? "bg-white w-4"
-                            : "bg-white/50 hover:bg-white/80"
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-white/80">
-                    <Camera className="h-4 w-4 inline-block mr-1.5" />
-                    {currentImageIndex + 1} / {preloadedImages.length}
-                  </span>
-                </div>
-              </div>
-
-              {/* Mobile Previous/Next Buttons */}
-              {isMobile && (
+                {/* Place Navigation */}
                 <div className="flex flex-col items-center gap-2 mt-4">
                   <div className="flex items-center justify-between w-full gap-2">
                     <Button
@@ -533,7 +531,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     </Button>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Side Navigation - Desktop Only */}
@@ -541,7 +539,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               <Button
                 variant="ghost"
                 size="lg"
-                onClick={() => navigateToPlace("prev")}
+                onClick={() => handleImageNavigation("prev")}
                 className="pointer-events-auto h-12 w-12 rounded-full bg-black/20 
                   backdrop-blur-md hover:bg-black/40 border border-white/10"
               >
@@ -550,7 +548,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               <Button
                 variant="ghost"
                 size="lg"
-                onClick={() => navigateToPlace("next")}
+                onClick={() => handleImageNavigation("next")}
                 className="pointer-events-auto h-12 w-12 rounded-full bg-black/20 
                   backdrop-blur-md hover:bg-black/40 border border-white/10"
               >
