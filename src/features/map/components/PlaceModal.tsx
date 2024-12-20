@@ -13,7 +13,6 @@ import {
   ChevronUp,
   Globe,
   LucideIcon,
-  Shield,
   Star,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
@@ -275,52 +274,54 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
               {/* Main Content Area */}
               <div className="absolute inset-x-0 top-0 z-20 pt-12 px-5">
-                {/* Title and Rating */}
-                <div
-                  onClick={handleViewDetails}
-                  className="group cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-3xl font-bold text-white leading-tight group-hover:underline">
+                {/* Title Section */}
+                <div className="flex flex-col">
+                  <div className="flex items-baseline gap-3">
+                    <h1
+                      onClick={handleViewDetails}
+                      className="text-3xl font-bold text-white leading-tight cursor-pointer hover:underline"
+                    >
                       {currentPlace.name}
                     </h1>
-                    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
-                      <Star className="w-3.5 h-3.5 text-yellow-500" />
+                    <div className="flex items-center gap-1 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                      <Star className="w-3 h-3 text-yellow-500" />
                       <span className="text-sm font-medium text-white">
                         {currentPlace.averageRating?.toFixed(1) || "N/A"}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <Globe className="w-4 h-4 text-white/70" />
-                    <p className="text-white/70">{currentPlace.country}</p>
-                  </div>
-                </div>
-
-                {/* Actions Bar */}
-                <div className="flex items-center gap-2 mt-3 pb-3 border-b border-white/10">
-                  <SocialShareMenu place={currentPlace} />
-                  {user && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowSaveDialog(true)}
-                      className={cn(
-                        "h-8 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200",
-                        isFavorited && "bg-white/20"
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-white/70" />
+                      <p className="text-sm text-white/70">
+                        {currentPlace.country}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <SocialShareMenu place={currentPlace} />
+                      {user && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowSaveDialog(true)}
+                          className={cn(
+                            "h-7 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200",
+                            isFavorited && "bg-white/20"
+                          )}
+                        >
+                          <Star
+                            className={cn(
+                              "w-3 h-3 mr-1",
+                              isFavorited && "fill-white"
+                            )}
+                          />
+                          <span className="text-xs">
+                            {isFavorited ? "Saved" : "Save"}
+                          </span>
+                        </Button>
                       )}
-                    >
-                      <Star
-                        className={cn(
-                          "w-3.5 h-3.5 mr-1.5",
-                          isFavorited && "fill-white"
-                        )}
-                      />
-                      <span className="text-xs">
-                        {isFavorited ? "Saved" : "Save"}
-                      </span>
-                    </Button>
-                  )}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -328,23 +329,23 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               <div className="absolute inset-y-0 left-4 right-4 hidden sm:flex items-center justify-between pointer-events-none">
                 <Button
                   variant="ghost"
-                  className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
+                  className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-8"
                   onClick={() => navigateImages("prev")}
                 >
                   <div className="flex items-center gap-2 px-2">
                     <ChevronLeft className="w-4 h-4 text-white" />
-                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
+                    <span className="text-xs hidden group-hover:inline text-white whitespace-nowrap">
                       Previous Photo
                     </span>
                   </div>
                 </Button>
                 <Button
                   variant="ghost"
-                  className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-9"
+                  className="pointer-events-auto group bg-black/30 backdrop-blur-sm hover:bg-black/50 border border-white/20 text-white rounded-full h-8"
                   onClick={() => navigateImages("next")}
                 >
                   <div className="flex items-center gap-2 px-2">
-                    <span className="text-sm hidden group-hover:inline text-white whitespace-nowrap">
+                    <span className="text-xs hidden group-hover:inline text-white whitespace-nowrap">
                       Next Photo
                     </span>
                     <ChevronRight className="w-4 h-4 text-white" />
@@ -353,10 +354,10 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
               </div>
 
               {/* Bottom Navigation Area */}
-              <div className="absolute inset-x-0 bottom-0 pb-6">
+              <div className="absolute inset-x-0 bottom-0 pb-5">
                 {/* Image Navigation Dots */}
-                <div className="flex justify-center mb-4">
-                  <div className="flex items-center gap-2 bg-black/30 backdrop-blur-sm rounded-full px-3 py-1.5">
+                <div className="flex justify-center mb-3">
+                  <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-1">
                     {preloadedImages.map((_, index) => (
                       <button
                         key={index}
@@ -364,7 +365,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         className={cn(
                           "w-1.5 h-1.5 rounded-full transition-all duration-200",
                           currentImageIndex === index
-                            ? "bg-white w-3"
+                            ? "bg-white w-2.5"
                             : "bg-white/50 hover:bg-white/75"
                         )}
                       />
@@ -373,26 +374,26 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 </div>
 
                 {/* Place Navigation */}
-                <div className="px-6 flex items-center justify-between">
+                <div className="px-5 flex items-center justify-between">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
+                    className="h-8 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
                     onClick={() => navigateToPlace("prev")}
                     disabled={isFirstPlace}
                   >
-                    <ChevronLeft className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Previous Place</span>
+                    <ChevronLeft className="w-3.5 h-3.5 mr-1.5" />
+                    <span className="text-xs">Previous Place</span>
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
+                    className="h-8 bg-black/30 backdrop-blur-sm border border-white/20 text-white hover:bg-black/50 transition-all duration-200 disabled:opacity-50"
                     onClick={() => navigateToPlace("next")}
                     disabled={isLastPlace}
                   >
-                    <span className="text-sm">Next Place</span>
-                    <ChevronRight className="w-4 h-4 ml-2" />
+                    <span className="text-xs">Next Place</span>
+                    <ChevronRight className="w-3.5 h-3.5 ml-1.5" />
                   </Button>
                 </div>
               </div>
