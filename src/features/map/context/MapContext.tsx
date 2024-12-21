@@ -1,79 +1,17 @@
 /**
- * MapContext manages map-specific state and filtering for place visibility.
+ * Map context for managing map state and place visibility.
  * 
- * Data Flow:
- * 1. MapContext receives filtered data from FiltersContext
- * 2. Applies map-specific filters (bounds, zoom visibility)
- * 3. Calculates place scores for prioritization
- * 4. Provides visible places to map components
+ * Handles:
+ * - Map state (zoom, center, bounds)
+ * - Place visibility filtering
+ * - Place prioritization for display
+ * - View mode (map/list/split)
  * 
- * Responsibilities:
- * 1. Map State
- *    - Manage zoom level and center coordinates
- *    - Track map bounds
- *    - Handle selected place
- * 
- * 2. Visibility Filtering
- *    - Filter places by map bounds
- *    - Apply zoom-based visibility rules
- *    - Handle place prioritization
- * 
- * 3. Place Scoring
- *    - Calculate place scores based on:
- *      * Distance from map center
- *      * Place type and zoom level
- *      * Population (for cities)
- *      * User ratings
- * 
- * 4. View Management
- *    - Handle map/list view modes
- *    - Manage place pagination
- *    - Track visible place counts
- * 
- * Does NOT handle:
- * - Raw city data (handled by CitiesContext)
- * - User-defined filters (handled by FiltersContext)
- * - UI components or interactions
- * 
- * Usage Example:
- * ```tsx
- * const { 
- *   visiblePlaces,
- *   zoom,
- *   center,
- *   getVisiblePlacesForCurrentView 
- * } = useMap();
- * ```
+ * Uses FiltersContext for user-defined filters and
+ * placeFiltering utilities for visibility rules.
  */
 
-/**
- * Global map state provider used by map components to share state and interactions.
- * Manages zoom, center, selected place and geographic level. Used by CityMap and
- * its child components via useMap hook.
- */
-
-/**
- * MapContext manages all map-related state and operations.
- * It takes filtered places from FiltersContext and applies map-specific
- * filtering (bounds, zoom) and pagination.
- *
- * Responsibilities:
- * 1. Map State Management
- *    - Zoom level, center coordinates
- *    - Selected place
- *    - Map bounds
- *
- * 2. Map-Specific Place Filtering
- *    - Filter places by zoom level
- *    - Filter places by map bounds
- *    - Handle place pagination
- *
- * Does NOT handle:
- *  - Raw city data (handled by CitiesContext)
- *  - User-defined filters (handled by FiltersContext)
- *  - UI components or interactions
- */
-
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
 import L, { LatLngTuple } from "leaflet";
@@ -91,11 +29,10 @@ import { getPlaceGeoJson } from "../utils/geoJsonUtils";
 import { calculateMapBounds } from "../utils/mapUtils";
 import {
   ZOOM_LEVELS,
-  filterPlacesByZoom,
   filterPlacesByBounds,
   filterPlacesByType,
+  filterPlacesByZoom,
 } from "../utils/placeFiltering";
-import { useFilters } from "@/features/places/context/FiltersContext";
 
 export type ViewMode = "list" | "split" | "map";
 
@@ -132,10 +69,6 @@ const getRandomCenter = () => {
 };
 
 const randomCountry = getRandomCenter();
-console.log(`🌍 Starting view centered on ${randomCountry.name}`);
-// const DEFAULT_CENTER = randomCountry.center;
-// const DEFAULT_ZOOM = randomCountry.zoom;
-
 const DEFAULT_CENTER: LatLngTuple = [45.5152, -122.6784]; // Portland, OR
 const DEFAULT_ZOOM = 9;
 
@@ -192,14 +125,12 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
-    []
-  );
-  const [numPrioritizedToShow, setNumPrioritizedToShow] = useState<number>(
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
+  const [prioritizedPlaces, setPrioritizedPlaces] = useState<MapPlace[]>([]);
+  const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
   const [hasMorePlaces, setHasMorePlaces] = useState(true);
-  const [currentlyShownCount, setCurrentlyShownCount] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>(
     window.innerWidth <= 640 ? "map" : "split"
   );
@@ -259,167 +190,41 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const filterPlacesByZoomCallback = useCallback(
     (places: MapPlace[]): MapPlace[] => {
-      return filterPlacesByZoom(
-        places,
-        state.zoom,
-        filters.populationCategory
-      );
+      return filterPlacesByZoom(places, state.zoom, filters.populationCategory);
     },
     [state.zoom, filters.populationCategory]
   );
 
   const getVisiblePlacesForCurrentView = useCallback(
     (allPlaces: MapPlace[]): MapPlace[] => {
-      // 1. Filter by map bounds - this is map-specific
+      if (state.zoom > 12) {
+        return filterPlacesByBoundsCallback(allPlaces);
+      }
+
       const boundsFiltered = filterPlacesByBoundsCallback(allPlaces);
-
-      // 2. Apply type filters from FiltersContext
       const typeFiltered = filterPlacesByTypeCallback(boundsFiltered);
-
-      // 3. Apply zoom-based visibility - this is map-specific
-      const zoomFiltered = filterPlacesByZoomCallback(typeFiltered);
-
-      return zoomFiltered;
+      return filterPlacesByZoomCallback(typeFiltered);
     },
     [
+      state.zoom,
       filterPlacesByBoundsCallback,
       filterPlacesByTypeCallback,
       filterPlacesByZoomCallback,
-      state.zoom,
-      filters.populationCategory
     ]
   );
 
-  const calculatePlaceScore = useCallback(
-    (place: MapPlace): number => {
-      let score = 0;
-
-      // Base random boost (0-8 points) - now consistent for each place
-      const baseRandomBoost = Math.random() * 8;
-      score += baseRandomBoost;
-
-      // Rating boost (0-7 points)
-      const rating =
-        typeof place.averageRating === "number" ? place.averageRating : 0;
-      score +=
-        rating *
-        (Math.random() * 1.4);
-
-      // Type-specific scoring with zoom consideration
-      switch (place.type) {
-        case CitiesTypeOptions.country:
-          // Increased score for countries
-          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 12 : 4;
-          // Additional bonus for countries
-          if (Math.random() < 0.5) {
-            score += 6;
-          }
-          break;
-        case CitiesTypeOptions.region:
-          // Increased score for regions
-          score += state.zoom <= ZOOM_LEVELS.REGION ? 10 : 4;
-          // Additional bonus for regions
-          if (Math.random() < 0.4) {
-            score += 5;
-          }
-          break;
-        case CitiesTypeOptions.city: {
-          const population = parseInt(place.population as string, 10);
-          if (!isNaN(population)) {
-            // Give cities a better chance at low zoom
-            const cityScore = state.zoom <= ZOOM_LEVELS.CITY ? 7 : 2;
-            score += cityScore;
-
-            // Population bonus
-            if (population >= 1000000) score += 6;
-            else if (population >= 500000) score += 4;
-          }
-          break;
-        }
-        case CitiesTypeOptions.neighborhood:
-        case CitiesTypeOptions.sight:
-          // Give interesting places a chance even at low zoom
-          if (state.zoom <= ZOOM_LEVELS.COUNTRY) {
-            score += Math.random() < 0.2 ? 10 : 2;
-          } else {
-            score += state.zoom > ZOOM_LEVELS.CITY ? 8 : 4;
-          }
-          break;
-      }
-
-      // Chaos boost (0-10 points) - now consistent for each place
-      const chaosBoost = Math.random() * 10;
-      score += chaosBoost;
-
-      // Super boost (30% chance, 8-12 points) - now consistent for each place
-      if (Math.random() < 0.3) {
-        score += 8 + Math.random() * 4;
-      }
-
-      // Mega boost (5% chance, 15 points) - now consistent for each place
-      if (Math.random() < 0.05) {
-        score += 15;
-      }
-
-      return score;
-    },
-    [state.zoom]
-  );
-
-  const prioritizedPlaces = useMemo(() => {
-    if (!visiblePlacesInView.length) return [];
-
-    const sortedPlaces = [...visiblePlacesInView].sort((a, b) => {
-      const scoreA = calculatePlaceScore(a);
-      const scoreB = calculatePlaceScore(b);
-      return scoreB - scoreA;
-    });
-
-    // Always show at least the minimum number of places
-    const minPlaces =
-      window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES;
-    const placesToShow = Math.max(minPlaces, numPrioritizedToShow);
-
-    const places = sortedPlaces.slice(0, placesToShow);
-    setCurrentlyShownCount(places.length);
-    return places;
-  }, [visiblePlacesInView, numPrioritizedToShow, calculatePlaceScore]);
-
-  // Debounced update function to handle all state changes together
-  const debouncedUpdateVisiblePlaces = useCallback(
-    debounce((places: MapPlace[]) => {
-      if (!mapBounds || !places.length) {
-        setVisiblePlacesInView([]);
-        setHasMorePlaces(false);
-        return;
-      }
-
-      const newVisiblePlaces = getVisiblePlacesForCurrentView(places);
-      setVisiblePlacesInView(newVisiblePlaces);
-      setHasMorePlaces(newVisiblePlaces.length > numPrioritizedToShow);
-    }, 300),
-    [mapBounds, getVisiblePlacesForCurrentView, numPrioritizedToShow]
-  );
-
-  // Memoize the update function to prevent recreation
-  const updateVisiblePlaces = useCallback(
-    (places: MapPlace[]) => {
-      debouncedUpdateVisiblePlaces(places);
-    },
-    [debouncedUpdateVisiblePlaces]
-  );
-
-  // Clean up debounced function on unmount
   useEffect(() => {
-    return () => {
-      debouncedUpdateVisiblePlaces.cancel();
-    };
-  }, [debouncedUpdateVisiblePlaces]);
-
-  // Update visible places when relevant state changes
-  useEffect(() => {
-    updateVisiblePlaces(visiblePlaces);
-  }, [visiblePlaces, updateVisiblePlaces]);
+    const newVisiblePlaces = getVisiblePlacesForCurrentView(visiblePlaces);
+    setVisiblePlacesInView(newVisiblePlaces);
+    setPrioritizedPlaces(newVisiblePlaces.slice(0, numPrioritizedToShow));
+  }, [
+    getVisiblePlacesForCurrentView,
+    visiblePlaces,
+    state.zoom,
+    mapBounds,
+    filters,
+    numPrioritizedToShow,
+  ]);
 
   const loadMorePlaces = useCallback(() => {
     setNumPrioritizedToShow((prev) => {
@@ -432,7 +237,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetDistribution = useCallback(() => {
-    // Force a re-render of the filtered places
     setVisiblePlaces((prev) => [...prev]);
   }, []);
 
@@ -473,9 +277,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       getGeographicLevel,
       viewMode,
       setViewMode,
-      // setViewMode: (mode: ViewMode) => {
-      //   setState((prev) => ({ ...prev, viewMode: mode }));
-      // },
     }),
     [
       state,

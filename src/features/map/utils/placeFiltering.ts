@@ -1,25 +1,10 @@
 /**
- * placeFiltering.ts
+ * Place filtering utilities for map visibility.
  * 
- * Purpose:
- * Provides pure utility functions for filtering map places based on different criteria.
- * These functions are stateless and don't depend on React or context state.
- * 
- * Responsibilities:
- * - Filter places by map bounds
- * - Filter places by zoom level (with population-based visibility)
- * - Filter places by type
- * - Handle population category filtering
- * 
- * Interaction with MapContext:
- * - MapContext owns the state (zoom, bounds, etc) and orchestrates when/how filters are applied
- * - MapContext handles scoring/prioritization because it depends on map-specific state
- * - getVisiblePlacesForCurrentView stays in MapContext as it coordinates multiple filters
- * - calculatePlaceScore stays in MapContext as it uses map-specific distance calculations
- * 
- * Interaction with FiltersContext:
- * - Uses types from FiltersContext (PopulationCategory)
- * - Applies filters based on state managed by FiltersContext
+ * Provides three main filtering functions:
+ * - filterPlacesByZoom: Shows/hides places based on zoom level and importance
+ * - filterPlacesByBounds: Filters places to those within the current map view
+ * - filterPlacesByType: Filters places by their type (city, region, etc.)
  */
 
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
@@ -69,7 +54,7 @@ function hashString(str: string): number {
 
 /**
  * Filters places based on the current map zoom level and place characteristics.
- * Uses a probabilistic approach to gradually show/hide places:
+ * Uses a deterministic approach to show/hide places:
  * 
  * 1. Countries: Always visible at low zoom, reduced visibility at high zoom
  * 2. Regions: Increased visibility above REGION zoom level
@@ -88,89 +73,36 @@ export function filterPlacesByZoom(
   zoom: number,
   populationCategory: PopulationCategory | null
 ): MapPlace[] {
-  const isInPopulationRange = (population: string | null, category: PopulationCategory): boolean => {
-    if (!population) return false;
-    const pop = parseInt(population, 10);
-    if (isNaN(pop)) return false;
-
-    switch (category) {
-      case "village":
-        return pop < 10000;
-      case "town":
-        return pop >= 10000 && pop < 50000;
-      case "city":
-        return pop >= 50000 && pop < 1000000;
-      case "megacity":
-        return pop >= 1000000;
-    }
-  };
-
-  // If population category is active, filter by that first
-  if (populationCategory !== null) {
-    const filtered = places.filter((place) => 
-      place.type === CitiesTypeOptions.city && 
+  if (populationCategory) {
+    return places.filter(
+      (place) =>
+      place.type !== CitiesTypeOptions.city || 
       isInPopulationRange(place.population as string, populationCategory)
     );
-    return filtered;
   }
 
-  // Otherwise use standard zoom-based filtering
-  const filtered = places.filter((place) => {
-    if (!place.type || !place.id) return false;
-
-    const threshold = getVisibilityThreshold(place, zoom);
-    const random = getRandomForPlace(place);
-    const visible = random < threshold;
-    
-    return visible;
-  });
-
-  return filtered;
-}
-
-/**
- * Calculates the visibility threshold for a place based on its type and the zoom level.
- * Higher threshold = more likely to be visible.
- * 
- * @param place - Place to calculate threshold for
- * @param zoom - Current map zoom level
- * @returns Number between 0-1 representing visibility threshold
- */
-function getVisibilityThreshold(place: MapPlace, zoom: number): number {
-  const baseThreshold = Math.min(1, Math.max(0.1, (zoom / ZOOM_LEVELS.CITY) * 0.8));
-  let threshold = baseThreshold;
-
-  if (place.type === CitiesTypeOptions.country) {
-    threshold = zoom <= ZOOM_LEVELS.COUNTRY ? 1 : baseThreshold * 2;
+  if (zoom > 12) {
+    return places;
   }
 
-  if (place.type === CitiesTypeOptions.region) {
-    threshold = zoom > ZOOM_LEVELS.REGION ? 1 : baseThreshold * 1.5;
-  }
-
-  if (place.type === CitiesTypeOptions.city) {
-    const population = parseInt(place.population as string, 10);
-    if (!isNaN(population)) {
-      if (population >= 1000000) {
-        threshold = 1;
-      } else if (population >= 500000) {
-        threshold = baseThreshold * 1.5;
-      } else {
-        threshold = baseThreshold;
+  if (zoom > 8) {
+    return places.filter(place => {
+      if (place.type === CitiesTypeOptions.city) {
+        return true;
       }
-    } else {
-      threshold = baseThreshold;
+      const importance = (place.averageRating || 0) * (place.totalReviews || 0);
+      return importance > 1000;
+    });
+  }
+
+  return places.filter(place => {
+    if (place.type === CitiesTypeOptions.city) {
+      const population = parseInt(place.population as string, 10);
+      return !isNaN(population) && population > 50000;
     }
-  }
-
-  if (
-    place.type === CitiesTypeOptions.sight ||
-    place.type === CitiesTypeOptions.neighborhood
-  ) {
-    threshold = zoom > ZOOM_LEVELS.COUNTRY ? 0.9 : baseThreshold * 0.5;
-  }
-
-  return threshold;
+    const importance = (place.averageRating || 0) * (place.totalReviews || 0);
+    return importance > 5000;
+  });
 }
 
 /**
@@ -184,10 +116,44 @@ export function filterPlacesByBounds(
   places: MapPlace[],
   mapBounds: L.LatLngBounds | null
 ): MapPlace[] {
-  if (!mapBounds) return places;
+  if (!mapBounds) {
+    return places;
+  }
+
+  const bounds = {
+    north: mapBounds.getNorth(),
+    south: mapBounds.getSouth(),
+    east: mapBounds.getEast(),
+    west: mapBounds.getWest()
+  };
+
   return places.filter((place) => {
-    if (!place.latitude || !place.longitude) return false;
-    return mapBounds.contains([place.latitude, place.longitude]);
+    if (!place.latitude || !place.longitude) {
+      return false;
+    }
+
+    const lat = Number(place.latitude);
+    const lng = Number(place.longitude);
+    
+    if (isNaN(lat) || isNaN(lng)) {
+      return false;
+    }
+
+    const latCheck = {
+      isAboveSouth: lat >= bounds.south,
+      isBelowNorth: lat <= bounds.north,
+    };
+
+    const lngCheck = {
+      isEastOfWest: lng >= bounds.west,
+      isWestOfEast: lng <= bounds.east
+    };
+
+    const isInLatRange = latCheck.isAboveSouth && latCheck.isBelowNorth;
+    const isInLngRange = lngCheck.isEastOfWest && lngCheck.isWestOfEast;
+    const isInBounds = isInLatRange && isInLngRange;
+
+    return isInBounds;
   });
 }
 
@@ -202,5 +168,32 @@ export function filterPlacesByType(
   places: MapPlace[],
   activeTypes: CitiesTypeOptions[]
 ): MapPlace[] {
-  return places.filter((place) => activeTypes.includes(place.type as CitiesTypeOptions));
+  return places.filter((place) => {
+    const isActive = activeTypes.includes(place.type as CitiesTypeOptions);
+    return isActive;
+  });
+}
+
+/**
+ * Checks if a place's population falls within a specified range.
+ * 
+ * @param population - Population of the place
+ * @param category - Population category to check against
+ * @returns True if the place's population falls within the category's range
+ */
+function isInPopulationRange(population: string | null, category: PopulationCategory): boolean {
+  if (!population) return false;
+  const pop = parseInt(population, 10);
+  if (isNaN(pop)) return false;
+
+  switch (category) {
+    case "village":
+      return pop < 10000;
+    case "town":
+      return pop >= 10000 && pop < 50000;
+    case "city":
+      return pop >= 50000 && pop < 1000000;
+    case "megacity":
+      return pop >= 1000000;
+  }
 }
