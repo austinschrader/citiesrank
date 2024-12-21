@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Bookmark, Home, LogOut, UserCircle } from "lucide-react";
+import { Bookmark, Home, LogOut, Plus, TableProperties, Upload, UserCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
@@ -34,6 +34,19 @@ export const Header = () => {
       description: "Interactive map with advanced filters and search",
       iconClass: "text-indigo-500",
     },
+    // Only show admin links to admin users
+    ...(user?.isAdmin
+      ? [
+          {
+            label: "Import Places",
+            mobileLabel: "Import",
+            icon: Upload,
+            to: "/admin/import-places",
+            description: "Import places from JSON file",
+            iconClass: "text-emerald-500",
+          },
+        ]
+      : []),
   ];
 
   return (

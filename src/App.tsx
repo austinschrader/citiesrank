@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
+import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { MapProvider } from "@/features/map/context/MapContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
@@ -34,6 +35,7 @@ function App() {
                         path="/places/:placeType/:id"
                         element={<PlaceDetailsPage />}
                       />
+                      <Route path="/admin/*" element={<AdminRoutes />} />
                     </Routes>
                   </RootLayout>
                   <Toaster />

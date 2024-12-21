@@ -29,6 +29,7 @@
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
 import L, { LatLngTuple } from "leaflet";
+import { debounce } from "lodash";
 import React, {
   createContext,
   useCallback,
@@ -40,12 +41,11 @@ import React, {
 import { MapPlace } from "../types";
 import { getPlaceGeoJson } from "../utils/geoJsonUtils";
 import { calculateMapBounds } from "../utils/mapUtils";
-import { debounce } from "lodash";
 
 export type ViewMode = "list" | "split" | "map";
 
 const DEFAULT_MOBILE_PLACES = 15;
-const DEFAULT_DESKTOP_PLACES = 30;
+const DEFAULT_DESKTOP_PLACES = 15;
 
 // OECD country centers with their coordinates and recommended zoom levels
 const COUNTRY_CENTERS: Array<{
@@ -78,8 +78,11 @@ const getRandomCenter = () => {
 
 const randomCountry = getRandomCenter();
 console.log(`🌍 Starting view centered on ${randomCountry.name}`);
-const DEFAULT_CENTER = randomCountry.center;
-const DEFAULT_ZOOM = randomCountry.zoom;
+// const DEFAULT_CENTER = randomCountry.center;
+// const DEFAULT_ZOOM = randomCountry.zoom;
+
+const DEFAULT_CENTER: LatLngTuple = [45.5152, -122.6784]; // Portland, OR
+const DEFAULT_ZOOM = 9;
 
 // Zoom level constants for place type visibility
 export const ZOOM_LEVELS = {
@@ -132,9 +135,9 @@ interface MapContextValue extends MapState {
 // Simple hash function for consistent randomness
 const hashString = (str: string) => {
   let hash = 0;
-  for (let i = 0; i <str.length; i++) {
+  for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return Math.abs(hash) / 2147483647; // Normalize to 0-1
@@ -158,7 +161,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
+    []
+  );
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState<number>(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
@@ -222,7 +227,11 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   };
 
   const filterPlacesByZoom = useCallback(
-    (places: MapPlace[], zoom: number, populationCategoryActive = false): MapPlace[] => {
+    (
+      places: MapPlace[],
+      zoom: number,
+      populationCategoryActive = false
+    ): MapPlace[] => {
       if (populationCategoryActive) {
         return places.filter((place) => place.type === CitiesTypeOptions.city);
       }
@@ -232,18 +241,21 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
         // Determine visibility threshold based on place type and zoom
         const getVisibilityThreshold = () => {
-          const baseThreshold = Math.min(1, Math.max(0.1, (zoom / ZOOM_LEVELS.CITY) * 0.8));
-          
+          const baseThreshold = Math.min(
+            1,
+            Math.max(0.1, (zoom / ZOOM_LEVELS.CITY) * 0.8)
+          );
+
           if (place.type === CitiesTypeOptions.country) {
             // Always show countries at low zoom, higher chance at high zoom
             return zoom <= ZOOM_LEVELS.COUNTRY ? 1 : baseThreshold * 2;
           }
-          
+
           if (place.type === CitiesTypeOptions.region) {
             // Increased threshold for regions
             return zoom > ZOOM_LEVELS.REGION ? 1 : baseThreshold * 1.5;
           }
-          
+
           if (place.type === CitiesTypeOptions.city) {
             const population = parseInt(place.population as string, 10);
             if (!isNaN(population)) {
@@ -252,12 +264,14 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
               return baseThreshold;
             }
           }
-          
-          if (place.type === CitiesTypeOptions.sight || 
-              place.type === CitiesTypeOptions.neighborhood) {
+
+          if (
+            place.type === CitiesTypeOptions.sight ||
+            place.type === CitiesTypeOptions.neighborhood
+          ) {
             return zoom > ZOOM_LEVELS.COUNTRY ? 0.9 : baseThreshold * 0.5;
           }
-          
+
           return baseThreshold;
         };
 
@@ -281,7 +295,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const filterPlacesByType = useCallback(
     (places: MapPlace[]): MapPlace[] => {
-      return places.filter((place) => filters.activeTypes.includes(place.type as any));
+      return places.filter((place) =>
+        filters.activeTypes.includes(place.type as any)
+      );
     },
     [filters.activeTypes]
   );
@@ -290,9 +306,19 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     (allPlaces: MapPlace[]): MapPlace[] => {
       const boundsFiltered = filterPlacesByBounds(allPlaces);
       const typeFiltered = filterPlacesByType(boundsFiltered);
-      return filterPlacesByZoom(typeFiltered, state.zoom, filters.populationCategory);
+      return filterPlacesByZoom(
+        typeFiltered,
+        state.zoom,
+        filters.populationCategory
+      );
     },
-    [filterPlacesByBounds, filterPlacesByType, filterPlacesByZoom, state.zoom, filters.populationCategory]
+    [
+      filterPlacesByBounds,
+      filterPlacesByType,
+      filterPlacesByZoom,
+      state.zoom,
+      filters.populationCategory,
+    ]
   );
 
   const calculatePlaceScore = useCallback(
@@ -306,7 +332,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       // Rating boost (0-7 points)
       const rating =
         typeof place.averageRating === "number" ? place.averageRating : 0;
-      score += rating * (getRandomForPlace({ ...place, id: place.id + "-rating" }) * 1.4);
+      score +=
+        rating *
+        (getRandomForPlace({ ...place, id: place.id + "-rating" }) * 1.4);
 
       // Type-specific scoring with zoom consideration
       switch (place.type) {
@@ -314,7 +342,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
           // Increased score for countries
           score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 12 : 4;
           // Additional bonus for countries
-          if (getRandomForPlace({ ...place, id: place.id + "-country-bonus" }) < 0.5) {
+          if (
+            getRandomForPlace({ ...place, id: place.id + "-country-bonus" }) <
+            0.5
+          ) {
             score += 6;
           }
           break;
@@ -322,7 +353,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
           // Increased score for regions
           score += state.zoom <= ZOOM_LEVELS.REGION ? 10 : 4;
           // Additional bonus for regions
-          if (getRandomForPlace({ ...place, id: place.id + "-region-bonus" }) < 0.4) {
+          if (
+            getRandomForPlace({ ...place, id: place.id + "-region-bonus" }) <
+            0.4
+          ) {
             score += 5;
           }
           break;
@@ -341,7 +375,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         case CitiesTypeOptions.sight:
           // Give interesting places a chance even at low zoom
           if (state.zoom <= ZOOM_LEVELS.COUNTRY) {
-            score += getRandomForPlace({ ...place, id: place.id + "-zoom" }) < 0.2 ? 10 : 2;
+            score +=
+              getRandomForPlace({ ...place, id: place.id + "-zoom" }) < 0.2
+                ? 10
+                : 2;
           } else {
             score += state.zoom > ZOOM_LEVELS.CITY ? 8 : 4;
           }
@@ -349,12 +386,15 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Chaos boost (0-10 points) - now consistent for each place
-      const chaosBoost = getRandomForPlace({ ...place, id: place.id + "-chaos" }) * 10;
+      const chaosBoost =
+        getRandomForPlace({ ...place, id: place.id + "-chaos" }) * 10;
       score += chaosBoost;
 
       // Super boost (30% chance, 8-12 points) - now consistent for each place
       if (getRandomForPlace({ ...place, id: place.id + "-super" }) < 0.3) {
-        score += 8 + getRandomForPlace({ ...place, id: place.id + "-super-value" }) * 4;
+        score +=
+          8 +
+          getRandomForPlace({ ...place, id: place.id + "-super-value" }) * 4;
       }
 
       // Mega boost (5% chance, 15 points) - now consistent for each place
@@ -369,17 +409,18 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const prioritizedPlaces = useMemo(() => {
     if (!visiblePlacesInView.length) return [];
-    
+
     const sortedPlaces = [...visiblePlacesInView].sort((a, b) => {
       const scoreA = calculatePlaceScore(a);
       const scoreB = calculatePlaceScore(b);
       return scoreB - scoreA;
     });
-    
+
     // Always show at least the minimum number of places
-    const minPlaces = window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES;
+    const minPlaces =
+      window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES;
     const placesToShow = Math.max(minPlaces, numPrioritizedToShow);
-    
+
     const places = sortedPlaces.slice(0, placesToShow);
     setCurrentlyShownCount(places.length);
     return places;
@@ -402,9 +443,12 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   );
 
   // Memoize the update function to prevent recreation
-  const updateVisiblePlaces = useCallback((places: MapPlace[]) => {
-    debouncedUpdateVisiblePlaces(places);
-  }, [debouncedUpdateVisiblePlaces]);
+  const updateVisiblePlaces = useCallback(
+    (places: MapPlace[]) => {
+      debouncedUpdateVisiblePlaces(places);
+    },
+    [debouncedUpdateVisiblePlaces]
+  );
 
   // Clean up debounced function on unmount
   useEffect(() => {
@@ -420,7 +464,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const loadMorePlaces = useCallback(() => {
     setNumPrioritizedToShow((prev) => {
-      const increment = window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES;
+      const increment =
+        window.innerWidth <= 640
+          ? DEFAULT_MOBILE_PLACES
+          : DEFAULT_DESKTOP_PLACES;
       return prev + increment;
     });
   }, []);

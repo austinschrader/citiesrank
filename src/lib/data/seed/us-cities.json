@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Kalmar",
+    "country": "Sweden",
+    "cost": 40,
+    "interesting": 85,
+    "transit": 75,
+    "description": "Historic riverside city known for port wine and stunning architecture",
+    "population": "215K",
+    "highlights": [
+      "Port wine cellars",
+      "Ribeira district",
+      "Dom Luís I Bridge",
+      "Serralves Museum",
+      "Crystal Palace Gardens",
+      "São Bento Station",
+      "Casa da Música"
+    ],
+    "averageRating": 4.3,
+    "totalReviews": 1000,
+    "tags": ["history", "charming"],
+    "crowdLevel": 65,
+    "recommendedStay": 70,
+    "bestSeason": 85,
+    "accessibility": 80,
+    "costIndex": 4,
+    "safetyScore": 7.5,
+    "walkScore": 8,
+    "transitScore": 7.5,
+    "latitude": 56.67,
+    "longitude": 16.37,
+    "type": ["city"]
+  }
+]

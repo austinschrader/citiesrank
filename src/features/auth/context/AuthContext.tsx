@@ -1,14 +1,8 @@
 // file location: src/features/auth/context/AuthContext.tsx
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import type { AuthModel, RecordAuthResponse } from "pocketbase";
 import PocketBase from "pocketbase";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { RecordAuthResponse, AuthModel } from "pocketbase";
 
 // Define a more specific type for our user
 type UserModel = AuthModel & {
@@ -18,6 +12,7 @@ type UserModel = AuthModel & {
   avatar?: string;
   created?: string;
   updated?: string;
+  isAdmin?: boolean;
 };
 
 interface AuthContextType {
