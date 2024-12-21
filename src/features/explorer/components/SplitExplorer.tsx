@@ -3,6 +3,7 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ResultsPanel } from "./ResultsPanel";
@@ -11,7 +12,7 @@ const pageSizeOptions = [15, 25, 50, 100];
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const { getFilteredCities } = useFilters();
+  const { filters, getFilteredCities } = useFilters();
   const {
     visiblePlacesInView,
     numPrioritizedToShow,
@@ -27,20 +28,35 @@ export const SplitExplorer = () => {
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
 
-  // Get filtered places using context
+  // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
+    // Only apply filters if there are active filters
+    const hasActiveFilters =
+      filters.search ||
+      filters.averageRating ||
+      filters.populationCategory ||
+      filters.travelStyle ||
+      filters.tags.length > 0 ||
+      filters.season ||
+      filters.budget ||
+      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length;
+
+    if (!hasActiveFilters) {
+      return cities;
+    }
+
     return getFilteredCities(cities, (city) => ({
       matchScore: 1,
       attributeMatches: {
-        budget: 1,
+        budget: filters.budget ? 1 : 0,
         crowds: 1,
         tripLength: 1,
-        season: 1,
+        season: filters.season ? 1 : 0,
         transit: 1,
         accessibility: 1,
       },
     }));
-  }, [cities, getFilteredCities]);
+  }, [cities, getFilteredCities, filters]);
 
   // Get paginated filtered places
   const paginatedFilteredPlaces = useMemo(() => {

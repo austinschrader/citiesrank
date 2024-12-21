@@ -5,7 +5,7 @@
  * Uses MapContext for state management and Leaflet for map rendering.
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -62,22 +62,31 @@ export const CityMap = ({ className }: CityMapProps) => {
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     viewMode,
+    setVisiblePlaces
   } = useMap();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
 
-  const filteredCities = getFilteredCities(cities, () => ({ 
-    matchScore: 1, 
-    attributeMatches: {
-      budget: 1,
-      crowds: 1,
-      tripLength: 1,
-      season: 1,
-      transit: 1,
-      accessibility: 1
-    } 
-  }));
+  // Get filtered cities from FiltersContext
+  const filteredCities = useMemo(() => {
+    return getFilteredCities(cities, (city) => ({
+      matchScore: 1,
+      attributeMatches: {
+        budget: filters.budget ? 1 : 0,
+        crowds: 1,
+        tripLength: 1,
+        season: filters.season ? 1 : 0,
+        transit: 1,
+        accessibility: 1
+      }
+    }));
+  }, [cities, getFilteredCities, filters]);
+
+  // Update visible places when filtered cities change
+  useEffect(() => {
+    setVisiblePlaces(filteredCities);
+  }, [filteredCities, setVisiblePlaces]);
 
   // Check if any filters are active
   const hasActiveFilters = 

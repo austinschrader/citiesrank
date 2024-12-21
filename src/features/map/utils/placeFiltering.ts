@@ -107,19 +107,25 @@ export function filterPlacesByZoom(
 
   // If population category is active, filter by that first
   if (populationCategory !== null) {
-    return places.filter((place) => 
+    const filtered = places.filter((place) => 
       place.type === CitiesTypeOptions.city && 
       isInPopulationRange(place.population as string, populationCategory)
     );
+    return filtered;
   }
 
   // Otherwise use standard zoom-based filtering
-  return places.filter((place) => {
+  const filtered = places.filter((place) => {
     if (!place.type || !place.id) return false;
 
     const threshold = getVisibilityThreshold(place, zoom);
-    return getRandomForPlace(place) < threshold;
+    const random = getRandomForPlace(place);
+    const visible = random < threshold;
+    
+    return visible;
   });
+
+  return filtered;
 }
 
 /**
@@ -132,32 +138,39 @@ export function filterPlacesByZoom(
  */
 function getVisibilityThreshold(place: MapPlace, zoom: number): number {
   const baseThreshold = Math.min(1, Math.max(0.1, (zoom / ZOOM_LEVELS.CITY) * 0.8));
+  let threshold = baseThreshold;
 
   if (place.type === CitiesTypeOptions.country) {
-    // Always show countries at low zoom, higher chance at high zoom
-    return zoom <= ZOOM_LEVELS.COUNTRY ? 1 : baseThreshold * 2;
+    threshold = zoom <= ZOOM_LEVELS.COUNTRY ? 1 : baseThreshold * 2;
   }
 
   if (place.type === CitiesTypeOptions.region) {
-    // Increased threshold for regions
-    return zoom > ZOOM_LEVELS.REGION ? 1 : baseThreshold * 1.5;
+    threshold = zoom > ZOOM_LEVELS.REGION ? 1 : baseThreshold * 1.5;
   }
 
   if (place.type === CitiesTypeOptions.city) {
     const population = parseInt(place.population as string, 10);
     if (!isNaN(population)) {
-      if (population >= 1000000) return 1; // Always show major cities
-      if (population >= 500000) return baseThreshold * 1.5;
-      return baseThreshold;
+      if (population >= 1000000) {
+        threshold = 1;
+      } else if (population >= 500000) {
+        threshold = baseThreshold * 1.5;
+      } else {
+        threshold = baseThreshold;
+      }
+    } else {
+      threshold = baseThreshold;
     }
   }
 
-  if (place.type === CitiesTypeOptions.sight || 
-      place.type === CitiesTypeOptions.neighborhood) {
-    return zoom > ZOOM_LEVELS.COUNTRY ? 0.9 : baseThreshold * 0.5;
+  if (
+    place.type === CitiesTypeOptions.sight ||
+    place.type === CitiesTypeOptions.neighborhood
+  ) {
+    threshold = zoom > ZOOM_LEVELS.COUNTRY ? 0.9 : baseThreshold * 0.5;
   }
 
-  return baseThreshold;
+  return threshold;
 }
 
 /**

@@ -1,24 +1,49 @@
 /**
- * MapContext.tsx
+ * MapContext manages map-specific state and filtering for place visibility.
  * 
- * Purpose:
- * Manages map-specific state and coordinates the application of filters based on map interactions.
+ * Data Flow:
+ * 1. MapContext receives filtered data from FiltersContext
+ * 2. Applies map-specific filters (bounds, zoom visibility)
+ * 3. Calculates place scores for prioritization
+ * 4. Provides visible places to map components
  * 
  * Responsibilities:
- * - Manage map state (zoom, center, bounds)
- * - Coordinate filter application order
- * - Handle map-specific calculations (distances, scores)
- * - Manage place visibility and prioritization
+ * 1. Map State
+ *    - Manage zoom level and center coordinates
+ *    - Track map bounds
+ *    - Handle selected place
  * 
- * Why getVisiblePlacesForCurrentView is here:
- * - Coordinates the order of filter application
- * - Needs access to multiple pieces of map state
- * - Acts as orchestrator between different filtering utilities
+ * 2. Visibility Filtering
+ *    - Filter places by map bounds
+ *    - Apply zoom-based visibility rules
+ *    - Handle place prioritization
  * 
- * Why calculatePlaceScore is here:
- * - Requires map-specific state (bounds, center)
- * - Uses Leaflet's distance calculations
- * - Scoring logic is specific to map visualization
+ * 3. Place Scoring
+ *    - Calculate place scores based on:
+ *      * Distance from map center
+ *      * Place type and zoom level
+ *      * Population (for cities)
+ *      * User ratings
+ * 
+ * 4. View Management
+ *    - Handle map/list view modes
+ *    - Manage place pagination
+ *    - Track visible place counts
+ * 
+ * Does NOT handle:
+ * - Raw city data (handled by CitiesContext)
+ * - User-defined filters (handled by FiltersContext)
+ * - UI components or interactions
+ * 
+ * Usage Example:
+ * ```tsx
+ * const { 
+ *   visiblePlaces,
+ *   zoom,
+ *   center,
+ *   getVisiblePlacesForCurrentView 
+ * } = useMap();
+ * ```
  */
 
 /**
@@ -245,14 +270,23 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const getVisiblePlacesForCurrentView = useCallback(
     (allPlaces: MapPlace[]): MapPlace[] => {
+      // 1. Filter by map bounds - this is map-specific
       const boundsFiltered = filterPlacesByBoundsCallback(allPlaces);
+
+      // 2. Apply type filters from FiltersContext
       const typeFiltered = filterPlacesByTypeCallback(boundsFiltered);
-      return filterPlacesByZoomCallback(typeFiltered);
+
+      // 3. Apply zoom-based visibility - this is map-specific
+      const zoomFiltered = filterPlacesByZoomCallback(typeFiltered);
+
+      return zoomFiltered;
     },
     [
       filterPlacesByBoundsCallback,
       filterPlacesByTypeCallback,
       filterPlacesByZoomCallback,
+      state.zoom,
+      filters.populationCategory
     ]
   );
 
