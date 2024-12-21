@@ -1,21 +1,21 @@
-import { Button } from "@/components/ui/button";
+import { Button, Button as MapButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { uploadPlace } from "@/features/places/utils/placeUpload";
 import { useToast } from "@/hooks/use-toast";
+import { createSlug } from "@/lib/imageUtils";
 import { CitiesRecord, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import Map, { Marker } from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import exifr from "exifr";
-import { X, MapPin, Crosshair, Search } from "lucide-react";
+import { Crosshair, MapPin, Search, X } from "lucide-react";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button as MapButton } from "@/components/ui/button";
+import Map, { Marker } from "react-map-gl";
 import { useNavigate } from "react-router-dom";
-import { DialogClose } from "@/components/ui/dialog";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -63,7 +63,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
   const [viewState, setViewState] = useState({
     longitude: -122.4194,
     latitude: 37.7749,
-    zoom: 13
+    zoom: 13,
   });
 
   const resetForm = useCallback(() => {
@@ -118,7 +118,8 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
 
         if (!data || Object.keys(data).length === 0) {
           toast({
-            description: "No location data found. Please click on the map to set the location.",
+            description:
+              "No location data found. Please click on the map to set the location.",
             duration: 3000,
           });
           setExifData(null);
@@ -144,7 +145,8 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
           setCoordinates({ lat: data.latitude, lng: data.longitude });
           toast({
             title: "Location Found",
-            description: "Photo location data has been detected and will be used.",
+            description:
+              "Photo location data has been detected and will be used.",
             duration: 3000,
           });
         }
@@ -156,7 +158,8 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       } catch (error) {
         console.error("Error extracting EXIF data:", error);
         toast({
-          description: "No location data found. Please click on the map to set the location.",
+          description:
+            "No location data found. Please click on the map to set the location.",
           duration: 3000,
         });
         // Set default coordinates to San Francisco
@@ -211,7 +214,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         setViewState({
           latitude,
           longitude,
-          zoom: 15 // Zoom in closer when finding location
+          zoom: 15, // Zoom in closer when finding location
         });
         toast({
           description: "Using your current location",
@@ -224,7 +227,8 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         let errorMessage = "Could not get your location. ";
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage += "Please allow location access in your browser settings.";
+            errorMessage +=
+              "Please allow location access in your browser settings.";
             break;
           case error.POSITION_UNAVAILABLE:
             errorMessage += "Location information is unavailable.";
@@ -258,14 +262,14 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         )}.json?access_token=${MAPBOX_TOKEN}`
       );
       const data = await response.json();
-      
+
       if (data.features && data.features.length > 0) {
         const [lng, lat] = data.features[0].center;
         setCoordinates({ lat, lng });
         setViewState({
           latitude: lat,
           longitude: lng,
-          zoom: 15
+          zoom: 15,
         });
         toast({
           description: `Location set to ${data.features[0].place_name}`,
@@ -274,7 +278,8 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       } else {
         toast({
           title: "Not Found",
-          description: "Could not find that location. Please try another search.",
+          description:
+            "Could not find that location. Please try another search.",
           variant: "destructive",
         });
       }
@@ -358,13 +363,17 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
           title: "Success",
           description: "Place uploaded successfully!",
         });
-        
+
         // Close the dialog
         onClose();
-        
-        // Navigate to the new place using the slug
+
+        // Navigate to the new place using type/normalizedName format
         setTimeout(() => {
-          navigate(`/places/${result.slug}`);
+          navigate(
+            `/places/${placeData.type || "sight"}/${
+              result.slug || createSlug(placeData.name || "untitled")
+            }`
+          );
         }, 1000);
       } else {
         throw new Error(result.error);
@@ -411,7 +420,9 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                   {...getRootProps()}
                   className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center cursor-pointer"
                 >
-                  <p className="text-white font-medium">Click or drag to replace</p>
+                  <p className="text-white font-medium">
+                    Click or drag to replace
+                  </p>
                   <input {...getInputProps()} />
                 </div>
               </div>
@@ -436,7 +447,9 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                     Drag & drop a photo here, or click to select
                   </p>
                 )}
-                <p className="text-sm text-gray-500">Supports: JPG, PNG, WebP</p>
+                <p className="text-sm text-gray-500">
+                  Supports: JPG, PNG, WebP
+                </p>
               </div>
             </div>
           )}

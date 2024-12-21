@@ -60,9 +60,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   // Get current place and its parent
   const placeData = useMemo(() => {
     if (initialData) return initialData;
-    return cities.find(
-      (city) => city.normalizedName.toLowerCase() === id?.toLowerCase()
-    );
+    return cities.find((city) => city.normalizedName === id || formatUrlName(city.name) === id);
   }, [cities, id, initialData]);
 
   const parentPlace = useMemo(() => {
