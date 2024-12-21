@@ -268,6 +268,21 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     ) => {
       return cities
         .filter((city) => {
+          // Apply search filter first
+          if (filters.search) {
+            const searchTerm = filters.search.toLowerCase();
+            const cityName = city.name.toLowerCase();
+            const cityCountry = city.country?.toLowerCase() || '';
+            const cityDescription = city.description?.toLowerCase() || '';
+            
+            // Check if search term matches any of the city's text fields
+            if (!cityName.includes(searchTerm) && 
+                !cityCountry.includes(searchTerm) && 
+                !cityDescription.includes(searchTerm)) {
+              return false;
+            }
+          }
+
           // Apply existing filters
           if (
             filters.activeTypes.length > 0 &&
@@ -295,23 +310,16 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
           // Apply travel style filtering
           if (filters.travelStyle) {
-            console.log('Filtering for travel style:', filters.travelStyle);
-            console.log('City:', city.name);
-
-            // Convert tag IDs to identifiers
             const cityTagIdentifiers = city.tags?.map((tagId) =>
               tagIdToIdentifier[tagId]
             ) || [];
-            console.log('City tag identifiers:', cityTagIdentifiers);
 
             const style = travelStyles[filters.travelStyle];
-            console.log('Style tags:', style.tags);
 
             // Check tags
             const hasMatchingTags = style.tags.some((tag) =>
               cityTagIdentifiers.includes(tag)
             );
-            console.log('Has matching tags:', hasMatchingTags);
             if (!hasMatchingTags) return false;
 
             // Check minimum rating
@@ -320,34 +328,21 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
               (!city.averageRating ||
                 city.averageRating < style.criteria.minRating)
             ) {
-              console.log('Failed rating check:', city.averageRating);
               return false;
             }
 
             // Check crowd level
             if (style.criteria.crowdLevel) {
               const { min, max } = style.criteria.crowdLevel;
-              if (min && city.crowdLevel < min) {
-                console.log('Failed min crowd level:', city.crowdLevel);
-                return false;
-              }
-              if (max && city.crowdLevel > max) {
-                console.log('Failed max crowd level:', city.crowdLevel);
-                return false;
-              }
+              if (min && city.crowdLevel < min) return false;
+              if (max && city.crowdLevel > max) return false;
             }
 
             // Check accessibility
             if (style.criteria.accessibility) {
               const { min, max } = style.criteria.accessibility;
-              if (min && city.accessibility < min) {
-                console.log('Failed min accessibility:', city.accessibility);
-                return false;
-              }
-              if (max && city.accessibility > max) {
-                console.log('Failed max accessibility:', city.accessibility);
-                return false;
-              }
+              if (min && city.accessibility < min) return false;
+              if (max && city.accessibility > max) return false;
             }
 
             // Check safety score
@@ -355,35 +350,23 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
               style.criteria.safetyScore &&
               (!city.safetyScore || city.safetyScore < style.criteria.safetyScore)
             ) {
-              console.log('Failed safety score:', city.safetyScore);
               return false;
             }
 
             // Check preferred scores
             if (style.criteria.preferredScores) {
               const scores = style.criteria.preferredScores;
-              let matchesPreferredScores = true;
-
+              
               if (scores.walkScore && (!city.walkScore || city.walkScore < scores.walkScore)) {
-                console.log('Failed walk score:', city.walkScore);
-                matchesPreferredScores = false;
+                return false;
               }
-              if (
-                scores.transitScore &&
-                (!city.transitScore || city.transitScore < scores.transitScore)
-              ) {
-                console.log('Failed transit score:', city.transitScore);
-                matchesPreferredScores = false;
+              if (scores.transitScore && (!city.transitScore || city.transitScore < scores.transitScore)) {
+                return false;
               }
               if (scores.interesting && (!city.interesting || city.interesting < scores.interesting)) {
-                console.log('Failed interesting score:', city.interesting);
-                matchesPreferredScores = false;
+                return false;
               }
-
-              if (!matchesPreferredScores) return false;
             }
-
-            console.log('City passed all filters:', city.name);
           }
 
           return true;
@@ -414,7 +397,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           return b.name.localeCompare(a.name);
         });
     },
-    [filters, parsePopulation, isInPopulationRange, tagIdToIdentifier]
+    [filters, tagIdToIdentifier]
   );
 
   const getActiveFilterCount = useCallback(() => {
