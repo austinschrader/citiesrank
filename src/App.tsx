@@ -22,8 +22,8 @@ function App() {
       <CountriesProvider>
         <AuthProvider>
           <PreferencesProvider>
-            <MapProvider>
-              <FiltersProvider>
+            <FiltersProvider>
+              <MapProvider>
                 <FavoritesProvider>
                   <RootLayout>
                     <Routes>
@@ -40,8 +40,8 @@ function App() {
                   </RootLayout>
                   <Toaster />
                 </FavoritesProvider>
-              </FiltersProvider>
-            </MapProvider>
+              </MapProvider>
+            </FiltersProvider>
           </PreferencesProvider>
         </AuthProvider>
       </CountriesProvider>
