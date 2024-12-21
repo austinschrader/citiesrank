@@ -128,22 +128,24 @@ interface MapContextValue extends MapState {
   loadMorePlaces: () => void;
 }
 
-// Cache for random values to prevent jumpiness
-const randomCache = new Map<string, number>();
-
-const getRandomForPlace = (placeId: string): number => {
-  if (!randomCache.has(placeId)) {
-    randomCache.set(placeId, Math.random());
+// Simple hash function for consistent randomness
+const hashString = (str: string) => {
+  let hash = 0;
+  for (let i = 0; i <str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
   }
-  return randomCache.get(placeId)!;
+  return Math.abs(hash) / 2147483647; // Normalize to 0-1
 };
 
-// Function to reset the random cache (call this when you want to refresh the distribution)
-const resetRandomCache = () => {
-  randomCache.clear();
+const getRandomForPlace = (place: MapPlace): number => {
+  // Use coordinates and ID for consistent randomness
+  const seed = `${place.id}-${place.latitude}-${place.longitude}`;
+  return hashString(seed);
 };
 
-export const MapContext = createContext<MapContextValue | null>(null);
+const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<MapState>({
@@ -253,7 +255,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         };
 
         const threshold = getVisibilityThreshold();
-        return getRandomForPlace(place.id) < threshold;
+        return getRandomForPlace(place) < threshold;
       });
     },
     [] // No dependencies since it's a pure function
@@ -290,14 +292,14 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     (place: MapPlace): number => {
       let score = 0;
 
-      // Base random boost (0-8 points)
-      const baseRandomBoost = Math.random() * 8;
+      // Base random boost (0-8 points) - now consistent for each place
+      const baseRandomBoost = getRandomForPlace(place) * 8;
       score += baseRandomBoost;
 
       // Rating boost (0-7 points)
       const rating =
         typeof place.averageRating === "number" ? place.averageRating : 0;
-      score += rating * (Math.random() * 1.4);
+      score += rating * (getRandomForPlace({ ...place, id: place.id + "-rating" }) * 1.4);
 
       // Type-specific scoring with zoom consideration
       switch (place.type) {
@@ -322,24 +324,24 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         case CitiesTypeOptions.sight:
           // Give interesting places a chance even at low zoom
           if (state.zoom <= ZOOM_LEVELS.COUNTRY) {
-            score += Math.random() < 0.2 ? 10 : 2;
+            score += getRandomForPlace({ ...place, id: place.id + "-zoom" }) < 0.2 ? 10 : 2;
           } else {
             score += state.zoom > ZOOM_LEVELS.CITY ? 8 : 4;
           }
           break;
       }
 
-      // Chaos boost (0-10 points)
-      const chaosBoost = Math.random() * 10;
+      // Chaos boost (0-10 points) - now consistent for each place
+      const chaosBoost = getRandomForPlace({ ...place, id: place.id + "-chaos" }) * 10;
       score += chaosBoost;
 
-      // Super boost (30% chance, 8-12 points)
-      if (Math.random() < 0.3) {
-        score += 8 + Math.random() * 4;
+      // Super boost (30% chance, 8-12 points) - now consistent for each place
+      if (getRandomForPlace({ ...place, id: place.id + "-super" }) < 0.3) {
+        score += 8 + getRandomForPlace({ ...place, id: place.id + "-super-value" }) * 4;
       }
 
-      // Mega boost (5% chance, 15 points)
-      if (Math.random() < 0.05) {
+      // Mega boost (5% chance, 15 points) - now consistent for each place
+      if (getRandomForPlace({ ...place, id: place.id + "-mega" }) < 0.05) {
         score += 15;
       }
 
@@ -403,7 +405,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetDistribution = useCallback(() => {
-    resetRandomCache();
     // Force a re-render of the filtered places
     setVisiblePlaces((prev) => [...prev]);
   }, []);
