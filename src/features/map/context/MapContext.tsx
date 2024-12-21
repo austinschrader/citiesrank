@@ -40,15 +40,52 @@ import React, {
 import { MapPlace } from "../types";
 import { getPlaceGeoJson } from "../utils/geoJsonUtils";
 import { calculateMapBounds } from "../utils/mapUtils";
+import { debounce } from "lodash";
 
 export type ViewMode = "list" | "split" | "map";
 
+// OECD country centers with their coordinates and recommended zoom levels
+const COUNTRY_CENTERS: Array<{
+  name: string;
+  center: LatLngTuple;
+  zoom: number;
+}> = [
+  { name: "United States", center: [39.8283, -98.5795], zoom: 5 },
+  { name: "Japan", center: [36.2048, 138.2529], zoom: 6 },
+  { name: "France", center: [46.2276, 2.2137], zoom: 6 },
+  { name: "Italy", center: [41.8719, 12.5674], zoom: 6 },
+  { name: "United Kingdom", center: [55.3781, -3.436], zoom: 6 },
+  { name: "Germany", center: [51.1657, 10.4515], zoom: 6 },
+  { name: "Spain", center: [40.4637, -3.7492], zoom: 6 },
+  { name: "Australia", center: [-25.2744, 133.7751], zoom: 5 },
+  { name: "South Korea", center: [35.9078, 127.7669], zoom: 7 },
+  { name: "Canada", center: [56.1304, -106.3468], zoom: 4 },
+  { name: "New Zealand", center: [-40.9006, 174.886], zoom: 6 },
+  { name: "Netherlands", center: [52.1326, 5.2913], zoom: 7 },
+  { name: "Switzerland", center: [46.8182, 8.2275], zoom: 8 },
+  { name: "Sweden", center: [60.1282, 18.6435], zoom: 5 },
+  { name: "Norway", center: [60.472, 8.4689], zoom: 5 },
+];
+
+// Get random country center
+const getRandomCenter = () => {
+  const randomIndex = Math.floor(Math.random() * COUNTRY_CENTERS.length);
+  return COUNTRY_CENTERS[randomIndex];
+};
+
+const randomCountry = getRandomCenter();
+console.log(`🌍 Starting view centered on ${randomCountry.name}`);
+const DEFAULT_CENTER = randomCountry.center;
+const DEFAULT_ZOOM = randomCountry.zoom;
+const DEFAULT_MOBILE_PLACES = 15;
+const DEFAULT_DESKTOP_PLACES = 30;
+
 // Zoom level constants for place type visibility
 export const ZOOM_LEVELS = {
-  COUNTRY: 3,
+  COUNTRY: 5,
   REGION: 6,
-  CITY: 10,
-  NEIGHBORHOOD: 14,
+  CITY: 8,
+  NEIGHBORHOOD: 12,
 } as const;
 
 interface MapState {
@@ -63,6 +100,7 @@ interface MapContextValue extends MapState {
   setCenter: (center: LatLngTuple) => void;
   selectPlace: (place: MapPlace | null) => void;
   resetView: () => void;
+  resetDistribution: () => void;
   mapBounds: L.LatLngBounds | null;
   setMapBounds: (bounds: L.LatLngBounds | null) => void;
   visiblePlaces: MapPlace[];
@@ -86,10 +124,24 @@ interface MapContextValue extends MapState {
   getGeographicLevel: (zoom: number) => CitiesTypeOptions;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
+  hasMorePlaces: boolean;
+  loadMorePlaces: () => void;
 }
 
-const DEFAULT_CENTER: LatLngTuple = [20, 0];
-const DEFAULT_ZOOM = 3;
+// Cache for random values to prevent jumpiness
+const randomCache = new Map<string, number>();
+
+const getRandomForPlace = (placeId: string): number => {
+  if (!randomCache.has(placeId)) {
+    randomCache.set(placeId, Math.random());
+  }
+  return randomCache.get(placeId)!;
+};
+
+// Function to reset the random cache (call this when you want to refresh the distribution)
+const resetRandomCache = () => {
+  randomCache.clear();
+};
 
 export const MapContext = createContext<MapContextValue | null>(null);
 
@@ -103,18 +155,29 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
-    []
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
+  const [numPrioritizedToShow, setNumPrioritizedToShow] = useState<number>(
+    window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
-  const [numPrioritizedToShow, setNumPrioritizedToShow] = useState<number>(15);
+  const [hasMorePlaces, setHasMorePlaces] = useState(true);
+  const [currentlyShownCount, setCurrentlyShownCount] = useState(0);
+
   const [filters, setFilters] = useState<{
     activeTypes: CitiesTypeOptions[];
     populationCategory: boolean;
   }>({
-    activeTypes: Object.values(CitiesTypeOptions),
+    // Start with a mix of different place types for more variety
+    activeTypes: [
+      CitiesTypeOptions.city,
+      CitiesTypeOptions.region,
+      CitiesTypeOptions.country,
+    ],
     populationCategory: false,
   });
-  const [viewMode, setViewMode] = useState<ViewMode>("map");
+
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    window.innerWidth <= 640 ? "map" : "split"
+  );
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -150,83 +213,134 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getVisiblePlaceTypes = (zoom: number): CitiesTypeOptions[] => {
-    const level = getGeographicLevel(zoom);
-    switch (level) {
-      case CitiesTypeOptions.country:
-        return [CitiesTypeOptions.country];
-      case CitiesTypeOptions.region:
-        return [CitiesTypeOptions.country, CitiesTypeOptions.region];
-      case CitiesTypeOptions.city:
-        return [
-          CitiesTypeOptions.country,
-          CitiesTypeOptions.region,
-          CitiesTypeOptions.city,
-        ];
-      case CitiesTypeOptions.neighborhood:
-        return [CitiesTypeOptions.city, CitiesTypeOptions.neighborhood];
-      case CitiesTypeOptions.sight:
-        return [CitiesTypeOptions.neighborhood, CitiesTypeOptions.sight];
-      default:
-        return Object.values(CitiesTypeOptions);
-    }
+    // At any zoom level, allow a mix of places
+    // But adjust probabilities through scoring instead of filtering
+    return Object.values(CitiesTypeOptions);
   };
 
-  const filterPlacesByZoom = (
-    places: MapPlace[],
-    zoom: number,
-    populationCategoryActive = false
-  ): MapPlace[] => {
-    const visibleTypes = getVisiblePlaceTypes(zoom);
-    return places.filter((place) => {
-      if (!place.type) return false;
+  const filterPlacesByZoom = useCallback(
+    (places: MapPlace[], zoom: number, populationCategoryActive = false): MapPlace[] => {
       if (populationCategoryActive) {
-        return place.type === CitiesTypeOptions.city;
+        return places.filter((place) => place.type === CitiesTypeOptions.city);
       }
-      return visibleTypes.includes(place.type as CitiesTypeOptions);
-    });
-  };
+
+      return places.filter((place) => {
+        if (!place.type || !place.id) return false;
+
+        // Determine visibility threshold based on place type and zoom
+        const getVisibilityThreshold = () => {
+          const baseThreshold = Math.min(1, Math.max(0.1, (zoom / ZOOM_LEVELS.CITY) * 0.8));
+          
+          if (place.type === CitiesTypeOptions.city) {
+            const population = parseInt(place.population as string, 10);
+            if (!isNaN(population)) {
+              if (population >= 1000000) return 1; // Always show major cities
+              if (population >= 500000) return baseThreshold * 1.5;
+              return baseThreshold;
+            }
+          }
+          
+          if (place.type === CitiesTypeOptions.region) {
+            return zoom > ZOOM_LEVELS.REGION ? 0.9 : baseThreshold;
+          }
+          
+          if (place.type === CitiesTypeOptions.sight || 
+              place.type === CitiesTypeOptions.neighborhood) {
+            return zoom > ZOOM_LEVELS.CITY ? 0.9 : baseThreshold * 0.5;
+          }
+          
+          return baseThreshold;
+        };
+
+        const threshold = getVisibilityThreshold();
+        return getRandomForPlace(place.id) < threshold;
+      });
+    },
+    [] // No dependencies since it's a pure function
+  );
+
+  const filterPlacesByBounds = useCallback(
+    (places: MapPlace[]): MapPlace[] => {
+      if (!mapBounds) return places;
+      return places.filter((place) => {
+        if (!place.latitude || !place.longitude) return false;
+        return mapBounds.contains([place.latitude, place.longitude]);
+      });
+    },
+    [mapBounds]
+  );
+
+  const filterPlacesByType = useCallback(
+    (places: MapPlace[]): MapPlace[] => {
+      return places.filter((place) => filters.activeTypes.includes(place.type as any));
+    },
+    [filters.activeTypes]
+  );
+
+  const getVisiblePlacesForCurrentView = useCallback(
+    (allPlaces: MapPlace[]): MapPlace[] => {
+      const boundsFiltered = filterPlacesByBounds(allPlaces);
+      const typeFiltered = filterPlacesByType(boundsFiltered);
+      return filterPlacesByZoom(typeFiltered, state.zoom, filters.populationCategory);
+    },
+    [filterPlacesByBounds, filterPlacesByType, filterPlacesByZoom, state.zoom, filters.populationCategory]
+  );
 
   const calculatePlaceScore = useCallback(
     (place: MapPlace): number => {
       let score = 0;
 
-      // Factor 1: Rating (0-5 points)
+      // Base random boost (0-8 points)
+      const baseRandomBoost = Math.random() * 8;
+      score += baseRandomBoost;
+
+      // Rating boost (0-7 points)
       const rating =
         typeof place.averageRating === "number" ? place.averageRating : 0;
-      score += rating;
+      score += rating * (Math.random() * 1.4);
 
-      // Factor 2: Place type importance (0-3 points)
+      // Type-specific scoring with zoom consideration
       switch (place.type) {
         case CitiesTypeOptions.country:
-          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 3 : 1;
+          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 8 : 2;
           break;
         case CitiesTypeOptions.region:
-          score +=
-            state.zoom > ZOOM_LEVELS.COUNTRY && state.zoom <= ZOOM_LEVELS.REGION
-              ? 3
-              : 1;
+          score += state.zoom <= ZOOM_LEVELS.REGION ? 7 : 2;
           break;
-        case CitiesTypeOptions.city:
-          score +=
-            state.zoom > ZOOM_LEVELS.REGION && state.zoom <= ZOOM_LEVELS.CITY
-              ? 3
-              : 1;
+        case CitiesTypeOptions.city: {
+          const population = parseInt(place.population as string, 10) || 0;
+          // Give cities a better chance at low zoom
+          const cityScore = state.zoom <= ZOOM_LEVELS.CITY ? 7 : 2;
+          score += cityScore;
+
+          // Population bonus
+          if (population >= 1000000) score += 6;
+          else if (population >= 500000) score += 4;
           break;
+        }
         case CitiesTypeOptions.neighborhood:
-          score += state.zoom > ZOOM_LEVELS.CITY ? 3 : 0;
-          break;
         case CitiesTypeOptions.sight:
-          score += state.zoom > ZOOM_LEVELS.NEIGHBORHOOD ? 3 : 0;
+          // Give interesting places a chance even at low zoom
+          if (state.zoom <= ZOOM_LEVELS.COUNTRY) {
+            score += Math.random() < 0.2 ? 10 : 2;
+          } else {
+            score += state.zoom > ZOOM_LEVELS.CITY ? 8 : 4;
+          }
           break;
       }
 
-      // Factor 3: Population size for cities (0-2 points)
-      if (place.type === CitiesTypeOptions.city && place.population) {
-        const population = parseInt(place.population as string, 10);
-        if (!isNaN(population)) {
-          if (population >= 1000000) score += 2;
-          else if (population >= 100000) score += 1;
-        }
+      // Chaos boost (0-10 points)
+      const chaosBoost = Math.random() * 10;
+      score += chaosBoost;
+
+      // Super boost (30% chance, 8-12 points)
+      if (Math.random() < 0.3) {
+        score += 8 + Math.random() * 4;
+      }
+
+      // Mega boost (5% chance, 15 points)
+      if (Math.random() < 0.05) {
+        score += 15;
       }
 
       return score;
@@ -234,42 +348,87 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     [state.zoom]
   );
 
-  useEffect(() => {
-    if (mapBounds && visiblePlaces.length > 0) {
-      const placesInView = getVisiblePlacesForCurrentView(visiblePlaces);
-      setVisiblePlacesInView(placesInView);
-    }
-  }, [mapBounds, visiblePlaces]);
+  const prioritizedPlaces = useMemo(() => {
+    if (!visiblePlacesInView.length) return [];
+    
+    const sortedPlaces = [...visiblePlacesInView].sort((a, b) => {
+      const scoreA = calculatePlaceScore(a);
+      const scoreB = calculatePlaceScore(b);
+      return scoreB - scoreA;
+    });
+    
+    const places = sortedPlaces.slice(0, numPrioritizedToShow);
+    setCurrentlyShownCount(places.length);
+    return places;
+  }, [visiblePlacesInView, numPrioritizedToShow, calculatePlaceScore]);
 
-  useEffect(() => {
-    if (viewMode === "map") {
-      setNumPrioritizedToShow(15);
-    }
-  }, [viewMode]);
-
-  const getVisiblePlacesForCurrentView = useCallback(
-    (allPlaces: MapPlace[]): MapPlace[] => {
-      if (!mapBounds) return allPlaces;
-
-      // Filter by current zoom level and bounds
-      return filterPlacesByZoom(
-        allPlaces,
-        state.zoom,
-        filters.populationCategory
-      )
-        .filter((place) => {
-          if (!place.latitude || !place.longitude) return false;
-          return mapBounds.contains([place.latitude, place.longitude]);
-        })
-        .filter((place) => filters.activeTypes.includes(place.type as any));
-    },
-    [state.zoom, mapBounds, filters]
+  // Debounced setters for smoother updates
+  const debouncedSetVisiblePlacesInView = useCallback(
+    debounce((places: MapPlace[]) => {
+      setVisiblePlacesInView(places);
+    }, 150),
+    []
   );
 
-  const prioritizedPlaces = useMemo(() => {
-    if (!visiblePlacesInView) return [];
-    return visiblePlacesInView.slice(0, numPrioritizedToShow);
-  }, [visiblePlacesInView, numPrioritizedToShow]);
+  const debouncedSetHasMorePlaces = useCallback(
+    debounce((value: boolean) => {
+      setHasMorePlaces(value);
+    }, 150),
+    []
+  );
+
+  const debouncedSetMapBounds = useCallback(
+    debounce((bounds: L.LatLngBounds | null) => {
+      setMapBounds(bounds);
+    }, 150),
+    []
+  );
+
+  // Memoize the update function to prevent recreation
+  const updateVisiblePlaces = useCallback((places: MapPlace[]) => {
+    if (!mapBounds || !places.length) {
+      debouncedSetVisiblePlacesInView([]);
+      debouncedSetHasMorePlaces(false);
+      return;
+    }
+
+    const newVisiblePlaces = getVisiblePlacesForCurrentView(places);
+    debouncedSetVisiblePlacesInView(newVisiblePlaces);
+    debouncedSetHasMorePlaces(newVisiblePlaces.length > numPrioritizedToShow);
+  }, [
+    mapBounds,
+    getVisiblePlacesForCurrentView,
+    numPrioritizedToShow,
+    debouncedSetVisiblePlacesInView,
+    debouncedSetHasMorePlaces
+  ]);
+
+  // Update visible places when relevant state changes
+  useEffect(() => {
+    updateVisiblePlaces(visiblePlaces);
+  }, [visiblePlaces, updateVisiblePlaces]);
+
+  // Clean up debounced functions on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSetVisiblePlacesInView.cancel();
+      debouncedSetHasMorePlaces.cancel();
+      debouncedSetMapBounds.cancel();
+    };
+  }, [debouncedSetVisiblePlacesInView, debouncedSetHasMorePlaces, debouncedSetMapBounds]);
+
+  const loadMorePlaces = useCallback(() => {
+    setNumPrioritizedToShow((prev) => {
+      const increment = window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES;
+      return prev + increment;
+    });
+  }, []);
+
+  const resetDistribution = useCallback(() => {
+    resetRandomCache();
+    // Force a re-render of the filtered places
+    setVisiblePlaces((prev) => [...prev]);
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -278,14 +437,17 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       setCenter,
       selectPlace,
       resetView,
+      resetDistribution,
       mapBounds,
-      setMapBounds,
+      setMapBounds: debouncedSetMapBounds,
       visiblePlaces,
       setVisiblePlaces,
       visiblePlacesInView,
       numPrioritizedToShow,
       setNumPrioritizedToShow,
       prioritizedPlaces,
+      hasMorePlaces,
+      loadMorePlaces,
       getVisiblePlacesForCurrentView,
       getVisiblePlaceTypes,
       filterPlacesByZoom,
@@ -302,10 +464,33 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       visiblePlacesInView,
       numPrioritizedToShow,
       prioritizedPlaces,
+      hasMorePlaces,
       getVisiblePlacesForCurrentView,
       viewMode,
+      debouncedSetMapBounds,
+      loadMorePlaces,
     ]
   );
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Update number of places based on screen size
+      setNumPrioritizedToShow(
+        window.innerWidth <= 640
+          ? DEFAULT_MOBILE_PLACES
+          : DEFAULT_DESKTOP_PLACES
+      );
+
+      // Update view mode based on screen size
+      // Only change to map view if screen becomes too small
+      if (window.innerWidth <= 640) {
+        setViewMode("map");
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }
