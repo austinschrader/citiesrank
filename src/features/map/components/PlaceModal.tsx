@@ -205,39 +205,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     setCurrentImageIndex(newIndex);
   };
 
-  const handleDetailsView = () => {
-    navigate(`/places/${currentPlace.type}/${createSlug(currentPlace.name)}`, {
-      state: { placeData: currentPlace },
-    });
-    onClose();
-  };
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-
-      switch (e.key) {
-        case "ArrowLeft":
-          handleImageNavigation("prev");
-          e.preventDefault();
-          break;
-        case "ArrowRight":
-          handleImageNavigation("next");
-          e.preventDefault();
-          break;
-        case "ArrowUp":
-        case "Escape":
-          onClose();
-          e.preventDefault();
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isOpen, onClose, handleImageNavigation]);
-
   const navigateToPlace = (direction: "next" | "prev") => {
     setIsTransitioning(true);
     const isNext = direction === "next";
@@ -271,15 +238,13 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         }
       }
     } else {
-      const nextIndex = isNext ? currentIndex + 1 : currentIndex - 1;
-      // Handle wrapping around at the ends
-      if (nextIndex < 0) {
-        nextPlace = visiblePlacesInView[visiblePlacesInView.length - 1];
-      } else if (nextIndex >= visiblePlacesInView.length) {
-        nextPlace = visiblePlacesInView[0];
-      } else {
-        nextPlace = visiblePlacesInView[nextIndex];
-      }
+      const nextIndex =
+        direction === "next"
+          ? (currentIndex + 1) % visiblePlacesInView.length
+          : currentIndex === 0
+          ? visiblePlacesInView.length - 1
+          : currentIndex - 1;
+      nextPlace = visiblePlacesInView[nextIndex];
     }
 
     if (nextPlace) {
@@ -293,6 +258,51 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     }
   };
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      
+      if (e.shiftKey) {
+        switch (e.key) {
+          case "ArrowRight":
+            e.preventDefault();
+            navigateToPlace("next");
+            break;
+          case "ArrowLeft":
+            e.preventDefault();
+            navigateToPlace("prev");
+            break;
+        }
+      } else {
+        switch (e.key) {
+          case "ArrowRight":
+            setCurrentImageIndex((prev) =>
+              prev < preloadedImages.length - 1 ? prev + 1 : 0
+            );
+            break;
+          case "ArrowLeft":
+            setCurrentImageIndex((prev) =>
+              prev > 0 ? prev - 1 : preloadedImages.length - 1
+            );
+            break;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isOpen,
+    preloadedImages.length,
+    navigateToPlace,
+    setCurrentImageIndex,
+    currentPlace.id,
+    visiblePlacesInView,
+    navigation.isRandomMode,
+    historyIndex
+  ]);
+
   // Reset history when random mode changes
   useEffect(() => {
     if (navigation.isRandomMode) {
@@ -300,6 +310,13 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       setHistoryIndex(0);
     }
   }, [navigation.isRandomMode]);
+
+  const handleDetailsView = () => {
+    navigate(`/places/${currentPlace.type}/${createSlug(currentPlace.name)}`, {
+      state: { placeData: currentPlace },
+    });
+    onClose();
+  };
 
   const StatBadge: React.FC<StatBadgeProps> = ({
     icon: Icon,
