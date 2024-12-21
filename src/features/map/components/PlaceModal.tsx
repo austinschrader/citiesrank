@@ -17,7 +17,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
-  Info,
   LucideIcon,
   MapPin,
   Shuffle,
@@ -70,7 +69,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+  const [showHints, setShowHints] = useState(true);
   const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [lastTap, setLastTap] = useState(0);
   const [navigation, setNavigation] = useState<NavigationState>({
@@ -86,7 +85,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [placeHistory, setPlaceHistory] = useState<MapPlace[]>([initialPlace]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
-  const [showHints, setShowHints] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const { visiblePlacesInView } = useMap();
   const { isFavorited } = useFavoriteStatus(currentPlace.id);
@@ -130,22 +128,19 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     loadImages();
   }, [currentPlace, isMobile]);
 
-  // Hide hints after delay
+  // Only auto-hide hints on mobile
   useEffect(() => {
-    if (showHints) {
+    if (showHints && isMobile) {
       const timer = setTimeout(() => {
         setShowHints(false);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [showHints]);
+  }, [showHints, isMobile]);
 
-  // Reset hints when modal reopens
   useEffect(() => {
-    if (isOpen) {
-      setShowHints(true);
-    }
-  }, [isOpen]);
+    setShowHints(true);
+  }, [currentPlace?.id]);
 
   // Touch handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -191,7 +186,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     const tapLength = currentTime - lastTap;
 
     if (tapLength < DOUBLE_TAP_DELAY && tapLength > 0) {
-      e.preventDefault();
       if (user) {
         setShowSaveDialog(true);
       }
@@ -338,39 +332,64 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         >
           <div className="relative h-full w-full" ref={contentRef}>
             {/* Main Image Container */}
-            <div className="absolute inset-0" onTouchStart={handleDoubleTap}>
+            <div className="absolute inset-0">
               {preloadedImages[currentImageIndex] && (
-                <div className="relative h-full">
+                <div className="relative h-full group">
+                  {/* Navigation Areas - constrained to middle section */}
+                  <div
+                    className={cn(
+                      "absolute inset-x-0 top-[15%] bottom-[25%] z-20 transition-opacity duration-1000 lg:hidden pointer-events-none",
+                      showHints ? "opacity-100" : "opacity-0"
+                    )}
+                  >
+                    {/* Left navigation area */}
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-1/4 pointer-events-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex((prev) =>
+                          prev > 0 ? prev - 1 : preloadedImages.length - 1
+                        );
+                      }}
+                    >
+                      <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none">
+                        <ChevronLeft className="h-12 w-12 text-white/90" />
+                      </div>
+                    </div>
+
+                    {/* Right navigation area */}
+                    <div
+                      className="absolute right-0 top-0 bottom-0 w-1/4 pointer-events-auto"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentImageIndex((prev) =>
+                          prev < preloadedImages.length - 1 ? prev + 1 : 0
+                        );
+                      }}
+                    >
+                      <div className="absolute inset-y-0 right-8 flex items-center pointer-events-none">
+                        <ChevronRight className="h-12 w-12 text-white/90" />
+                      </div>
+                    </div>
+                  </div>
+
                   <img
                     src={preloadedImages[currentImageIndex]}
                     alt={currentPlace.name}
-                    className="w-full h-full object-cover transition-all duration-500"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowHints(true);
+                    }}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      if (user) {
+                        setShowSaveDialog(true);
+                      }
+                    }}
+                    onTouchStart={handleDoubleTap}
+                    className="w-full h-full object-cover transition-all duration-500 cursor-pointer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
-                  {/* Usage Hints */}
-                  {isMobile && (
-                    <div
-                      className={cn(
-                        "absolute top-20 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm text-white text-xs flex flex-col items-center gap-1.5 transition-all duration-500",
-                        showHints
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 pointer-events-none translate-y-1"
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        <ChevronLeft className="w-3.5 h-3.5" />
-                        <span className="font-medium">
-                          Swipe for more photos
-                        </span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </div>
-                      {user && (
-                        <span className="font-medium text-white">
-                          Double tap to save
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent pointer-events-none" />
                 </div>
               )}
             </div>
@@ -382,80 +401,74 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={onClose}
-                  className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-md 
-                    hover:bg-black/50 border border-white/20"
+                  className="h-10 w-10 rounded-full bg-transparent backdrop-blur-md 
+                    hover:bg-black/50"
                 >
                   <X className="h-5 w-5 text-white" />
                 </Button>
 
                 <div className="flex items-center gap-3">
-                  <Popover>
-                    <PopoverTrigger asChild>
+                  <div className="flex items-center gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowHints(true);
+                          }}
+                          className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-full px-2 py-1 h-auto hover:bg-black/50"
+                        >
+                          <Camera className="h-3.5 w-3.5 text-white/80" />
+                          <span className="text-sm text-white/80 tabular-nums">
+                            {currentImageIndex + 1}/{preloadedImages.length}
+                          </span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-3 bg-black/80 backdrop-blur-md"
+                        align="center"
+                        sideOffset={5}
+                      >
+                        <div className="flex gap-2 items-center">
+                          {preloadedImages.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setCurrentImageIndex(index)}
+                              className={cn(
+                                "w-2.5 h-2.5 rounded-full transition-all duration-300",
+                                currentImageIndex === index
+                                  ? "bg-white w-6"
+                                  : "bg-white/50 hover:bg-white/80"
+                              )}
+                            />
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    <SocialShareMenu place={currentPlace} />
+                    {user && (
                       <Button
                         variant="ghost"
-                        size="sm"
-                        className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-full px-2 py-1 h-auto hover:bg-black/50 border border-white/20"
-                      >
-                        <Camera className="h-3.5 w-3.5 text-white/80" />
-                        <span className="text-sm text-white/80 tabular-nums">
-                          {currentImageIndex + 1}/{preloadedImages.length}
-                        </span>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-3 bg-black/80 backdrop-blur-md border-white/20"
-                      align="center"
-                      sideOffset={5}
-                    >
-                      <div className="flex gap-2 items-center">
-                        {preloadedImages.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentImageIndex(index)}
-                            className={cn(
-                              "w-2.5 h-2.5 rounded-full transition-all duration-300",
-                              currentImageIndex === index
-                                ? "bg-white w-6"
-                                : "bg-white/50 hover:bg-white/80"
-                            )}
-                          />
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setShowHints(false);
-                      setTimeout(() => setShowHints(true), 0);
-                    }}
-                    className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-md 
-                      hover:bg-black/50 border border-white/20"
-                  >
-                    <Info className="h-5 w-5 text-white" />
-                  </Button>
-                  <SocialShareMenu place={currentPlace} />
-                  {user && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setShowSaveDialog(true)}
-                      className={cn(
-                        "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md border border-white/20",
-                        isFavorited
-                          ? "bg-white/20 text-rose-500 hover:bg-white/30"
-                          : "bg-black/30 hover:bg-black/50"
-                      )}
-                    >
-                      <Heart
+                        size="icon"
+                        onClick={() => setShowSaveDialog(true)}
                         className={cn(
-                          "h-5 w-5",
-                          isFavorited ? "fill-rose-500" : "text-rose-500"
+                          "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md",
+                          isFavorited
+                            ? "bg-white/20 text-rose-500 hover:bg-white/30"
+                            : "bg-transparent hover:bg-black/50"
                         )}
-                      />
-                    </Button>
-                  )}
+                      >
+                        <Heart
+                          className={cn(
+                            "h-5 w-5",
+                            isFavorited ? "fill-rose-500" : "text-rose-500"
+                          )}
+                        />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -473,7 +486,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 <div className="flex items-baseline gap-3">
                   <Button
                     variant="ghost"
-                    className="text-xl sm:text-2xl font-bold text-white leading-tight px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/50 border border-white/20 drop-shadow-sm"
+                    className="text-xl sm:text-2xl font-bold text-white leading-tight px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/50"
                     onClick={handleDetailsView}
                   >
                     {currentPlace.name}
@@ -501,7 +514,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 px-4 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
+                    className="h-9 px-4 rounded-full bg-transparent backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20"
                     onClick={() => {
                       setNavigation((prev) => ({ ...prev, direction: -1 }));
                       navigateToPlace("prev");
@@ -521,10 +534,10 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       }))
                     }
                     className={cn(
-                      "h-9 w-9 rounded-full backdrop-blur-sm border border-white/20",
+                      "h-9 w-9 rounded-full backdrop-blur-md",
                       navigation.isRandomMode
                         ? "bg-white/20 text-white hover:bg-white/30"
-                        : "bg-black/40 hover:bg-black/50"
+                        : "bg-transparent hover:bg-black/50"
                     )}
                   >
                     <Shuffle className="h-4 w-4 text-white" />
@@ -533,7 +546,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 px-4 rounded-full bg-black/40 backdrop-blur-sm text-white hover:bg-black/50 active:bg-white/20 border border-white/20 [&:not(:disabled)]:text-white transition-all duration-200"
+                    className="h-9 px-4 rounded-full bg-transparent backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20"
                     onClick={() => {
                       setNavigation((prev) => ({ ...prev, direction: 1 }));
                       navigateToPlace("next");
@@ -549,7 +562,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                 </div>
               </div>
             </div>
-
             {/* Side Navigation - Desktop Only */}
             <div className="absolute inset-y-0 left-4 right-4 hidden lg:flex items-center justify-between pointer-events-none">
               <Button
