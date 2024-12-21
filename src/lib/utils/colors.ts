@@ -17,5 +17,6 @@ export const ratingColors = {
   okay: "#facc15", // Yellow
   fair: "#f97316", // Orange
   poor: "#ef4444", // Red
+  new: "#10b981", // Emerald - for new places
   none: "#6b7280", // Gray
 } as const;

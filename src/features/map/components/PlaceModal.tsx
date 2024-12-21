@@ -20,6 +20,7 @@ import {
   LucideIcon,
   MapPin,
   Shuffle,
+  Sparkles,
   Star,
   X,
 } from "lucide-react";
@@ -515,12 +516,17 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   >
                     {currentPlace.name}
                   </Button>
-                  {currentPlace.averageRating && (
+                  {currentPlace.averageRating ? (
                     <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full drop-shadow-sm">
                       <Star className="w-3 h-3 text-yellow-500" />
                       <span className="text-sm font-medium text-white">
                         {currentPlace.averageRating.toFixed(1)}
                       </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full drop-shadow-sm">
+                      <Sparkles className="w-3 h-3 text-emerald-400" />
+                      <span className="text-sm font-medium text-white">New</span>
                     </div>
                   )}
                 </div>
