@@ -87,18 +87,30 @@ export function filterPlacesByZoom(
 
   if (zoom > 8) {
     return places.filter(place => {
-      if (place.type === CitiesTypeOptions.city) {
+      // Always show sights when zoomed in this far
+      if (place.type === CitiesTypeOptions.sight) {
         return true;
       }
+      // Show cities based on population
+      if (place.type === CitiesTypeOptions.city) {
+        const population = parseInt(place.population as string, 10);
+        return !isNaN(population) && population > 10000;
+      }
+      // For other types, use importance if available
       const importance = (place.averageRating || 0) * (place.totalReviews || 0);
       return importance > 1000;
     });
   }
 
   return places.filter(place => {
+    // At lower zoom levels, be more selective
     if (place.type === CitiesTypeOptions.city) {
       const population = parseInt(place.population as string, 10);
       return !isNaN(population) && population > 50000;
+    }
+    // Don't show sights at low zoom levels
+    if (place.type === CitiesTypeOptions.sight) {
+      return false;
     }
     const importance = (place.averageRating || 0) * (place.totalReviews || 0);
     return importance > 5000;

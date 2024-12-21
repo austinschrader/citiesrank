@@ -143,7 +143,7 @@ export const uploadPlace = async (
   pb: any,
   placeData: Partial<CitiesRecord>,
   imageFile?: File
-): Promise<{ success: boolean; error?: string }> => {
+): Promise<{ success: boolean; error?: string; id?: string; slug?: string }> => {
   try {
     const validationResult = validatePlace(placeData);
     
@@ -184,9 +184,9 @@ export const uploadPlace = async (
     }
 
     // Create the place record
-    await pb.collection("cities").create(validationResult.data);
+    const record = await pb.collection("cities").create(validationResult.data);
     
-    return { success: true };
+    return { success: true, id: record.id, slug: record.slug };
   } catch (error) {
     const message = error instanceof ClientResponseError ? error.message : "Unknown error occurred";
     return { success: false, error: message };

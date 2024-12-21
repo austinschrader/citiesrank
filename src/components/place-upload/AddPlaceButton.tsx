@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { PlaceUpload } from './PlaceUpload';
 
 export function AddPlaceButton() {
+  const [open, setOpen] = React.useState(false);
+  
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 p-0 bg-primary"
@@ -22,7 +24,7 @@ export function AddPlaceButton() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[900px] h-[90vh] overflow-y-auto">
         <div className="py-4">
-          <PlaceUpload />
+          <PlaceUpload onClose={() => setOpen(false)} />
         </div>
       </DialogContent>
     </Dialog>

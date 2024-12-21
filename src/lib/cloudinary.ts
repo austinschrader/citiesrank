@@ -53,7 +53,7 @@ export const uploadImage = async (file: File, publicId: string): Promise<string>
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('public_id', `places/${publicId}`);
+  formData.append('public_id', publicId);
   formData.append('folder', 'places');
 
   try {
