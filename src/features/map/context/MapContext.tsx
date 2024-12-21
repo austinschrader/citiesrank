@@ -362,60 +362,38 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     return places;
   }, [visiblePlacesInView, numPrioritizedToShow, calculatePlaceScore]);
 
-  // Debounced setters for smoother updates
-  const debouncedSetVisiblePlacesInView = useCallback(
+  // Debounced update function to handle all state changes together
+  const debouncedUpdateVisiblePlaces = useCallback(
     debounce((places: MapPlace[]) => {
-      setVisiblePlacesInView(places);
-    }, 150),
-    []
-  );
+      if (!mapBounds || !places.length) {
+        setVisiblePlacesInView([]);
+        setHasMorePlaces(false);
+        return;
+      }
 
-  const debouncedSetHasMorePlaces = useCallback(
-    debounce((value: boolean) => {
-      setHasMorePlaces(value);
-    }, 150),
-    []
-  );
-
-  const debouncedSetMapBounds = useCallback(
-    debounce((bounds: L.LatLngBounds | null) => {
-      setMapBounds(bounds);
-    }, 150),
-    []
+      const newVisiblePlaces = getVisiblePlacesForCurrentView(places);
+      setVisiblePlacesInView(newVisiblePlaces);
+      setHasMorePlaces(newVisiblePlaces.length > numPrioritizedToShow);
+    }, 300),
+    [mapBounds, getVisiblePlacesForCurrentView, numPrioritizedToShow]
   );
 
   // Memoize the update function to prevent recreation
   const updateVisiblePlaces = useCallback((places: MapPlace[]) => {
-    if (!mapBounds || !places.length) {
-      debouncedSetVisiblePlacesInView([]);
-      debouncedSetHasMorePlaces(false);
-      return;
-    }
+    debouncedUpdateVisiblePlaces(places);
+  }, [debouncedUpdateVisiblePlaces]);
 
-    const newVisiblePlaces = getVisiblePlacesForCurrentView(places);
-    debouncedSetVisiblePlacesInView(newVisiblePlaces);
-    debouncedSetHasMorePlaces(newVisiblePlaces.length > numPrioritizedToShow);
-  }, [
-    mapBounds,
-    getVisiblePlacesForCurrentView,
-    numPrioritizedToShow,
-    debouncedSetVisiblePlacesInView,
-    debouncedSetHasMorePlaces
-  ]);
+  // Clean up debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedUpdateVisiblePlaces.cancel();
+    };
+  }, [debouncedUpdateVisiblePlaces]);
 
   // Update visible places when relevant state changes
   useEffect(() => {
     updateVisiblePlaces(visiblePlaces);
   }, [visiblePlaces, updateVisiblePlaces]);
-
-  // Clean up debounced functions on unmount
-  useEffect(() => {
-    return () => {
-      debouncedSetVisiblePlacesInView.cancel();
-      debouncedSetHasMorePlaces.cancel();
-      debouncedSetMapBounds.cancel();
-    };
-  }, [debouncedSetVisiblePlacesInView, debouncedSetHasMorePlaces, debouncedSetMapBounds]);
 
   const loadMorePlaces = useCallback(() => {
     setNumPrioritizedToShow((prev) => {
@@ -439,7 +417,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       resetView,
       resetDistribution,
       mapBounds,
-      setMapBounds: debouncedSetMapBounds,
+      setMapBounds,
       visiblePlaces,
       setVisiblePlaces,
       visiblePlacesInView,
@@ -467,7 +445,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       hasMorePlaces,
       getVisiblePlacesForCurrentView,
       viewMode,
-      debouncedSetMapBounds,
       loadMorePlaces,
     ]
   );

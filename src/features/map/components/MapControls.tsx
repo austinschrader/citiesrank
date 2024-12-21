@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, Home, RefreshCw, ArrowDown } from "lucide-react";
 import { useMap as useLeafletMap } from "react-leaflet";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useMap } from "../context/MapContext";
+import { debounce } from "lodash";
 
 interface MapControlsProps {
   onZoomChange: (zoom: number) => void;
@@ -19,16 +20,25 @@ export const MapControls = ({
   const map = useLeafletMap();
   const { resetDistribution, hasMorePlaces, loadMorePlaces } = useMap();
 
+  // Create a stable debounced zoom handler
+  const debouncedZoomChange = useCallback(
+    debounce((zoom: number) => {
+      onZoomChange(zoom);
+    }, 300),
+    [onZoomChange]
+  );
+
   useEffect(() => {
     const handleZoomEnd = () => {
-      onZoomChange(map.getZoom());
+      debouncedZoomChange(map.getZoom());
     };
 
     map.on("zoomend", handleZoomEnd);
     return () => {
       map.off("zoomend", handleZoomEnd);
+      debouncedZoomChange.cancel();
     };
-  }, [map, onZoomChange]);
+  }, [map, debouncedZoomChange]);
 
   const handleZoomIn = () => {
     map.setZoom(map.getZoom() + 1);
