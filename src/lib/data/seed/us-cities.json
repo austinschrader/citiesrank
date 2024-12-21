@@ -1,34 +1,145 @@
 [
   {
-    "name": "Kalmar",
-    "country": "Sweden",
-    "cost": 40,
-    "interesting": 85,
-    "transit": 75,
-    "description": "Historic riverside city known for port wine and stunning architecture",
-    "population": "215K",
-    "highlights": [
-      "Port wine cellars",
-      "Ribeira district",
-      "Dom Luís I Bridge",
-      "Serralves Museum",
-      "Crystal Palace Gardens",
-      "São Bento Station",
-      "Casa da Música"
+    "name": "United States",
+    "country": "United States",
+    "type": [
+      "country"
     ],
-    "averageRating": 4.3,
-    "totalReviews": 1000,
-    "tags": ["history", "charming"],
-    "crowdLevel": 65,
-    "recommendedStay": 70,
-    "bestSeason": 85,
-    "accessibility": 80,
+    "cost": 65,
+    "interesting": 95,
+    "transit": 70,
+    "description": "A vast and diverse nation offering everything from bustling cities to stunning national parks.",
+    "population": "331M",
+    "highlights": [
+      "Grand Canyon",
+      "Yellowstone National Park",
+      "New York City",
+      "Silicon Valley",
+      "The Smithsonian",
+      "Hollywood",
+      "Hawaii Beaches"
+    ],
+    "averageRating": 4.5,
+    "totalReviews": 10000,
+    "tags": [
+      "diverse",
+      "adventure",
+      "modern"
+    ],
+    "crowdLevel": 85,
+    "recommendedStay": 200,
+    "bestSeason": 75,
+    "accessibility": 90,
     "costIndex": 4,
     "safetyScore": 7.5,
+    "walkScore": 6,
+    "transitScore": 6,
+    "latitude": 37.09,
+    "longitude": -95.71
+  },
+  {
+    "name": "Columbia River Gorge",
+    "country": "United States",
+    "type": [
+      "region"
+    ],
+    "cost": 30,
+    "interesting": 90,
+    "transit": 60,
+    "description": "A stunning canyon of the Columbia River, known for waterfalls, hiking trails, and scenic vistas.",
+    "population": "N/A",
+    "highlights": [
+      "Multnomah Falls",
+      "Hood River",
+      "Vista House",
+      "Beacon Rock",
+      "Bridge of the Gods"
+    ],
+    "averageRating": 4.8,
+    "totalReviews": 2000,
+    "tags": [
+      "scenic",
+      "hiking",
+      "nature"
+    ],
+    "crowdLevel": 70,
+    "recommendedStay": 20,
+    "bestSeason": 90,
+    "accessibility": 75,
+    "costIndex": 2,
+    "safetyScore": 9,
+    "walkScore": 5,
+    "transitScore": 4,
+    "latitude": 45.72,
+    "longitude": -121.73
+  },
+  {
+    "name": "Alberta Arts District",
+    "country": "United States",
+    "type": [
+      "neighborhood"
+    ],
+    "cost": 45,
+    "interesting": 85,
+    "transit": 80,
+    "description": "A vibrant, creative Portland neighborhood filled with murals, galleries, and trendy eateries.",
+    "population": "15K",
+    "highlights": [
+      "Monthly Art Walk",
+      "Street murals",
+      "Boutique shopping",
+      "Craft beer bars"
+    ],
+    "averageRating": 4.4,
+    "totalReviews": 800,
+    "tags": [
+      "artsy",
+      "hipster",
+      "local"
+    ],
+    "crowdLevel": 65,
+    "recommendedStay": 15,
+    "bestSeason": 85,
+    "accessibility": 85,
+    "costIndex": 3,
+    "safetyScore": 7.8,
     "walkScore": 8,
-    "transitScore": 7.5,
-    "latitude": 56.67,
-    "longitude": 16.37,
-    "type": ["city"]
+    "transitScore": 8,
+    "latitude": 45.56,
+    "longitude": -122.64
+  },
+  {
+    "name": "Multnomah Falls",
+    "country": "United States",
+    "type": [
+      "sight"
+    ],
+    "cost": 10,
+    "interesting": 95,
+    "transit": 70,
+    "description": "One of Oregon's most iconic waterfalls, featuring a picturesque bridge and stunning viewpoints.",
+    "population": "N/A",
+    "highlights": [
+      "Benson Bridge",
+      "Scenic viewpoints",
+      "Trail to Wahkeena Falls"
+    ],
+    "averageRating": 4.9,
+    "totalReviews": 3000,
+    "tags": [
+      "nature",
+      "photogenic",
+      "waterfalls"
+    ],
+    "crowdLevel": 80,
+    "recommendedStay": 5,
+    "bestSeason": 90,
+    "accessibility": 80,
+    "costIndex": 1,
+    "safetyScore": 9.5,
+    "walkScore": 6,
+    "transitScore": 6,
+    "latitude": 45.58,
+    "longitude": -122.11
   }
 ]

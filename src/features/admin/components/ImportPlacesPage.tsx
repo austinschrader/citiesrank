@@ -6,13 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ClientResponseError } from "pocketbase";
 import { Loader2, Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import slugify from "slugify";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface Place {
@@ -72,8 +66,7 @@ const normalizeString = (str: string): string => {
 
 const createSlug = (name: string, country: string): string => {
   const processedName = name.replace(/[']/g, "");
-  const processedCountry = country.replace(/[\s-]/g, ""); // Remove spaces and hyphens from country
-  return slugify(`${processedName}-${processedCountry}`, {
+  return slugify(`${processedName}-${country}`, {
     lower: true,
     strict: true,
     trim: true,
@@ -89,10 +82,10 @@ const normalizeScore = (score: number | null | undefined): number => {
 
 const validatePlace = (data: any): ValidationResult => {
   const errors: string[] = [];
-  
+
   // Helper function to validate text fields
   const validateText = (value: any, field: string, min?: number, max?: number) => {
-    if (!value || typeof value !== 'string') {
+    if (!value || typeof value !== "string") {
       errors.push(`${field} is required and must be a string`);
       return;
     }
@@ -109,60 +102,72 @@ const validatePlace = (data: any): ValidationResult => {
     if (value === undefined || value === null) {
       return; // We'll use defaults for missing numbers
     }
-    if (typeof value !== 'number') {
+    if (typeof value !== "number") {
       errors.push(`${field} must be a number`);
     }
   };
 
   // Required text fields
-  validateText(data.name, 'name', 1, 100);
-  validateText(data.country, 'country', 1, 100);
-  validateText(data.description, 'description', 10, 500);
+  validateText(data.name, "name", 1, 100);
+  validateText(data.country, "country", 1, 100);
+  validateText(data.description, "description", 10, 500);
 
   // Population can be "Unknown"
-  if (data.population && typeof data.population !== 'string') {
-    errors.push('population must be a string');
+  if (data.population && typeof data.population !== "string") {
+    errors.push("population must be a string");
   }
 
   // Validate all number fields - they're optional but must be numbers if present
   const numberFields = [
-    'cost', 'interesting', 'transit', 'crowdLevel', 'recommendedStay',
-    'bestSeason', 'accessibility', 'costIndex', 'safetyScore', 'walkScore',
-    'transitScore', 'latitude', 'longitude', 'averageRating', 'totalReviews'
+    "cost",
+    "interesting",
+    "transit",
+    "crowdLevel",
+    "recommendedStay",
+    "bestSeason",
+    "accessibility",
+    "costIndex",
+    "safetyScore",
+    "walkScore",
+    "transitScore",
+    "latitude",
+    "longitude",
+    "averageRating",
+    "totalReviews",
   ];
-  numberFields.forEach(field => validateNumber(data[field], field));
+  numberFields.forEach((field) => validateNumber(data[field], field));
 
   // Highlights validation
   if (data.highlights) {
     try {
-      if (typeof data.highlights === 'string') {
+      if (typeof data.highlights === "string") {
         JSON.parse(data.highlights);
       } else {
         // If it's already an object/array, we'll stringify it later
         JSON.stringify(data.highlights);
       }
     } catch (e) {
-      errors.push('highlights must be valid JSON');
+      errors.push("highlights must be valid JSON");
     }
   }
 
   // Transform the data
-  const normalizedName = normalizeString(data.name || '');
-  const slug = createSlug(data.name || '', data.country || '');
-  
+  const normalizedName = normalizeString(data.name || "");
+  const slug = createSlug(data.name || "", data.country || "");
+
   const transformedData = {
     ...data,
     normalizedName,
     slug,
-    type: ["city"], // Must be an array
-    population: data.population || 'Unknown',
+    type: Array.isArray(data.type) ? data.type : [data.type || "city"],
+    population: data.population || "Unknown",
     highlights: JSON.stringify(
       data.highlights || [
-        `Explore ${data.name || ''}`,
-        'Experience local culture',
-        'Visit historic sites',
-        'Enjoy local cuisine',
-        'Discover natural beauty',
+        `Explore ${data.name || ""}`,
+        "Experience local culture",
+        "Visit historic sites",
+        "Enjoy local cuisine",
+        "Discover natural beauty",
       ]
     ),
     // Normalize all scores to 0-10 scale
@@ -184,10 +189,10 @@ const validatePlace = (data: any): ValidationResult => {
   };
 
   return {
-    name: data.name || 'Unknown Place',
+    name: data.name || "Unknown Place",
     isValid: errors.length === 0,
     errors,
-    data: transformedData
+    data: transformedData,
   };
 };
 
@@ -211,14 +216,14 @@ export function ImportPlacesPage() {
   useEffect(() => {
     const loadTags = async () => {
       try {
-        const records = await pb.collection('tags').getFullList();
+        const records = await pb.collection("tags").getFullList();
         const mapping: Record<string, string> = {};
-        records.forEach(record => {
+        records.forEach((record) => {
           mapping[record.name] = record.id;
         });
         setTagsMapping(mapping);
       } catch (error) {
-        console.error('Error loading tags:', error);
+        console.error("Error loading tags:", error);
         toast({
           title: "Error",
           description: "Failed to load tags. Some features may not work correctly.",
@@ -231,31 +236,29 @@ export function ImportPlacesPage() {
   const handleFileSelect = (value: string) => {
     setSelectedFile(value);
     const fileData = seedFiles[value].default;
-    
+
     // Validate each place
-    const results = fileData.map(place => {
+    const results = fileData.map((place) => {
       const result = validatePlace(place);
       if (result.isValid) {
         // Generate the slug
         const slug = createSlug(place.name, place.country);
         // Convert tag names to IDs
-        const tagIds = (place.tags || [])
-          .map(tag => tagsMapping[tag])
-          .filter(id => id); // Remove any undefined tags
+        const tagIds = (place.tags || []).map((tag) => tagsMapping[tag]).filter((id) => id); // Remove any undefined tags
 
         // Update the transformed data
         result.data = {
           ...result.data,
           imageUrl: `${slug}-1`,
-          tags: tagIds
+          tags: tagIds,
         };
       }
       return result;
     });
-    
+
     setValidationResults(results);
-    
-    const validCount = results.filter(r => r.isValid).length;
+
+    const validCount = results.filter((r) => r.isValid).length;
     toast({
       title: "File Validated",
       description: `Found ${results.length} places (${validCount} valid, ${results.length - validCount} invalid)`,
@@ -263,28 +266,66 @@ export function ImportPlacesPage() {
   };
 
   const importPlaces = async () => {
-    const validPlaces = validationResults.filter(r => r.isValid);
+    const validPlaces = validationResults.filter((r) => r.isValid);
     if (validPlaces.length === 0) return;
-    
+
     setIsImporting(true);
     setImportResults(new Map());
+    let successCount = 0; // Add counter for successful imports
 
     for (const result of validPlaces) {
       try {
-        // Create the record - use the transformed data directly
-        await pb.collection("cities").create(result.data);
-        setImportResults(prev => new Map(prev).set(result.name, true));
+        // Check if a place with this slug exists
+        try {
+          const exists = await pb.collection("cities").getFirstListItem(`slug="${result.data.slug}"`);
+          // If we get here, the record exists
+          setImportResults((prev) => new Map(prev).set(result.name, false));
+          toast({
+            title: "Import Failed",
+            description: `${result.name} already exists with slug: ${result.data.slug}`,
+            variant: "destructive",
+          });
+          continue;
+        } catch (error) {
+          // If it's a 404 error, that means the slug doesn't exist and we can create the record
+          if (error instanceof ClientResponseError && error.status === 404) {
+            await pb.collection("cities").create(result.data);
+            setImportResults((prev) => new Map(prev).set(result.name, true));
+            successCount++; // Increment counter on successful import
+          } else {
+            // If it's any other error, we should handle it as a real error
+            throw error;
+          }
+        }
       } catch (error) {
-        setImportResults(prev => new Map(prev).set(result.name, false));
+        const message = error instanceof ClientResponseError ? error.message : "Unknown error occurred";
+
+        setImportResults((prev) => new Map(prev).set(result.name, false));
         console.error(`Error importing ${result.name}:`, error);
+
+        toast({
+          title: "Import Failed",
+          description: `Failed to import ${result.name}: ${message}`,
+          variant: "destructive",
+        });
       }
     }
 
     setIsImporting(false);
-    toast({
-      title: "Import Complete",
-      description: `Successfully imported ${Array.from(importResults.values()).filter(Boolean).length} places`,
-    });
+
+    // Use the successCount instead of counting from importResults
+    if (successCount > 0) {
+      toast({
+        title: "Import Complete",
+        description: `Successfully imported ${successCount} places`,
+      });
+    } else {
+      toast({
+        title: "Import Complete",
+        description: "No new places were imported",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -304,7 +345,7 @@ export function ImportPlacesPage() {
             <SelectContent>
               {Object.keys(seedFiles).map((file) => (
                 <SelectItem key={file} value={file}>
-                  {file.split('/').pop()?.replace('.json', '')}
+                  {file.split("/").pop()?.replace(".json", "")}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -317,17 +358,13 @@ export function ImportPlacesPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Validation Results</h2>
               <div className="text-sm text-muted-foreground">
-                {validationResults.filter(r => r.isValid).length} valid, {' '}
-                {validationResults.filter(r => !r.isValid).length} invalid
+                {validationResults.filter((r) => r.isValid).length} valid, {validationResults.filter((r) => !r.isValid).length} invalid
               </div>
             </div>
 
             <div className="border rounded-lg divide-y">
               {validationResults.map((result, index) => (
-                <div
-                  key={index}
-                  className="p-4 space-y-2"
-                >
+                <div key={index} className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       {result.isValid ? (
@@ -338,11 +375,8 @@ export function ImportPlacesPage() {
                       <span className="font-medium">{result.name}</span>
                     </div>
                     {importResults.has(result.name) && (
-                      <span className={importResults.get(result.name) 
-                        ? "text-green-500"
-                        : "text-destructive"
-                      }>
-                        {importResults.get(result.name) ? 'Imported ✓' : 'Failed ✗'}
+                      <span className={importResults.get(result.name) ? "text-green-500" : "text-destructive"}>
+                        {importResults.get(result.name) ? "Imported ✓" : "Failed ✗"}
                       </span>
                     )}
                   </div>
@@ -351,7 +385,9 @@ export function ImportPlacesPage() {
                       <AlertDescription>
                         <ul className="list-disc list-inside space-y-1">
                           {result.errors.map((error, i) => (
-                            <li key={i} className="text-sm">{error}</li>
+                            <li key={i} className="text-sm">
+                              {error}
+                            </li>
                           ))}
                         </ul>
                       </AlertDescription>
@@ -361,19 +397,15 @@ export function ImportPlacesPage() {
               ))}
             </div>
 
-            {validationResults.some(r => r.isValid) && (
-              <Button
-                onClick={importPlaces}
-                disabled={isImporting}
-                className="w-full"
-              >
+            {validationResults.some((r) => r.isValid) && (
+              <Button onClick={importPlaces} disabled={isImporting} className="w-full">
                 {isImporting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Importing Valid Places...
                   </>
                 ) : (
-                  `Import ${validationResults.filter(r => r.isValid).length} Valid Places`
+                  `Import ${validationResults.filter((r) => r.isValid).length} Valid Places`
                 )}
               </Button>
             )}
@@ -386,7 +418,9 @@ export function ImportPlacesPage() {
           <div className="prose prose-sm max-w-none">
             <p>To add new data files:</p>
             <ol>
-              <li>Create a JSON file in the <code>/src/lib/data/seed/</code> directory</li>
+              <li>
+                Create a JSON file in the <code>/src/lib/data/seed/</code> directory
+              </li>
               <li>Follow the data format shown below</li>
               <li>Commit the file to the repository</li>
               <li>The file will appear in the dropdown above</li>
@@ -394,7 +428,7 @@ export function ImportPlacesPage() {
           </div>
           <div className="border rounded-lg p-4 bg-muted/50">
             <pre className="text-sm">
-{`[
+              {`[
   {
     "name": "City Name",
     "country": "Country Name",
