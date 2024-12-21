@@ -118,11 +118,6 @@ console.log(`🌍 Starting view centered on ${randomCountry.name}`);
 
 const DEFAULT_CENTER = randomCountry.center;
 const DEFAULT_ZOOM = randomCountry.zoom;
-
-// European center coordinates and zoom level
-const EUROPE_CENTER: LatLngTuple = [48.5, 10]; // Centered roughly on Germany/Austria
-const EUROPE_ZOOM = 5;
-
 const DEFAULT_MOBILE_PLACES = 15;
 const DEFAULT_DESKTOP_PLACES = 30;
 
@@ -174,8 +169,8 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const resetView = () => {
     setState((prev) => ({
       ...prev,
-      zoom: EUROPE_ZOOM,
-      center: EUROPE_CENTER,
+      zoom: DEFAULT_ZOOM,
+      center: DEFAULT_CENTER,
       selectedPlace: null,
     }));
   };
