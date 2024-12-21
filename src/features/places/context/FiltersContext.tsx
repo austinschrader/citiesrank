@@ -1,21 +1,39 @@
 /**
- * FiltersContext manages all filtering and sorting logic for places.
- *
+ * FiltersContext manages all user-defined filtering and sorting logic for places.
+ * 
+ * Data Flow:
+ * 1. FiltersContext receives raw city data from CitiesContext
+ * 2. Applies user-defined filters (search, type, rating, etc.)
+ * 3. Provides filtered data to MapContext and UI components
+ * 4. MapContext further filters based on map-specific criteria
+ * 
  * Responsibilities:
  * 1. Filter State Management
- *    - Search query, active types, ratings, etc.
- *    - Filter operations (setting filters, resetting)
+ *    - Manage all filter states (search, types, ratings, etc.)
+ *    - Handle filter operations (set, reset, toggle)
+ *    - Track active filter counts
+ * 
  * 2. Filter Operations
- *    - Handle type selection
- *    - Handle population category selection
- * 3. Filtered Data
- *    - Calculate filtered places list
- *    - Calculate type counts
- *
+ *    - Apply search filtering
+ *    - Handle type selection/deselection
+ *    - Apply population category filters
+ *    - Calculate match scores for cities
+ * 
+ * 3. Filter Results
+ *    - Provide filtered and sorted city lists
+ *    - Calculate type counts for UI
+ *    - Track filter statistics
+ * 
  * Does NOT handle:
  * - Raw city data (handled by CitiesContext)
  * - Map-specific filtering (handled by MapContext)
  * - UI state or interactions
+ * 
+ * Usage Example:
+ * ```tsx
+ * const { filters, getFilteredCities } = useFilters();
+ * const filteredCities = getFilteredCities(cities, calculateMatchScore);
+ * ```
  */
 
 import { travelStyles } from "@/features/explorer/components/filters/TravelStyleDropdown";
@@ -86,8 +104,6 @@ interface FiltersContextValue {
   ) => Record<CitiesTypeOptions, number>;
 }
 
-const DEFAULT_RATING = 4.6;
-
 const defaultFilters: Filters = {
   search: "",
   activeTypes: Object.values(CitiesTypeOptions),
@@ -141,14 +157,6 @@ export const isInPopulationRange = (
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<Filters>(defaultFilters);
   const { tagIdToIdentifier } = useTagIdentifiers();
-
-  // Set default rating only on mount
-  useEffect(() => {
-    setFiltersState((prev) => ({
-      ...prev,
-      averageRating: DEFAULT_RATING,
-    }));
-  }, []); // Empty dependency array means this only runs once on mount
 
   const setFilter = useCallback(
     <K extends keyof Filters>(key: K, value: Filters[K]) => {
