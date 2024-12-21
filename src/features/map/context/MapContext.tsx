@@ -44,6 +44,9 @@ import { debounce } from "lodash";
 
 export type ViewMode = "list" | "split" | "map";
 
+const DEFAULT_MOBILE_PLACES = 15;
+const DEFAULT_DESKTOP_PLACES = 30;
+
 // OECD country centers with their coordinates and recommended zoom levels
 const COUNTRY_CENTERS: Array<{
   name: string;
@@ -77,8 +80,6 @@ const randomCountry = getRandomCenter();
 console.log(`🌍 Starting view centered on ${randomCountry.name}`);
 const DEFAULT_CENTER = randomCountry.center;
 const DEFAULT_ZOOM = randomCountry.zoom;
-const DEFAULT_MOBILE_PLACES = 15;
-const DEFAULT_DESKTOP_PLACES = 30;
 
 // Zoom level constants for place type visibility
 export const ZOOM_LEVELS = {
@@ -375,7 +376,11 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       return scoreB - scoreA;
     });
     
-    const places = sortedPlaces.slice(0, numPrioritizedToShow);
+    // Always show at least the minimum number of places
+    const minPlaces = window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES;
+    const placesToShow = Math.max(minPlaces, numPrioritizedToShow);
+    
+    const places = sortedPlaces.slice(0, placesToShow);
     setCurrentlyShownCount(places.length);
     return places;
   }, [visiblePlacesInView, numPrioritizedToShow, calculatePlaceScore]);
