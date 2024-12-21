@@ -118,8 +118,6 @@ export const CityMap = ({ className }: CityMapProps) => {
           <BoundsTracker />
           <MapControls
             onZoomChange={setZoom}
-            defaultCenter={[20, 0]}
-            defaultZoom={2}
           />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

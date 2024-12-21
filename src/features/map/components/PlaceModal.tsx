@@ -262,7 +262,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
-      
+
       if (e.shiftKey) {
         switch (e.key) {
           case "ArrowRight":
@@ -300,7 +300,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     currentPlace.id,
     visiblePlacesInView,
     navigation.isRandomMode,
-    historyIndex
+    historyIndex,
   ]);
 
   // Reset history when random mode changes

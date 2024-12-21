@@ -13,8 +13,8 @@ interface MapControlsProps {
 
 export const MapControls = ({
   onZoomChange,
-  defaultCenter = [20, 0],
-  defaultZoom = 2,
+  defaultCenter = [48.5, 10], // Centered on Germany/Austria
+  defaultZoom = 5,
 }: MapControlsProps) => {
   const map = useLeafletMap();
   const { resetDistribution, hasMorePlaces, loadMorePlaces } = useMap();
