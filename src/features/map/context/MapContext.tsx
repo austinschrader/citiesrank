@@ -1,4 +1,27 @@
 /**
+ * MapContext.tsx
+ * 
+ * Purpose:
+ * Manages map-specific state and coordinates the application of filters based on map interactions.
+ * 
+ * Responsibilities:
+ * - Manage map state (zoom, center, bounds)
+ * - Coordinate filter application order
+ * - Handle map-specific calculations (distances, scores)
+ * - Manage place visibility and prioritization
+ * 
+ * Why getVisiblePlacesForCurrentView is here:
+ * - Coordinates the order of filter application
+ * - Needs access to multiple pieces of map state
+ * - Acts as orchestrator between different filtering utilities
+ * 
+ * Why calculatePlaceScore is here:
+ * - Requires map-specific state (bounds, center)
+ * - Uses Leaflet's distance calculations
+ * - Scoring logic is specific to map visualization
+ */
+
+/**
  * Global map state provider used by map components to share state and interactions.
  * Manages zoom, center, selected place and geographic level. Used by CityMap and
  * its child components via useMap hook.

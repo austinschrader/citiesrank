@@ -1,3 +1,27 @@
+/**
+ * placeFiltering.ts
+ * 
+ * Purpose:
+ * Provides pure utility functions for filtering map places based on different criteria.
+ * These functions are stateless and don't depend on React or context state.
+ * 
+ * Responsibilities:
+ * - Filter places by map bounds
+ * - Filter places by zoom level (with population-based visibility)
+ * - Filter places by type
+ * - Handle population category filtering
+ * 
+ * Interaction with MapContext:
+ * - MapContext owns the state (zoom, bounds, etc) and orchestrates when/how filters are applied
+ * - MapContext handles scoring/prioritization because it depends on map-specific state
+ * - getVisiblePlacesForCurrentView stays in MapContext as it coordinates multiple filters
+ * - calculatePlaceScore stays in MapContext as it uses map-specific distance calculations
+ * 
+ * Interaction with FiltersContext:
+ * - Uses types from FiltersContext (PopulationCategory)
+ * - Applies filters based on state managed by FiltersContext
+ */
+
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { MapPlace } from "../types";
 import L from "leaflet";
