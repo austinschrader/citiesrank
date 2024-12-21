@@ -184,25 +184,25 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getVisiblePlaceTypes = (zoom: number): CitiesTypeOptions[] => {
-    const level = getGeographicLevel(zoom);
-    switch (level) {
-      case CitiesTypeOptions.country:
-        return [CitiesTypeOptions.country];
-      case CitiesTypeOptions.region:
-        return [CitiesTypeOptions.country, CitiesTypeOptions.region];
-      case CitiesTypeOptions.city:
-        return [
-          CitiesTypeOptions.country,
-          CitiesTypeOptions.region,
-          CitiesTypeOptions.city,
-        ];
-      case CitiesTypeOptions.neighborhood:
-        return [CitiesTypeOptions.city, CitiesTypeOptions.neighborhood];
-      case CitiesTypeOptions.sight:
-        return [CitiesTypeOptions.neighborhood, CitiesTypeOptions.sight];
-      default:
-        return Object.values(CitiesTypeOptions);
+    if (zoom <= ZOOM_LEVELS.COUNTRY) {
+      // At country level, show countries and major cities
+      return [CitiesTypeOptions.country, CitiesTypeOptions.city];
+    } else if (zoom <= ZOOM_LEVELS.REGION) {
+      // At region level, show countries, regions, and major cities
+      return [CitiesTypeOptions.country, CitiesTypeOptions.region, CitiesTypeOptions.city];
+    } else if (zoom <= ZOOM_LEVELS.CITY) {
+      // At city level, show all except sights
+      return [
+        CitiesTypeOptions.country,
+        CitiesTypeOptions.region,
+        CitiesTypeOptions.city,
+        CitiesTypeOptions.neighborhood
+      ];
+    } else if (zoom <= ZOOM_LEVELS.NEIGHBORHOOD) {
+      // At neighborhood level, show everything
+      return Object.values(CitiesTypeOptions);
     }
+    return Object.values(CitiesTypeOptions);
   };
 
   const filterPlacesByZoom = (
@@ -216,6 +216,15 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       if (populationCategoryActive) {
         return place.type === CitiesTypeOptions.city;
       }
+      
+      // Always include major cities regardless of zoom level
+      if (place.type === CitiesTypeOptions.city && place.population) {
+        const population = parseInt(place.population as string, 10);
+        if (!isNaN(population) && population >= 1000000) {
+          return true;
+        }
+      }
+      
       return visibleTypes.includes(place.type as CitiesTypeOptions);
     });
   };
@@ -225,41 +234,57 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       let score = 0;
 
       // Factor 1: Rating (0-5 points)
-      const rating =
-        typeof place.averageRating === "number" ? place.averageRating : 0;
+      const rating = typeof place.averageRating === "number" ? place.averageRating : 0;
       score += rating;
 
-      // Factor 2: Place type importance (0-3 points)
+      // Factor 2: Place type importance with zoom-based tapering (0-15 points)
+      const zoomLevel = state.zoom;
       switch (place.type) {
         case CitiesTypeOptions.country:
-          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 3 : 1;
+          // Countries dominate at low zoom
+          score += Math.max(0, 15 - Math.max(0, zoomLevel - ZOOM_LEVELS.COUNTRY) * 2);
           break;
         case CitiesTypeOptions.region:
-          score +=
-            state.zoom > ZOOM_LEVELS.COUNTRY && state.zoom <= ZOOM_LEVELS.REGION
-              ? 3
-              : 1;
+          // Regions peak near their zoom level
+          if (zoomLevel <= ZOOM_LEVELS.COUNTRY) {
+            score += 5; // Moderate visibility at country level
+          } else if (zoomLevel <= ZOOM_LEVELS.REGION) {
+            score += 12; // High visibility at region level
+          } else {
+            score += Math.max(0, 10 - Math.max(0, zoomLevel - ZOOM_LEVELS.REGION) * 1.5);
+          }
           break;
         case CitiesTypeOptions.city:
-          score +=
-            state.zoom > ZOOM_LEVELS.REGION && state.zoom <= ZOOM_LEVELS.CITY
-              ? 3
-              : 1;
+          // Cities increase in importance as you zoom in
+          if (zoomLevel <= ZOOM_LEVELS.COUNTRY) {
+            score += 3; // Low visibility at country level
+          } else if (zoomLevel <= ZOOM_LEVELS.REGION) {
+            score += 6; // Medium visibility at region level
+          } else if (zoomLevel <= ZOOM_LEVELS.CITY) {
+            score += 10; // High visibility at city level
+          } else {
+            score += 8; // Good visibility at high zooms
+          }
           break;
         case CitiesTypeOptions.neighborhood:
-          score += state.zoom > ZOOM_LEVELS.CITY ? 3 : 0;
+          if (zoomLevel > ZOOM_LEVELS.CITY) {
+            score += Math.min(8, (zoomLevel - ZOOM_LEVELS.CITY) * 1.5);
+          }
           break;
         case CitiesTypeOptions.sight:
-          score += state.zoom > ZOOM_LEVELS.NEIGHBORHOOD ? 3 : 0;
+          if (zoomLevel > ZOOM_LEVELS.NEIGHBORHOOD) {
+            score += Math.min(7, (zoomLevel - ZOOM_LEVELS.NEIGHBORHOOD) * 2);
+          }
           break;
       }
 
-      // Factor 3: Population size for cities (0-2 points)
+      // Factor 3: Population size bonus (0-5 points for cities)
       if (place.type === CitiesTypeOptions.city && place.population) {
         const population = parseInt(place.population as string, 10);
         if (!isNaN(population)) {
-          if (population >= 1000000) score += 2;
-          else if (population >= 100000) score += 1;
+          if (population >= 5000000) score += 5;
+          else if (population >= 1000000) score += 4;
+          else if (population >= 500000) score += 2;
         }
       }
 
@@ -286,7 +311,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       if (!mapBounds) return allPlaces;
 
       // Filter by current zoom level and bounds
-      return filterPlacesByZoom(
+      const filteredPlaces = filterPlacesByZoom(
         allPlaces,
         state.zoom,
         filters.populationCategory
@@ -296,8 +321,15 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
           return mapBounds.contains([place.latitude, place.longitude]);
         })
         .filter((place) => filters.activeTypes.includes(place.type as any));
+
+      // Sort places by their scores
+      return filteredPlaces.sort((a, b) => {
+        const scoreA = calculatePlaceScore(a);
+        const scoreB = calculatePlaceScore(b);
+        return scoreB - scoreA; // Higher scores first
+      });
     },
-    [state.zoom, mapBounds, filters]
+    [state.zoom, mapBounds, filters, calculatePlaceScore]
   );
 
   const prioritizedPlaces = useMemo(() => {
