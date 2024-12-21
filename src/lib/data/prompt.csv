@@ -1,0 +1,27 @@
+Succinctly analyze all California cities of tourist importance and provide tourism data in a table format as shown below:
+
+CityName|Reviews|Transit|Safety|Core Appeal|Metro Draw|Rating
+
+Metrics:
+
+Reviews: Total count (K/M) - Reflects popularity.
+
+Transit (0-100): Public transport quality.
+
+Safety (0-100): Based on crime statistics and perceived safety.
+
+Core Appeal (0-100): The city's inherent attractiveness to tourists (natural beauty, unique offerings, cultural significance). This is the primary driver of the overall rating.
+
+Metro Draw (0-100): How much the city benefits from being part of a larger metropolitan area. A secondary factor.
+
+Rating (0-5): Overall tourist experience rating. Focus on accurately reflecting each city's appeal based on the metrics, especially Core Appeal. Do not force the ratings into a specific distribution (e.g., a bell curve). Multiple cities can have similar ratings if they genuinely offer a comparable quality of tourist experience.
+
+Reference Cities (for context):
+
+Venice: 800K Reviews, Transit: 65, Safety: 75, Core Appeal: 95, Metro Draw: 20, Rating: 4.8
+
+Gary, Indiana: 50K Reviews, Transit: 30, Safety: 35, Core Appeal: 20, Metro Draw: 50, Rating: 2.1
+
+DO NOT provide a justification, summary of the simply. Simply the scores, for as many cities as possible within that jurisdicition.
+
+Sort by Rating (descending). Prioritize accurate representation over forced statistical patterns.
