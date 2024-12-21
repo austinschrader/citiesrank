@@ -46,7 +46,7 @@ export type ViewMode = "list" | "split" | "map";
 // Zoom level constants for place type visibility
 export const ZOOM_LEVELS = {
   COUNTRY: 3,
-  REGION: 6,
+  REGION: 5,
   CITY: 10,
   NEIGHBORHOOD: 14,
 } as const;
@@ -88,8 +88,43 @@ interface MapContextValue extends MapState {
   setViewMode: (mode: ViewMode) => void;
 }
 
-const DEFAULT_CENTER: LatLngTuple = [20, 0];
-const DEFAULT_ZOOM = 3;
+// OECD country centers with their coordinates and recommended zoom levels
+const COUNTRY_CENTERS: Array<{
+  name: string;
+  center: LatLngTuple;
+  zoom: number;
+}> = [
+  { name: "United States", center: [39.8283, -98.5795], zoom: 5 },
+  { name: "Japan", center: [36.2048, 138.2529], zoom: 6 },
+  { name: "France", center: [46.2276, 2.2137], zoom: 6 },
+  { name: "Italy", center: [41.8719, 12.5674], zoom: 6 },
+  { name: "United Kingdom", center: [55.3781, -3.436], zoom: 6 },
+  { name: "Germany", center: [51.1657, 10.4515], zoom: 6 },
+  { name: "Spain", center: [40.4637, -3.7492], zoom: 6 },
+  { name: "Australia", center: [-25.2744, 133.7751], zoom: 5 },
+  { name: "South Korea", center: [35.9078, 127.7669], zoom: 7 },
+  { name: "Netherlands", center: [52.1326, 5.2913], zoom: 7 },
+  { name: "Switzerland", center: [46.8182, 8.2275], zoom: 8 },
+];
+
+// Get random country center
+const getRandomCenter = () => {
+  const randomIndex = Math.floor(Math.random() * COUNTRY_CENTERS.length);
+  return COUNTRY_CENTERS[randomIndex];
+};
+
+const randomCountry = getRandomCenter();
+console.log(`🌍 Starting view centered on ${randomCountry.name}`);
+
+const DEFAULT_CENTER = randomCountry.center;
+const DEFAULT_ZOOM = randomCountry.zoom;
+
+// European center coordinates and zoom level
+const EUROPE_CENTER: LatLngTuple = [48.5, 10]; // Centered roughly on Germany/Austria
+const EUROPE_ZOOM = 5;
+
+const DEFAULT_MOBILE_PLACES = 15;
+const DEFAULT_DESKTOP_PLACES = 30;
 
 export const MapContext = createContext<MapContextValue | null>(null);
 
@@ -114,7 +149,11 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     activeTypes: Object.values(CitiesTypeOptions),
     populationCategory: false,
   });
-  const [viewMode, setViewMode] = useState<ViewMode>("map");
+
+  // Set default view mode based on device type
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    return window.innerWidth >= 1024 ? "split" : "map";
+  });
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -135,8 +174,8 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const resetView = () => {
     setState((prev) => ({
       ...prev,
-      zoom: DEFAULT_ZOOM,
-      center: DEFAULT_CENTER,
+      zoom: EUROPE_ZOOM,
+      center: EUROPE_CENTER,
       selectedPlace: null,
     }));
   };
