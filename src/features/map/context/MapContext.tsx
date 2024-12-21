@@ -233,6 +233,16 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         const getVisibilityThreshold = () => {
           const baseThreshold = Math.min(1, Math.max(0.1, (zoom / ZOOM_LEVELS.CITY) * 0.8));
           
+          if (place.type === CitiesTypeOptions.country) {
+            // Always show countries at low zoom, higher chance at high zoom
+            return zoom <= ZOOM_LEVELS.COUNTRY ? 1 : baseThreshold * 2;
+          }
+          
+          if (place.type === CitiesTypeOptions.region) {
+            // Increased threshold for regions
+            return zoom > ZOOM_LEVELS.REGION ? 1 : baseThreshold * 1.5;
+          }
+          
           if (place.type === CitiesTypeOptions.city) {
             const population = parseInt(place.population as string, 10);
             if (!isNaN(population)) {
@@ -242,13 +252,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
             }
           }
           
-          if (place.type === CitiesTypeOptions.region) {
-            return zoom > ZOOM_LEVELS.REGION ? 0.9 : baseThreshold;
-          }
-          
           if (place.type === CitiesTypeOptions.sight || 
               place.type === CitiesTypeOptions.neighborhood) {
-            return zoom > ZOOM_LEVELS.CITY ? 0.9 : baseThreshold * 0.5;
+            return zoom > ZOOM_LEVELS.COUNTRY ? 0.9 : baseThreshold * 0.5;
           }
           
           return baseThreshold;
@@ -304,10 +310,20 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       // Type-specific scoring with zoom consideration
       switch (place.type) {
         case CitiesTypeOptions.country:
-          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 8 : 2;
+          // Increased score for countries
+          score += state.zoom <= ZOOM_LEVELS.COUNTRY ? 12 : 4;
+          // Additional bonus for countries
+          if (getRandomForPlace({ ...place, id: place.id + "-country-bonus" }) < 0.5) {
+            score += 6;
+          }
           break;
         case CitiesTypeOptions.region:
-          score += state.zoom <= ZOOM_LEVELS.REGION ? 7 : 2;
+          // Increased score for regions
+          score += state.zoom <= ZOOM_LEVELS.REGION ? 10 : 4;
+          // Additional bonus for regions
+          if (getRandomForPlace({ ...place, id: place.id + "-region-bonus" }) < 0.4) {
+            score += 5;
+          }
           break;
         case CitiesTypeOptions.city: {
           const population = parseInt(place.population as string, 10) || 0;
