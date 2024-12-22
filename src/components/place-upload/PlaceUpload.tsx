@@ -50,7 +50,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [exifData, setExifData] = useState<ExifData | null>(null);
-  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [placeName, setPlaceName] = useState(
     `Christmas Lights House #${Math.floor(Math.random() * 9000) + 1000}`
@@ -64,10 +64,12 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
   const { refreshCities } = useCitiesActions();
 
   const [viewState, setViewState] = useState({
-    longitude: -122.7023063,
-    latitude: 45.5320858,
+    latitude: 45.532497,
+    longitude: -122.6839292,
     zoom: 13,
   });
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Get initial coordinates from the map's current center
   useEffect(() => {
@@ -78,6 +80,10 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       });
     }
   }, []);
+
+  useEffect(() => {
+    console.log('showCamera changed:', showCamera);
+  }, [showCamera]);
 
   const resetForm = useCallback(() => {
     setFiles([]);
@@ -200,6 +206,52 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
     },
     [toast, viewState]
   );
+
+  const handleCameraCapture = async (file: File) => {
+    try {
+      // Get location from EXIF data
+      const exifData = await exifr.gps(file);
+      console.log('EXIF GPS data:', exifData);
+
+      if (exifData?.latitude && exifData?.longitude) {
+        // Update map viewport
+        setViewState(prev => ({
+          ...prev,
+          latitude: exifData.latitude,
+          longitude: exifData.longitude,
+          zoom: 15 // Zoom in closer for captured photo location
+        }));
+
+        // Update coordinates
+        setCoordinates({
+          lat: exifData.latitude,
+          lng: exifData.longitude
+        });
+
+        // Update search field with coordinates
+        setSearchQuery(`${exifData.latitude.toFixed(6)}, ${exifData.longitude.toFixed(6)}`);
+
+        // Show success message
+        toast({
+          title: "Location Found",
+          description: `Photo location: ${exifData.latitude.toFixed(6)}, ${exifData.longitude.toFixed(6)}`,
+        });
+      }
+    } catch (err) {
+      console.error('Error reading EXIF data:', err);
+      toast({
+        title: "Location Not Found",
+        description: "Could not read location data from photo. You can set the location manually.",
+        variant: "destructive",
+      });
+    }
+
+    // Handle the file upload
+    setFiles([file]);
+    const previewUrl = URL.createObjectURL(file);
+    setPreview(previewUrl);
+    setShowCamera(false);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -450,82 +502,130 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
     }
   };
 
+  const renderContent = () => {
+    if (showCamera) {
+      return (
+        <div className="fixed inset-0 bg-black/90 z-50">
+          <CameraCapture
+            onCapture={(file, location) => {
+              setFiles([file]);
+              const previewUrl = URL.createObjectURL(file);
+              setPreview(previewUrl);
+              
+              if (location) {
+                setViewState(prev => ({
+                  ...prev,
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  zoom: 15
+                }));
+
+                setCoordinates({
+                  lat: location.latitude,
+                  lng: location.longitude
+                });
+
+                setSearchQuery(`${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`);
+
+                // Set EXIF data with location and camera info
+                setExifData({
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  DateTimeOriginal: new Date().toISOString(),
+                  Make: 'CitiesRank',
+                  Model: 'Web Camera',
+                  LensModel: 'Browser Camera',
+                  ExposureTime: 1/60,
+                  FNumber: 2.8,
+                });
+              }
+              
+              setShowCamera(false);
+            }}
+            onClose={() => setShowCamera(false)}
+          />
+        </div>
+      );
+    }
+    
+    if (!files.length && !preview) {
+      return (
+        <>
+          <div className="grid sm:grid-cols-1 gap-4">
+            <Card
+              {...getRootProps()}
+              className={`border-dashed cursor-pointer touch-manipulation hover:border-primary/50 transition-colors ${
+                isDragActive && "border-primary/50 bg-primary/5"
+              }`}
+            >
+              <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+                <div className="rounded-full bg-muted p-4">
+                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-medium">Drop photo here or click to upload</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                    Upload a high-quality photo of the place. The photo will be publicly visible.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+          <Button
+            variant="outline"
+            className="w-full h-auto py-10 border-2 border-dashed md:hidden mt-4"
+            onClick={() => {
+              setShowCamera(true);
+            }}
+          >
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <div className="rounded-full bg-muted p-4">
+                <Camera className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Take a photo with camera</h3>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                  Use your device's camera to take a photo of the place right now.
+                </p>
+              </div>
+            </div>
+          </Button>
+        </>
+      );
+    }
+
+    return (
+      <Card className="relative overflow-hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 z-10"
+          onClick={() => {
+            setFiles([]);
+            setPreview("");
+            setExifData(null);
+          }}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+        <div className="aspect-[4/3] relative bg-muted">
+          <img
+            src={preview}
+            alt="Preview"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+      </Card>
+    );
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-6">
       <DialogClose ref={dialogCloseRef} className="hidden" />
       <div className="space-y-4">
         <div className="space-y-2">
           <Label>Photo</Label>
-          {!files.length && !preview ? (
-            <div className="grid sm:grid-cols-1 gap-4">
-              <Card
-                {...getRootProps()}
-                className={`border-dashed cursor-pointer hover:border-primary/50 transition-colors ${
-                  isDragActive && "border-primary/50 bg-primary/5"
-                }`}
-              >
-                <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
-                  <div className="rounded-full bg-muted p-4">
-                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Drop photo here or click to upload</h3>
-                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      Upload a high-quality photo of the place. The photo will be publicly visible.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-              <Card
-                className="border-dashed cursor-pointer hover:border-primary/50 transition-colors md:hidden"
-                onClick={() => setShowCamera(true)}
-              >
-                <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
-                  <div className="rounded-full bg-muted p-4">
-                    <Camera className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Take a photo with camera</h3>
-                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      Use your device's camera to take a photo of the place right now.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          ) : showCamera ? (
-            <CameraCapture
-              onCapture={(file) => {
-                setFiles([file]);
-                const previewUrl = URL.createObjectURL(file);
-                setPreview(previewUrl);
-                setShowCamera(false);
-              }}
-              onClose={() => setShowCamera(false)}
-            />
-          ) : (
-            <Card className="relative overflow-hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-2 z-10"
-                onClick={() => {
-                  setFiles([]);
-                  setPreview("");
-                  setExifData(null);
-                }}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <div className="aspect-[4/3] relative bg-muted">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              </div>
-            </Card>
-          )}
+          {renderContent()}
         </div>
         {files.length > 0 && (
           <div className="mt-4 space-y-4 animate-fadeIn">
@@ -622,13 +722,12 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                       onClick={handleMapClick}
                       style={{ width: "100%", height: "100%" }}
                       mapStyle="mapbox://styles/mapbox/streets-v12"
-                      collectResourceTiming={false}
-                      trackResize={false}
+                      reuseMaps
                       cooperativeGestures={true}
                     >
                       <Marker
-                        longitude={coordinates.lng}
-                        latitude={coordinates.lat}
+                        longitude={coordinates?.lng || viewState.longitude}
+                        latitude={coordinates?.lat || viewState.latitude}
                       >
                         <MapPin className="w-6 h-6 text-red-500" />
                       </Marker>
