@@ -5,14 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useCitiesActions } from "@/features/places/context/CitiesContext";
 import { uploadPlace } from "@/features/places/utils/placeUpload";
 import { useToast } from "@/hooks/use-toast";
-import { createSlug } from "@/lib/imageUtils";
 import { CitiesRecord, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import exifr from "exifr";
 import { Crosshair, MapPin, Search, X } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Map, { Marker } from "react-map-gl";
 import { useNavigate } from "react-router-dom";
@@ -59,12 +59,23 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
   const [isLocating, setIsLocating] = useState(false);
   const { pb } = useAuth();
   const { toast } = useToast();
+  const { refreshCities } = useCitiesActions();
 
   const [viewState, setViewState] = useState({
-    longitude: -122.4194,
-    latitude: 37.7749,
+    longitude: -122.7023063,
+    latitude: 45.5320858,
     zoom: 13,
   });
+
+  // Get initial coordinates from the map's current center
+  useEffect(() => {
+    if (!coordinates) {
+      setCoordinates({
+        lat: viewState.latitude,
+        lng: viewState.longitude,
+      });
+    }
+  }, []);
 
   const resetForm = useCallback(() => {
     setFiles([]);
@@ -119,12 +130,15 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         if (!data || Object.keys(data).length === 0) {
           toast({
             description:
-              "No location data found. Please click on the map to set the location.",
+              "No location data found in photo. Using current map location.",
             duration: 3000,
           });
           setExifData(null);
-          // Set default coordinates to San Francisco
-          setCoordinates({ lat: 37.7749, lng: -122.4194 });
+          // Use current map coordinates
+          setCoordinates({
+            lat: viewState.latitude,
+            lng: viewState.longitude,
+          });
           return;
         }
 
@@ -149,6 +163,16 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
               "Photo location data has been detected and will be used.",
             duration: 3000,
           });
+        } else {
+          // Use current map coordinates if no GPS data in EXIF
+          setCoordinates({
+            lat: viewState.latitude,
+            lng: viewState.longitude,
+          });
+          toast({
+            description: "Using current map location.",
+            duration: 3000,
+          });
         }
 
         // Generate a new random number for the place name
@@ -159,17 +183,20 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         console.error("Error extracting EXIF data:", error);
         toast({
           description:
-            "No location data found. Please click on the map to set the location.",
+            "No location data found in photo. Using current map location.",
           duration: 3000,
         });
-        // Set default coordinates to San Francisco
-        setCoordinates({ lat: 37.7749, lng: -122.4194 });
+        // Use current map coordinates on error
+        setCoordinates({
+          lat: viewState.latitude,
+          lng: viewState.longitude,
+        });
       }
 
       // Cleanup function to revoke the preview URL when component unmounts
       return () => URL.revokeObjectURL(previewUrl);
     },
-    [toast]
+    [toast, viewState]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -364,16 +391,15 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
           description: "Place uploaded successfully!",
         });
 
+        // Refresh cities data
+        await refreshCities();
+
         // Close the dialog
         onClose();
 
-        // Navigate to the new place using type/normalizedName format
+        // Navigate to the new place using type/slug format
         setTimeout(() => {
-          navigate(
-            `/places/${placeData.type || "sight"}/${
-              result.slug || createSlug(placeData.name || "untitled")
-            }`
-          );
+          navigate(`/places/${placeData.type || "sight"}/${result.slug}`);
         }, 1000);
       } else {
         throw new Error(result.error);

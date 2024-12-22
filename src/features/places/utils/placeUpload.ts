@@ -1,7 +1,7 @@
-import { ClientResponseError } from "pocketbase";
-import slugify from "slugify";
 import { uploadImage } from "@/lib/cloudinary";
 import { CitiesRecord, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { ClientResponseError } from "pocketbase";
+import slugify from "slugify";
 
 export interface ValidationResult {
   name: string;
