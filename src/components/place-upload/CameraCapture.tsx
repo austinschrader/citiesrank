@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Camera, FlipHorizontal, X } from "lucide-react";
+import { Camera, SwitchCamera, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
@@ -102,9 +102,27 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
     }
   }, [webcamRef, onCapture, onClose, location]);
 
-  const toggleCamera = useCallback(() => {
-    setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
-  }, []);
+  const toggleCamera = useCallback(async () => {
+    const newMode = facingMode === "user" ? "environment" : "user";
+    try {
+      // Stop all video tracks first
+      const stream = webcamRef.current?.video?.srcObject as MediaStream;
+      stream?.getTracks().forEach(track => track.stop());
+
+      // Request new stream with new facing mode
+      await navigator.mediaDevices.getUserMedia({ 
+        video: {
+          facingMode: newMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      });
+
+      setFacingMode(newMode);
+    } catch (err) {
+      console.error('Failed to switch camera:', err);
+    }
+  }, [facingMode]);
 
   if (hasPermission === null) {
     return (
@@ -151,6 +169,7 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
             height: { ideal: 720 }
           }}
           className="absolute inset-0 w-full h-full object-cover"
+          mirrored={facingMode === "user"}
         />
         {hasMultipleCameras && (
           <Button 
@@ -159,7 +178,7 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
             onClick={toggleCamera}
             className="absolute top-4 left-4 bg-white/80 hover:bg-white shadow-lg"
           >
-            <FlipHorizontal className="h-4 w-4" />
+            <SwitchCamera className="h-4 w-4" />
             <span className="sr-only">Switch Camera</span>
           </Button>
         )}
