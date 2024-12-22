@@ -320,7 +320,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   }, [navigation.isRandomMode]);
 
   const handleDetailsView = () => {
-    navigate(`/places/${currentPlace.type}/${createSlug(currentPlace.name)}`, {
+    navigate(`/places/${currentPlace.type}/${currentPlace.slug}`, {
       state: { placeData: currentPlace },
     });
     onClose();
