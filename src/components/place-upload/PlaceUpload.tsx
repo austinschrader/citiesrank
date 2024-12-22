@@ -558,6 +558,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                 isDragActive && "border-primary/50 bg-primary/5"
               }`}
             >
+              <input {...getInputProps()} accept="image/*" />
               <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
                 <div className="rounded-full bg-muted p-4">
                   <ImageIcon className="h-8 w-8 text-muted-foreground" />
