@@ -481,14 +481,12 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                   </div>
                 </div>
               </Card>
-              <Card
-                className="border-dashed cursor-pointer touch-manipulation hover:border-primary/50 transition-colors md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowCamera(true);
-                }}
+              <Button
+                variant="outline"
+                className="w-full h-auto py-10 border-2 border-dashed md:hidden"
+                onClick={() => setShowCamera(true)}
               >
-                <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+                <div className="flex flex-col items-center justify-center gap-2 text-center">
                   <div className="rounded-full bg-muted p-4">
                     <Camera className="h-8 w-8 text-muted-foreground" />
                   </div>
@@ -499,7 +497,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                     </p>
                   </div>
                 </div>
-              </Card>
+              </Button>
             </div>
           ) : showCamera ? (
             <CameraCapture
