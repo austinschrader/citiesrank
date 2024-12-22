@@ -53,6 +53,14 @@ function hashString(str: string): number {
 }
 
 /**
+ * Helper function to get population in actual numbers
+ */
+const getPopulation = (place: MapPlace): number => {
+  const pop = parseInt(place.population as string, 10);
+  return !isNaN(pop) ? pop * 1000 : 0; // Convert from thousands to actual number
+};
+
+/**
  * Filters places based on the current map zoom level and place characteristics.
  * Uses a deterministic approach to show/hide places:
  * 
@@ -91,10 +99,11 @@ export function filterPlacesByZoom(
       if (place.type === CitiesTypeOptions.sight) {
         return true;
       }
-      // Show cities based on population
+      // Show cities with population > 10k
       if (place.type === CitiesTypeOptions.city) {
-        const population = parseInt(place.population as string, 10);
-        return !isNaN(population) && population > 10000;
+        const population = getPopulation(place);
+        const show = population > 10000;
+        return show;
       }
       // For other types, use importance if available
       const importance = (place.averageRating || 0) * (place.totalReviews || 0);
