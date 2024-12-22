@@ -10,12 +10,13 @@ import { uploadPlace } from "@/features/places/utils/placeUpload";
 import { useToast } from "@/hooks/use-toast";
 import { CitiesRecord, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import exifr from "exifr";
-import { Crosshair, MapPin, Search, X } from "lucide-react";
+import { Camera, Crosshair, ImageIcon, MapPin, Search, X } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Map, { Marker } from "react-map-gl";
 import { useNavigate } from "react-router-dom";
+import { CameraCapture } from "./CameraCapture";
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -50,6 +51,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
   const [progress, setProgress] = useState(0);
   const [exifData, setExifData] = useState<ExifData | null>(null);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
   const [placeName, setPlaceName] = useState(
     `Christmas Lights House #${Math.floor(Math.random() * 9000) + 1000}`
   );
@@ -320,19 +322,28 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
   };
 
   const handleUpload = async () => {
-    if (!files.length) {
+    if (!coordinates) {
       toast({
         title: "Error",
-        description: "Please select a file to upload",
+        description: "Please set a location for this photo",
         variant: "destructive",
       });
       return;
     }
 
-    if (!coordinates) {
+    if (!pb.authStore.model) {
       toast({
         title: "Error",
-        description: "Please set a location for this photo",
+        description: "Authentication error - please try logging in again",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!files.length) {
+      toast({
+        title: "Error",
+        description: "Please select a file or take a photo",
         variant: "destructive",
       });
       return;
@@ -423,9 +434,9 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         // Navigate to the new place using type/slug format
         setTimeout(() => {
           navigate(`/places/${placeData.type || "sight"}/${result.slug}`);
-        }, 1000);
+        }, 500);
       } else {
-        throw new Error(result.error);
+        throw new Error(result.error || "Unknown error occurred");
       }
     } catch (error) {
       toast({
@@ -436,231 +447,243 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       });
     } finally {
       setUploading(false);
-      setProgress(0);
     }
   };
 
   return (
-    <>
+    <div className="w-full max-w-3xl mx-auto p-4 space-y-6">
       <DialogClose ref={dialogCloseRef} className="hidden" />
-      <div className="w-full max-w-3xl mx-auto p-4 space-y-6">
-        <Card className="p-6">
-          <div className="flex justify-end mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetForm}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <X className="w-4 h-4 mr-2" />
-              Reset Form
-            </Button>
-          </div>
-
-          {preview ? (
-            <div className="relative group mb-4">
-              <div className="aspect-[16/9] w-full relative overflow-hidden rounded-lg">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label>Photo</Label>
+          {!files.length && !preview ? (
+            <div className="grid sm:grid-cols-1 gap-4">
+              <Card
+                {...getRootProps()}
+                className={`border-dashed cursor-pointer hover:border-primary/50 transition-colors ${
+                  isDragActive && "border-primary/50 bg-primary/5"
+                }`}
+              >
+                <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+                  <div className="rounded-full bg-muted p-4">
+                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Drop photo here or click to upload</h3>
+                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                      Upload a high-quality photo of the place. The photo will be publicly visible.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+              <Card
+                className="border-dashed cursor-pointer hover:border-primary/50 transition-colors md:hidden"
+                onClick={() => setShowCamera(true)}
+              >
+                <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+                  <div className="rounded-full bg-muted p-4">
+                    <Camera className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Take a photo with camera</h3>
+                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                      Use your device's camera to take a photo of the place right now.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          ) : showCamera ? (
+            <CameraCapture
+              onCapture={(file) => {
+                setFiles([file]);
+                const previewUrl = URL.createObjectURL(file);
+                setPreview(previewUrl);
+                setShowCamera(false);
+              }}
+              onClose={() => setShowCamera(false)}
+            />
+          ) : (
+            <Card className="relative overflow-hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2 z-10"
+                onClick={() => {
+                  setFiles([]);
+                  setPreview("");
+                  setExifData(null);
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <div className="aspect-[4/3] relative bg-muted">
                 <img
                   src={preview}
                   alt="Preview"
-                  className="absolute inset-0 w-full h-full object-contain bg-gray-100"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div
-                  {...getRootProps()}
-                  className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center cursor-pointer"
-                >
-                  <p className="text-white font-medium">
-                    Click or drag to replace
-                  </p>
-                  <input {...getInputProps()} />
+              </div>
+            </Card>
+          )}
+        </div>
+        {files.length > 0 && (
+          <div className="mt-4 space-y-4 animate-fadeIn">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-medium mb-2">Photo Details</h3>
+              {exifData ? (
+                <div className="text-sm text-gray-600 space-y-1">
+                  {coordinates && (
+                    <p>
+                      📍 Location: {coordinates.lat.toFixed(6)},{" "}
+                      {coordinates.lng.toFixed(6)}
+                    </p>
+                  )}
+                  {exifData.DateTimeOriginal && (
+                    <p>
+                      📅 Taken:{" "}
+                      {new Date(exifData.DateTimeOriginal).toLocaleString()}
+                    </p>
+                  )}
+                  {(exifData.Make || exifData.Model) && (
+                    <p>
+                      📸 Camera:{" "}
+                      {[exifData.Make, exifData.Model]
+                        .filter(Boolean)
+                        .join(" ")}
+                    </p>
+                  )}
+                  {exifData.LensModel && <p>🔭 Lens: {exifData.LensModel}</p>}
+                  {(exifData.ExposureTime ||
+                    exifData.FNumber ||
+                    exifData.ISO ||
+                    exifData.FocalLength) && (
+                    <p>
+                      ⚙️ Settings:{" "}
+                      {[
+                        exifData.ExposureTime &&
+                          `${formatExposureTime(exifData.ExposureTime)}s`,
+                        exifData.FNumber && `f/${exifData.FNumber}`,
+                        exifData.ISO && `ISO ${exifData.ISO}`,
+                        exifData.FocalLength && `${exifData.FocalLength}mm`,
+                      ]
+                        .filter(Boolean)
+                        .join(" • ")}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No EXIF data found in this photo
+                </p>
+              )}
+            </div>
+
+            {/* Map for location selection */}
+            {coordinates && (
+              <div className="rounded-lg overflow-hidden border border-gray-200">
+                <div className="relative">
+                  {/* Search bar */}
+                  <div className="absolute top-2 left-2 right-2 z-10 flex gap-2">
+                    <div className="flex-1 relative">
+                      <Input
+                        type="text"
+                        placeholder="Search for a location..."
+                        className="pr-8 bg-white"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSearch(e.currentTarget.value);
+                          }
+                        }}
+                      />
+                      <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    </div>
+                    <MapButton
+                      size="icon"
+                      variant="secondary"
+                      onClick={handleCurrentLocation}
+                      disabled={isLocating}
+                      className="bg-white hover:bg-gray-100"
+                      title="Use my location"
+                    >
+                      {isLocating ? (
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Crosshair className="w-4 h-4" />
+                      )}
+                    </MapButton>
+                  </div>
+
+                  <div className="h-[300px]">
+                    <Map
+                      mapboxAccessToken={MAPBOX_TOKEN}
+                      {...viewState}
+                      onMove={(evt) => setViewState(evt.viewState)}
+                      onClick={handleMapClick}
+                      style={{ width: "100%", height: "100%" }}
+                      mapStyle="mapbox://styles/mapbox/streets-v12"
+                      collectResourceTiming={false}
+                      trackResize={false}
+                      cooperativeGestures={true}
+                    >
+                      <Marker
+                        longitude={coordinates.lng}
+                        latitude={coordinates.lat}
+                      >
+                        <MapPin className="w-6 h-6 text-red-500" />
+                      </Marker>
+                    </Map>
+                  </div>
+                  <div className="absolute bottom-2 left-2 right-2 bg-white bg-opacity-90 p-2 rounded text-sm text-center">
+                    Click anywhere on the map to update the location
+                  </div>
                 </div>
               </div>
+            )}
+
+            <div className="grid gap-4">
+              <div>
+                <Label htmlFor="placeName">Place Name</Label>
+                <Input
+                  id="placeName"
+                  value={placeName}
+                  onChange={(e) => setPlaceName(e.target.value)}
+                  placeholder="Enter place name"
+                  className="font-medium"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Describe this place"
+                  className="font-medium"
+                />
+              </div>
             </div>
-          ) : (
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200
-                ${
-                  isDragActive
-                    ? "border-primary bg-primary/5 scale-102"
-                    : "border-gray-300 hover:border-primary hover:scale-[1.01]"
-                }`}
-            >
-              <input {...getInputProps()} />
-              <div className="space-y-4">
-                <div className="text-4xl text-gray-400">📷</div>
-                {isDragActive ? (
-                  <p className="text-lg">Drop your photo here...</p>
-                ) : (
-                  <p className="text-lg">
-                    Drag & drop a photo here, or click to select
-                  </p>
-                )}
-                <p className="text-sm text-gray-500">
-                  Supports: JPG, PNG, WebP
+
+            {uploading && (
+              <div className="space-y-2">
+                <Progress value={progress} className="w-full" />
+                <p className="text-sm text-center text-gray-500">
+                  {progress < 100 ? "Uploading..." : "Processing..."}
                 </p>
               </div>
-            </div>
-          )}
+            )}
 
-          {files.length > 0 && (
-            <div className="mt-4 space-y-4 animate-fadeIn">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-medium mb-2">Photo Details</h3>
-                {exifData ? (
-                  <div className="text-sm text-gray-600 space-y-1">
-                    {coordinates && (
-                      <p>
-                        📍 Location: {coordinates.lat.toFixed(6)},{" "}
-                        {coordinates.lng.toFixed(6)}
-                      </p>
-                    )}
-                    {exifData.DateTimeOriginal && (
-                      <p>
-                        📅 Taken:{" "}
-                        {new Date(exifData.DateTimeOriginal).toLocaleString()}
-                      </p>
-                    )}
-                    {(exifData.Make || exifData.Model) && (
-                      <p>
-                        📸 Camera:{" "}
-                        {[exifData.Make, exifData.Model]
-                          .filter(Boolean)
-                          .join(" ")}
-                      </p>
-                    )}
-                    {exifData.LensModel && <p>🔭 Lens: {exifData.LensModel}</p>}
-                    {(exifData.ExposureTime ||
-                      exifData.FNumber ||
-                      exifData.ISO ||
-                      exifData.FocalLength) && (
-                      <p>
-                        ⚙️ Settings:{" "}
-                        {[
-                          exifData.ExposureTime &&
-                            `${formatExposureTime(exifData.ExposureTime)}s`,
-                          exifData.FNumber && `f/${exifData.FNumber}`,
-                          exifData.ISO && `ISO ${exifData.ISO}`,
-                          exifData.FocalLength && `${exifData.FocalLength}mm`,
-                        ]
-                          .filter(Boolean)
-                          .join(" • ")}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500">
-                    No EXIF data found in this photo
-                  </p>
-                )}
-              </div>
-
-              {/* Map for location selection */}
-              {coordinates && (
-                <div className="rounded-lg overflow-hidden border border-gray-200">
-                  <div className="relative">
-                    {/* Search bar */}
-                    <div className="absolute top-2 left-2 right-2 z-10 flex gap-2">
-                      <div className="flex-1 relative">
-                        <Input
-                          type="text"
-                          placeholder="Search for a location..."
-                          className="pr-8 bg-white"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              handleSearch(e.currentTarget.value);
-                            }
-                          }}
-                        />
-                        <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                      </div>
-                      <MapButton
-                        size="icon"
-                        variant="secondary"
-                        onClick={handleCurrentLocation}
-                        disabled={isLocating}
-                        className="bg-white hover:bg-gray-100"
-                        title="Use my location"
-                      >
-                        {isLocating ? (
-                          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <Crosshair className="w-4 h-4" />
-                        )}
-                      </MapButton>
-                    </div>
-
-                    <div className="h-[300px]">
-                      <Map
-                        mapboxAccessToken={MAPBOX_TOKEN}
-                        {...viewState}
-                        onMove={(evt) => setViewState(evt.viewState)}
-                        onClick={handleMapClick}
-                        style={{ width: "100%", height: "100%" }}
-                        mapStyle="mapbox://styles/mapbox/streets-v12"
-                        collectResourceTiming={false}
-                        trackResize={false}
-                        cooperativeGestures={true}
-                      >
-                        <Marker
-                          longitude={coordinates.lng}
-                          latitude={coordinates.lat}
-                        >
-                          <MapPin className="w-6 h-6 text-red-500" />
-                        </Marker>
-                      </Map>
-                    </div>
-                    <div className="absolute bottom-2 left-2 right-2 bg-white bg-opacity-90 p-2 rounded text-sm text-center">
-                      Click anywhere on the map to update the location
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid gap-4">
-                <div>
-                  <Label htmlFor="placeName">Place Name</Label>
-                  <Input
-                    id="placeName"
-                    value={placeName}
-                    onChange={(e) => setPlaceName(e.target.value)}
-                    placeholder="Enter place name"
-                    className="font-medium"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe this place"
-                    className="font-medium"
-                  />
-                </div>
-              </div>
-
-              {uploading && (
-                <div className="space-y-2">
-                  <Progress value={progress} className="w-full" />
-                  <p className="text-sm text-center text-gray-500">
-                    {progress < 100 ? "Uploading..." : "Processing..."}
-                  </p>
-                </div>
-              )}
-
-              <Button
-                onClick={handleUpload}
-                disabled={uploading}
-                className="w-full transition-all hover:scale-[1.01]"
-              >
-                {uploading ? "Uploading..." : "Upload Place"}
-              </Button>
-            </div>
-          )}
-        </Card>
+            <Button
+              onClick={handleUpload}
+              disabled={uploading}
+              className="w-full transition-all hover:scale-[1.01]"
+            >
+              {uploading ? "Uploading..." : "Upload Place"}
+            </Button>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 }
