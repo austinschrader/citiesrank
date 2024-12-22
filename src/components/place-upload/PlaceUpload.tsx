@@ -573,7 +573,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
           </div>
           <Button
             variant="outline"
-            className="w-full h-auto py-10 border-2 border-dashed md:hidden mt-4"
+            className="w-full h-auto py-10 border-2 border-dashed mt-4"
             onClick={() => {
               setShowCamera(true);
             }}
