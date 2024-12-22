@@ -35,8 +35,8 @@ export const Header = () => {
 
   const navItems = [
     {
-      label: "Home",
-      mobileLabel: "Home",
+      label: "Places",
+      mobileLabel: "Places",
       icon: Home,
       to: "/",
       description: "Interactive map with advanced filters and search",
