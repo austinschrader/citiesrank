@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Camera, FlipHorizontal, X } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 interface CameraCaptureProps {
@@ -11,7 +11,56 @@ interface CameraCaptureProps {
 
 export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
   const webcamRef = useRef<Webcam>(null);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user"); // Default to front camera on desktop
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function checkCameraAccess() {
+      try {
+        console.log('Checking for available video devices...');
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        console.log('Available video devices:', videoDevices);
+
+        if (videoDevices.length === 0) {
+          setHasPermission(false);
+          setError('No camera devices found. Please ensure your camera is connected and not in use by another application.');
+          return;
+        }
+
+        console.log('Requesting camera access...');
+        await navigator.mediaDevices.getUserMedia({ 
+          video: {
+            facingMode: "user",  // Prefer front camera first
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          } 
+        });
+        console.log('Camera access granted!');
+        setHasPermission(true);
+        setError(null);
+      } catch (err) {
+        console.error('Camera access error:', err);
+        setHasPermission(false);
+        if (err instanceof Error) {
+          if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+            setError('No camera found. Please ensure your camera is connected and not in use by another application.');
+          } else if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            setError('Camera access denied. Please allow camera access in your browser settings.');
+          } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+            setError('Camera is in use by another application. Please close other apps that might be using your camera.');
+          } else {
+            setError(`Camera error: ${err.message}`);
+          }
+        } else {
+          setError('An unexpected error occurred while accessing the camera.');
+        }
+      }
+    }
+
+    checkCameraAccess();
+  }, []);
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -31,8 +80,32 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
     setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
   }, []);
 
+  if (hasPermission === null) {
+    return (
+      <Card className="fixed inset-x-0 top-1/2 -translate-y-1/2 mx-4 max-w-lg md:mx-auto">
+        <div className="p-4 text-center">
+          <p>Checking camera availability...</p>
+        </div>
+      </Card>
+    );
+  }
+
+  if (hasPermission === false) {
+    return (
+      <Card className="fixed inset-x-0 top-1/2 -translate-y-1/2 mx-4 max-w-lg md:mx-auto">
+        <div className="p-4 text-center">
+          <h3 className="font-medium mb-2">Camera Access Required</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            {error || "Please allow camera access to take a photo."}
+          </p>
+          <Button onClick={onClose}>Close</Button>
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="fixed inset-x-0 top-1/2 -translate-y-1/2 mx-4 max-w-lg md:mx-auto">
       <Button
         variant="ghost"
         size="icon"
@@ -48,7 +121,8 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
           screenshotFormat="image/jpeg"
           videoConstraints={{
             facingMode,
-            aspectRatio: 4/3,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
           }}
           className="absolute inset-0 w-full h-full object-cover"
         />

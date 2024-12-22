@@ -79,6 +79,10 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
     }
   }, []);
 
+  useEffect(() => {
+    console.log('showCamera changed:', showCamera);
+  }, [showCamera]);
+
   const resetForm = useCallback(() => {
     setFiles([]);
     setPreview("");
@@ -450,88 +454,101 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
     }
   };
 
+  const renderContent = () => {
+    if (showCamera) {
+      return (
+        <div className="fixed inset-0 bg-black/90 z-50">
+          <CameraCapture
+            onCapture={(file) => {
+              setFiles([file]);
+              const previewUrl = URL.createObjectURL(file);
+              setPreview(previewUrl);
+              setShowCamera(false);
+            }}
+            onClose={() => setShowCamera(false)}
+          />
+        </div>
+      );
+    }
+    
+    if (!files.length && !preview) {
+      return (
+        <>
+          <div className="grid sm:grid-cols-1 gap-4">
+            <Card
+              {...getRootProps()}
+              className={`border-dashed cursor-pointer touch-manipulation hover:border-primary/50 transition-colors ${
+                isDragActive && "border-primary/50 bg-primary/5"
+              }`}
+            >
+              <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+                <div className="rounded-full bg-muted p-4">
+                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-medium">Drop photo here or click to upload</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                    Upload a high-quality photo of the place. The photo will be publicly visible.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+          <Button
+            variant="outline"
+            className="w-full h-auto py-10 border-2 border-dashed md:hidden mt-4"
+            onClick={() => {
+              setShowCamera(true);
+            }}
+          >
+            <div className="flex flex-col items-center justify-center gap-2 text-center">
+              <div className="rounded-full bg-muted p-4">
+                <Camera className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Take a photo with camera</h3>
+                <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                  Use your device's camera to take a photo of the place right now.
+                </p>
+              </div>
+            </div>
+          </Button>
+        </>
+      );
+    }
+
+    return (
+      <Card className="relative overflow-hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 z-10"
+          onClick={() => {
+            setFiles([]);
+            setPreview("");
+            setExifData(null);
+          }}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+        <div className="aspect-[4/3] relative bg-muted">
+          <img
+            src={preview}
+            alt="Preview"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+      </Card>
+    );
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-6">
       <DialogClose ref={dialogCloseRef} className="hidden" />
       <div className="space-y-4">
         <div className="space-y-2">
           <Label>Photo</Label>
-          {!files.length && !preview ? (
-            <div className="grid sm:grid-cols-1 gap-4">
-              <Card
-                {...getRootProps()}
-                className={`border-dashed cursor-pointer touch-manipulation hover:border-primary/50 transition-colors ${
-                  isDragActive && "border-primary/50 bg-primary/5"
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-                  if (input) input.click();
-                }}
-              >
-                <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
-                  <div className="rounded-full bg-muted p-4">
-                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Drop photo here or click to upload</h3>
-                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      Upload a high-quality photo of the place. The photo will be publicly visible.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-              <Button
-                variant="outline"
-                className="w-full h-auto py-10 border-2 border-dashed md:hidden"
-                onClick={() => setShowCamera(true)}
-              >
-                <div className="flex flex-col items-center justify-center gap-2 text-center">
-                  <div className="rounded-full bg-muted p-4">
-                    <Camera className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="font-medium">Take a photo with camera</h3>
-                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      Use your device's camera to take a photo of the place right now.
-                    </p>
-                  </div>
-                </div>
-              </Button>
-            </div>
-          ) : showCamera ? (
-            <CameraCapture
-              onCapture={(file) => {
-                setFiles([file]);
-                const previewUrl = URL.createObjectURL(file);
-                setPreview(previewUrl);
-                setShowCamera(false);
-              }}
-              onClose={() => setShowCamera(false)}
-            />
-          ) : (
-            <Card className="relative overflow-hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-2 z-10"
-                onClick={() => {
-                  setFiles([]);
-                  setPreview("");
-                  setExifData(null);
-                }}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <div className="aspect-[4/3] relative bg-muted">
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              </div>
-            </Card>
-          )}
+          {renderContent()}
         </div>
         {files.length > 0 && (
           <div className="mt-4 space-y-4 animate-fadeIn">
