@@ -38,30 +38,53 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
         console.log('Available video devices:', videoDevices);
 
-        setHasMultipleCameras(videoDevices.length > 1);
+        // First request general camera permission
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        
+        // Then enumerate devices again to get labels
+        const devicesWithLabels = await navigator.mediaDevices.enumerateDevices();
+        const videoDevicesWithLabels = devicesWithLabels.filter(device => device.kind === 'videoinput');
+        console.log('Video devices with labels:', videoDevicesWithLabels);
 
-        if (videoDevices.length === 0) {
+        setHasMultipleCameras(videoDevicesWithLabels.length > 1);
+
+        if (videoDevicesWithLabels.length === 0) {
           setHasPermission(false);
           setError('No camera devices found. Please ensure your camera is connected and not in use by another application.');
           return;
         }
 
-        // Default to environment (back) camera if available
-        const hasBackCamera = videoDevices.some(device => 
+        // Try to find the back camera by deviceId
+        const backCamera = videoDevicesWithLabels.find(device => 
           device.label.toLowerCase().includes('back') || 
+          device.label.toLowerCase().includes('rear') ||
           device.label.toLowerCase().includes('environment')
         );
-        setFacingMode(hasBackCamera ? 'environment' : 'user');
 
-        console.log('Requesting camera access...');
-        await navigator.mediaDevices.getUserMedia({ 
-          video: {
-            facingMode: hasBackCamera ? "environment" : "user",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          } 
-        });
-        console.log('Camera access granted!');
+        // If we found a back camera, use its deviceId
+        if (backCamera) {
+          console.log('Found back camera:', backCamera);
+          await navigator.mediaDevices.getUserMedia({ 
+            video: {
+              deviceId: { exact: backCamera.deviceId },
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            } 
+          });
+          setFacingMode('environment');
+        } else {
+          // Fall back to front camera
+          console.log('No back camera found, using front camera');
+          await navigator.mediaDevices.getUserMedia({ 
+            video: {
+              facingMode: 'user',
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            } 
+          });
+          setFacingMode('user');
+        }
+
         setHasPermission(true);
         setError(null);
       } catch (err) {
@@ -103,26 +126,56 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
   }, [webcamRef, onCapture, onClose, location]);
 
   const toggleCamera = useCallback(async () => {
-    const newMode = facingMode === "user" ? "environment" : "user";
     try {
-      // Stop all video tracks first
+      // Stop current stream
       const stream = webcamRef.current?.video?.srcObject as MediaStream;
       stream?.getTracks().forEach(track => track.stop());
 
-      // Request new stream with new facing mode
-      await navigator.mediaDevices.getUserMedia({ 
-        video: {
-          facingMode: newMode,
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
-        } 
+      // Get updated device list
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+      if (videoDevices.length < 2) {
+        console.log('Only one camera available');
+        return;
+      }
+
+      const newMode = facingMode === 'user' ? 'environment' : 'user';
+      console.log('Switching to:', newMode);
+
+      // Find the appropriate camera
+      const targetCamera = videoDevices.find(device => {
+        const label = device.label.toLowerCase();
+        return newMode === 'environment' 
+          ? (label.includes('back') || label.includes('rear') || label.includes('environment'))
+          : (label.includes('front') || label.includes('user') || label.includes('facetime'));
       });
+
+      if (targetCamera) {
+        console.log('Found target camera:', targetCamera);
+        await navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: { exact: targetCamera.deviceId },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+      } else {
+        console.log('Using facingMode fallback');
+        await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: newMode,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+      }
 
       setFacingMode(newMode);
     } catch (err) {
       console.error('Failed to switch camera:', err);
     }
-  }, [facingMode]);
+  }, [facingMode, webcamRef]);
 
   if (hasPermission === null) {
     return (
