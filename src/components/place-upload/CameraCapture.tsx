@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 interface CameraCaptureProps {
-  onCapture: (file: File) => void;
+  onCapture: (file: File, location?: { latitude: number; longitude: number }) => void;
   onClose: () => void;
 }
 
@@ -15,8 +15,22 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
+  const [location, setLocation] = useState<GeolocationPosition | null>(null);
 
   useEffect(() => {
+    // Request location permission
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log('Got location:', position);
+          setLocation(position);
+        },
+        (error) => {
+          console.error('Location error:', error);
+        }
+      );
+    }
+
     async function checkCameraAccess() {
       try {
         console.log('Checking for available video devices...');
@@ -24,7 +38,6 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
         console.log('Available video devices:', videoDevices);
 
-        // Set whether we have multiple cameras
         setHasMultipleCameras(videoDevices.length > 1);
 
         if (videoDevices.length === 0) {
@@ -33,7 +46,6 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
           return;
         }
 
-        // If we're on mobile (has multiple cameras), start with environment (back) camera
         if (videoDevices.length > 1) {
           setFacingMode('environment');
         }
@@ -74,16 +86,18 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
-      // Convert base64 to blob
       fetch(imageSrc)
         .then((res) => res.blob())
         .then((blob) => {
           const file = new File([blob], "camera-capture.jpg", { type: "image/jpeg" });
-          onCapture(file);
+          onCapture(file, location?.coords ? {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+          } : undefined);
           onClose();
         });
     }
-  }, [webcamRef, onCapture, onClose]);
+  }, [webcamRef, onCapture, onClose, location]);
 
   const toggleCamera = useCallback(() => {
     setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
