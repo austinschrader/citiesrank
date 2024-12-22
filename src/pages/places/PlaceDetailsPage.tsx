@@ -36,6 +36,8 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useFeed } from "@/features/feed/context/FeedContext";
+import { Button } from "@/components/ui/button";
 
 interface PlaceDetailsPageProps {
   initialData?: CitiesResponse;
@@ -51,6 +53,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   const { cities, cityStatus } = useCities();
   const { searchQuery } = useSearch();
   const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
+  const { followPlace, unfollowPlace, followedPlaces } = useFeed();
 
   // Reset filters when entering the page
   useEffect(() => {
@@ -366,6 +369,22 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                 </CardContent>
               </Card>
             )}
+            <Card className="overflow-hidden border-none shadow-lg">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">Follow</h2>
+                <div className="flex items-center gap-4 mb-6">
+                  <Button
+                    variant={followedPlaces.includes(placeData.id) ? "secondary" : "default"}
+                    onClick={() => followedPlaces.includes(placeData.id) 
+                      ? unfollowPlace(placeData.id)
+                      : followPlace(placeData.id)
+                    }
+                  >
+                    {followedPlaces.includes(placeData.id) ? 'Following' : 'Follow'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

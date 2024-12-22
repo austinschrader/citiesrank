@@ -61,6 +61,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
 
+    // Create user preferences if they don't exist
+    try {
+      const existingPrefs = await pb.collection('user_preferences').getFirstListItem(
+        `user="${authData.record.id}"`
+      );
+    } catch (error) {
+      // If preferences don't exist, create them
+      await pb.collection('user_preferences').create({
+        user: authData.record.id,
+        followed_tags: [],
+        followed_places: [],
+      });
+    }
+
     // Optional: Redirect after successful login
     navigate("/");
 

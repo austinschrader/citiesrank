@@ -15,6 +15,7 @@ import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Bookmark,
+  Compass,
   Home,
   LogOut,
   MapPin,
@@ -41,6 +42,13 @@ export const Header = () => {
       to: "/",
       description: "Interactive map with advanced filters and search",
       iconClass: "text-indigo-500",
+    },
+    {
+      label: "Feed",
+      mobileLabel: "Feed",
+      icon: Compass,
+      to: "/feed",
+      description: "Your personalized city updates and discoveries",
     },
     {
       label: "My Places",
