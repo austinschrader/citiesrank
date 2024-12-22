@@ -33,6 +33,7 @@ import {
   filterPlacesByType,
   filterPlacesByZoom,
 } from "../utils/placeFiltering";
+import { useLocation } from "react-router-dom";
 
 export type ViewMode = "list" | "split" | "map";
 
@@ -115,13 +116,27 @@ interface MapContextValue extends MapState {
 const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
   const { filters } = useFilters();
   const [state, setState] = useState<MapState>({
     zoom: DEFAULT_ZOOM,
     center: DEFAULT_CENTER,
-    geographicLevel: CitiesTypeOptions.country,
+    geographicLevel: CitiesTypeOptions.city,
     selectedPlace: null,
   });
+
+  // Handle location state from navigation
+  useEffect(() => {
+    console.log('Location state:', location.state);
+    if (location.state?.center && location.state?.zoom) {
+      console.log('Updating map with:', location.state);
+      setState(prev => ({
+        ...prev,
+        center: location.state.center,
+        zoom: location.state.zoom,
+      }));
+    }
+  }, [location]);
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
@@ -197,16 +212,16 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const getVisiblePlacesForCurrentView = useCallback(
     (allPlaces: MapPlace[]): MapPlace[] => {
-      if (state.zoom > 12) {
-        return filterPlacesByBoundsCallback(allPlaces);
-      }
+      // First apply type filters
+      const typeFiltered = filterPlacesByTypeCallback(allPlaces);
 
-      const boundsFiltered = filterPlacesByBoundsCallback(allPlaces);
-      const typeFiltered = filterPlacesByTypeCallback(boundsFiltered);
-      return filterPlacesByZoomCallback(typeFiltered);
+      // Then apply zoom-based filtering
+      const zoomFiltered = filterPlacesByZoomCallback(typeFiltered);
+
+      // Finally apply bounds filtering
+      return filterPlacesByBoundsCallback(zoomFiltered);
     },
     [
-      state.zoom,
       filterPlacesByBoundsCallback,
       filterPlacesByTypeCallback,
       filterPlacesByZoomCallback,

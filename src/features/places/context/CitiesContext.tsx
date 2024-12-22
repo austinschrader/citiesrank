@@ -135,28 +135,17 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   const [state, setState] = useState<CitiesState>(defaultState);
 
   const organizeCitiesByType = (cities: CitiesResponse[]) => {
-    const lists = {
-      [CitiesTypeOptions.country]: [] as CitiesResponse[],
-      [CitiesTypeOptions.region]: [] as CitiesResponse[],
-      [CitiesTypeOptions.city]: [] as CitiesResponse[],
-      [CitiesTypeOptions.neighborhood]: [] as CitiesResponse[],
-      [CitiesTypeOptions.sight]: [] as CitiesResponse[],
+    const lists: Record<CitiesTypeOptions, CitiesResponse[]> = {
+      [CitiesTypeOptions.country]: [],
+      [CitiesTypeOptions.region]: [],
+      [CitiesTypeOptions.city]: [],
+      [CitiesTypeOptions.neighborhood]: [],
+      [CitiesTypeOptions.sight]: [],
     };
 
-    const uniqueCountries = new Set(cities.map((city) => city.country));
-    lists[CitiesTypeOptions.country] = Array.from(uniqueCountries).map(
-      (country) =>
-        ({
-          ...cities.find((city) => city.country === country)!,
-          type: CitiesTypeOptions.country,
-          name: country,
-        } as CitiesResponse)
-    );
-
     cities.forEach((city) => {
-      if (city.type && city.type !== CitiesTypeOptions.country) {
-        lists[city.type].push(city);
-      }
+      const type = city.type || CitiesTypeOptions.city;
+      lists[type].push(city);
     });
 
     return lists;
@@ -189,26 +178,54 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
           sort: "-created",
         });
 
-      console.log('📊 Fetched cities count:', citiesData.length);
-      console.log('🏙️ Cities by type:', 
-        Object.fromEntries(
-          Object.entries(
-            citiesData.reduce((acc, city) => {
-              acc[city.type as string] = (acc[city.type as string] || 0) + 1;
-              return acc;
-            }, {} as Record<string, number>)
-          )
-        )
-      );
+      console.log('📊 Raw cities data:', citiesData.slice(0, 5));
+
+      // Ensure each city has a type
+      const processedCitiesData = citiesData.map(city => ({
+        ...city,
+        type: city.type || CitiesTypeOptions.city // Default to city if no type
+      }));
+
+      console.log('📊 Fetched cities count:', processedCitiesData.length);
+      
+      // Log detailed type information
+      const typeStats = processedCitiesData.reduce((acc, city) => {
+        acc[city.type] = (acc[city.type] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      
+      console.log('🏙️ Cities by type:', typeStats);
+      
+      // Log some example cities of each type
+      Object.keys(typeStats).forEach(type => {
+        const examples = processedCitiesData
+          .filter(city => city.type === type)
+          .slice(0, 3)
+          .map(city => ({ name: city.name, type: city.type }));
+        console.log(`Examples of type ${type}:`, examples);
+      });
+
+      // Log detailed city information
+      const cityExamples = processedCitiesData
+        .filter(city => city.type === CitiesTypeOptions.city)
+        .slice(0, 10)
+        .map(city => ({
+          name: city.name,
+          type: city.type,
+          population: city.population,
+          latitude: city.latitude,
+          longitude: city.longitude
+        }));
+      console.log('Example cities with data:', cityExamples);
 
       setState((prev) => ({
         ...prev,
-        cities: citiesData,
-        sortedCities: [...citiesData].sort((a, b) =>
+        cities: processedCitiesData,
+        sortedCities: [...processedCitiesData].sort((a, b) =>
           a.name.localeCompare(b.name)
         ),
-        totalCities: citiesData.length,
-        typeSpecificLists: organizeCitiesByType(citiesData),
+        totalCities: processedCitiesData.length,
+        typeSpecificLists: organizeCitiesByType(processedCitiesData),
         cityStatus: { loading: false, error: null },
       }));
 
@@ -216,11 +233,11 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
       const start = (page - 1) * perPage;
       const end = start + perPage;
       const paginatedResult = {
-        items: citiesData.slice(start, end),
-        totalItems: citiesData.length,
+        items: processedCitiesData.slice(start, end),
+        totalItems: processedCitiesData.length,
         page,
         perPage,
-        totalPages: Math.ceil(citiesData.length / perPage),
+        totalPages: Math.ceil(processedCitiesData.length / perPage),
       };
 
       console.log('📑 Returning paginated result:', {

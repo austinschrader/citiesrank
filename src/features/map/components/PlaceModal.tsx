@@ -73,7 +73,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [showHints, setShowHints] = useState(true);
   const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [lastTap, setLastTap] = useState(0);
-  console.log(currentPlace.imageUrl);
   const [navigation, setNavigation] = useState<NavigationState>({
     direction: 0,
     isRandomMode: false,
@@ -127,8 +126,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
           });
         })
       );
-
-      console.log(images);
 
       setPreloadedImages(images);
     };

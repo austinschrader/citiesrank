@@ -231,6 +231,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       updates.activeTypes =
         newTypes.length === 0 ? Object.values(CitiesTypeOptions) : newTypes;
 
+      console.log('Active types after update:', updates.activeTypes);
       return { ...prev, ...updates };
     });
   }, []);
@@ -291,12 +292,12 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             }
           }
 
-          // Apply existing filters
-          if (
-            filters.activeTypes.length > 0 &&
-            !filters.activeTypes.includes(city.type)
-          ) {
-            return false;
+          // Apply type filter
+          if (filters.activeTypes.length > 0) {
+            const placeType = city.type || CitiesTypeOptions.city; // Default to city if type is not set
+            if (!filters.activeTypes.includes(placeType)) {
+              return false;
+            }
           }
 
           if (filters.populationCategory) {
