@@ -13,7 +13,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { Bookmark, Home, LogOut, MapPin, Plus, TableProperties, Upload, UserCircle } from "lucide-react";
+import {
+  Bookmark,
+  Home,
+  LogOut,
+  MapPin,
+  Plus,
+  Upload,
+  UserCircle,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
@@ -59,7 +67,7 @@ export const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-[50] w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-[100] w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-[calc(100%-4rem)] mx-auto">
         <div className="h-16 flex items-center">
           {/* Logo section - only show on desktop */}
@@ -240,7 +248,9 @@ export const Header = () => {
                       className={`h-5 w-5 ${item.iconClass}`}
                       strokeWidth={2.5}
                     />
-                    <span className="text-[10px] font-medium">{item.label}</span>
+                    <span className="text-[10px] font-medium">
+                      {item.label}
+                    </span>
                   </div>
                 </Link>
               ))}
