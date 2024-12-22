@@ -11,9 +11,10 @@ interface CameraCaptureProps {
 
 export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
   const webcamRef = useRef<Webcam>(null);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">("user"); // Default to front camera on desktop
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
 
   useEffect(() => {
     async function checkCameraAccess() {
@@ -23,16 +24,24 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
         const videoDevices = devices.filter(device => device.kind === 'videoinput');
         console.log('Available video devices:', videoDevices);
 
+        // Set whether we have multiple cameras
+        setHasMultipleCameras(videoDevices.length > 1);
+
         if (videoDevices.length === 0) {
           setHasPermission(false);
           setError('No camera devices found. Please ensure your camera is connected and not in use by another application.');
           return;
         }
 
+        // If we're on mobile (has multiple cameras), start with environment (back) camera
+        if (videoDevices.length > 1) {
+          setFacingMode('environment');
+        }
+
         console.log('Requesting camera access...');
         await navigator.mediaDevices.getUserMedia({ 
           video: {
-            facingMode: "user",  // Prefer front camera first
+            facingMode: videoDevices.length > 1 ? "environment" : "user",
             width: { ideal: 1280 },
             height: { ideal: 720 }
           } 
@@ -128,9 +137,11 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
         />
       </div>
       <div className="p-4 flex justify-center gap-4">
-        <Button variant="outline" size="icon" onClick={toggleCamera}>
-          <FlipHorizontal className="h-4 w-4" />
-        </Button>
+        {hasMultipleCameras && (
+          <Button variant="outline" size="icon" onClick={toggleCamera}>
+            <FlipHorizontal className="h-4 w-4" />
+          </Button>
+        )}
         <Button onClick={capture} className="gap-2">
           <Camera className="h-4 w-4" />
           Take Photo
