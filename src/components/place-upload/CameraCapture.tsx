@@ -46,14 +46,17 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
           return;
         }
 
-        if (videoDevices.length > 1) {
-          setFacingMode('environment');
-        }
+        // Default to environment (back) camera if available
+        const hasBackCamera = videoDevices.some(device => 
+          device.label.toLowerCase().includes('back') || 
+          device.label.toLowerCase().includes('environment')
+        );
+        setFacingMode(hasBackCamera ? 'environment' : 'user');
 
         console.log('Requesting camera access...');
         await navigator.mediaDevices.getUserMedia({ 
           video: {
-            facingMode: videoDevices.length > 1 ? "environment" : "user",
+            facingMode: hasBackCamera ? "environment" : "user",
             width: { ideal: 1280 },
             height: { ideal: 720 }
           } 
@@ -149,13 +152,19 @@ export function CameraCapture({ onCapture, onClose }: CameraCaptureProps) {
           }}
           className="absolute inset-0 w-full h-full object-cover"
         />
-      </div>
-      <div className="p-4 flex justify-center gap-4">
         {hasMultipleCameras && (
-          <Button variant="outline" size="icon" onClick={toggleCamera}>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={toggleCamera}
+            className="absolute top-4 left-4 bg-white/80 hover:bg-white shadow-lg"
+          >
             <FlipHorizontal className="h-4 w-4" />
+            <span className="sr-only">Switch Camera</span>
           </Button>
         )}
+      </div>
+      <div className="p-4 flex justify-center gap-4">
         <Button onClick={capture} className="gap-2">
           <Camera className="h-4 w-4" />
           Take Photo
