@@ -1,34 +1,34 @@
 /**
  * FiltersContext manages all user-defined filtering and sorting logic for places.
- * 
+ *
  * Data Flow:
  * 1. FiltersContext receives raw city data from CitiesContext
  * 2. Applies user-defined filters (search, type, rating, etc.)
  * 3. Provides filtered data to MapContext and UI components
  * 4. MapContext further filters based on map-specific criteria
- * 
+ *
  * Responsibilities:
  * 1. Filter State Management
  *    - Manage all filter states (search, types, ratings, etc.)
  *    - Handle filter operations (set, reset, toggle)
  *    - Track active filter counts
- * 
+ *
  * 2. Filter Operations
  *    - Apply search filtering
  *    - Handle type selection/deselection
  *    - Apply population category filters
  *    - Calculate match scores for cities
- * 
+ *
  * 3. Filter Results
  *    - Provide filtered and sorted city lists
  *    - Calculate type counts for UI
  *    - Track filter statistics
- * 
+ *
  * Does NOT handle:
  * - Raw city data (handled by CitiesContext)
  * - Map-specific filtering (handled by MapContext)
  * - UI state or interactions
- * 
+ *
  * Usage Example:
  * ```tsx
  * const { filters, getFilteredCities } = useFilters();
@@ -36,9 +36,7 @@
  * ```
  */
 
-import { travelStyles } from "@/features/explorer/components/filters/TravelStyleDropdown";
 import { MatchScore } from "@/features/preferences/types";
-import { TravelStyle } from "@/features/places/types/travel";
 import {
   CitiesResponse,
   CitiesTypeOptions,
@@ -51,7 +49,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useTagIdentifiers } from "@/features/places/hooks/useTagIdentifiers";
 
 export type SortOrder =
   | "match"
@@ -74,7 +71,7 @@ export interface Filters {
   sort: SortOrder;
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
-  travelStyle: TravelStyle | null;
+  travelStyle: string | null;
 
   // Display-only filters
   tags: string[];
@@ -92,7 +89,7 @@ interface FiltersContextValue {
   resetTravelStyleFilter: () => void;
   handleTypeClick: (type: CitiesTypeOptions) => void;
   handlePopulationSelect: (category: PopulationCategory | null) => void;
-  handleTravelStyleSelect: (style: TravelStyle | null) => Promise<void>;
+  handleTravelStyleSelect: (style: string | null) => Promise<void>;
   handleRatingChange: (rating: number | null) => void;
   getFilteredCities: (
     cities: CitiesResponse[],
@@ -156,7 +153,6 @@ export const isInPopulationRange = (
 
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<Filters>(defaultFilters);
-  const { tagIdToIdentifier } = useTagIdentifiers();
 
   const setFilter = useCallback(
     <K extends keyof Filters>(key: K, value: Filters[K]) => {
@@ -200,10 +196,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  const handleTravelStyleSelect = useCallback(async (style: TravelStyle | null) => {
+  const handleTravelStyleSelect = useCallback(async (style: string | null) => {
     // Simulate a small delay to show loading state
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     setFiltersState((prev) => ({
       ...prev,
       travelStyle: style,
@@ -280,13 +276,15 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           if (filters.search) {
             const searchTerm = filters.search.toLowerCase();
             const cityName = city.name.toLowerCase();
-            const cityCountry = city.country?.toLowerCase() || '';
-            const cityDescription = city.description?.toLowerCase() || '';
-            
+            const cityCountry = city.country?.toLowerCase() || "";
+            const cityDescription = city.description?.toLowerCase() || "";
+
             // Check if search term matches any of the city's text fields
-            if (!cityName.includes(searchTerm) && 
-                !cityCountry.includes(searchTerm) && 
-                !cityDescription.includes(searchTerm)) {
+            if (
+              !cityName.includes(searchTerm) &&
+              !cityCountry.includes(searchTerm) &&
+              !cityDescription.includes(searchTerm)
+            ) {
               return false;
             }
           }
@@ -316,64 +314,19 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             return false;
           }
 
+          // Filter by tags
+          if (filters.tags && filters.tags.length > 0) {
+            const cityTags = (city.tags as string[]) || [];
+            if (!cityTags.some((tag) => filters.tags.includes(tag))) {
+              return false;
+            }
+          }
+
           // Apply travel style filtering
           if (filters.travelStyle) {
-            const cityTagIdentifiers = city.tags?.map((tagId) =>
-              tagIdToIdentifier[tagId]
-            ) || [];
-
-            const style = travelStyles[filters.travelStyle];
-
-            // Check tags
-            const hasMatchingTags = style.tags.some((tag) =>
-              cityTagIdentifiers.includes(tag)
-            );
-            if (!hasMatchingTags) return false;
-
-            // Check minimum rating
-            if (
-              style.criteria.minRating &&
-              (!city.averageRating ||
-                city.averageRating < style.criteria.minRating)
-            ) {
+            const cityTags = (city.tags as string[]) || [];
+            if (!cityTags.includes(filters.travelStyle)) {
               return false;
-            }
-
-            // Check crowd level
-            if (style.criteria.crowdLevel) {
-              const { min, max } = style.criteria.crowdLevel;
-              if (min && city.crowdLevel < min) return false;
-              if (max && city.crowdLevel > max) return false;
-            }
-
-            // Check accessibility
-            if (style.criteria.accessibility) {
-              const { min, max } = style.criteria.accessibility;
-              if (min && city.accessibility < min) return false;
-              if (max && city.accessibility > max) return false;
-            }
-
-            // Check safety score
-            if (
-              style.criteria.safetyScore &&
-              (!city.safetyScore || city.safetyScore < style.criteria.safetyScore)
-            ) {
-              return false;
-            }
-
-            // Check preferred scores
-            if (style.criteria.preferredScores) {
-              const scores = style.criteria.preferredScores;
-              
-              if (scores.walkScore && (!city.walkScore || city.walkScore < scores.walkScore)) {
-                return false;
-              }
-              if (scores.transitScore && (!city.transitScore || city.transitScore < scores.transitScore)) {
-                return false;
-              }
-              if (scores.interesting && (!city.interesting || city.interesting < scores.interesting)) {
-                return false;
-              }
             }
           }
 
@@ -405,7 +358,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           return b.name.localeCompare(a.name);
         });
     },
-    [filters, tagIdToIdentifier]
+    [filters]
   );
 
   const getActiveFilterCount = useCallback(() => {
@@ -417,6 +370,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     // Check if not all types are selected
     if (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length)
       count++;
+    if (filters.tags.length > 0) count++;
     return count;
   }, [filters]);
 

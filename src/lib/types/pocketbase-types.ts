@@ -9,8 +9,9 @@ export enum Collections {
 	Cities = "cities",
 	Countries = "countries",
 	Favorites = "favorites",
+	FeedItems = "feed_items",
 	Lists = "lists",
-	Tags = "tags",
+	UserPreferences = "user_preferences",
 	Users = "users",
 }
 
@@ -45,7 +46,7 @@ export enum CitiesTypeOptions {
 	"neighborhood" = "neighborhood",
 	"sight" = "sight",
 }
-export type CitiesRecord<Thighlights = unknown> = {
+export type CitiesRecord<Thighlights = unknown, Ttags = unknown> = {
 	accessibility: number
 	averageRating?: number
 	bestSeason: number
@@ -67,7 +68,7 @@ export type CitiesRecord<Thighlights = unknown> = {
 	recommendedStay: number
 	safetyScore: number
 	slug: string
-	tags?: RecordIdString[]
+	tags?: null | Ttags
 	totalReviews?: number
 	transit: number
 	transitScore: number
@@ -87,6 +88,31 @@ export type FavoritesRecord = {
 	city: RecordIdString
 	field?: string
 	user: RecordIdString
+}
+
+export enum FeedItemsTypeOptions {
+	"trending_place" = "trending_place",
+	"place_collection" = "place_collection",
+	"similar_places" = "similar_places",
+	"place_update" = "place_update",
+	"tag_spotlight" = "tag_spotlight",
+}
+
+export enum FeedItemsSourceTypeOptions {
+	"tag" = "tag",
+	"place" = "place",
+	"system" = "system",
+}
+export type FeedItemsRecord<Tcontent = unknown, Tstats = unknown> = {
+	content?: null | Tcontent
+	curator?: RecordIdString
+	place?: RecordIdString
+	places?: RecordIdString
+	source_name: string
+	source_type: FeedItemsSourceTypeOptions
+	stats?: null | Tstats
+	timestamp: IsoDateString
+	type: FeedItemsTypeOptions
 }
 
 export enum ListsStatusOptions {
@@ -125,11 +151,10 @@ export type ListsRecord<Ttags = unknown> = {
 	views?: number
 }
 
-export type TagsRecord = {
-	active?: boolean
-	identifier: string
-	label: string
-	order?: number
+export type UserPreferencesRecord<Tfollowed_places = unknown, Tfollowed_tags = unknown> = {
+	followed_places?: null | Tfollowed_places
+	followed_tags?: null | Tfollowed_tags
+	user: RecordIdString
 }
 
 export type UsersRecord = {
@@ -144,11 +169,12 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type CitiesResponse<Thighlights = unknown, Texpand = unknown> = Required<CitiesRecord<Thighlights>> & BaseSystemFields<Texpand>
+export type CitiesResponse<Thighlights = unknown, Ttags = unknown, Texpand = unknown> = Required<CitiesRecord<Thighlights, Ttags>> & BaseSystemFields<Texpand>
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
+export type FeedItemsResponse<Tcontent = unknown, Tstats = unknown, Texpand = unknown> = Required<FeedItemsRecord<Tcontent, Tstats>> & BaseSystemFields<Texpand>
 export type ListsResponse<Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Ttags>> & BaseSystemFields<Texpand>
-export type TagsResponse<Texpand = unknown> = Required<TagsRecord> & BaseSystemFields<Texpand>
+export type UserPreferencesResponse<Tfollowed_places = unknown, Tfollowed_tags = unknown, Texpand = unknown> = Required<UserPreferencesRecord<Tfollowed_places, Tfollowed_tags>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -157,8 +183,9 @@ export type CollectionRecords = {
 	cities: CitiesRecord
 	countries: CountriesRecord
 	favorites: FavoritesRecord
+	feed_items: FeedItemsRecord
 	lists: ListsRecord
-	tags: TagsRecord
+	user_preferences: UserPreferencesRecord
 	users: UsersRecord
 }
 
@@ -166,8 +193,9 @@ export type CollectionResponses = {
 	cities: CitiesResponse
 	countries: CountriesResponse
 	favorites: FavoritesResponse
+	feed_items: FeedItemsResponse
 	lists: ListsResponse
-	tags: TagsResponse
+	user_preferences: UserPreferencesResponse
 	users: UsersResponse
 }
 
@@ -178,7 +206,8 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'cities'): RecordService<CitiesResponse>
 	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'favorites'): RecordService<FavoritesResponse>
+	collection(idOrName: 'feed_items'): RecordService<FeedItemsResponse>
 	collection(idOrName: 'lists'): RecordService<ListsResponse>
-	collection(idOrName: 'tags'): RecordService<TagsResponse>
+	collection(idOrName: 'user_preferences'): RecordService<UserPreferencesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

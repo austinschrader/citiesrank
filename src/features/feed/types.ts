@@ -5,6 +5,7 @@
  */
 
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
+import { PlaceTag } from "@/features/places/types/tags";
 
 export type FeedItemType =
   | 'trending_place'
@@ -44,6 +45,7 @@ export interface PlaceCollectionItem extends FeedItem {
     avatar: string;
   };
   savedCount: number;
+  tags: string[];
 }
 
 export interface SimilarPlacesItem extends FeedItem {
