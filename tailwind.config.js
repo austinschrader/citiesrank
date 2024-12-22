@@ -16,7 +16,7 @@ export default {
       animation: {
         pulse: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         ping: "ping 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        shimmer: "shimmer 2s infinite",
+        shimmer: "shimmer 2.5s linear infinite",
         "heart-bounce": "heart-bounce 2s infinite ease-in-out",
         "heart-favorite": "heart-favorite 0.5s ease-out",
       },
@@ -26,8 +26,8 @@ export default {
           "50%": { opacity: 0.75 },
         },
         shimmer: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(100%)" },
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
         },
         ping: {
           "0%, 100%": { transform: "scale(1)", opacity: 0.75 },

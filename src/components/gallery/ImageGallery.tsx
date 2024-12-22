@@ -40,12 +40,11 @@ export const ImageGallery = ({
           mobile: getImageUrl(imageUrl, "mobile"),
           tablet: getImageUrl(imageUrl, "tablet"),
           desktop: getImageUrl(imageUrl, "wide"),
-          // Add higher quality versions for full screen
           fullscreen: getImageUrl(imageUrl, "fullscreen"),
         },
       };
     });
-  }, [citySlug, countrySlug, cityName, country]);
+  }, [citySlug, countrySlug, cityName, country, imageUrl]);
 
   // Preload adjacent images
   const preloadAdjacentImages = useCallback(
@@ -73,13 +72,15 @@ export const ImageGallery = ({
 
   useEffect(() => {
     if (priority) {
-      // Immediately load first image for hero sections
       const img = new Image();
-      img.src = images[0].sources.desktop;
+      img.src =
+        variant === "hero"
+          ? images[0].sources.desktop
+          : images[0].sources.tablet;
       img.onload = () => setIsLoading(false);
     }
     preloadAdjacentImages(currentIndex);
-  }, [priority, images, currentIndex, preloadAdjacentImages]);
+  }, [priority, images, currentIndex, preloadAdjacentImages, variant]);
 
   const navigate = useCallback(
     (direction: number) => {
@@ -97,10 +98,14 @@ export const ImageGallery = ({
 
   return (
     <div className="relative w-full h-full">
+      {/* Loading skeleton */}
       {isLoading && (
-        <div className="absolute inset-0 bg-slate-200 animate-pulse" />
+        <div className="absolute inset-0">
+          <div className="w-full h-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-shimmer bg-[length:200%_100%]" />
+        </div>
       )}
 
+      {/* Hero overlay gradients */}
       {variant === "hero" && (
         <>
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60 pointer-events-none" />
@@ -126,10 +131,14 @@ export const ImageGallery = ({
           }
         />
         <img
-          src={images[currentIndex].sources.tablet}
+          src={
+            variant === "hero"
+              ? images[currentIndex].sources.desktop
+              : images[currentIndex].sources.tablet
+          }
           alt={images[currentIndex].title}
           className={cn(
-            "w-full h-full object-cover",
+            "w-full h-full object-cover transition-opacity duration-300",
             onImageClick && "cursor-pointer"
           )}
           loading={priority ? "eager" : "lazy"}
@@ -138,7 +147,7 @@ export const ImageGallery = ({
         />
       </picture>
 
-      {/* Add gallery icon for hero variant */}
+      {/* Gallery controls */}
       {variant === "hero" && onImageClick && (
         <div className="absolute top-4 right-4 z-10">
           <button
@@ -160,13 +169,6 @@ export const ImageGallery = ({
             />
           </button>
         </div>
-      )}
-
-      {variant === "hero" && isLoading && (
-        <>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-        </>
       )}
 
       {images.length > 1 && (
