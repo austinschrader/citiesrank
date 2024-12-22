@@ -13,8 +13,9 @@ import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
+import { MyPlacesPage } from "@/pages/places/MyPlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
                       <Route path="/explore" element={<PlacesPage />} />
                       <Route path="/favorites" element={<FavoritesPage />} />
                       <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/my-places" element={<MyPlacesPage />} />
                       <Route
                         path="/places/:placeType/:id"
                         element={<PlaceDetailsPage />}
