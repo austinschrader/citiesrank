@@ -96,3 +96,16 @@ run a prod migration
 
 run a prod release
 1. it will release when you merge to main
+
+
+
+setup ngrok
+
+1. go to ngrok
+2. sign up
+3. brew install ngrok
+4. ngrok config add-authtoken YOUR_AUTH_TOKEN
+
+run ngrok
+ngrok http 5173
+

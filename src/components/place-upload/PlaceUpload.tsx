@@ -460,9 +460,14 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
             <div className="grid sm:grid-cols-1 gap-4">
               <Card
                 {...getRootProps()}
-                className={`border-dashed cursor-pointer hover:border-primary/50 transition-colors ${
+                className={`border-dashed cursor-pointer touch-manipulation hover:border-primary/50 transition-colors ${
                   isDragActive && "border-primary/50 bg-primary/5"
                 }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+                  if (input) input.click();
+                }}
               >
                 <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
                   <div className="rounded-full bg-muted p-4">
@@ -477,8 +482,11 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                 </div>
               </Card>
               <Card
-                className="border-dashed cursor-pointer hover:border-primary/50 transition-colors md:hidden"
-                onClick={() => setShowCamera(true)}
+                className="border-dashed cursor-pointer touch-manipulation hover:border-primary/50 transition-colors md:hidden"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowCamera(true);
+                }}
               >
                 <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
                   <div className="rounded-full bg-muted p-4">
