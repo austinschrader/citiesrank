@@ -3,10 +3,22 @@ import { Cloudinary } from "@cloudinary/url-gen";
 import { improve } from "@cloudinary/url-gen/actions/adjust";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+import axios from 'axios';
+
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+if (!CLOUD_NAME) {
+  throw new Error('VITE_CLOUDINARY_CLOUD_NAME is not defined');
+}
+
+if (!UPLOAD_PRESET) {
+  throw new Error('VITE_CLOUDINARY_UPLOAD_PRESET is not defined');
+}
 
 const cld = new Cloudinary({
   cloud: {
-    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+    cloudName: CLOUD_NAME,
   },
   url: {
     secure: true,
@@ -37,6 +49,26 @@ const SIZES: Record<
   fullscreen: { width: 2400, height: 1600, quality: 90 },
 };
 
+export const uploadImage = async (file: File, publicId: string): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+  formData.append('public_id', publicId);
+  formData.append('folder', 'places');
+
+  try {
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      formData
+    );
+
+    return response.data.public_id;
+  } catch (error) {
+    console.error('Error uploading to Cloudinary:', error);
+    throw error;
+  }
+};
+
 export const getImageUrl = (path: string, size: ImageSize = "standard") => {
   const { width, height } = SIZES[size];
 
@@ -50,13 +82,13 @@ export const getImageUrl = (path: string, size: ImageSize = "standard") => {
 export const getPlaceImage = (
   citySlug: string,
   size: ImageSize = "standard"
-) => {
-  return getImageUrl(citySlug, size);
+): string => {
+  return getImageUrl(`places/${citySlug}`, size);
 };
 
 export const getAttractionImage = (
   attractionSlug: string,
   size: ImageSize = "standard"
-) => {
-  return getImageUrl(attractionSlug, size);
+): string => {
+  return getImageUrl(`attractions/${attractionSlug}`, size);
 };

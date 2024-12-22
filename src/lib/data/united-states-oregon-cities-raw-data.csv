@@ -1,0 +1,99 @@
+Succinctly analyze all Oregon cities of tourist importance and provide tourism data in a table format as shown below:
+City|Reviews|Transit|Safety|Core Appeal|Metro Draw|Rating|City Name
+Metrics:
+Rating (0-5): Overall tourist experience rating.
+Reference Cities (for context):
+5.0 (Exceptional): Kyoto, Machu Picchu, Bora Bora
+4.9 (Outstanding): Santorini, Paris, New York City
+4.8 (Excellent): Venice, Barcelona, London
+4.7 (Very good): Rome, San Francisco, Buenos Aires
+4.6 (Good): Seville, Prague, Cape Town
+4.5 (Above average): Florence, Tokyo, Quebec City
+4.0 (Average): Dublin, Berlin, Mexico City
+3.5 (Below average): Amsterdam, Mumbai, Cairo
+3.0 (Mediocre): Lisbon, Jakarta, Nairobi
+2.5 (Poor): Bucharest, Dhaka, Port-au-Prince
+2.0 (Very poor): Minsk, Kinshasa, Caracas
+1.5 (Extremely poor): Pyongyang, Sana'a, Bangui
+1.0 (Severely compromised): Kabul, Mogadishu, Damascus
+0.5 (Near uninhabitable): Tripoli, War zone areas
+0 (Uninhabitable): Hypothetical destroyed city
+DO NOT provide a justification, summary of the simply. Simply the scores, for as many cities as possible within that jurisdicition.
+Sort by Rating (descending). Prioritize accurate representation over forced statistical patterns.
+
+
+Primary Tourist Cities:
+CityName	Reviews	Transit	Safety	Core Appeal	Metro Draw	Rating
+Portland|4.0
+Astoria|4.5
+Bend|4.7
+Cannon Beach|4.9
+Florence|4.0
+Jacksonville|4.5
+Joseph|4.7
+Yachats|4.2
+Seaside|3.5
+Newport|4.0
+Hood River|4.7
+Baker City|4.2
+Ashland|4.5
+Crater Lake National Park|4.9
+Columbia River Gorge|4.7
+Silverton|4.0
+Sisters|4.2
+Tillamook|4.0
+Eugene|3.5
+Salem|3.0
+Medford|3.0
+Klamath Falls|3.0
+Pendleton|3.5
+Coos Bay|3.0
+Brookings|3.5
+Lincoln City|3.5
+Depoe Bay|3.5
+Bandon|4.0
+Grants Pass|3.0
+Roseburg|2.5
+Ontario|2.5
+Burns|2.5
+Lakeview|2.5
+John Day|3.0
+The Dalles|3.0
+La Grande|3.0
+Enterprise|3.5
+Fossil|3.0
+Heppner|3.0
+Vale|2.5
+Nyssa|2.5
+Boardman|2.5
+Condon|3.0
+Arlington|3.0
+Dufur|3.5
+Maupin|3.5
+Wasco|3.0
+Rufus|2.5
+Shaniko|3.0
+Antelope|3.0
+Mitchell|3.0
+Spray|3.0
+Monument|3.0
+Long Creek|3.0
+Ukiah|3.0
+Pilot Rock|3.0
+Ione|3.0
+Lexington|3.0
+Echo|3.0
+Hermiston|2.5
+Milton-Freewater|2.5
+Umatilla|2.5
+Stanfield|2.5
+Adams|2.5
+Athena|2.5
+Weston|3.0
+Irrigon|2.5
+Morrow|2.5
+Helix|2.5
+Hardman|2.5
+Service Creek|2.5
+Kimberly|2.5
+Lonerock|2.5

@@ -24,15 +24,16 @@ export function SignInButton() {
       onClick={handleSignIn}
       disabled={isLoading}
       size="sm"
-      className="bg-primary text-white hover:bg-primary/90 relative h-9 text-sm font-medium shadow-md"
+      className="bg-primary text-white hover:bg-primary/90 relative h-9 text-sm font-medium shadow-md flex items-center gap-2"
     >
       {isLoading ? (
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
       ) : (
-        <LogIn className="h-4 w-4" />
+        <>
+          <LogIn className="h-4 w-4" />
+          <span>Sign in</span>
+        </>
       )}
-      <span className="hidden md:inline">Join/Sign in</span>
-      <span className="md:hidden">Join</span>
     </Button>
   );
 }

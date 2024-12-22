@@ -8,7 +8,7 @@ import { MapMarkerProps, MapPlace } from "../types";
 // Helper functions
 const getMarkerStyle = (type?: string, rating?: number) => {
   const getRatingColor = (rating?: number) => {
-    if (!rating) return ratingColors.none;
+    if (!rating) return ratingColors.new; // Show emerald for new places
     if (rating >= 4.8) return ratingColors.best;
     if (rating >= 4.5) return ratingColors.great;
     if (rating >= 4.2) return ratingColors.good;
@@ -95,17 +95,18 @@ const createMarkerHtml = (
       ">
         ${
           rating
-            ? `
-          <div style="
-            font-size: ${rating.length > 2 ? "13px" : "14px"};
-            font-weight: 600;
-            color: #ffffff;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          ">
-            ${rating}
-          </div>
-        `
-            : ""
+            ? `<div style="
+                font-size: ${rating.length > 2 ? "13px" : "14px"};
+                font-weight: 600;
+                color: #ffffff;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+              ">${rating}</div>`
+            : `<div style="
+                font-size: 14px;
+                font-weight: 600;
+                color: #ffffff;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+              ">✨</div>`
         }
       </div>
     </div>

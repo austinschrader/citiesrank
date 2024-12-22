@@ -9,7 +9,7 @@ import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
 import { createSlug } from "@/features/places/utils/placeUtils";
-import { getPlaceImage } from "@/lib/cloudinary";
+import { getImageUrl } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
@@ -20,6 +20,7 @@ import {
   LucideIcon,
   MapPin,
   Shuffle,
+  Sparkles,
   Star,
   X,
 } from "lucide-react";
@@ -72,6 +73,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [showHints, setShowHints] = useState(true);
   const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [lastTap, setLastTap] = useState(0);
+  console.log(currentPlace.imageUrl);
   const [navigation, setNavigation] = useState<NavigationState>({
     direction: 0,
     isRandomMode: false,
@@ -103,13 +105,17 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   // Image preloading
   useEffect(() => {
     const loadImages = async () => {
-      const images = Array.from({ length: 4 }, (_, i) =>
-        getPlaceImage(
-          currentPlace.type === "city"
-            ? `${currentPlace.imageUrl.replace(/-\d+$/, "")}-${i + 1}`
-            : currentPlace.imageUrl,
-          isMobile ? "mobile" : "wide"
-        )
+      // For cities, we have multiple numbered images
+      // For sights, we just have one image
+      const imageUrls = currentPlace.type === "city"
+        ? Array.from({ length: 4 }, (_, i) => {
+            const base = currentPlace.imageUrl.replace(/^places\//, '').replace(/-\d+$/, '');
+            return `places/${base}-${i + 1}`;
+          })
+        : [currentPlace.imageUrl];
+
+      const images = imageUrls.map(url => 
+        getImageUrl(url, isMobile ? "mobile" : "wide")
       );
 
       await Promise.all(
@@ -121,6 +127,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
           });
         })
       );
+
+      console.log(images);
 
       setPreloadedImages(images);
     };
@@ -312,7 +320,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   }, [navigation.isRandomMode]);
 
   const handleDetailsView = () => {
-    navigate(`/places/${currentPlace.type}/${createSlug(currentPlace.name)}`, {
+    navigate(`/places/${currentPlace.type}/${currentPlace.slug}`, {
       state: { placeData: currentPlace },
     });
     onClose();
@@ -508,12 +516,17 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   >
                     {currentPlace.name}
                   </Button>
-                  {currentPlace.averageRating && (
+                  {currentPlace.averageRating ? (
                     <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full drop-shadow-sm">
                       <Star className="w-3 h-3 text-yellow-500" />
                       <span className="text-sm font-medium text-white">
                         {currentPlace.averageRating.toFixed(1)}
                       </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full drop-shadow-sm">
+                      <Sparkles className="w-3 h-3 text-emerald-400" />
+                      <span className="text-sm font-medium text-white">New</span>
                     </div>
                   )}
                 </div>

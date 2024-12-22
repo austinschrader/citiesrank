@@ -46,7 +46,7 @@ const formatUrlName = (name: string) => {
 };
 
 export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
-  const { id } = useParams();
+  const { placeType, id } = useParams();
   const { preferences, calculateMatchForCity } = usePreferences();
   const { cities, cityStatus } = useCities();
   const { searchQuery } = useSearch();
@@ -60,9 +60,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   // Get current place and its parent
   const placeData = useMemo(() => {
     if (initialData) return initialData;
-    return cities.find(
-      (city) => city.normalizedName.toLowerCase() === id?.toLowerCase()
-    );
+    return cities.find((city) => city.slug === id);
   }, [cities, id, initialData]);
 
   const parentPlace = useMemo(() => {
@@ -105,9 +103,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
               <>
                 <li>
                   <Link
-                    to={`/places/${
-                      parentPlace.type || "country"
-                    }/${formatUrlName(parentPlace.normalizedName)}`}
+                    to={`/places/${parentPlace.type || "country"}/${parentPlace.slug}`}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {parentPlace.name}
