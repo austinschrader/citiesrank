@@ -59,7 +59,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
     "A dazzling holiday spectacle! This house transforms into a winter wonderland with thousands of synchronized LED lights dancing to festive music. Features include animated light sculptures, a towering Christmas tree, and a magical walkthrough experience that delights visitors of all ages. A must-visit destination during the holiday season that brings joy and wonder to the community."
   );
   const [isLocating, setIsLocating] = useState(false);
-  const { pb } = useAuth();
+  const { pb, user } = useAuth();
   const { toast } = useToast();
   const { refreshCities } = useCitiesActions();
 
@@ -349,6 +349,28 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to upload places",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log("Current user object:", user);
+    console.log("User model:", pb.authStore.model);
+    console.log("Auth store:", pb.authStore);
+
+    if (!pb.authStore.model) {
+      toast({
+        title: "Error",
+        description: "Authentication error - please try logging in again",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setUploading(true);
     setProgress(0);
 
@@ -371,6 +393,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       transitScore: 7,
       latitude: coordinates.lat,
       longitude: coordinates.lng,
+      userId: pb.authStore.model.id,
       highlights: [
         "Beautiful Christmas lights display",
         "Synchronized music and lights",
