@@ -72,6 +72,7 @@ export type CitiesRecord<Thighlights = unknown> = {
 	transit: number
 	transitScore: number
 	type?: CitiesTypeOptions
+	userId?: RecordIdString
 	walkScore: number
 }
 
@@ -134,7 +135,7 @@ export type TagsRecord = {
 export type UsersRecord = {
 	avatar?: string
 	bio?: string
-	isAdmin: boolean
+	isAdmin?: boolean
 	isPrivate?: boolean
 	lists_count?: number
 	location?: string

@@ -129,6 +129,8 @@ export const validatePlace = (data: Partial<CitiesRecord>): ValidationResult => 
     longitude: data.longitude || 0,
     // Required by interface but can be empty
     imageUrl: data.imageUrl || "",
+    // User relation
+    userId: data.userId,
   };
 
   return {
@@ -145,7 +147,10 @@ export const uploadPlace = async (
   imageFile?: File
 ): Promise<{ success: boolean; error?: string; id?: string; slug?: string }> => {
   try {
+    console.log("Original place data:", placeData);
+    console.log("User ID being sent:", placeData.userId);
     const validationResult = validatePlace(placeData);
+    console.log("Transformed place data:", validationResult.data);
     
     if (!validationResult.isValid) {
       return {
@@ -183,8 +188,29 @@ export const uploadPlace = async (
       validationResult.data.imageUrl = "places/default-place";
     }
 
-    // Create the place record
-    const record = await pb.collection("cities").create(validationResult.data);
+    // Create the place record with userId as array
+    const recordData = {
+      ...validationResult.data,
+      userId: validationResult.data.userId ? [validationResult.data.userId] : undefined
+    };
+    
+    console.log("Final record data being sent to PocketBase:", recordData);
+    
+    // Verify user exists before creating record
+    if (recordData.userId) {
+      try {
+        const user = await pb.collection('users').getOne(recordData.userId[0]);
+        console.log("Found user:", user);
+      } catch (error) {
+        console.error("Failed to find user:", error);
+        return {
+          success: false,
+          error: "Invalid user ID - user not found",
+        };
+      }
+    }
+    
+    const record = await pb.collection("cities").create(recordData);
     
     return { success: true, id: record.id, slug: record.slug };
   } catch (error) {
