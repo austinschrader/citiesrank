@@ -81,7 +81,7 @@ export const HeroSection = ({ city }: HeroSectionProps) => {
                   {city.description && city.description.length > 200 && (
                     <button
                       onClick={() => setIsExpanded(!isExpanded)}
-                      className="mt-2 text-sm text-white/70 hover:text-white transition-colors"
+                      className="mt-2 text-sm text-black/70 hover:text-black transition-colors"
                     >
                       {isExpanded ? "Show less" : "Read more"}
                     </button>
