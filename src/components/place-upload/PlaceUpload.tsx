@@ -434,7 +434,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
         <div className="space-y-2">
           <Label>Photo</Label>
           {!files.length && !preview ? (
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-1 gap-4">
               <Card
                 {...getRootProps()}
                 className={`border-dashed cursor-pointer hover:border-primary/50 transition-colors ${
@@ -446,18 +446,15 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                     <ImageIcon className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-medium">
-                      Drop photo here or click to upload
-                    </h3>
+                    <h3 className="font-medium">Drop photo here or click to upload</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      Upload a high-quality photo of the place. The photo will
-                      be publicly visible.
+                      Upload a high-quality photo of the place. The photo will be publicly visible.
                     </p>
                   </div>
                 </div>
               </Card>
               <Card
-                className="border-dashed cursor-pointer hover:border-primary/50 transition-colors"
+                className="border-dashed cursor-pointer hover:border-primary/50 transition-colors md:hidden"
                 onClick={() => setShowCamera(true)}
               >
                 <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
@@ -467,8 +464,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
                   <div className="space-y-2">
                     <h3 className="font-medium">Take a photo with camera</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      Use your device's camera to take a photo of the place
-                      right now.
+                      Use your device's camera to take a photo of the place right now.
                     </p>
                   </div>
                 </div>
