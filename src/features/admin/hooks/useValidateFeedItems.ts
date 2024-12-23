@@ -50,11 +50,17 @@ const tagSpotlightSchema = baseFeedItemSchema.extend({
 const placeUpdateSchema = baseFeedItemSchema.extend({
   type: z.literal("place_update"),
   place: z.string(),
-  changes: z.array(z.object({
-    field: z.string(),
-    old_value: z.any(),
-    new_value: z.any()
-  }))
+  content: z.object({
+    title: z.string(),
+    description: z.string(),
+    changes: z.array(z.object({
+      field: z.string(),
+      old_value: z.any().optional(),
+      new_value: z.any().optional(),
+      reason: z.string().optional(),
+      update: z.string().optional()
+    }))
+  })
 });
 
 // Schema for similar places

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Tokyo",
+    "country": "Japan",
+    "type": ["city"],
+    "cost": 85,
+    "interesting": 95,
+    "transit": 98,
+    "description": "Tokyo is a dynamic metropolis that seamlessly blends ultra-modern technology with traditional Japanese culture. As one of the world's largest and most advanced cities, it offers an unparalleled urban experience with efficient public transportation, cutting-edge technology, and diverse neighborhoods each with their own unique character.",
+    "population": "37.4M",
+    "highlights": [
+      "World's most efficient public transit system",
+      "Incredible food scene with the most Michelin-starred restaurants globally",
+      "Perfect blend of traditional culture and modern technology",
+      "Safe and clean urban environment",
+      "Vibrant neighborhoods each with distinct character"
+    ],
+    "averageRating": 4.4,
+    "totalReviews": 12500,
+    "tags": [
+      "metropolitan",
+      "technology",
+      "culture",
+      "food",
+      "efficient",
+      "modern",
+      "traditional",
+      "shopping",
+      "entertainment"
+    ],
+    "crowdLevel": 90,
+    "recommendedStay": 90,
+    "bestSeason": 80,
+    "accessibility": 90,
+    "costIndex": 5,
+    "safetyScore": 9.5,
+    "walkScore": 9.0,
+    "transitScore": 9.8,
+    "latitude": 35.6762,
+    "longitude": 139.6503
+  }
+]
