@@ -1,6 +1,6 @@
-import { Route, Routes } from "react-router-dom";
-import { ImportPlacesPage } from "@/features/admin/components/ImportPlacesPage";
+import { ImportPlacesPage } from "@/features/admin/pages/ImportPlacesPage";
 import { AdminGuard } from "@/features/admin/routes/AdminGuard";
+import { Route, Routes } from "react-router-dom";
 
 export function AdminRoutes() {
   return (
