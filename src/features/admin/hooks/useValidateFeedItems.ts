@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import type { ValidationResult } from "../types/validation";
-import { FeedItemsTypeOptions, FeedItemsSourceTypeOptions } from "@/lib/types/pocketbase-types";
+import { useToast } from "@/hooks/use-toast";
+import { FeedItemsSourceTypeOptions, FeedItemsTypeOptions } from "@/lib/types/pocketbase-types";
+import { useState } from "react";
 import { z } from "zod";
+import type { ValidationResult } from "../types/validation";
 
 // Base schema for all feed items
 const baseFeedItemSchema = z.object({
@@ -65,14 +65,14 @@ const placeUpdateSchema = baseFeedItemSchema.extend({
 
 // Schema for similar places
 const similarPlacesSchema = baseFeedItemSchema.extend({
-  type: z.literal(FeedItemsTypeOptions.similar_places),
+  type: z.literal("similar_places"),
   place: z.string(),
   places: z.array(z.string()),
   stats: z.object({
     average_cost: z.number(),
     average_transit_score: z.number(),
     average_walk_score: z.number()
-  }).optional()
+  })
 });
 
 export function useValidateFeedItems() {
@@ -130,7 +130,7 @@ export function useValidateFeedItems() {
       case "place_update":
         schema = placeUpdateSchema;
         break;
-      case FeedItemsTypeOptions.similar_places:
+      case "similar_places":
         schema = similarPlacesSchema;
         break;
       default:
@@ -151,7 +151,22 @@ export function useValidateFeedItems() {
 
     // Additional validation for items with place references
     const data = result.data;
-    if ('places' in data) {
+    let validatedData = { ...data };
+
+    // Type guard for objects with 'place' property
+    if ('place' in data && typeof data.place === 'string') {
+      const placeIds = await resolvePlaceIds([data.place]);
+      if (!placeIds[data.place]) {
+        return {
+          ...baseResult,
+          errors: [`Place not found: ${data.place}`]
+        };
+      }
+      (validatedData as any).place = placeIds[data.place];
+    }
+
+    // Type guard for objects with 'places' property
+    if ('places' in data && Array.isArray(data.places)) {
       const placeIds = await resolvePlaceIds(data.places);
       const missingPlaces = data.places.filter(slug => !placeIds[slug]);
       
@@ -165,41 +180,13 @@ export function useValidateFeedItems() {
       // Convert to array of IDs for PocketBase
       const placeIdArray = data.places.map(slug => placeIds[slug]);
       console.log('Place ID array:', placeIdArray);
-
-      return {
-        ...baseResult,
-        isValid: true,
-        data: {
-          ...data,
-          places: placeIdArray
-        }
-      };
-    }
-
-    if ('place' in data) {
-      const placeIds = await resolvePlaceIds([data.place]);
-      if (!placeIds[data.place]) {
-        return {
-          ...baseResult,
-          errors: [`Place not found: ${data.place}`]
-        };
-      }
-
-      // Replace slug with ID in the data
-      return {
-        ...baseResult,
-        isValid: true,
-        data: {
-          ...data,
-          place: placeIds[data.place]
-        }
-      };
+      (validatedData as any).places = placeIdArray;
     }
 
     return {
       ...baseResult,
       isValid: true,
-      data: result.data
+      data: validatedData
     };
   };
 

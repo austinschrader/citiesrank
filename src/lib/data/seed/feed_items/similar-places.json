@@ -7,8 +7,8 @@
     "places": ["austin-united-states", "denver-united-states", "seattle-united-states"],
     "content": {
       "title": "Cities Like Portland",
-      "description": "If you like Portland, you might enjoy these similar cities",
-      "similarities": [
+      "description": "If you like Portland, you might enjoy these similar cities. These cities share Portland's strong food scene, outdoor lifestyle, tech industry presence, and progressive culture.",
+      "highlights": [
         "Strong food scene",
         "Outdoor lifestyle",
         "Tech industry presence",
@@ -30,8 +30,8 @@
     "places": ["copenhagen-denmark", "berlin-germany", "stockholm-sweden"],
     "content": {
       "title": "Cities Similar to Amsterdam",
-      "description": "European cities that share Amsterdam's urban characteristics",
-      "similarities": [
+      "description": "European cities that share Amsterdam's urban characteristics including bike-friendly infrastructure, historic architecture, canal systems, and rich cultural attractions.",
+      "highlights": [
         "Bike-friendly infrastructure",
         "Historic architecture",
         "Canal systems",
