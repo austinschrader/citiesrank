@@ -6,8 +6,8 @@ interface OnboardingOverlayProps {
 
 export const OnboardingOverlay = ({ onClose }: OnboardingOverlayProps) => {
   return (
-    <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-8 max-w-lg mx-4">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[200] isolate">
+      <div className="bg-white rounded-2xl p-8 max-w-lg mx-4 relative">
         <h2 className="text-2xl font-bold mb-2">Welcome to MapSpace</h2>
         <p className="text-gray-600 mb-6">The living layer of your world</p>
 
@@ -50,7 +50,7 @@ export const OnboardingOverlay = ({ onClose }: OnboardingOverlayProps) => {
         </div>
 
         <button
-          className="w-full bg-blue-600 text-white font-medium py-3 rounded-lg hover:bg-blue-700"
+          className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
           onClick={onClose}
         >
           Start Exploring
