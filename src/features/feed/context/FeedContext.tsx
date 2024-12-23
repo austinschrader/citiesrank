@@ -105,8 +105,12 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const updateUserPreferences = async () => {
+  const updateUserPreferences = async (newTags?: string[], newPlaces?: string[]) => {
     if (!user) return;
+    
+    const tagsToUpdate = newTags ?? followedTags;
+    const placesToUpdate = newPlaces ?? followedPlaces;
+    
     try {
       const result = await pb.collection("user_preferences").getList(1, 1, {
         filter: `user="${user.id}"`,
@@ -116,14 +120,18 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       if (result.items.length > 0) {
         const record = result.items[0];
         await pb.collection("user_preferences").update(record.id, {
-          followed_tags: followedTags,
-          followed_places: followedPlaces,
+          followed_tags: tagsToUpdate,
+          followed_places: placesToUpdate,
+        }, {
+          $autoCancel: false
         });
       } else {
         await pb.collection("user_preferences").create({
           user: user.id,
-          followed_tags: followedTags,
-          followed_places: followedPlaces,
+          followed_tags: tagsToUpdate,
+          followed_places: placesToUpdate,
+        }, {
+          $autoCancel: false
         });
       }
     } catch (error) {
@@ -133,24 +141,28 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const followTag = async (tag: string) => {
     if (followedTags.includes(tag)) return;
-    setFollowedTags([...followedTags, tag]);
-    await updateUserPreferences();
+    const newTags = [...followedTags, tag];
+    await updateUserPreferences(newTags, followedPlaces);
+    setFollowedTags(newTags);
   };
 
   const unfollowTag = async (tag: string) => {
-    setFollowedTags(followedTags.filter((t) => t !== tag));
-    await updateUserPreferences();
+    const newTags = followedTags.filter((t) => t !== tag);
+    await updateUserPreferences(newTags, followedPlaces);
+    setFollowedTags(newTags);
   };
 
   const followPlace = async (placeId: string) => {
     if (followedPlaces.includes(placeId)) return;
-    setFollowedPlaces([...followedPlaces, placeId]);
-    await updateUserPreferences();
+    const newPlaces = [...followedPlaces, placeId];
+    await updateUserPreferences(followedTags, newPlaces);
+    setFollowedPlaces(newPlaces);
   };
 
   const unfollowPlace = async (placeId: string) => {
-    setFollowedPlaces(followedPlaces.filter((p) => p !== placeId));
-    await updateUserPreferences();
+    const newPlaces = followedPlaces.filter((p) => p !== placeId);
+    await updateUserPreferences(followedTags, newPlaces);
+    setFollowedPlaces(newPlaces);
   };
 
   const generateFeed = async () => {
