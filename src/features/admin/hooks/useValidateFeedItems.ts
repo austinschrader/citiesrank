@@ -2,23 +2,26 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import type { ValidationResult } from "../types/validation";
+import { FeedItemsTypeOptions, FeedItemsSourceTypeOptions } from "@/lib/types/pocketbase-types";
 import { z } from "zod";
 
 // Base schema for all feed items
 const baseFeedItemSchema = z.object({
-  type: z.string(),
-  source_type: z.string(),
+  type: z.nativeEnum(FeedItemsTypeOptions),
+  source_type: z.nativeEnum(FeedItemsSourceTypeOptions),
   source_name: z.string(),
   timestamp: z.string(),
   content: z.object({
     title: z.string(),
-    description: z.string()
+    description: z.string(),
+    image_url: z.string().optional(),
+    highlights: z.array(z.string()).optional()
   })
 });
 
 // Schema for trending places
 const trendingPlaceSchema = baseFeedItemSchema.extend({
-  type: z.literal("trending_place"),
+  type: z.literal(FeedItemsTypeOptions.trending_place),
   place: z.string(),
   stats: z.object({
     views_last_week: z.number(),
@@ -29,7 +32,7 @@ const trendingPlaceSchema = baseFeedItemSchema.extend({
 
 // Schema for place collections
 const placeCollectionSchema = baseFeedItemSchema.extend({
-  type: z.literal("place_collection"),
+  type: z.literal(FeedItemsTypeOptions.place_collection),
   places: z.array(z.string()),
 });
 
@@ -56,7 +59,7 @@ const placeUpdateSchema = baseFeedItemSchema.extend({
 
 // Schema for similar places
 const similarPlacesSchema = baseFeedItemSchema.extend({
-  type: z.literal("similar_places"),
+  type: z.literal(FeedItemsTypeOptions.similar_places),
   place: z.string(),
   places: z.array(z.string()),
   stats: z.object({
@@ -75,15 +78,26 @@ export function useValidateFeedItems() {
     const placeIds: { [key: string]: string } = {};
     const errors: string[] = [];
 
+    console.log('Resolving slugs:', slugs);
+
     for (const slug of slugs) {
       try {
+        // First verify the slug format
+        console.log('Looking up city with slug:', slug);
         const record = await pb.collection('cities').getFirstListItem(`slug="${slug}"`);
+        console.log('Found city record:', record);
         placeIds[slug] = record.id;
+
+        // Verify the ID exists
+        const verifyRecord = await pb.collection('cities').getOne(record.id);
+        console.log('Verified city record exists:', verifyRecord.id);
       } catch (error) {
+        console.error(`Error resolving place ${slug}:`, error);
         errors.push(`Place not found: ${slug}`);
       }
     }
 
+    console.log('Resolved place IDs:', placeIds);
     return placeIds;
   };
 
@@ -98,10 +112,10 @@ export function useValidateFeedItems() {
     // Determine schema based on type
     let schema;
     switch ((item as any).type) {
-      case "trending_place":
+      case FeedItemsTypeOptions.trending_place:
         schema = trendingPlaceSchema;
         break;
-      case "place_collection":
+      case FeedItemsTypeOptions.place_collection:
         schema = placeCollectionSchema;
         break;
       case "tag_spotlight":
@@ -110,7 +124,7 @@ export function useValidateFeedItems() {
       case "place_update":
         schema = placeUpdateSchema;
         break;
-      case "similar_places":
+      case FeedItemsTypeOptions.similar_places:
         schema = similarPlacesSchema;
         break;
       default:
@@ -142,13 +156,16 @@ export function useValidateFeedItems() {
         };
       }
 
-      // Replace slugs with IDs in the data
+      // Convert to array of IDs for PocketBase
+      const placeIdArray = data.places.map(slug => placeIds[slug]);
+      console.log('Place ID array:', placeIdArray);
+
       return {
         ...baseResult,
         isValid: true,
         data: {
           ...data,
-          places: data.places.map(slug => placeIds[slug])
+          places: placeIdArray
         }
       };
     }
@@ -175,7 +192,8 @@ export function useValidateFeedItems() {
 
     return {
       ...baseResult,
-      isValid: true
+      isValid: true,
+      data: result.data
     };
   };
 

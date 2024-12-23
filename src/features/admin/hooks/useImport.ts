@@ -61,9 +61,30 @@ export function useImport(config: ImportConfig) {
           continue;
         }
 
-        await pb.collection(config.collection).create(result.data);
-        setImportResults((prev) => new Map(prev).set(result.name, true));
-        successCount++;
+        console.log('Attempting to create record:', {
+          collection: config.collection,
+          data: JSON.stringify(result.data, null, 2)
+        });
+
+        try {
+          const response = await pb.collection(config.collection).create(result.data);
+          console.log('Create response:', response);
+          setImportResults((prev) => new Map(prev).set(result.name, true));
+          successCount++;
+        } catch (error) {
+          if (error instanceof ClientResponseError) {
+            console.error('PocketBase error details:', {
+              status: error.status,
+              response: error.response,
+              data: error.data,
+              message: error.message,
+              url: error.url,
+              isAbort: error.isAbort,
+              originalError: error
+            });
+          }
+          throw error;
+        }
       } catch (error) {
         const message =
           error instanceof ClientResponseError
