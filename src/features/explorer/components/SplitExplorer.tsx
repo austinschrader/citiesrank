@@ -13,7 +13,9 @@ export const SplitExplorer = () => {
       <div className="flex flex-col h-full">
         <ExplorerHeader />
         <FiltersBar />
+
         <div className="flex-1 flex overflow-hidden">
+          {/* Feed Section - 40% */}
           <div
             key={viewMode}
             className={cn(
@@ -22,7 +24,7 @@ export const SplitExplorer = () => {
                 ? "w-0 invisible"
                 : viewMode === "list"
                 ? "w-full"
-                : "w-1/2"
+                : "w-[40%]"
             )}
           >
             <div className="flex-1 overflow-y-auto">
@@ -30,6 +32,7 @@ export const SplitExplorer = () => {
             </div>
           </div>
 
+          {/* Map Section - 60% */}
           <div
             key={`map-${viewMode}`}
             className={cn(
@@ -38,7 +41,7 @@ export const SplitExplorer = () => {
                 ? "w-0 invisible"
                 : viewMode === "map"
                 ? "w-full"
-                : "w-1/2"
+                : "w-[60%]"
             )}
           >
             <div className="absolute inset-0">

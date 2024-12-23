@@ -1,7 +1,9 @@
+import { Button } from "@/components/ui/button";
 import { TimeWindow } from "@/features/explorer/components/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
-import { Activity, Users } from "lucide-react";
+import { Activity, PlusCircle, Users } from "lucide-react";
 import { useState } from "react";
+import { ViewModeToggle } from "./filters/ViewModeToggle";
 
 type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
 type TimeRange = "now" | "today" | "week" | "month";
@@ -34,7 +36,7 @@ export const ExplorerHeader = () => {
           <div className="flex items-center gap-3">
             <Activity className="h-5 w-5 text-purple-500" />
             <h1 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              The Space Feed
+              Spaces Feed
             </h1>
           </div>
 
@@ -51,6 +53,19 @@ export const ExplorerHeader = () => {
           onEnergyChange={setEnergyMode}
           onTimeChange={setTimeRange}
         />
+        <div className="flex items-center gap-3">
+          {viewMode === "map" && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 bg-background/80"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Add Space
+            </Button>
+          )}
+          <ViewModeToggle />
+        </div>
       </div>
 
       {/* View Context */}
