@@ -55,7 +55,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   const { cities, cityStatus } = useCities();
   const { searchQuery } = useSearch();
   const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
-  const { followPlace, unfollowPlace, followedPlaces } = useFeed();
+  const { followPlace, unfollowPlace, followedPlaces, followTag, unfollowTag, followedTags } = useFeed();
 
   // Reset filters when entering the page
   useEffect(() => {
@@ -199,18 +199,22 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
               </CardContent>
             </Card>
 
+            {/* Tags Section */}
             <Card className="overflow-hidden border-none shadow-lg">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-semibold mb-4">Tags</h2>
                 <div className="flex flex-wrap gap-2">
                   {(placeData.tags as PlaceTag[] || []).map((tag: PlaceTag) => (
-                    <Badge
+                    <Button
                       key={tag}
-                      variant="secondary"
-                      className="text-sm"
+                      variant={followedTags.includes(tag) ? "secondary" : "outline"}
+                      size="sm"
+                      className="rounded-full"
+                      onClick={() => followedTags.includes(tag) ? unfollowTag(tag) : followTag(tag)}
                     >
                       {getTagLabel(tag)}
-                    </Badge>
+                      {followedTags.includes(tag) ? " ✓" : ""}
+                    </Button>
                   ))}
                 </div>
               </CardContent>
