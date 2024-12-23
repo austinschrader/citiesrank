@@ -17,8 +17,9 @@ export const ViewModeToggle = () => {
         <button
           onClick={handleMobileToggle}
           className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-md transition-all",
-            "bg-primary text-primary-foreground shadow-sm"
+            "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200",
+            "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600",
+            "text-white shadow-sm"
           )}
         >
           {viewMode === "list" ? (
@@ -30,7 +31,7 @@ export const ViewModeToggle = () => {
       </div>
 
       {/* Desktop View: Full Interface */}
-      <div className="hidden sm:flex items-center gap-1">
+      <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 shadow-sm">
         {[
           { mode: "list" as const, icon: Rows, label: "Space" },
           {
@@ -44,16 +45,20 @@ export const ViewModeToggle = () => {
             key={mode}
             onClick={() => setViewMode(mode)}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-md transition-all",
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200",
               viewMode === mode
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-white/10",
+              "relative overflow-hidden group"
             )}
           >
             <Icon className="h-4 w-4" />
             <span className="text-sm font-medium capitalize hidden sm:inline">
               {label}
             </span>
+            {viewMode === mode && (
+              <div className="absolute inset-0 bg-white/10 animate-pulse" />
+            )}
           </button>
         ))}
       </div>
