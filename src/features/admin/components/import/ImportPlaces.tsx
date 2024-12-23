@@ -1,13 +1,12 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { ClientResponseError } from "pocketbase";
 import { useEffect, useState } from "react";
 import { useValidatePlaces } from "../../hooks/useValidatePlaces";
 import type { SeedFile } from "../../types/places";
 import { FileSelector } from "./FileSelector";
 import { ImportButton } from "./ImportButton";
 import { ValidationResults } from "./ValidationResults";
-import type { ImportResultsMap } from "./types";
+import { useImport } from "../../hooks/useImport";
+import { useToast } from "@/hooks/use-toast";
 
 // Import all seed files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
@@ -18,13 +17,28 @@ const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
 export function ImportPlaces() {
   const { pb } = useAuth();
   const { toast } = useToast();
-  const [isImporting, setIsImporting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [importResults, setImportResults] = useState<ImportResultsMap>(
-    new Map()
-  );
   const [tagsMapping, setTagsMapping] = useState<Record<string, string>>({});
-  const { validationResults, validatePlaces } = useValidatePlaces(tagsMapping);
+  const { validatePlaces } = useValidatePlaces(tagsMapping);
+
+  const { 
+    isImporting, 
+    selectedFile, 
+    importResults,
+    validationResults,
+    handleFileSelect: baseHandleFileSelect,
+    importData 
+  } = useImport({
+    collection: "cities",
+    validateData: validatePlaces,
+    checkExists: async (data) => {
+      try {
+        await pb.collection("cities").getFirstListItem(`slug="${data.slug}"`);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+  });
 
   // Load tags mapping on component mount
   useEffect(() => {
@@ -49,84 +63,17 @@ export function ImportPlaces() {
   }, []);
 
   const handleFileSelect = (value: string) => {
-    setSelectedFile(value);
-    const fileData = seedFiles[value].default;
-    validatePlaces(fileData);
+    baseHandleFileSelect(value, seedFiles);
   };
-
-  const importPlaces = async () => {
-    const validPlaces = validationResults.filter((r) => r.isValid);
-    if (validPlaces.length === 0) return;
-
-    setIsImporting(true);
-    setImportResults(new Map());
-    let successCount = 0;
-
-    for (const result of validPlaces) {
-      try {
-        try {
-          const exists = await pb
-            .collection("cities")
-            .getFirstListItem(`slug="${result.data.slug}"`);
-          setImportResults((prev) => new Map(prev).set(result.name, false));
-          toast({
-            title: "Import Failed",
-            description: `${result.name} already exists with slug: ${result.data.slug}`,
-            variant: "destructive",
-          });
-          continue;
-        } catch (error) {
-          if (error instanceof ClientResponseError && error.status === 404) {
-            await pb.collection("cities").create(result.data);
-            setImportResults((prev) => new Map(prev).set(result.name, true));
-            successCount++;
-          } else {
-            throw error;
-          }
-        }
-      } catch (error) {
-        const message =
-          error instanceof ClientResponseError
-            ? error.message
-            : "Unknown error occurred";
-        setImportResults((prev) => new Map(prev).set(result.name, false));
-        console.error(`Error importing ${result.name}:`, error);
-        toast({
-          title: "Import Failed",
-          description: `Failed to import ${result.name}: ${message}`,
-          variant: "destructive",
-        });
-      }
-    }
-
-    setIsImporting(false);
-
-    if (successCount > 0) {
-      toast({
-        title: "Import Complete",
-        description: `Successfully imported ${successCount} places`,
-      });
-    } else {
-      toast({
-        title: "Import Complete",
-        description: "No new places were imported",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const hasValidPlaces = validationResults.some((r) => r.isValid);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
-        {hasValidPlaces && (
-          <ImportButton
-            isImporting={isImporting}
-            onImport={importPlaces}
-            disabled={!selectedFile}
-          />
-        )}
+        <ImportButton
+          isImporting={isImporting}
+          onImport={importData}
+          disabled={!selectedFile || validationResults.filter((r) => r.isValid).length === 0}
+        />
       </div>
 
       <FileSelector

@@ -1,10 +1,10 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
 import type { SeedFile } from "../../types/places";
 import { FileSelector } from "./FileSelector";
 import { ImportButton } from "./ImportButton";
-import type { ImportResultsMap } from "./types";
+import { ValidationResults } from "./ValidationResults";
+import { useImport } from "../../hooks/useImport";
 
 // Import all feed item files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
@@ -13,23 +13,28 @@ const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
 );
 
 export function ImportFeedItems() {
-  const { pb } = useAuth();
-  const { toast } = useToast();
-  const [isImporting, setIsImporting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [importResults, setImportResults] = useState<ImportResultsMap>(new Map());
+  const { 
+    isImporting, 
+    selectedFile, 
+    importResults,
+    validationResults,
+    handleFileSelect: baseHandleFileSelect,
+    importData 
+  } = useImport({
+    collection: "feed_items",
+    validateData: async (data) => {
+      // TODO: Implement feed item validation
+      return data.map((item: any) => ({
+        name: item.type,
+        data: item,
+        isValid: true, // For now, consider all items valid
+        errors: []
+      }));
+    }
+  });
 
   const handleFileSelect = (value: string) => {
-    setSelectedFile(value);
-    // TODO: Add validation logic for feed items
-  };
-
-  const importFeedItems = async () => {
-    // TODO: Implement feed items import logic
-    toast({
-      title: "Coming Soon",
-      description: "Feed items import functionality is under development",
-    });
+    baseHandleFileSelect(value, seedFiles);
   };
 
   return (
@@ -37,8 +42,8 @@ export function ImportFeedItems() {
       <div className="flex justify-end">
         <ImportButton
           isImporting={isImporting}
-          onImport={importFeedItems}
-          disabled={!selectedFile}
+          onImport={importData}
+          disabled={!selectedFile || validationResults.filter((r) => r.isValid).length === 0}
         />
       </div>
 
@@ -46,6 +51,11 @@ export function ImportFeedItems() {
         files={seedFiles}
         selectedFile={selectedFile}
         onFileSelect={handleFileSelect}
+      />
+
+      <ValidationResults
+        validationResults={validationResults}
+        importResults={importResults}
       />
 
       {/* Instructions */}
