@@ -1,6 +1,6 @@
+import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Map, SplitSquareHorizontal } from "lucide-react";
-import { ViewMode, useMap } from "@/features/map/context/MapContext";
+import { Layout, List, Map, Rows } from "lucide-react";
 
 export const ViewModeToggle = () => {
   const { viewMode, setViewMode } = useMap();
@@ -24,7 +24,7 @@ export const ViewModeToggle = () => {
           {viewMode === "list" ? (
             <Map className="h-4 w-4" />
           ) : (
-            <LayoutGrid className="h-4 w-4" />
+            <List className="h-4 w-4" />
           )}
         </button>
       </div>
@@ -32,13 +32,13 @@ export const ViewModeToggle = () => {
       {/* Desktop View: Full Interface */}
       <div className="hidden sm:flex items-center gap-1">
         {[
-          { mode: "list" as const, icon: LayoutGrid, label: "List view" },
+          { mode: "list" as const, icon: Rows, label: "Space" },
           {
             mode: "split" as const,
-            icon: SplitSquareHorizontal,
-            label: "Split view",
+            icon: Layout,
+            label: "Both",
           },
-          { mode: "map" as const, icon: Map, label: "Map view" },
+          { mode: "map" as const, icon: Map, label: "Map" },
         ].map(({ mode, icon: Icon, label }) => (
           <button
             key={mode}
@@ -52,7 +52,7 @@ export const ViewModeToggle = () => {
           >
             <Icon className="h-4 w-4" />
             <span className="text-sm font-medium capitalize hidden sm:inline">
-              {mode}
+              {label}
             </span>
           </button>
         ))}

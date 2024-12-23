@@ -14,13 +14,10 @@ import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Activity,
   Bookmark,
   LogOut,
   Map,
-  MapPin,
   PenTool,
-  Plus,
   Upload,
   UserCircle,
 } from "lucide-react";
@@ -39,19 +36,19 @@ export const Header = () => {
 
   const navItems = [
     {
-      label: "Map",
-      mobileLabel: "Map",
+      label: "MapSpace",
+      mobileLabel: "MapSpace",
       icon: Map,
       to: "/",
       description: "Explore the world through places",
       iconClass: "text-indigo-500",
     },
     {
-      label: "Created Spaces",
+      label: "Your Spaces",
       mobileLabel: "Spaces",
       icon: PenTool,
       to: "/created-spaces",
-      description: "Your created spaces and contributions",
+      description: "Manage your contributed spaces",
       iconClass: "text-indigo-500",
       requiresAuth: true,
     },
@@ -113,18 +110,6 @@ export const Header = () => {
                   </Link>
                 ))}
             </nav>
-
-            {user && (
-              <Link to="/my-places">
-                <Button
-                  size="sm"
-                  className="hidden md:flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
-                >
-                  <Plus className="h-4 w-4" />
-                  Create Space
-                </Button>
-              </Link>
-            )}
 
             {user ? (
               <DropdownMenu>

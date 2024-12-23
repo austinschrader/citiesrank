@@ -21,7 +21,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Helper components
-const VibeIndicator = ({ vibe }: { vibe?: { sound: number; energy: number } }) => {
+const VibeIndicator = ({
+  vibe,
+}: {
+  vibe?: { sound: number; energy: number };
+}) => {
   if (!vibe) return null;
 
   return (
@@ -224,11 +228,22 @@ export function CreatedSpacesPage() {
             <PenTool className="h-5 w-5 text-indigo-500" />
             <span className="font-medium">Created Spaces</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-indigo-500" />
-            <span className="text-sm">
-              {myPlaces.length} contribution{myPlaces.length !== 1 && "s"}
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4 text-indigo-500" />
+              <span className="text-sm">
+                {myPlaces.length} contribution{myPlaces.length !== 1 && "s"}
+              </span>
+            </div>
+            <AddPlaceDialog
+              open={showUploadDialog}
+              onOpenChange={setShowUploadDialog}
+            >
+              <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium rounded-lg shadow-sm transition-all duration-200">
+                <PlusCircle className="h-4 w-4" />
+                Create Space
+              </button>
+            </AddPlaceDialog>
           </div>
         </div>
       </div>
@@ -241,7 +256,8 @@ export function CreatedSpacesPage() {
             </div>
             <h2 className="text-xl font-bold mb-2">Create your first space</h2>
             <p className="text-gray-600 mb-8">
-              Share your favorite places with the MapSpace community. Add photos, descriptions, and insider tips.
+              Share your favorite places with the MapSpace community. Add
+              photos, descriptions, and insider tips.
             </p>
             <div className="space-y-4">
               <AddPlaceDialog
@@ -277,7 +293,9 @@ export function CreatedSpacesPage() {
                     <PlusCircle className="w-6 h-6 text-indigo-500" />
                   </div>
                   <h3 className="font-medium mb-1">Add another space</h3>
-                  <p className="text-sm text-gray-500">Share more places with the community</p>
+                  <p className="text-sm text-gray-500">
+                    Share more places with the community
+                  </p>
                 </div>
               </AddPlaceDialog>
             </Card>
