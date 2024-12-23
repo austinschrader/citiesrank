@@ -5,7 +5,7 @@
     "type": ["city"],
     "latitude": 47.6062,
     "longitude": -122.3321,
-    "population": "737K",
+    "population": 737000,
     "description": "Seattle is a vibrant city known for its tech industry, coffee culture, and stunning natural surroundings. Home to major companies like Amazon and Microsoft, it balances urban innovation with outdoor adventure.",
     "accessibility": 80,
     "bestSeason": 85,
