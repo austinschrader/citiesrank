@@ -12,7 +12,7 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { SlidersHorizontal, Star } from "lucide-react";
+import { Filter, Star } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -96,7 +96,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
               "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
           )}
         >
-          <SlidersHorizontal className="h-4 w-4" />
+          <Filter className="h-4 w-4" />
           <span className="relative z-10">All Filters</span>
           {activeFiltersCount > 0 && (
             <div className="flex items-center gap-1">

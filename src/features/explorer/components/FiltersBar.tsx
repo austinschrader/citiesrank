@@ -1,12 +1,15 @@
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
   const [sort, setSort] = useState("popular");
+  const navigate = useNavigate();
 
   return (
     <div className="border-b bg-card/50 backdrop-blur-sm">
@@ -26,6 +29,13 @@ export const FiltersBar = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <Button 
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600 transition-all duration-200"
+              onClick={() => navigate("/created-spaces")}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Space
+            </Button>
             <FiltersSheet 
               sort={sort}
               onSortChange={setSort}
