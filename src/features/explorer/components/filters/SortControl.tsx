@@ -39,12 +39,13 @@ export const SortControl = () => {
       >
         <SelectTrigger 
           className={cn(
-            "h-10 w-[110px] sm:w-[160px]",
+            "h-9 px-3 py-1.5",
+            "w-[110px] sm:w-[140px]",
             "bg-white/5 border-white/10 backdrop-blur-sm",
             "hover:bg-white/10 transition-all duration-200",
-            "focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50",
             "data-[state=open]:bg-gradient-to-r data-[state=open]:from-indigo-500 data-[state=open]:to-purple-500",
-            "data-[state=open]:border-0 data-[state=open]:text-white"
+            "data-[state=open]:text-white data-[state=open]:border-0",
+            "focus:ring-0 focus:ring-offset-0"
           )}>
           <SelectValue>
             <div className="flex items-center gap-2 text-sm">

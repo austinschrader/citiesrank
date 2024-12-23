@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetClose,
@@ -13,7 +12,6 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { markerColors } from "@/lib/utils/colors";
 import { SlidersHorizontal, Star } from "lucide-react";
 
 const placeTypeIcons = {
@@ -77,277 +75,182 @@ export const FiltersSheet = () => {
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          variant="outline"
-          className={cn("h-9 gap-2", activeFiltersCount > 0 && "bg-primary/5")}
+          className={cn(
+            "h-9 px-3 py-1.5 gap-2 relative group",
+            "bg-white/5 border-white/10 backdrop-blur-sm",
+            "hover:bg-white/10 transition-all duration-200",
+            activeFiltersCount > 0 &&
+              "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
+          )}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          All Filters
+          <span className="relative z-10">All Filters</span>
           {activeFiltersCount > 0 && (
-            <>
-              <span className="mx-0.5 h-1 w-1 rounded-full bg-foreground/50" />
+            <div className="flex items-center gap-1">
+              <div className="h-1 w-1 rounded-full bg-white/70" />
               <span className="text-xs font-medium">{activeFiltersCount}</span>
-            </>
+            </div>
           )}
         </Button>
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-xl z-[9999] flex flex-col p-0 overflow-hidden"
+        className="w-full sm:max-w-xl z-[9999] flex flex-col p-0 overflow-hidden bg-background/95 backdrop-blur-sm border-white/10"
       >
-        <SheetHeader className="space-y-4 p-6 border-b">
+        <SheetHeader className="space-y-4 p-6 border-b border-white/10 bg-gradient-to-r from-indigo-500/5 to-purple-500/5">
           <div className="flex items-center justify-between">
-            <SheetTitle>Filters</SheetTitle>
+            <SheetTitle className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Filters
+            </SheetTitle>
           </div>
-          <SheetDescription className="text-base">
-            Discover your perfect destination - whether you're a digital nomad
-            seeking vibrant coworking spaces, a family planning the next
-            adventure, or a traveler exploring the world's hidden gems.
+          <SheetDescription className="text-base text-muted-foreground/80">
+            Filter spaces by type, size, and rating
           </SheetDescription>
         </SheetHeader>
+
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-6">
-            <div>
-              <div className="px-6 py-4 border-b">
-                <h4 className="font-medium">Discover Places By Type</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  From countries and regions to local neighborhoods
-                </p>
+          <div className="space-y-6 p-6">
+            {/* Place Types */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Place Types</h3>
+                {filters.activeTypes.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={resetTypeFilters}
+                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                  >
+                    Reset
+                  </Button>
+                )}
               </div>
-              <div className="divide-y divide-border/50">
-                {Object.values(CitiesTypeOptions).map((type) => (
-                  <div key={type}>
-                    <div
-                      onClick={() => handleTypeClick(type)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          handleTypeClick(type);
-                        }
-                      }}
-                      style={
-                        {
-                          "--marker-color":
-                            markerColors[type as CitiesTypeOptions],
-                          backgroundColor: filters.activeTypes.includes(type)
-                            ? `${markerColors[type as CitiesTypeOptions]}15`
-                            : undefined,
-                        } as React.CSSProperties & { "--marker-color": string }
-                      }
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(placeTypeIcons).map(
+                  ([type, { label, emoji }]) => (
+                    <button
+                      key={type}
+                      onClick={() => handleTypeClick(type as CitiesTypeOptions)}
                       className={cn(
-                        "w-full px-6 py-3 flex items-center justify-between",
-                        "transition-all duration-200 ease-in-out",
-                        filters.activeTypes.includes(type)
-                          ? "hover:brightness-110"
-                          : "hover:bg-accent/10",
-                        "cursor-pointer"
+                        "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                        "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
+                        filters.activeTypes.includes(type as CitiesTypeOptions)
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                          : "bg-white/5 text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            "w-2 h-2 rounded-full transition-all duration-200",
-                            filters.activeTypes.includes(type)
-                              ? "opacity-100 scale-125"
-                              : "opacity-40"
-                          )}
-                          style={{
-                            backgroundColor: "var(--marker-color)",
-                            boxShadow: filters.activeTypes.includes(type)
-                              ? "0 0 8px var(--marker-color)"
-                              : "none",
-                          }}
-                        />
-                        <span
-                          className="text-lg"
-                          role="img"
-                          aria-label={`${type} emoji`}
-                        >
-                          {placeTypeIcons[type].emoji}
-                        </span>
-                        <span
-                          className="text-sm font-medium capitalize transition-all duration-200"
-                          style={{
-                            color: filters.activeTypes.includes(type)
-                              ? "var(--marker-color)"
-                              : "var(--muted-foreground)",
-                          }}
-                        >
-                          {type}s
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                      <span className="text-lg">{emoji}</span>
+                      <span>{label}</span>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* City Sizes */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">City Size</h3>
+                {filters.populationCategory && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={resetPopulationFilter}
+                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(sizeTypeIcons).map(
+                  ([size, { label, emoji }]) => (
+                    <button
+                      key={size}
+                      onClick={() => handlePopulationSelect(size as any)}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                        "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
+                        filters.populationCategory === size
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                          : "bg-white/5 text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <span className="text-lg">{emoji}</span>
+                      <span>{label}</span>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* Rating */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Rating</h3>
+                {filters.averageRating && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRatingChange(null)}
+                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[4, 3, 2].map((rating) => (
+                  <button
+                    key={rating}
+                    onClick={() => handleRatingChange(rating)}
+                    className={cn(
+                      "flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                      "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
+                      filters.averageRating === rating
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                        : "bg-white/5 text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Star className="h-4 w-4" />
+                    <span>{rating}+</span>
+                  </button>
                 ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="px-6 py-4 border-y">
-                <h4 className="font-semibold text-lg">City Size</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  From small villages to bustling megacities
-                </p>
-              </div>
-              <div className="px-6 py-4">
-                <div className="space-y-4">
-                  {(["megacity", "city", "town", "village"] as const).map(
-                    (size) => (
-                      <div
-                        key={size}
-                        onClick={() =>
-                          handlePopulationSelect(
-                            filters.populationCategory === size ? null : size
-                          )
-                        }
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            handlePopulationSelect(
-                              filters.populationCategory === size ? null : size
-                            );
-                          }
-                        }}
-                        className={cn(
-                          "w-full px-4 py-2 flex items-center justify-between rounded-md",
-                          "transition-all duration-200 ease-in-out",
-                          filters.populationCategory === size
-                            ? "bg-primary/10 text-primary"
-                            : "hover:bg-accent/10"
-                        )}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg" role="img">
-                            {sizeTypeIcons[size].emoji}
-                          </span>
-                          <span className="text-sm font-medium capitalize">
-                            {size}
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="px-6 py-4 border-y">
-                <h4 className="font-semibold text-lg">Filter by Rating</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Find the highest-rated places around the world
-                </p>
-              </div>
-              <div className="px-6 py-4">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Star
-                        className={cn(
-                          "h-5 w-5",
-                          filters.averageRating
-                            ? "text-yellow-500 fill-yellow-500"
-                            : "text-muted-foreground"
-                        )}
-                      />
-                      <span className="text-sm font-medium">
-                        {filters.averageRating
-                          ? `${filters.averageRating}+`
-                          : "Any rating"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <Input
-                      type="range"
-                      min="1"
-                      max="5"
-                      step="0.1"
-                      value={filters.averageRating ?? 1}
-                      onChange={(e) => {
-                        const value = parseFloat(e.target.value);
-                        handleRatingChange(value === 1 ? null : value);
-                      }}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between px-1">
-                      {[1, 2, 3, 4, 5].map((rating) => (
-                        <button
-                          key={rating}
-                          onClick={() =>
-                            handleRatingChange(
-                              filters.averageRating === rating ? null : rating
-                            )
-                          }
-                          className={cn(
-                            "flex flex-col items-center gap-1 transition-colors",
-                            filters.averageRating === rating
-                              ? "text-primary"
-                              : "text-muted-foreground hover:text-foreground"
-                          )}
-                        >
-                          <Star
-                            className={cn(
-                              "h-4 w-4",
-                              filters.averageRating === rating
-                                ? "text-yellow-500 fill-yellow-500"
-                                : "text-muted-foreground"
-                            )}
-                          />
-                          <span className="text-xs">{rating}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    {[4.9, 4.75, 4.5, 4].map((rating) => (
-                      <Button
-                        key={rating}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleRatingChange(rating)}
-                        className={cn(
-                          "justify-start gap-2",
-                          filters.averageRating === rating &&
-                            "bg-primary text-primary-foreground hover:bg-primary/90"
-                        )}
-                      >
-                        <Star
-                          className={cn(
-                            "h-3.5 w-3.5",
-                            filters.averageRating === rating
-                              ? "text-primary-foreground fill-primary-foreground"
-                              : "text-yellow-500 fill-yellow-500"
-                          )}
-                        />
-                        {rating}+ Stars
-                      </Button>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="p-6 border-t flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              resetTypeFilters();
-              resetPopulationFilter();
-              handleRatingChange(null);
-            }}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            Reset all
-          </Button>
-          <SheetClose asChild>
-            <Button size="sm">See {cities?.length ?? 0} places</Button>
-          </SheetClose>
+
+        <div className="border-t border-white/10 p-6 bg-gradient-to-r from-indigo-500/5 to-purple-500/5">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-4">
+              <span className="text-muted-foreground">
+                {cities.length} spaces
+              </span>
+              {activeFiltersCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    resetTypeFilters();
+                    resetPopulationFilter();
+                    handleRatingChange(null);
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Reset all
+                </Button>
+              )}
+            </div>
+            <SheetClose asChild>
+              <Button
+                className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0 
+                  hover:from-indigo-600 hover:to-purple-600 shadow-sm"
+              >
+                View Results
+              </Button>
+            </SheetClose>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
