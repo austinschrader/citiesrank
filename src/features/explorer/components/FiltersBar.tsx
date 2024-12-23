@@ -2,8 +2,8 @@ import { Input } from "@/components/ui/input";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
 import { SortControl } from "@/features/explorer/components/filters/SortControl";
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { useMap } from "@/features/map/context/MapContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { Search } from "lucide-react";
 
 export const FiltersBar = () => {
@@ -22,7 +22,9 @@ export const FiltersBar = () => {
               placeholder="Find active spaces nearby..."
               className="w-full pl-9 h-10 bg-background/60"
               value={filters.search || ""}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           </div>

@@ -133,10 +133,9 @@ export const FiltersSheet = () => {
                       onClick={() => handleTypeClick(type as CitiesTypeOptions)}
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                        "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
                         filters.activeTypes.includes(type as CitiesTypeOptions)
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                          : "bg-white/5 text-muted-foreground hover:text-foreground"
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                          : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
                       )}
                     >
                       <span className="text-lg">{emoji}</span>
@@ -232,9 +231,13 @@ export const FiltersSheet = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    resetTypeFilters();
-                    resetPopulationFilter();
-                    handleRatingChange(null);
+                    setFilters({
+                      ...filters,
+                      activeTypes: Object.keys(placeTypeIcons) as CitiesTypeOptions[],
+                      populationCategory: null,
+                      averageRating: null,
+                      search: "",
+                    });
                   }}
                   className="text-muted-foreground hover:text-foreground"
                 >
