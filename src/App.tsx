@@ -10,7 +10,7 @@ import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
-import { MyPlacesPage } from "@/pages/places/MyPlacesPage";
+import { CreatedSpacesPage } from "@/pages/places/CreatedSpacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { FeedProvider } from '@/features/feed/context/FeedContext';
 import { FeedView } from '@/features/feed/components/FeedView';
@@ -43,7 +43,7 @@ function App() {
                             <Route path="/explore" element={<PlacesPage />} />
                             <Route path="/favorites" element={<FavoritesPage />} />
                             <Route path="/profile" element={<ProfilePage />} />
-                            <Route path="/my-places" element={<MyPlacesPage />} />
+                            <Route path="/created-spaces" element={<CreatedSpacesPage />} />
                             <Route path="/feed" element={<FeedView />} />
                             <Route path="/following" element={<FollowingManagement />} />
                             <Route
