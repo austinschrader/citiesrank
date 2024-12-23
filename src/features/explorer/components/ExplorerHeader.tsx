@@ -34,7 +34,7 @@ export const ExplorerHeader = () => {
           <div className="flex items-center gap-3">
             <Activity className="h-5 w-5 text-purple-500" />
             <h1 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              The Space
+              The Space Feed
             </h1>
           </div>
 
