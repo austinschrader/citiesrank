@@ -7,7 +7,7 @@
     "interesting": 90,
     "transit": 65,
     "description": "Pacific Northwest state featuring diverse landscapes from coastal rainforests to volcanic peaks, urban innovation, and agricultural abundance.",
-    "population": "7.7M",
+    "population": 7500000,
     "highlights": [
       "Mount Rainier",
       "Seattle",
@@ -39,7 +39,7 @@
     "interesting": 95,
     "transit": 75,
     "description": "Maritime heart of Washington centered around an intricate network of waterways, urban centers, and island communities.",
-    "population": "4.2M",
+    "population": 4200000,
     "highlights": [
       "Space Needle",
       "Pike Place Market",
@@ -71,7 +71,7 @@
     "interesting": 95,
     "transit": 45,
     "description": "Diverse peninsula featuring the only temperate rainforest in the continental US, rugged coastline, and glaciated peaks.",
-    "population": "375K",
+    "population": 375000,
     "highlights": [
       "Hoh Rainforest",
       "Hurricane Ridge",
@@ -103,7 +103,7 @@
     "interesting": 90,
     "transit": 40,
     "description": "Rugged alpine wilderness with over 300 glaciers, featuring dramatic mountain peaks and the Bavarian-themed town of Leavenworth.",
-    "population": "45K",
+    "population": 450000,
     "highlights": [
       "North Cascades National Park",
       "Diablo Lake",
@@ -135,7 +135,7 @@
     "interesting": 85,
     "transit": 45,
     "description": "Premier wine-growing region with over 120 wineries, abundant orchards, and hop fields producing 75% of US hops.",
-    "population": "250K",
+    "population": 250000,
     "highlights": [
       "Yakima Valley Wine Trail",
       "Johnson Orchards",
@@ -167,7 +167,7 @@
     "interesting": 85,
     "transit": 35,
     "description": "Distinctive agricultural region characterized by rolling hills of wheat fields, creating one of the world's most photographed rural landscapes.",
-    "population": "130K",
+    "population": 130000,
     "highlights": [
       "Steptoe Butte",
       "Palouse Falls",
@@ -199,7 +199,7 @@
     "interesting": 95,
     "transit": 45,
     "description": "Region surrounding the iconic 14,411-foot active volcano, featuring glaciers, wildflower meadows, and ancient forests.",
-    "population": "30K",
+    "population": 300000,
     "highlights": [
       "Paradise Visitor Center",
       "Sunrise Point",
@@ -231,7 +231,7 @@
     "interesting": 90,
     "transit": 35,
     "description": "Volcanic landscape dramatically transformed by the 1980 eruption, offering unique geological features and recovery observation.",
-    "population": "15K",
+    "population": 150000,
     "highlights": [
       "Johnston Ridge Observatory",
       "Ape Cave",
@@ -263,7 +263,7 @@
     "interesting": 75,
     "transit": 50,
     "description": "Columbia Basin hub encompassing Richland, Pasco, and Kennewick, known for wine country, water sports, and scientific heritage.",
-    "population": "300K",
+    "population": 300000,
     "highlights": [
       "REACH Museum",
       "Columbia Park",
