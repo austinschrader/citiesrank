@@ -1,11 +1,6 @@
 import { Input } from "@/components/ui/input";
-import { ActiveFilters } from "@/features/explorer/components/filters/ActiveFilters";
-import { CitySizeDropdown } from "@/features/explorer/components/filters/CitySizeSheet";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
-import { PlaceTypesSheet } from "@/features/explorer/components/filters/PlaceTypesSheet";
-import { RatingFilter } from "@/features/explorer/components/filters/RatingFilter";
 import { SortControl } from "@/features/explorer/components/filters/SortControl";
-import { TravelStyleDropdown } from "@/features/explorer/components/filters/TravelStyleDropdown";
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { Search } from "lucide-react";
@@ -41,32 +36,10 @@ export const FiltersBar = () => {
         </div>
 
         {/* Desktop View: Full Controls */}
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:gap-3">
-          <div className="flex items-center gap-3">
-            <PlaceTypesSheet />
-            <CitySizeDropdown />
-            <TravelStyleDropdown />
-            <RatingFilter />
-            <FiltersSheet />
-          </div>
-
-          {/* Active Filters */}
-          <div className="flex-1 min-w-0">
-            {(filters.activeTypes.length > 0 ||
-              filters.populationCategory ||
-              filters.averageRating) && (
-              <div className="flex flex-wrap items-center gap-2">
-                <ActiveFilters />
-              </div>
-            )}
-          </div>
-
-          {/* Right Side Controls */}
-          <div className="flex items-center gap-4">
-            <SortControl />
-            <div className="h-6 w-px bg-border" />
-            <ViewModeToggle />
-          </div>
+        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-end sm:gap-3">
+          <SortControl />
+          <FiltersSheet />
+          <ViewModeToggle />
         </div>
       </div>
     </div>
