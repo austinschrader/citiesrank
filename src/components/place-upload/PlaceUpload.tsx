@@ -434,7 +434,7 @@ export function PlaceUpload({ onClose }: PlaceUploadProps) {
       cost: 5,
       interesting: 8,
       transit: 7,
-      population: "Unknown",
+      population: 0, // Changed from "Unknown" to 0 for unknown population
       crowdLevel: 8,
       recommendedStay: 1,
       bestSeason: 4,

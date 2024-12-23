@@ -17,17 +17,21 @@ export function useImport(config: ImportConfig) {
   const { pb } = useAuth();
   const { toast } = useToast();
   const [isImporting, setIsImporting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [importResults, setImportResults] = useState<ImportResultsMap>(new Map());
   const [validationResults, setValidationResults] = useState<any[]>([]);
   const [validationError, setValidationError] = useState<Error | null>(null);
 
-  const handleFileSelect = async (value: string, files: Record<string, SeedFile>) => {
-    setSelectedFile(value);
-    const fileData = files[value].default;
+  const handleFileSelect = async (values: string[], files: Record<string, SeedFile>) => {
+    setSelectedFiles(values);
     try {
-      const results = await config.validateData(fileData);
-      setValidationResults(results);
+      let allResults = [];
+      for (const value of values) {
+        const fileData = files[value].default;
+        const results = await config.validateData(fileData);
+        allResults.push(...results);
+      }
+      setValidationResults(allResults);
       setValidationError(null);
     } catch (error) {
       setValidationError(error instanceof Error ? error : new Error('Unknown validation error'));
@@ -101,30 +105,22 @@ export function useImport(config: ImportConfig) {
     }
 
     setIsImporting(false);
-
     if (successCount > 0) {
       toast({
-        title: "Import Complete",
+        title: "Import Successful",
         description: `Successfully imported ${successCount} items`,
       });
       config.onSuccess?.(successCount);
-    } else {
-      toast({
-        title: "Import Complete",
-        description: "No new items were imported",
-        variant: "destructive",
-      });
-      config.onError?.(new Error("No items imported"));
     }
   };
 
   return {
     isImporting,
-    selectedFile,
+    selectedFiles,
     importResults,
     validationResults,
     validationError,
     handleFileSelect,
-    importData
+    importData,
   };
 }

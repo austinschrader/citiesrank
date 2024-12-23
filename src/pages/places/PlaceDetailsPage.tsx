@@ -133,7 +133,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
           <StatCard
             icon={Users}
             title="Population"
-            value={placeData.population}
+            value={placeData.population?.toLocaleString() || "Unknown"}
             colorClass="bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
           />
           <StatCard

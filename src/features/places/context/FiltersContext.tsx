@@ -115,29 +115,17 @@ const defaultFilters: Filters = {
 
 const FiltersContext = createContext<FiltersContextValue | null>(null);
 
-export const parsePopulation = (pop: string): number | null => {
-  if (!pop || pop.toLowerCase() === "n/a") return null;
-
-  try {
-    // Remove commas and convert k/m suffixes
-    const normalized = pop
-      .toLowerCase()
-      .replace(/,/g, "")
-      .replace("k", "000")
-      .replace("m", "000000");
-
-    return parseFloat(normalized);
-  } catch {
-    return null;
-  }
+export const parsePopulation = (pop: number): number => {
+  return pop || 0;
 };
 
 export const isInPopulationRange = (
-  population: string,
-  category: PopulationCategory
+  population: number,
+  category: PopulationCategory | null
 ): boolean => {
-  const pop = parsePopulation(population);
-  if (pop === null) return false;
+  if (!category) return true;
+
+  const pop = population || 0;
 
   switch (category) {
     case "village":
@@ -148,6 +136,8 @@ export const isInPopulationRange = (
       return pop >= 50000 && pop < 1000000;
     case "megacity":
       return pop >= 1000000;
+    default:
+      return true;
   }
 };
 
@@ -298,11 +288,8 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           }
 
           if (filters.populationCategory) {
-            const population = parsePopulation(city.population);
-            if (
-              !population ||
-              !isInPopulationRange(city.population, filters.populationCategory)
-            ) {
+            const population = city.population;
+            if (!isInPopulationRange(population, filters.populationCategory)) {
               return false;
             }
           }

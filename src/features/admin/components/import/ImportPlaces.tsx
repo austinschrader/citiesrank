@@ -22,7 +22,7 @@ export function ImportPlaces() {
 
   const { 
     isImporting, 
-    selectedFile, 
+    selectedFiles, 
     importResults,
     validationResults,
     handleFileSelect: baseHandleFileSelect,
@@ -62,8 +62,8 @@ export function ImportPlaces() {
     loadTags();
   }, []);
 
-  const handleFileSelect = (value: string) => {
-    baseHandleFileSelect(value, seedFiles);
+  const handleFileSelect = (values: string[]) => {
+    baseHandleFileSelect(values, seedFiles);
   };
 
   return (
@@ -72,13 +72,13 @@ export function ImportPlaces() {
         <ImportButton
           isImporting={isImporting}
           onImport={importData}
-          disabled={!selectedFile || validationResults.filter((r) => r.isValid).length === 0}
+          disabled={selectedFiles.length === 0 || validationResults.filter((r) => r.isValid).length === 0}
         />
       </div>
 
       <FileSelector
         files={seedFiles}
-        selectedFile={selectedFile}
+        selectedFiles={selectedFiles}
         onFileSelect={handleFileSelect}
       />
 

@@ -7,10 +7,10 @@
  * - filterPlacesByType: Filters places by their type (city, region, etc.)
  */
 
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import { MapPlace } from "../types";
-import L from "leaflet";
 import { PopulationCategory } from "@/features/places/context/FiltersContext";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import L from "leaflet";
+import { MapPlace } from "../types";
 
 /**
  * Constants defining the zoom levels at which different place types become visible.
@@ -56,8 +56,7 @@ function hashString(str: string): number {
  * Helper function to get population in actual numbers
  */
 const getPopulation = (place: MapPlace): number => {
-  const pop = parseInt(place.population as string, 10);
-  return !isNaN(pop) ? pop * 1000 : 0; // Convert from thousands to actual number
+  return typeof place.population === 'number' ? place.population : 0;
 };
 
 /**
@@ -85,7 +84,7 @@ export function filterPlacesByZoom(
     return places.filter(
       (place) =>
       place.type !== CitiesTypeOptions.city || 
-      isInPopulationRange(place.population as string, populationCategory)
+      isInPopulationRange(place.population, populationCategory)
     );
   }
 
@@ -114,8 +113,8 @@ export function filterPlacesByZoom(
   return places.filter(place => {
     // At lower zoom levels, be more selective
     if (place.type === CitiesTypeOptions.city) {
-      const population = parseInt(place.population as string, 10);
-      return !isNaN(population) && population > 50000;
+      const population = getPopulation(place);
+      return population > 50000;
     }
     // Don't show sights at low zoom levels
     if (place.type === CitiesTypeOptions.sight) {
@@ -202,11 +201,11 @@ export function filterPlacesByType(
  * @param category - Population category to check against
  * @returns True if the place's population falls within the category's range
  */
-function isInPopulationRange(population: string | null, category: PopulationCategory): boolean {
-  if (!population) return false;
-  const pop = parseInt(population, 10);
-  if (isNaN(pop)) return false;
-
+function isInPopulationRange(population: number | undefined, category: PopulationCategory | null): boolean {
+  if (!category) return true;
+  
+  const pop = population || 0;
+  
   switch (category) {
     case "village":
       return pop < 10000;
@@ -216,5 +215,7 @@ function isInPopulationRange(population: string | null, category: PopulationCate
       return pop >= 50000 && pop < 1000000;
     case "megacity":
       return pop >= 1000000;
+    default:
+      return true;
   }
 }

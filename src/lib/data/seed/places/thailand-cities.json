@@ -5,7 +5,7 @@
     "type": ["city"],
     "latitude": 18.7883,
     "longitude": 98.9853,
-    "population": "127K",
+    "population": 127000,
     "description": "Chiang Mai is a cultural hub in northern Thailand, famous for its temples, digital nomad community, and laid-back lifestyle. The city combines ancient traditions with modern coworking spaces and cafes.",
     "accessibility": 75,
     "bestSeason": 85,

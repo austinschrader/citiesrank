@@ -64,7 +64,7 @@ export type CitiesRecord<Thighlights = unknown, Ttags = unknown> = {
 	name: string
 	normalizedName: string
 	parentId?: RecordIdString
-	population: string
+	population?: number
 	recommendedStay: number
 	safetyScore: number
 	slug: string
@@ -107,7 +107,7 @@ export type FeedItemsRecord<Tcontent = unknown, Tstats = unknown> = {
 	content?: null | Tcontent
 	curator?: RecordIdString
 	place?: RecordIdString
-	places?: RecordIdString
+	places?: RecordIdString[]
 	source_name: string
 	source_type: FeedItemsSourceTypeOptions
 	stats?: null | Tstats

@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Copenhagen",
+    "country": "Denmark",
+    "type": ["city"],
+    "cost": 85,
+    "interesting": 90,
+    "transit": 95,
+    "description": "Copenhagen is a model of Scandinavian efficiency and design, known for its cycling culture, sustainable living, and high quality of life. The city combines historic charm with modern innovation, offering world-class dining, beautiful architecture, and a strong emphasis on work-life balance.",
+    "population": 2057142,
+    "highlights": [
+      "Tivoli Gardens",
+      "Nyhavn harbor",
+      "World-class cycling infrastructure",
+      "New Nordic cuisine",
+      "Design museums",
+      "Historic palaces",
+      "Christiania"
+    ],
+    "averageRating": 4.6,
+    "totalReviews": 8500,
+    "tags": [
+      "cycling",
+      "design",
+      "sustainable",
+      "food",
+      "culture",
+      "architecture",
+      "hygge",
+      "urban",
+      "waterfront"
+    ],
+    "crowdLevel": 65,
+    "recommendedStay": 75,
+    "bestSeason": 70,
+    "accessibility": 95,
+    "costIndex": 5,
+    "safetyScore": 9.5,
+    "walkScore": 9.0,
+    "transitScore": 9.5,
+    "latitude": 55.6761,
+    "longitude": 12.5683
+  }
+]

@@ -5,7 +5,7 @@
     "type": ["city"],
     "latitude": 6.2442,
     "longitude": -75.5812,
-    "population": "2.5M",
+    "population": 2500000,
     "description": "Medellin, known as the 'City of Eternal Spring', has transformed into a modern tech hub and digital nomad hotspot. The city is famous for its perfect weather, innovative public transportation, and vibrant culture.",
     "accessibility": 75,
     "bestSeason": 90,
@@ -27,6 +27,12 @@
     "transit": 85,
     "averageRating": 4.3,
     "totalReviews": 7500,
-    "tags": ["digital nomad", "innovation", "spring weather", "culture", "affordable"]
+    "tags": [
+      "digital nomad",
+      "innovation",
+      "spring weather",
+      "culture",
+      "affordable"
+    ]
   }
 ]

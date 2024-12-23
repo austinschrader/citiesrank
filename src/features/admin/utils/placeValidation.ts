@@ -56,8 +56,9 @@ export const validatePlace = (data: any): ValidationResult => {
   validateText(data.country, "country", 1, 100);
   validateText(data.description, "description", 10, 500);
 
-  if (data.population && typeof data.population !== "string") {
-    errors.push("population must be a string");
+  // Population must be a number
+  if (data.population && typeof data.population !== "number") {
+    errors.push("population must be a number");
   }
 
   const numberFields = [
@@ -99,7 +100,7 @@ export const validatePlace = (data: any): ValidationResult => {
     normalizedName,
     slug,
     type: Array.isArray(data.type) ? data.type : [data.type || "city"],
-    population: data.population || "Unknown",
+    population: typeof data.population === "number" ? data.population : 0,
     highlights: JSON.stringify(
       data.highlights || [
         `Explore ${data.name || ""}`,

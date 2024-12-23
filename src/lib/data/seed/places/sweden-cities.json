@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Stockholm",
+    "country": "Sweden",
+    "type": ["city"],
+    "cost": 80,
+    "interesting": 90,
+    "transit": 95,
+    "description": "Stockholm is an archipelago city that perfectly balances natural beauty with urban sophistication. Built on 14 islands, it offers a unique blend of historic preservation and modern innovation, with world-class museums, beautiful parks, and a thriving tech scene.",
+    "population": 2415139,
+    "highlights": [
+      "Gamla Stan (Old Town)",
+      "Vasa Museum",
+      "Stockholm Archipelago",
+      "Royal Palace",
+      "ABBA Museum",
+      "Södermalm district",
+      "Metro art galleries"
+    ],
+    "averageRating": 4.5,
+    "totalReviews": 9000,
+    "tags": [
+      "archipelago",
+      "design",
+      "culture",
+      "history",
+      "nature",
+      "technology",
+      "urban",
+      "waterfront",
+      "sustainable"
+    ],
+    "crowdLevel": 60,
+    "recommendedStay": 80,
+    "bestSeason": 75,
+    "accessibility": 90,
+    "costIndex": 4,
+    "safetyScore": 9.0,
+    "walkScore": 8.5,
+    "transitScore": 9.5,
+    "latitude": 59.3293,
+    "longitude": 18.0686
+  }
+]
