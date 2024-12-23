@@ -63,11 +63,11 @@ export const Header = () => {
     ...(user?.isAdmin
       ? [
           {
-            label: "Import Places",
+            label: "Import Data",
             mobileLabel: "Import",
             icon: Upload,
-            to: "/admin/import-places",
-            description: "Import places from JSON file",
+            to: "/admin/import",
+            description: "Import places and feed items",
             iconClass: "text-emerald-500",
           },
         ]

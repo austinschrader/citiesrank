@@ -2,13 +2,12 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { ClientResponseError } from "pocketbase";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FileSelector } from "../components/import/FileSelector";
-import { ImportButton } from "../components/import/ImportButton";
-import { ValidationResults } from "../components/import/ValidationResults";
-import type { ImportResultsMap } from "../components/import/types";
-import { useValidatePlaces } from "../hooks/useValidatePlaces";
-import type { SeedFile } from "../types/places";
+import { useValidatePlaces } from "../../hooks/useValidatePlaces";
+import type { SeedFile } from "../../types/places";
+import { FileSelector } from "./FileSelector";
+import { ImportButton } from "./ImportButton";
+import { ValidationResults } from "./ValidationResults";
+import type { ImportResultsMap } from "./types";
 
 // Import all seed files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
@@ -16,10 +15,9 @@ const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
   { eager: true }
 );
 
-export function ImportPlacesPage() {
-  const { pb, user } = useAuth();
+export function ImportPlaces() {
+  const { pb } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [isImporting, setIsImporting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [importResults, setImportResults] = useState<ImportResultsMap>(
@@ -27,12 +25,6 @@ export function ImportPlacesPage() {
   );
   const [tagsMapping, setTagsMapping] = useState<Record<string, string>>({});
   const { validationResults, validatePlaces } = useValidatePlaces(tagsMapping);
-
-  // If not admin, redirect to home
-  if (!user?.isAdmin) {
-    navigate("/");
-    return null;
-  }
 
   // Load tags mapping on component mount
   useEffect(() => {
@@ -126,9 +118,8 @@ export function ImportPlacesPage() {
   const hasValidPlaces = validationResults.some((r) => r.isValid);
 
   return (
-    <div className="container max-w-4xl py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Import Places</h1>
+    <div className="space-y-6">
+      <div className="flex justify-end">
         {hasValidPlaces && (
           <ImportButton
             isImporting={isImporting}
@@ -138,37 +129,35 @@ export function ImportPlacesPage() {
         )}
       </div>
 
-      <div className="space-y-6">
-        <FileSelector
-          files={seedFiles}
-          selectedFile={selectedFile}
-          onFileSelect={handleFileSelect}
-        />
+      <FileSelector
+        files={seedFiles}
+        selectedFile={selectedFile}
+        onFileSelect={handleFileSelect}
+      />
 
-        <ValidationResults
-          validationResults={validationResults}
-          importResults={importResults}
-        />
+      <ValidationResults
+        validationResults={validationResults}
+        importResults={importResults}
+      />
 
-        {/* Instructions */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Adding New Data Files</h2>
-          <div className="prose prose-sm max-w-none">
-            <p>To add new data files:</p>
-            <ol>
-              <li>
-                Create a JSON file in the <code>/src/lib/data/seed/</code>{" "}
-                directory with the prefix <code>places-</code> (e.g.,{" "}
-                <code>places-europe.json</code>)
-              </li>
-              <li>Follow the data format shown below</li>
-              <li>Commit the file to the repository</li>
-              <li>The file will appear in the dropdown above</li>
-            </ol>
-          </div>
-          <div className="border rounded-lg p-4 bg-muted/50">
-            <pre className="text-sm">
-              {`[
+      {/* Instructions */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Adding New Place Files</h2>
+        <div className="prose prose-sm max-w-none">
+          <p>To add new place files:</p>
+          <ol>
+            <li>
+              Create a JSON file in the <code>/src/lib/data/seed/places/</code>{" "}
+              directory
+            </li>
+            <li>Follow the data format shown below</li>
+            <li>Commit the file to the repository</li>
+            <li>The file will appear in the dropdown above</li>
+          </ol>
+        </div>
+        <div className="border rounded-lg p-4 bg-muted/50">
+          <pre className="text-sm">
+            {`[
   {
     "name": "City Name",
     "country": "Country Name",
@@ -192,8 +181,7 @@ export function ImportPlacesPage() {
     "transit": "poor|limited|good|excellent"
   }
 ]`}
-            </pre>
-          </div>
+          </pre>
         </div>
       </div>
     </div>
