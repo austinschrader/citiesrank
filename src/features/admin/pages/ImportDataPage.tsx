@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ImportTabs } from "../components/import/ImportTabs";
 import { TabsContent } from "@/components/ui/tabs";
 import { ImportPlaces } from "../components/import/ImportPlaces";
+import { ImportFeedItems } from "../components/import/ImportFeedItems";
 
 export function ImportDataPage() {
   const { user } = useAuth();
@@ -21,10 +22,8 @@ export function ImportDataPage() {
           <ImportPlaces />
         </TabsContent>
 
-        <TabsContent value="feed_items" className="space-y-6">
-          <div className="prose prose-sm max-w-none">
-            <p>Feed item import functionality coming soon.</p>
-          </div>
+        <TabsContent value="feed_items">
+          <ImportFeedItems />
         </TabsContent>
       </ImportTabs>
     </div>
