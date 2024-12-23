@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { TimeWindow } from "@/features/explorer/components/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
-import { Activity, PlusCircle, Users } from "lucide-react";
+import { Activity, Users } from "lucide-react";
 import { useState } from "react";
 
 type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
@@ -47,27 +45,12 @@ export const ExplorerHeader = () => {
         </div>
 
         {/* Center: Time Window */}
-        <TimeWindow 
+        <TimeWindow
           energyMode={energyMode}
-        timeRange={timeRange}
+          timeRange={timeRange}
           onEnergyChange={setEnergyMode}
           onTimeChange={setTimeRange}
         />
-
-        {/* Right: View Controls */}
-        <div className="flex items-center gap-3">
-          {viewMode === "map" && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 bg-background/80"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Space
-            </Button>
-          )}
-          <ViewModeToggle />
-        </div>
       </div>
 
       {/* View Context */}
