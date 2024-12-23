@@ -53,11 +53,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  // NOTE: IF USERS FIELD EVER CHANGES, MAKE SURE TO UPDATE THIS
+  // OTHERWISE, USERS CAN SIGN IN, BUT NOT SIGN UP
   const signInWithGoogle = async () => {
     const authData = await pb.collection("users").authWithOAuth2({
       provider: "google",
       createData: {
         emailVisibility: true,
+        isAdmin: false,
+        isPrivate: false,
+        lists_count: 0,
+        location: "",
+        bio: "",
+        places_visited: [], 
       },
     });
 
