@@ -5,196 +5,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ClientResponseError } from "pocketbase";
 import { Loader2, Upload, AlertCircle, CheckCircle2 } from "lucide-react";
-import slugify from "slugify";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
-interface Place {
-  name: string;
-  normalizedName: string;
-  country: string;
-  cost: number;
-  interesting: number;
-  transit: number;
-  description: string;
-  population: string;
-  highlights: any;
-  crowdLevel: number;
-  recommendedStay: number;
-  bestSeason: number;
-  accessibility: number;
-  slug: string;
-  imageUrl: string;
-  averageRating?: number;
-  totalReviews?: number;
-  costIndex: number;
-  safetyScore: number;
-  walkScore: number;
-  transitScore: number;
-  tags?: string[];
-  latitude?: number;
-  longitude?: number;
-  type?: "country" | "region" | "city" | "neighborhood" | "sight";
-  parentId?: string;
-  climate?: string;
-}
-
-interface SeedFile {
-  default: Place[];
-}
-
-interface ValidationResult {
-  name: string;
-  isValid: boolean;
-  errors: string[];
-  data: Partial<Place>;
-}
+import { useValidatePlaces } from "../hooks/useValidatePlaces";
+import type { SeedFile } from "../types/places";
 
 // Import all seed files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>("/src/lib/data/seed/*.json", { eager: true });
-
-const normalizeString = (str: string): string => {
-  return str
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/[-']/g, " ") // Replace hyphens and apostrophes with spaces
-    .replace(/[^a-zA-Z0-9\s]/g, "") // Remove any remaining special characters
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " "); // Normalize multiple spaces to single space
-};
-
-const createSlug = (name: string, country: string): string => {
-  const processedName = name.replace(/[']/g, "");
-  return slugify(`${processedName}-${country}`, {
-    lower: true,
-    strict: true,
-    trim: true,
-    remove: /[*+~.()'"!:@]/g,
-  });
-};
-
-const normalizeScore = (score: number | null | undefined): number => {
-  if (score === null || score === undefined) return 0;
-  // If score is greater than 10, assume it's on a 100 scale and convert
-  return score > 10 ? score / 10 : score;
-};
-
-const validatePlace = (data: any): ValidationResult => {
-  const errors: string[] = [];
-
-  // Helper function to validate text fields
-  const validateText = (value: any, field: string, min?: number, max?: number) => {
-    if (!value || typeof value !== "string") {
-      errors.push(`${field} is required and must be a string`);
-      return;
-    }
-    if (min && value.length < min) {
-      errors.push(`${field} must be at least ${min} characters`);
-    }
-    if (max && value.length > max) {
-      errors.push(`${field} must be at most ${max} characters`);
-    }
-  };
-
-  // Helper function to validate number fields
-  const validateNumber = (value: any, field: string) => {
-    if (value === undefined || value === null) {
-      return; // We'll use defaults for missing numbers
-    }
-    if (typeof value !== "number") {
-      errors.push(`${field} must be a number`);
-    }
-  };
-
-  // Required text fields
-  validateText(data.name, "name", 1, 100);
-  validateText(data.country, "country", 1, 100);
-  validateText(data.description, "description", 10, 500);
-
-  // Population can be "Unknown"
-  if (data.population && typeof data.population !== "string") {
-    errors.push("population must be a string");
-  }
-
-  // Validate all number fields - they're optional but must be numbers if present
-  const numberFields = [
-    "cost",
-    "interesting",
-    "transit",
-    "crowdLevel",
-    "recommendedStay",
-    "bestSeason",
-    "accessibility",
-    "costIndex",
-    "safetyScore",
-    "walkScore",
-    "transitScore",
-    "latitude",
-    "longitude",
-    "averageRating",
-    "totalReviews",
-  ];
-  numberFields.forEach((field) => validateNumber(data[field], field));
-
-  // Highlights validation
-  if (data.highlights) {
-    try {
-      if (typeof data.highlights === "string") {
-        JSON.parse(data.highlights);
-      } else {
-        // If it's already an object/array, we'll stringify it later
-        JSON.stringify(data.highlights);
-      }
-    } catch (e) {
-      errors.push("highlights must be valid JSON");
-    }
-  }
-
-  // Transform the data
-  const normalizedName = normalizeString(data.name || "");
-  const slug = createSlug(data.name || "", data.country || "");
-
-  const transformedData = {
-    ...data,
-    normalizedName,
-    slug,
-    type: Array.isArray(data.type) ? data.type : [data.type || "city"],
-    population: data.population || "Unknown",
-    highlights: JSON.stringify(
-      data.highlights || [
-        `Explore ${data.name || ""}`,
-        "Experience local culture",
-        "Visit historic sites",
-        "Enjoy local cuisine",
-        "Discover natural beauty",
-      ]
-    ),
-    // Normalize all scores to 0-10 scale
-    interesting: normalizeScore(data.interesting),
-    transit: normalizeScore(data.transit),
-    crowdLevel: normalizeScore(data.crowdLevel),
-    recommendedStay: normalizeScore(data.recommendedStay),
-    bestSeason: normalizeScore(data.bestSeason),
-    accessibility: normalizeScore(data.accessibility),
-    costIndex: normalizeScore(data.costIndex),
-    transitScore: normalizeScore(data.transitScore),
-    walkScore: normalizeScore(data.walkScore),
-    safetyScore: normalizeScore(data.safetyScore),
-    // Set defaults for optional fields
-    averageRating: data.averageRating || 0,
-    totalReviews: data.totalReviews || 0,
-    latitude: data.latitude || 0,
-    longitude: data.longitude || 0,
-  };
-
-  return {
-    name: data.name || "Unknown Place",
-    isValid: errors.length === 0,
-    errors,
-    data: transformedData,
-  };
-};
 
 export function ImportPlacesPage() {
   const { pb, user } = useAuth();
@@ -202,9 +19,9 @@ export function ImportPlacesPage() {
   const navigate = useNavigate();
   const [isImporting, setIsImporting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
   const [importResults, setImportResults] = useState<Map<string, boolean>>(new Map());
   const [tagsMapping, setTagsMapping] = useState<Record<string, string>>({});
+  const { validationResults, validatePlaces } = useValidatePlaces(tagsMapping);
 
   // If not admin, redirect to home
   if (!user?.isAdmin) {
@@ -236,33 +53,7 @@ export function ImportPlacesPage() {
   const handleFileSelect = (value: string) => {
     setSelectedFile(value);
     const fileData = seedFiles[value].default;
-
-    // Validate each place
-    const results = fileData.map((place) => {
-      const result = validatePlace(place);
-      if (result.isValid) {
-        // Generate the slug
-        const slug = createSlug(place.name, place.country);
-        // Convert tag names to IDs
-        const tagIds = (place.tags || []).map((tag) => tagsMapping[tag]).filter((id) => id); // Remove any undefined tags
-
-        // Update the transformed data
-        result.data = {
-          ...result.data,
-          imageUrl: `${slug}-1`,
-          tags: tagIds,
-        };
-      }
-      return result;
-    });
-
-    setValidationResults(results);
-
-    const validCount = results.filter((r) => r.isValid).length;
-    toast({
-      title: "File Validated",
-      description: `Found ${results.length} places (${validCount} valid, ${results.length - validCount} invalid)`,
-    });
+    validatePlaces(fileData);
   };
 
   const importPlaces = async () => {
@@ -271,14 +62,12 @@ export function ImportPlacesPage() {
 
     setIsImporting(true);
     setImportResults(new Map());
-    let successCount = 0; // Add counter for successful imports
+    let successCount = 0;
 
     for (const result of validPlaces) {
       try {
-        // Check if a place with this slug exists
         try {
           const exists = await pb.collection("cities").getFirstListItem(`slug="${result.data.slug}"`);
-          // If we get here, the record exists
           setImportResults((prev) => new Map(prev).set(result.name, false));
           toast({
             title: "Import Failed",
@@ -287,22 +76,18 @@ export function ImportPlacesPage() {
           });
           continue;
         } catch (error) {
-          // If it's a 404 error, that means the slug doesn't exist and we can create the record
           if (error instanceof ClientResponseError && error.status === 404) {
             await pb.collection("cities").create(result.data);
             setImportResults((prev) => new Map(prev).set(result.name, true));
-            successCount++; // Increment counter on successful import
+            successCount++;
           } else {
-            // If it's any other error, we should handle it as a real error
             throw error;
           }
         }
       } catch (error) {
         const message = error instanceof ClientResponseError ? error.message : "Unknown error occurred";
-
         setImportResults((prev) => new Map(prev).set(result.name, false));
         console.error(`Error importing ${result.name}:`, error);
-
         toast({
           title: "Import Failed",
           description: `Failed to import ${result.name}: ${message}`,
@@ -313,7 +98,6 @@ export function ImportPlacesPage() {
 
     setIsImporting(false);
 
-    // Use the successCount instead of counting from importResults
     if (successCount > 0) {
       toast({
         title: "Import Complete",
