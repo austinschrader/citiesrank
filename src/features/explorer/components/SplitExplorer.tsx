@@ -1,7 +1,7 @@
 import { FiltersBar } from "@/features/explorer/components/FiltersBar";
-import { FeedView } from "@/features/feed/components/FeedView";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
+import { SpaceView } from "@/features/space/components/SpaceView";
 import { cn } from "@/lib/utils";
 
 export const SplitExplorer = () => {
@@ -20,10 +20,12 @@ export const SplitExplorer = () => {
                 ? "w-0 invisible"
                 : viewMode === "list"
                 ? "w-full"
-                : "w-[800px]"
+                : "w-1/2"
             )}
           >
-            <FeedView />
+            <div className="flex-1 overflow-y-auto">
+              <SpaceView />
+            </div>
           </div>
           <div
             key={`map-${viewMode}`}
@@ -33,15 +35,10 @@ export const SplitExplorer = () => {
                 ? "w-0 invisible"
                 : viewMode === "map"
                 ? "w-full"
-                : "flex-1"
+                : "w-1/2"
             )}
           >
-            <div
-              className={cn(
-                "absolute inset-0",
-                viewMode === "list" && "pointer-events-none"
-              )}
-            >
+            <div className="absolute inset-0">
               <CityMap className="h-full" />
             </div>
           </div>

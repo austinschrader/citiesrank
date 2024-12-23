@@ -25,7 +25,7 @@ export const FiltersBar = () => {
         <div className="relative flex-1 min-w-[200px]">
           <Input
             type="text"
-            placeholder="Search places..."
+            placeholder="Find active spaces nearby..."
             className="w-full pl-9 h-10 bg-background/60"
             value={filters.search || ""}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
