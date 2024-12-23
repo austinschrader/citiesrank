@@ -4,28 +4,46 @@
  * Uses shadcn/ui components for consistent styling and includes loading/empty states.
  */
 
-import React from 'react';
-import { MapPin, Users, Camera, Sparkles, Heart, Tag, Trophy, Calendar } from 'lucide-react';
-import { useFeed } from '../context/FeedContext';
-import { 
-  TrendingPlaceItem, 
-  PlaceCollectionItem, 
-  SimilarPlacesItem, 
-  PlaceUpdateItem, 
-  TagSpotlightItem, 
-  PhotoChallengeItem, 
-  FriendActivityItem, 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getImageUrl } from "@/lib/cloudinary";
+import {
+  Calendar,
+  Camera,
+  Heart,
+  MapPin,
+  Sparkles,
+  Tag,
+  Trophy,
+  Users,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { useFeed } from "../context/FeedContext";
+import {
+  FeedItem,
+  FriendActivityItem,
+  PhotoChallengeItem,
+  PlaceCollectionItem,
+  PlaceUpdateItem,
+  SimilarPlacesItem,
+  TagSpotlightItem,
   TimeMachineItem,
-  FeedItem
-} from '../types';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Link } from 'react-router-dom';
+  TrendingPlaceItem,
+} from "../types";
 
 export const FeedView = () => {
-  const { feedItems, isLoading, followTag, unfollowTag, followPlace, unfollowPlace, followedTags, followedPlaces } = useFeed();
+  const {
+    feedItems,
+    isLoading,
+    followTag,
+    unfollowTag,
+    followPlace,
+    unfollowPlace,
+    followedTags,
+    followedPlaces,
+  } = useFeed();
 
   if (isLoading) {
     return (
@@ -48,35 +66,46 @@ export const FeedView = () => {
         <h3 className="font-bold text-lg">{item.place.name} is Trending!</h3>
       </div>
       {item.place.imageUrl && (
-        <img 
-          src={item.place.imageUrl} 
+        <img
+          src={getImageUrl(item.place.imageUrl, "thumbnail")}
           alt={item.place.name}
-          className="w-full h-48 object-cover rounded-lg mb-3" 
+          className="w-full h-48 object-cover rounded-lg mb-3"
         />
       )}
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center space-x-4 text-sm text-gray-600">
-          <span><Camera className="w-4 h-4 inline mr-1" />{item.stats.recentPhotos} new photos</span>
-          <span><Users className="w-4 h-4 inline mr-1" />{item.stats.activeUsers} active</span>
+          <span>
+            <Camera className="w-4 h-4 inline mr-1" />
+            {item.stats.recentPhotos} new photos
+          </span>
+          <span>
+            <Users className="w-4 h-4 inline mr-1" />
+            {item.stats.activeUsers} active
+          </span>
         </div>
         <Button
-          variant={followedPlaces.includes(item.place.id) ? "secondary" : "default"}
+          variant={
+            followedPlaces.includes(item.place.id) ? "secondary" : "default"
+          }
           size="sm"
-          onClick={() => followedPlaces.includes(item.place.id) 
-            ? unfollowPlace(item.place.id)
-            : followPlace(item.place.id)
+          onClick={() =>
+            followedPlaces.includes(item.place.id)
+              ? unfollowPlace(item.place.id)
+              : followPlace(item.place.id)
           }
         >
-          {followedPlaces.includes(item.place.id) ? 'Following' : 'Follow'}
+          {followedPlaces.includes(item.place.id) ? "Following" : "Follow"}
         </Button>
       </div>
       <div className="flex flex-wrap gap-2">
         {item.trendingTags.map((tag) => (
-          <Badge 
+          <Badge
             key={tag}
             variant={followedTags.includes(tag) ? "secondary" : "default"}
             className="cursor-pointer"
-            onClick={() => followedTags.includes(tag) ? unfollowTag(tag) : followTag(tag)}
+            onClick={() =>
+              followedTags.includes(tag) ? unfollowTag(tag) : followTag(tag)
+            }
           >
             {tag}
           </Badge>
@@ -93,23 +122,26 @@ export const FeedView = () => {
           <h3 className="font-bold text-lg">{item.content.title}</h3>
         </div>
         <Button
-          variant={followedPlaces.includes(item.place.id) ? "secondary" : "default"}
+          variant={
+            followedPlaces.includes(item.place.id) ? "secondary" : "default"
+          }
           size="sm"
-          onClick={() => followedPlaces.includes(item.place.id) 
-            ? unfollowPlace(item.place.id)
-            : followPlace(item.place.id)
+          onClick={() =>
+            followedPlaces.includes(item.place.id)
+              ? unfollowPlace(item.place.id)
+              : followPlace(item.place.id)
           }
         >
-          {followedPlaces.includes(item.place.id) ? 'Following' : 'Follow'}
+          {followedPlaces.includes(item.place.id) ? "Following" : "Follow"}
         </Button>
       </div>
       <p className="text-gray-600 mb-3">{item.content.description}</p>
       {item.content.images && (
         <div className="grid grid-cols-3 gap-2 mb-3">
           {item.content.images.map((image, idx) => (
-            <img 
+            <img
               key={idx}
-              src={image}
+              src={getImageUrl(image, "standard")}
               alt={`Update from ${item.place.name}`}
               className="w-full h-24 object-cover rounded-lg"
             />
@@ -126,19 +158,25 @@ export const FeedView = () => {
           <Heart className="w-6 h-6 text-purple-500 mr-2" />
           <div>
             <h3 className="font-bold text-lg">{item.title}</h3>
-            <p className="text-sm text-gray-600">Curated by {item.curator.name}</p>
+            <p className="text-sm text-gray-600">
+              Curated by {item.curator.name}
+            </p>
           </div>
         </div>
-        <img src={item.curator.avatar} alt={item.curator.name} className="w-8 h-8 rounded-full" />
+        <img
+          src={item.curator.avatar}
+          alt={item.curator.name}
+          className="w-8 h-8 rounded-full"
+        />
       </div>
       <p className="text-gray-600 mb-3">{item.description}</p>
       <div className="grid grid-cols-3 gap-2 mb-3">
         {item.places.slice(0, 3).map((place) => (
           <Link key={place.id} to={`/places/${place.id}`}>
-            <img 
-              src={place.imageUrl} 
+            <img
+              src={getImageUrl(place.imageUrl, "standard")}
               alt={place.name}
-              className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity" 
+              className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
           </Link>
         ))}
@@ -146,31 +184,31 @@ export const FeedView = () => {
       <div className="flex justify-between items-center">
         <div className="flex flex-wrap gap-2">
           {item.tags.slice(0, 3).map((tag) => (
-            <Badge 
+            <Badge
               key={tag}
               variant={followedTags.includes(tag) ? "secondary" : "default"}
               className="cursor-pointer"
-              onClick={() => followedTags.includes(tag) ? unfollowTag(tag) : followTag(tag)}
+              onClick={() =>
+                followedTags.includes(tag) ? unfollowTag(tag) : followTag(tag)
+              }
             >
               {tag}
             </Badge>
           ))}
         </div>
-        <span className="text-sm text-gray-600">
-          {item.savedCount} saves
-        </span>
+        <span className="text-sm text-gray-600">{item.savedCount} saves</span>
       </div>
     </Card>
   );
 
   const renderSimilarPlaces = (item: SimilarPlacesItem) => {
-    console.debug('Rendering similar places:', {
+    console.debug("Rendering similar places:", {
       basedOn: item.basedOn,
-      similarPlaces: item.similarPlaces
+      similarPlaces: item.similarPlaces,
     });
-    
+
     if (!item.similarPlaces || !Array.isArray(item.similarPlaces)) {
-      console.warn('Similar places is not an array:', item.similarPlaces);
+      console.warn("Similar places is not an array:", item.similarPlaces);
       return null;
     }
 
@@ -178,20 +216,24 @@ export const FeedView = () => {
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
         <div className="flex items-center mb-3">
           <Sparkles className="w-6 h-6 text-blue-500 mr-2" />
-          <h3 className="font-bold text-lg">Similar to {item.basedOn?.name || 'this place'}</h3>
+          <h3 className="font-bold text-lg">
+            Similar to {item.basedOn?.name || "this place"}
+          </h3>
         </div>
         {item.similarPlaces.length > 0 ? (
           <div className="grid grid-cols-3 gap-2">
             {item.similarPlaces.map((place) => (
               <div key={place.id} className="relative group">
                 <img
-                  src={place.imageUrl}
+                  src={getImageUrl(place.imageUrl, "standard")}
                   alt={place.name}
                   className="w-full h-24 object-cover rounded-lg"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity rounded-lg" />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-white text-sm font-medium">{place.name}</span>
+                  <span className="text-white text-sm font-medium">
+                    {place.name}
+                  </span>
                 </div>
               </div>
             ))}
@@ -222,25 +264,32 @@ export const FeedView = () => {
           <Tag className="w-6 h-6 text-indigo-500 mr-2" />
           <div>
             <h3 className="font-bold text-lg">#{item.tag} Spotlight</h3>
-            <p className="text-sm text-gray-600">{item.stats.totalPlaces} places • {item.stats.recentActivity} recent activities</p>
+            <p className="text-sm text-gray-600">
+              {item.stats.totalPlaces} places • {item.stats.recentActivity}{" "}
+              recent activities
+            </p>
           </div>
         </div>
         <Button
           variant={followedTags.includes(item.tag) ? "secondary" : "default"}
           size="sm"
-          onClick={() => followedTags.includes(item.tag) ? unfollowTag(item.tag) : followTag(item.tag)}
+          onClick={() =>
+            followedTags.includes(item.tag)
+              ? unfollowTag(item.tag)
+              : followTag(item.tag)
+          }
         >
-          {followedTags.includes(item.tag) ? 'Following' : 'Follow'}
+          {followedTags.includes(item.tag) ? "Following" : "Follow"}
         </Button>
       </div>
       <p className="text-gray-600 mb-3">{item.description}</p>
       <div className="grid grid-cols-3 gap-2">
         {item.featuredPlaces.slice(0, 3).map((place) => (
           <Link key={place.id} to={`/places/${place.id}`}>
-            <img 
-              src={place.imageUrl} 
+            <img
+              src={getImageUrl(place.imageUrl, "standard")}
               alt={place.name}
-              className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity" 
+              className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
           </Link>
         ))}
@@ -257,11 +306,11 @@ export const FeedView = () => {
       <p className="text-gray-600 mb-3">{item.description}</p>
       <div className="grid grid-cols-3 gap-2 mb-3">
         {item.topPhotos.map((photo, idx) => (
-          <img 
-            key={idx} 
-            src={photo} 
+          <img
+            key={idx}
+            src={getImageUrl(photo, "standard")}
             alt={`Challenge photo ${idx + 1}`}
-            className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity" 
+            className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
           />
         ))}
       </div>
@@ -286,23 +335,24 @@ export const FeedView = () => {
       <div className="flex items-center mb-3">
         <div className="flex -space-x-2">
           {item.users.map((user, idx) => (
-            <img 
-              key={user.id} 
-              src={user.avatar} 
+            <img
+              key={user.id}
+              src={user.avatar}
               alt={user.name}
-              className="w-8 h-8 rounded-full border-2 border-white" 
+              className="w-8 h-8 rounded-full border-2 border-white"
             />
           ))}
         </div>
         <p className="ml-3 text-gray-600">
-          <span className="font-semibold">{item.users[0].name}</span> and {item.users.length - 1} others {item.activityType}
+          <span className="font-semibold">{item.users[0].name}</span> and{" "}
+          {item.users.length - 1} others {item.activityType}
         </p>
       </div>
       <div className="relative">
-        <img 
-          src={item.sight.image} 
+        <img
+          src={getImageUrl(item.sight.image, "standard")}
           alt={item.sight.name}
-          className="w-full h-32 object-cover rounded-lg" 
+          className="w-full h-32 object-cover rounded-lg"
         />
         <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
           <MapPin className="w-4 h-4 inline mr-1" />
@@ -318,13 +368,15 @@ export const FeedView = () => {
         <Calendar className="w-6 h-6 text-indigo-500 mr-2" />
         <div>
           <h3 className="font-bold text-lg">{item.title}</h3>
-          <p className="text-sm text-gray-600">{item.yearsAgo} year{item.yearsAgo > 1 ? 's' : ''} ago</p>
+          <p className="text-sm text-gray-600">
+            {item.yearsAgo} year{item.yearsAgo > 1 ? "s" : ""} ago
+          </p>
         </div>
       </div>
-      <img 
-        src={item.memory.image} 
+      <img
+        src={getImageUrl(item.memory.image, "wide")}
         alt={item.memory.title}
-        className="w-full h-48 object-cover rounded-lg mb-3" 
+        className="w-full h-48 object-cover rounded-lg mb-3"
       />
       <div className="flex justify-between items-center">
         <p className="font-semibold">{item.memory.title}</p>
@@ -342,17 +394,17 @@ export const FeedView = () => {
 
   const renderFeedItem = (item: FeedItem) => {
     if (!item) return null;
-    
+
     switch (item.type) {
-      case 'trending_place':
+      case "trending_place":
         return renderTrendingPlace(item as TrendingPlaceItem);
-      case 'place_collection':
+      case "place_collection":
         return renderPlaceCollection(item as PlaceCollectionItem);
-      case 'similar_places':
+      case "similar_places":
         return renderSimilarPlaces(item as SimilarPlacesItem);
-      case 'place_update':
+      case "place_update":
         return renderPlaceUpdate(item as PlaceUpdateItem);
-      case 'tag_spotlight':
+      case "tag_spotlight":
         return renderTagSpotlight(item as TagSpotlightItem);
       default:
         return null;
@@ -364,8 +416,12 @@ export const FeedView = () => {
       <div className="max-w-2xl mx-auto p-4 text-center">
         <div className="bg-gray-50 rounded-lg p-8">
           <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Your feed is empty</h3>
-          <p className="text-gray-600 mb-4">Follow some places or tags to start seeing updates!</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Your feed is empty
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Follow some places or tags to start seeing updates!
+          </p>
           <Link to="/explore">
             <Button>Explore Places</Button>
           </Link>
