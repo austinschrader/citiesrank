@@ -1,10 +1,9 @@
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
 import type { SeedFile } from "../../types/places";
 import { FileSelector } from "./FileSelector";
 import { ImportButton } from "./ImportButton";
 import { ValidationResults } from "./ValidationResults";
 import { useImport } from "../../hooks/useImport";
+import { useValidateFeedItems } from "../../hooks/useValidateFeedItems";
 
 // Import all feed item files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
@@ -13,6 +12,8 @@ const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
 );
 
 export function ImportFeedItems() {
+  const { validateFeedItems } = useValidateFeedItems();
+  
   const { 
     isImporting, 
     selectedFile, 
@@ -22,15 +23,7 @@ export function ImportFeedItems() {
     importData 
   } = useImport({
     collection: "feed_items",
-    validateData: async (data) => {
-      // TODO: Implement feed item validation
-      return data.map((item: any) => ({
-        name: item.type,
-        data: item,
-        isValid: true, // For now, consider all items valid
-        errors: []
-      }));
-    }
+    validateData: validateFeedItems
   });
 
   const handleFileSelect = (value: string) => {
@@ -68,10 +61,15 @@ export function ImportFeedItems() {
               Create a JSON file in the <code>/src/lib/data/seed/feed_items/</code>{" "}
               directory
             </li>
-            <li>Follow one of the existing feed item formats</li>
-            <li>Commit the file to the repository</li>
-            <li>The file will appear in the dropdown above</li>
+            <li>Follow one of these feed item formats:</li>
           </ol>
+          <ul>
+            <li><strong>Trending Place</strong>: Views and saves statistics for popular places</li>
+            <li><strong>Place Collection</strong>: Curated groups of related places</li>
+            <li><strong>Tag Spotlight</strong>: Featured tags with place statistics</li>
+            <li><strong>Place Update</strong>: Changes in place attributes</li>
+            <li><strong>Similar Places</strong>: Places with similar characteristics</li>
+          </ul>
         </div>
       </div>
     </div>

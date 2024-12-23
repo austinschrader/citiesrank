@@ -1,0 +1,38 @@
+[
+  {
+    "type": "place_collection",
+    "source_type": "system",
+    "source_name": "Pacific Northwest",
+    "places": ["portland-united-states", "seattle-united-states", "vancouver-canada"],
+    "content": {
+      "title": "Best of the Pacific Northwest",
+      "description": "Discover the natural beauty and urban culture of the Pacific Northwest",
+      "image_url": "pnw-collection.jpg",
+      "highlights": [
+        "Stunning natural landscapes",
+        "Vibrant coffee culture",
+        "Tech-forward cities",
+        "Outdoor activities"
+      ]
+    },
+    "timestamp": "2024-12-22 00:00:00.000Z"
+  },
+  {
+    "type": "place_collection",
+    "source_type": "tag",
+    "source_name": "Digital Nomad Friendly",
+    "places": ["lisbon-portugal", "chiang-mai-thailand", "medellin-colombia"],
+    "content": {
+      "title": "Top Digital Nomad Destinations",
+      "description": "Cities with great internet, coworking spaces, and digital nomad communities",
+      "image_url": "digital-nomad-collection.jpg",
+      "highlights": [
+        "Fast internet connectivity",
+        "Affordable living costs",
+        "Active expat communities",
+        "Quality of life"
+      ]
+    },
+    "timestamp": "2024-12-21 00:00:00.000Z"
+  }
+]

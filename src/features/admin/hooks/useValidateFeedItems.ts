@@ -1,0 +1,199 @@
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import type { ValidationResult } from "../types/validation";
+import { z } from "zod";
+
+// Base schema for all feed items
+const baseFeedItemSchema = z.object({
+  type: z.string(),
+  source_type: z.string(),
+  source_name: z.string(),
+  timestamp: z.string(),
+  content: z.object({
+    title: z.string(),
+    description: z.string()
+  })
+});
+
+// Schema for trending places
+const trendingPlaceSchema = baseFeedItemSchema.extend({
+  type: z.literal("trending_place"),
+  place: z.string(),
+  stats: z.object({
+    views_last_week: z.number(),
+    view_increase: z.number(),
+    saves_last_week: z.number()
+  })
+});
+
+// Schema for place collections
+const placeCollectionSchema = baseFeedItemSchema.extend({
+  type: z.literal("place_collection"),
+  places: z.array(z.string()),
+});
+
+// Schema for tag spotlights
+const tagSpotlightSchema = baseFeedItemSchema.extend({
+  type: z.literal("tag_spotlight"),
+  tag: z.string(),
+  stats: z.object({
+    places_count: z.number(),
+    average_rating: z.number().optional(),
+  })
+});
+
+// Schema for place updates
+const placeUpdateSchema = baseFeedItemSchema.extend({
+  type: z.literal("place_update"),
+  place: z.string(),
+  changes: z.array(z.object({
+    field: z.string(),
+    old_value: z.any(),
+    new_value: z.any()
+  }))
+});
+
+// Schema for similar places
+const similarPlacesSchema = baseFeedItemSchema.extend({
+  type: z.literal("similar_places"),
+  place: z.string(),
+  places: z.array(z.string()),
+  stats: z.object({
+    average_cost: z.number(),
+    average_transit_score: z.number(),
+    average_walk_score: z.number()
+  }).optional()
+});
+
+export function useValidateFeedItems() {
+  const { toast } = useToast();
+  const { pb } = useAuth();
+  const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
+
+  const resolvePlaceIds = async (slugs: string[]): Promise<{ [key: string]: string }> => {
+    const placeIds: { [key: string]: string } = {};
+    const errors: string[] = [];
+
+    for (const slug of slugs) {
+      try {
+        const record = await pb.collection('cities').getFirstListItem(`slug="${slug}"`);
+        placeIds[slug] = record.id;
+      } catch (error) {
+        errors.push(`Place not found: ${slug}`);
+      }
+    }
+
+    return placeIds;
+  };
+
+  const validateFeedItem = async (item: unknown): Promise<ValidationResult> => {
+    const baseResult = {
+      name: `${(item as any).type} - ${(item as any).source_name}`,
+      data: item,
+      isValid: false,
+      errors: [] as string[]
+    };
+
+    // Determine schema based on type
+    let schema;
+    switch ((item as any).type) {
+      case "trending_place":
+        schema = trendingPlaceSchema;
+        break;
+      case "place_collection":
+        schema = placeCollectionSchema;
+        break;
+      case "tag_spotlight":
+        schema = tagSpotlightSchema;
+        break;
+      case "place_update":
+        schema = placeUpdateSchema;
+        break;
+      case "similar_places":
+        schema = similarPlacesSchema;
+        break;
+      default:
+        return {
+          ...baseResult,
+          errors: [`Unknown feed item type: ${(item as any).type}`]
+        };
+    }
+
+    // Validate against schema
+    const result = schema.safeParse(item);
+    if (!result.success) {
+      return {
+        ...baseResult,
+        errors: result.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+      };
+    }
+
+    // Additional validation for items with place references
+    const data = result.data;
+    if ('places' in data) {
+      const placeIds = await resolvePlaceIds(data.places);
+      const missingPlaces = data.places.filter(slug => !placeIds[slug]);
+      
+      if (missingPlaces.length > 0) {
+        return {
+          ...baseResult,
+          errors: [`Places not found: ${missingPlaces.join(', ')}`]
+        };
+      }
+
+      // Replace slugs with IDs in the data
+      return {
+        ...baseResult,
+        isValid: true,
+        data: {
+          ...data,
+          places: data.places.map(slug => placeIds[slug])
+        }
+      };
+    }
+
+    if ('place' in data) {
+      const placeIds = await resolvePlaceIds([data.place]);
+      if (!placeIds[data.place]) {
+        return {
+          ...baseResult,
+          errors: [`Place not found: ${data.place}`]
+        };
+      }
+
+      // Replace slug with ID in the data
+      return {
+        ...baseResult,
+        isValid: true,
+        data: {
+          ...data,
+          place: placeIds[data.place]
+        }
+      };
+    }
+
+    return {
+      ...baseResult,
+      isValid: true
+    };
+  };
+
+  const validateFeedItems = async (items: unknown[]) => {
+    const results = await Promise.all(items.map(validateFeedItem));
+    setValidationResults(results);
+
+    const validCount = results.filter((r) => r.isValid).length;
+    toast({
+      title: "File Validated",
+      description: `Found ${results.length} feed items (${validCount} valid, ${results.length - validCount} invalid)`,
+    });
+
+    return results;
+  };
+
+  return {
+    validationResults,
+    validateFeedItems
+  };
+}

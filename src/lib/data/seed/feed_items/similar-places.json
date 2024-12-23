@@ -1,0 +1,48 @@
+[
+  {
+    "type": "similar_places",
+    "source_type": "place",
+    "source_name": "Portland",
+    "place": "portland-united-states",
+    "places": ["austin-united-states", "denver-united-states", "seattle-united-states"],
+    "content": {
+      "title": "Cities Like Portland",
+      "description": "If you like Portland, you might enjoy these similar cities",
+      "similarities": [
+        "Strong food scene",
+        "Outdoor lifestyle",
+        "Tech industry presence",
+        "Progressive culture"
+      ]
+    },
+    "stats": {
+      "average_cost": 7.5,
+      "average_transit_score": 8.0,
+      "average_walk_score": 8.5
+    },
+    "timestamp": "2024-12-22 00:00:00.000Z"
+  },
+  {
+    "type": "similar_places",
+    "source_type": "place",
+    "source_name": "Amsterdam",
+    "place": "amsterdam-netherlands",
+    "places": ["copenhagen-denmark", "berlin-germany", "stockholm-sweden"],
+    "content": {
+      "title": "Cities Similar to Amsterdam",
+      "description": "European cities that share Amsterdam's urban characteristics",
+      "similarities": [
+        "Bike-friendly infrastructure",
+        "Historic architecture",
+        "Canal systems",
+        "Cultural attractions"
+      ]
+    },
+    "stats": {
+      "average_cost": 8.5,
+      "average_transit_score": 9.0,
+      "average_walk_score": 9.5
+    },
+    "timestamp": "2024-12-21 00:00:00.000Z"
+  }
+]

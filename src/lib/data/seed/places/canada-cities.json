@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Vancouver",
+    "country": "Canada",
+    "type": ["city"],
+    "latitude": 49.2827,
+    "longitude": -123.1207,
+    "population": "675K",
+    "description": "Vancouver is a bustling seaport city known for its stunning natural beauty, outdoor activities, and film industry. Surrounded by mountains and ocean, it consistently ranks among the world's most livable cities.",
+    "accessibility": 85,
+    "bestSeason": 80,
+    "cost": 80,
+    "costIndex": 5,
+    "crowdLevel": 70,
+    "highlights": [
+      "Stanley Park",
+      "Granville Island",
+      "Grouse Mountain",
+      "Gastown",
+      "Vancouver Aquarium"
+    ],
+    "interesting": 85,
+    "recommendedStay": 120,
+    "safetyScore": 8.0,
+    "transitScore": 8.5,
+    "walkScore": 8.0,
+    "transit": 85,
+    "averageRating": 4.6,
+    "totalReviews": 8000,
+    "tags": ["outdoors", "film industry", "multicultural", "food", "scenic"]
+  }
+]

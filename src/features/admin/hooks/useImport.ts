@@ -20,15 +20,24 @@ export function useImport(config: ImportConfig) {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [importResults, setImportResults] = useState<ImportResultsMap>(new Map());
   const [validationResults, setValidationResults] = useState<any[]>([]);
+  const [validationError, setValidationError] = useState<Error | null>(null);
 
   const handleFileSelect = async (value: string, files: Record<string, SeedFile>) => {
     setSelectedFile(value);
     const fileData = files[value].default;
-    const results = await config.validateData(fileData);
-    setValidationResults(results);
+    try {
+      const results = await config.validateData(fileData);
+      setValidationResults(results);
+      setValidationError(null);
+    } catch (error) {
+      setValidationError(error instanceof Error ? error : new Error('Unknown validation error'));
+      setValidationResults([]);
+    }
   };
 
   const importData = async () => {
+    if (validationError) return;
+
     const validItems = validationResults.filter((r) => r.isValid);
     if (validItems.length === 0) return;
 
@@ -93,6 +102,7 @@ export function useImport(config: ImportConfig) {
     selectedFile,
     importResults,
     validationResults,
+    validationError,
     handleFileSelect,
     importData
   };
