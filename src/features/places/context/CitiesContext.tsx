@@ -46,6 +46,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
 } from "react";
 
 const apiUrl = getApiUrl();
@@ -95,20 +96,18 @@ const CitiesActionsContext = createContext<{
     queryParams?: QueryParams
   ) => Promise<any>;
   getCityByName: (cityName: string) => Promise<CitiesResponse>;
-  getCityById: (id: string) => Promise<CitiesResponse>;
+  getCityById: (id: string) => Promise<CitiesResponse | null>;
   getAllCities: () => Promise<CitiesResponse[]>;
 }>({
   refreshCities: async () => {},
-  fetchCitiesPaginated: async () => {},
+  fetchCitiesPaginated: async () => ({}),
   getCityByName: async () => {
     throw new Error("Not implemented");
   },
   getCityById: async () => {
     throw new Error("Not implemented");
   },
-  getAllCities: async () => {
-    throw new Error("Not implemented");
-  },
+  getAllCities: async () => [],
 });
 
 export function useCities() {
@@ -241,14 +240,18 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     }
   };
 
-  const getCityById = async (id: string): Promise<CitiesResponse> => {
+  const getCityById = useCallback(async (id: string): Promise<CitiesResponse | null> => {
     try {
-      return await pb.collection("cities").getOne<CitiesResponse>(id);
+      // Use $autoCancel: false to prevent auto-cancellation on component unmount
+      const record = await pb.collection("cities").getOne<CitiesResponse>(id, {
+        $autoCancel: false,
+      });
+      return record;
     } catch (error) {
       console.error("Error fetching city by ID:", error);
-      throw error;
+      return null;
     }
-  };
+  }, []);
 
   const getCityByName = async (cityName: string) => {
     const decodedCity = decodeURIComponent(cityName)
@@ -284,7 +287,9 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
 
       const citiesData = await pb
         .collection("cities")
-        .getFullList<CitiesResponse>();
+        .getFullList<CitiesResponse>({
+          $autoCancel: false
+        });
       
       console.log('🔄 refreshCities fetched:', citiesData.length, 'cities');
       console.log('🏙️ Cities by type:', 
@@ -298,14 +303,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         )
       );
 
-      const sortedCities = [...citiesData].sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
-
       setState((prev) => ({
         ...prev,
         cities: citiesData,
-        sortedCities,
+        sortedCities: [...citiesData].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        ),
         totalCities: citiesData.length,
         typeSpecificLists: organizeCitiesByType(citiesData),
         cityStatus: { loading: false, error: null },
@@ -316,7 +319,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         ...prev,
         cityStatus: { loading: false, error: String(error) },
       }));
-      throw error;
     }
   };
 

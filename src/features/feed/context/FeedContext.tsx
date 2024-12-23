@@ -4,15 +4,20 @@
  * Provides methods to follow/unfollow content and refresh the feed, used by FeedView for display.
  */
 
+import { ClientResponseError } from "pocketbase";
+import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import React, { createContext, useContext, useEffect, useState } from "react";
 import {
-  FeedItem,
-  PlaceUpdateItem,
-  TagSpotlightItem,
-  TrendingPlaceItem,
-} from "../types";
+  useCities,
+  useCitiesActions,
+} from "@/features/places/context/CitiesContext";
+import PocketBase from "pocketbase";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { transformFeedItem } from "../transformers";
+import { FeedItem, PocketBaseRecord } from "../types";
+
+const apiUrl = getApiUrl();
+const pb = new PocketBase(apiUrl);
 
 interface FeedContextType {
   feedItems: FeedItem[];
@@ -39,104 +44,142 @@ export const useFeed = () => {
 export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { pb, user } = useAuth();
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [followedTags, setFollowedTags] = useState<string[]>([]);
+  const { user } = useAuth();
+  const { cities } = useCities();
+  const { getCityById } = useCitiesActions();
   const [followedPlaces, setFollowedPlaces] = useState<string[]>([]);
+  const [followedTags, setFollowedTags] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      loadUserPreferences();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (followedPlaces.length > 0 || followedTags.length > 0) {
+      refreshFeed();
+    }
+  }, [followedPlaces, followedTags]);
 
   const loadUserPreferences = async () => {
-    if (!user) return;
+    if (!user) {
+      console.debug("No user found, skipping preferences load");
+      return;
+    }
 
     try {
-      const record = await pb
-        .collection("user_preferences")
-        .getFirstListItem(`user="${user.id}"`);
+      console.debug("Loading user preferences for:", user.id);
+      const result = await pb.collection("user_preferences").getList(1, 1, {
+        filter: `user="${user.id}"`,
+        $autoCancel: false
+      });
 
-      setFollowedTags(record.followed_tags || []);
-      setFollowedPlaces(record.followed_places || []);
+      if (result.items.length > 0) {
+        const record = result.items[0];
+        console.debug("User preferences loaded:", {
+          followedTags: record.followed_tags,
+          followedPlaces: record.followed_places
+        });
+        setFollowedTags(record.followed_tags || []);
+        setFollowedPlaces(record.followed_places || []);
+      } else {
+        console.debug("No preferences found, creating default");
+        await pb.collection("user_preferences").create({
+          user: user.id,
+          followed_tags: [],
+          followed_places: [],
+        }, {
+          $autoCancel: false
+        });
+        setFollowedTags([]);
+        setFollowedPlaces([]);
+      }
     } catch (error) {
       console.error("Error loading user preferences:", error);
+      // Set defaults on error
+      setFollowedTags([]);
+      setFollowedPlaces([]);
     }
   };
 
+  const updateUserPreferences = async () => {
+    if (!user) return;
+    try {
+      const result = await pb.collection("user_preferences").getList(1, 1, {
+        filter: `user="${user.id}"`,
+        $autoCancel: false
+      });
+
+      if (result.items.length > 0) {
+        const record = result.items[0];
+        await pb.collection("user_preferences").update(record.id, {
+          followed_tags: followedTags,
+          followed_places: followedPlaces,
+        });
+      } else {
+        await pb.collection("user_preferences").create({
+          user: user.id,
+          followed_tags: followedTags,
+          followed_places: followedPlaces,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating user preferences:", error);
+    }
+  };
+
+  const followTag = async (tag: string) => {
+    if (followedTags.includes(tag)) return;
+    setFollowedTags([...followedTags, tag]);
+    await updateUserPreferences();
+  };
+
+  const unfollowTag = async (tag: string) => {
+    setFollowedTags(followedTags.filter((t) => t !== tag));
+    await updateUserPreferences();
+  };
+
+  const followPlace = async (placeId: string) => {
+    if (followedPlaces.includes(placeId)) return;
+    setFollowedPlaces([...followedPlaces, placeId]);
+    await updateUserPreferences();
+  };
+
+  const unfollowPlace = async (placeId: string) => {
+    setFollowedPlaces(followedPlaces.filter((p) => p !== placeId));
+    await updateUserPreferences();
+  };
+
   const generateFeed = async () => {
-    if (!user) return [];
-
-    const items: FeedItem[] = [];
-
-    // Get trending places from followed tags
-    if (followedTags.length > 0) {
-      const trendingPlaces = await pb.collection("cities").getList(1, 5, {
-        filter: followedTags.map((tag) => `tags ~ "${tag}"`).join(" || "),
-        sort: "-created",
-      });
-
-      trendingPlaces.items.forEach((place) => {
-        items.push({
-          id: `trending-${place.id}`,
-          type: "trending_place",
-          timestamp: new Date().toISOString(),
-          source: { type: "tag", name: place.tags[0] },
-          place: place as CitiesResponse,
-          stats: {
-            recentReviews: Math.floor(Math.random() * 20),
-            recentPhotos: Math.floor(Math.random() * 30),
-            activeUsers: Math.floor(Math.random() * 50),
-          },
-          trendingTags: place.tags.slice(0, 3),
-        } as TrendingPlaceItem);
-      });
+    if (!user) {
+      console.debug("No user found, returning empty feed");
+      return [];
     }
 
-    // Get updates from followed places
-    if (followedPlaces.length > 0) {
-      const followedPlacesData = await pb.collection("cities").getList(1, 5, {
-        filter: followedPlaces.map((id) => `id="${id}"`).join(" || "),
-      });
+    try {
+      console.debug("Fetching feed items for user:", user.id);
+      const result = await pb
+        .collection("feed_items")
+        .getList<PocketBaseRecord>(1, 50, {
+          sort: "-created",
+        });
 
-      followedPlacesData.items.forEach((place) => {
-        items.push({
-          id: `update-${place.id}`,
-          type: "place_update",
-          timestamp: new Date().toISOString(),
-          source: { type: "place", name: place.name },
-          place: place as CitiesResponse,
-          updateType: "new_photos",
-          content: {
-            title: `New photos from ${place.name}`,
-            description: "Check out the latest photos from this city!",
-            images: place.imageUrl ? [place.imageUrl] : [],
-          },
-        } as PlaceUpdateItem);
-      });
+      const items = await Promise.all(
+        result.items.map((record) => transformFeedItem(record, getCityById))
+      );
+
+      const validItems = items.filter(
+        (item): item is FeedItem => item !== null
+      );
+      console.debug("Final feed items count:", validItems.length);
+      return validItems;
+    } catch (error) {
+      console.error("Error fetching feed items:", error);
+      return [];
     }
-
-    // Add tag spotlights
-    for (const tag of followedTags.slice(0, 2)) {
-      const tagPlaces = await pb.collection("cities").getList(1, 3, {
-        filter: `tags ~ "${tag}"`,
-      });
-
-      items.push({
-        id: `tag-${tag}`,
-        type: "tag_spotlight",
-        timestamp: new Date().toISOString(),
-        source: { type: "tag", name: tag },
-        tag,
-        description: `Explore places tagged with ${tag}`,
-        featuredPlaces: tagPlaces.items as CitiesResponse[],
-        stats: {
-          totalPlaces: tagPlaces.totalItems,
-          recentActivity: Math.floor(Math.random() * 100),
-        },
-      } as TagSpotlightItem);
-    }
-
-    return items.sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
   };
 
   const refreshFeed = async () => {
@@ -145,131 +188,27 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       const items = await generateFeed();
       setFeedItems(items);
     } catch (error) {
-      console.error("Error generating feed:", error);
+      console.error("Error refreshing feed:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const followPlace = async (placeId: string) => {
-    if (!user) return;
-
-    try {
-      let record;
-      try {
-        // Try to get existing preferences
-        record = await pb
-          .collection("user_preferences")
-          .getFirstListItem(`user="${user.id}"`);
-      } catch (error) {
-        // If preferences don't exist, create them
-        record = await pb.collection("user_preferences").create({
-          user: user.id,
-          followed_places: [],
-          followed_tags: [],
-        });
-      }
-
-      const updatedPlaces = [...new Set([...followedPlaces, placeId])];
-      await pb.collection("user_preferences").update(record.id, {
-        followed_places: updatedPlaces,
-      });
-
-      setFollowedPlaces(updatedPlaces);
-      await refreshFeed();
-    } catch (error) {
-      console.error("Error following place:", error);
-    }
-  };
-
-  const unfollowPlace = async (placeId: string) => {
-    if (!user) return;
-
-    try {
-      const record = await pb
-        .collection("user_preferences")
-        .getFirstListItem(`user="${user.id}"`);
-
-      const updatedPlaces = followedPlaces.filter((p) => p !== placeId);
-      await pb.collection("user_preferences").update(record.id, {
-        followed_places: updatedPlaces,
-      });
-
-      setFollowedPlaces(updatedPlaces);
-      await refreshFeed();
-    } catch (error) {
-      console.error("Error unfollowing place:", error);
-    }
-  };
-
-  const followTag = async (tag: string) => {
-    if (!user) return;
-
-    try {
-      let record;
-      try {
-        // Try to get existing preferences
-        record = await pb
-          .collection("user_preferences")
-          .getFirstListItem(`user="${user.id}"`);
-      } catch (error) {
-        // If preferences don't exist, create them
-        record = await pb.collection("user_preferences").create({
-          user: user.id,
-          followed_places: [],
-          followed_tags: [],
-        });
-      }
-
-      const updatedTags = [...new Set([...followedTags, tag])];
-      await pb.collection("user_preferences").update(record.id, {
-        followed_tags: updatedTags,
-      });
-
-      setFollowedTags(updatedTags);
-      await refreshFeed();
-    } catch (error) {
-      console.error("Error following tag:", error);
-    }
-  };
-
-  const unfollowTag = async (tag: string) => {
-    if (!user) return;
-
-    try {
-      const record = await pb
-        .collection("user_preferences")
-        .getFirstListItem(`user="${user.id}"`);
-
-      const updatedTags = followedTags.filter((t) => t !== tag);
-      await pb.collection("user_preferences").update(record.id, {
-        followed_tags: updatedTags,
-      });
-
-      setFollowedTags(updatedTags);
-      await refreshFeed();
-    } catch (error) {
-      console.error("Error unfollowing tag:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      loadUserPreferences().then(() => refreshFeed());
-    }
-  }, [user]);
-
-  const value = {
-    feedItems,
-    isLoading,
-    followTag,
-    unfollowTag,
-    followPlace,
-    unfollowPlace,
-    followedTags,
-    followedPlaces,
-    refreshFeed,
-  };
-
-  return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>;
+  return (
+    <FeedContext.Provider
+      value={{
+        feedItems,
+        isLoading,
+        followTag,
+        unfollowTag,
+        followPlace,
+        unfollowPlace,
+        followedTags,
+        followedPlaces,
+        refreshFeed,
+      }}
+    >
+      {children}
+    </FeedContext.Provider>
+  );
 };
