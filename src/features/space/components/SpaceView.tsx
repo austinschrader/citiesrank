@@ -6,9 +6,7 @@ import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
 import {
   Activity,
-  Calendar,
   Camera,
-  Clock,
   Compass,
   Heart,
   History,
@@ -22,10 +20,8 @@ import {
   Sparkles,
   Sun,
   Trophy,
-  Users,
   Wind,
 } from "lucide-react";
-import { SpaceHeader } from "./SpaceHeader";
 
 // Enhanced types
 type SpaceActivity = {
@@ -367,9 +363,6 @@ export const SpaceView = () => {
   const { viewMode } = useMap();
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-background to-background/95 backdrop-blur-sm">
-      {/* Header Section */}
-      <SpaceHeader />
-
       {/* Activity Feed */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-6">
