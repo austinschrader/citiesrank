@@ -7,7 +7,7 @@
     "interesting": 90,
     "transit": 65,
     "description": "Pacific Northwest state known for diverse landscapes from coastal beaches to volcanic mountains, dense forests, and high desert.",
-    "population": "4.2M",
+    "population": 4200000,
     "highlights": [
       "Crater Lake National Park",
       "Portland",
@@ -39,7 +39,7 @@
     "interesting": 85,
     "transit": 65,
     "description": "150-mile valley between the Oregon Coast Range and Cascade Mountains, renowned for pinot noir vineyards and agricultural heritage.",
-    "population": "2.7M",
+    "population": 2700000,
     "highlights": [
       "Willamette Valley Wine Trail",
       "Silver Falls State Park",
@@ -71,7 +71,7 @@
     "interesting": 95,
     "transit": 60,
     "description": "80-mile-long river canyon cutting through the Cascade Mountains, featuring dramatic waterfalls and world-class windsurfing.",
-    "population": "75K",
+    "population": 75000,
     "highlights": [
       "Multnomah Falls",
       "Crown Point Vista House",
@@ -103,7 +103,7 @@
     "interesting": 90,
     "transit": 65,
     "description": "Year-round recreation area centered around Oregon's highest peak (11,249 ft), featuring skiing, hiking, and historic lodges.",
-    "population": "100K",
+    "population": 100000,
     "highlights": [
       "Timberline Lodge",
       "Mt Hood Meadows",
@@ -135,7 +135,7 @@
     "interesting": 95,
     "transit": 40,
     "description": "High Cascade region centered around America's deepest lake (1,943 ft) formed in a collapsed volcano caldera.",
-    "population": "50K",
+    "population": 50000,
     "highlights": [
       "Crater Lake National Park",
       "Rim Drive",
@@ -167,7 +167,7 @@
     "interesting": 85,
     "transit": 60,
     "description": "Cultural hub of Southern Oregon, featuring world-class theater, wineries, and outdoor recreation along the Rogue River.",
-    "population": "310K",
+    "population": 310000,
     "highlights": [
       "Oregon Shakespeare Festival",
       "Rogue River",
@@ -199,7 +199,7 @@
     "interesting": 90,
     "transit": 35,
     "description": "Remote alpine region known as 'Little Switzerland of America', featuring pristine wilderness, glacial lakes, and historic ranching communities.",
-    "population": "7K",
+    "population": 70000,
     "highlights": [
       "Wallowa Lake",
       "Eagle Cap Wilderness",
@@ -231,7 +231,7 @@
     "interesting": 85,
     "transit": 30,
     "description": "Striking painted hills and fossil beds showcasing 40 million years of prehistoric life, set in rugged high desert terrain.",
-    "population": "15K",
+    "population": 150000,
     "highlights": [
       "Painted Hills Unit",
       "John Day Fossil Beds",
@@ -263,7 +263,7 @@
     "interesting": 90,
     "transit": 25,
     "description": "North America's deepest river gorge (7,993 ft), offering dramatic landscapes, whitewater rafting, and remote wilderness experiences.",
-    "population": "5K",
+    "population": 50000,
     "highlights": [
       "Hells Canyon Dam Overlook",
       "Hat Point Overlook",
