@@ -43,38 +43,6 @@ export const FiltersBar = () => {
             <ViewModeToggle />
           </div>
         </div>
-
-        {/* Bottom Row: View Title */}
-        <div className="flex items-center">
-          <h1 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent group relative">
-            {viewMode === "list" && (
-              <span className="inline-flex items-center group-hover:cursor-help">
-                The Space
-                <div className="absolute hidden group-hover:block top-full left-0 mt-1 w-48 p-2 bg-white dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-border/40 whitespace-normal z-[100]">
-                  Browse spaces in a list
-                </div>
-              </span>
-            )}
-            {viewMode === "split" && (
-              <span className="inline-flex items-center gap-2 group-hover:cursor-help">
-                <span>The Space</span>
-                <span className="text-muted-foreground/50">×</span>
-                <span>World Map</span>
-                <div className="absolute hidden group-hover:block top-full left-0 mt-1 w-48 p-2 bg-white dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-border/40 whitespace-normal z-[100]">
-                  List and map side by side
-                </div>
-              </span>
-            )}
-            {viewMode === "map" && (
-              <span className="inline-flex items-center group-hover:cursor-help">
-                World Map
-                <div className="absolute hidden group-hover:block top-full left-0 mt-1 w-48 p-2 bg-white dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-border/40 whitespace-normal z-[100]">
-                  Interactive world map view
-                </div>
-              </span>
-            )}
-          </h1>
-        </div>
       </div>
     </div>
   );

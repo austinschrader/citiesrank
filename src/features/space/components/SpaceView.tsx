@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -15,7 +16,6 @@ import {
   MapPin,
   MessageCircle,
   Music,
-  Music2,
   PlusCircle,
   Scroll,
   Share2,
@@ -25,6 +25,7 @@ import {
   Users,
   Wind,
 } from "lucide-react";
+import { SpaceHeader } from "./SpaceHeader";
 
 // Enhanced types
 type SpaceActivity = {
@@ -363,40 +364,11 @@ const AtmosphereBadge = ({
 };
 
 export const SpaceView = () => {
+  const { viewMode } = useMap();
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-background to-background/95 backdrop-blur-sm">
-      {/* Header with Time Wheel */}
-      <div className="sticky top-0 z-10 p-4 border-b bg-background/95 backdrop-blur-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Activity className="h-5 w-5 text-purple-500" />
-            <span className="font-medium">Active Spaces</span>
-            <Badge
-              variant="outline"
-              className="ml-2 gap-1.5 bg-background/80 px-2.5"
-            >
-              <Clock className="h-3 w-3" />
-              Now
-            </Badge>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">
-                142 people exploring nearby
-              </span>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 bg-background/80"
-            >
-              <Calendar className="h-4 w-4" />
-              Time Window
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Header Section */}
+      <SpaceHeader />
 
       {/* Activity Feed */}
       <div className="flex-1 overflow-y-auto">
