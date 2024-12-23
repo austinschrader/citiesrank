@@ -1,11 +1,32 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
+import { TimeWindow } from "@/features/explorer/components/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
-import { Activity, Calendar, Clock, PlusCircle, Users } from "lucide-react";
+import { Activity, PlusCircle, Users } from "lucide-react";
+import { useState } from "react";
+
+type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
+type TimeRange = "now" | "today" | "week" | "month";
 
 export const ExplorerHeader = () => {
   const { viewMode } = useMap();
+  const [energyMode, setEnergyMode] = useState<EnergyMode>("buzzing");
+  const [timeRange, setTimeRange] = useState<TimeRange>("now");
+
+  const getContextMessage = () => {
+    switch (energyMode) {
+      case "buzzing":
+        return "The Mission and Hayes Valley are on fire right now ";
+      case "fresh":
+        return "Fresh spots and stories just dropped ";
+      case "trending":
+        return "These places are taking off ";
+      case "upcoming":
+        return "Coming up next ";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div className="sticky top-0 z-10 p-4 border-b bg-background/95 backdrop-blur-lg">
@@ -21,19 +42,17 @@ export const ExplorerHeader = () => {
 
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-purple-500" />
-            <span className="text-sm font-medium">
-              142 exploring nearby
-            </span>
+            <span className="text-sm font-medium">142 exploring nearby</span>
           </div>
-
-          <Badge
-            variant="outline"
-            className="gap-1.5 bg-background/80 px-2.5"
-          >
-            <Clock className="h-3 w-3" />
-            Now
-          </Badge>
         </div>
+
+        {/* Center: Time Window */}
+        <TimeWindow 
+          energyMode={energyMode}
+        timeRange={timeRange}
+          onEnergyChange={setEnergyMode}
+          onTimeChange={setTimeRange}
+        />
 
         {/* Right: View Controls */}
         <div className="flex items-center gap-3">
@@ -47,14 +66,6 @@ export const ExplorerHeader = () => {
               Add Space
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 bg-background/80"
-          >
-            <Calendar className="h-4 w-4" />
-            Time Window
-          </Button>
           <ViewModeToggle />
         </div>
       </div>
@@ -62,7 +73,7 @@ export const ExplorerHeader = () => {
       {/* View Context */}
       {viewMode === "map" && (
         <div className="mt-3 text-sm text-muted-foreground">
-          Click anywhere on the map to discover or add spaces
+          {getContextMessage()}
         </div>
       )}
     </div>
