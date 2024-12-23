@@ -1,11 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
-import { SortControl } from "@/features/explorer/components/filters/SortControl";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { Search } from "lucide-react";
+import { useState } from "react";
 
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
+  const [sort, setSort] = useState("popular");
 
   return (
     <div className="border-b bg-card/50 backdrop-blur-sm">
@@ -25,8 +26,10 @@ export const FiltersBar = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <SortControl />
-            <FiltersSheet />
+            <FiltersSheet 
+              sort={sort}
+              onSortChange={setSort}
+            />
           </div>
         </div>
       </div>

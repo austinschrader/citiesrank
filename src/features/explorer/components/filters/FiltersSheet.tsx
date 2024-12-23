@@ -13,6 +13,14 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, Star } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 const placeTypeIcons = {
   [CitiesTypeOptions.country]: {
@@ -37,7 +45,12 @@ const sizeTypeIcons = {
   megacity: { icon: null, label: "Megacities", emoji: "🌇" },
 } as const;
 
-export const FiltersSheet = () => {
+interface FiltersSheetProps {
+  sort: string;
+  onSortChange: (value: string) => void;
+}
+
+export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
   const { filters, setFilters } = useFilters();
   const { cities } = useCities();
 
@@ -110,6 +123,23 @@ export const FiltersSheet = () => {
 
         <div className="flex-1 overflow-y-auto">
           <div className="space-y-6 p-6">
+            {/* Sort Section */}
+            <div className="space-y-4">
+              <div className="font-medium">Sort By</div>
+              <Select value={sort} onValueChange={onSortChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sort by..." />
+                </SelectTrigger>
+                <SelectContent className="z-[99999]">
+                  <SelectItem value="popular">Most Popular</SelectItem>
+                  <SelectItem value="recent">Most Recent</SelectItem>
+                  <SelectItem value="distance">Distance</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Separator />
+
             {/* Place Types */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">

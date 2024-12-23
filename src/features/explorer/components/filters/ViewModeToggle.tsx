@@ -37,7 +37,7 @@ export const ViewModeToggle = () => {
           {
             mode: "split" as const,
             icon: Layout,
-            label: "Both",
+            label: "MapSpace",
           },
           { mode: "map" as const, icon: Map, label: "Map" },
         ].map(({ mode, icon: Icon, label }) => (
