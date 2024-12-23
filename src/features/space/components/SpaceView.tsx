@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useMap } from "@/features/map/context/MapContext";
+import { getImageUrl } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -122,7 +123,7 @@ const mockActivities: SpaceActivity[] = [
     timestamp: "Just now",
     media: [
       {
-        url: "/images/jazz-session.jpg",
+        url: getImageUrl("jazz-park.jpg", "wide"),
         type: "image",
       },
     ],
@@ -170,7 +171,7 @@ const mockActivities: SpaceActivity[] = [
       type: "curated",
       places: 8,
       followers: 1243,
-      preview: ["/images/cafe1.jpg", "/images/cafe2.jpg"],
+      preview: [getImageUrl("paris-coffee.jpg", "wide")],
     },
     user: {
       name: "Marie Dubois",
@@ -181,7 +182,7 @@ const mockActivities: SpaceActivity[] = [
     timestamp: "2 hours ago",
     media: [
       {
-        url: "/images/paris-cafe.jpg",
+        url: getImageUrl("paris-coffee.jpg", "wide"),
         type: "image",
       },
     ],
@@ -224,7 +225,7 @@ const mockActivities: SpaceActivity[] = [
     timestamp: "5 hours ago",
     media: [
       {
-        url: "/images/temple-view.jpg",
+        url: getImageUrl("japan-temple.jpg", "wide"),
         type: "image",
       },
     ],
@@ -264,7 +265,7 @@ const mockActivities: SpaceActivity[] = [
     timestamp: "1 hour ago",
     media: [
       {
-        url: "/images/beach-yoga.jpg",
+        url: getImageUrl("beach-yoga.jpg", "wide"),
         type: "image",
       },
     ],
