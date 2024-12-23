@@ -13,7 +13,7 @@ import {
   Landmark,
 } from "lucide-react";
 import { useRef } from "react";
-import { useTags } from "../hooks/useTags";
+import { PLACE_TAGS, TAG_GROUPS } from "../types/tags";
 
 const destinationTypes = [
   { type: CitiesTypeOptions.country, label: "Countries", icon: Globe2 },
@@ -25,7 +25,6 @@ const destinationTypes = [
 
 export const DestinationFilter = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { filterOptions } = useTags();
   const { filters, setFilter } = useFilters();
 
   const handleScroll = (direction: "left" | "right") => {
@@ -44,93 +43,81 @@ export const DestinationFilter = () => {
 
   return (
     <div className="relative w-full border-b bg-background flex flex-col gap-3">
-      {/* Place Types (Implemented) */}
+      {/* Place Types */}
       <div className="flex items-center gap-2 px-8 pt-3">
         {destinationTypes.map(({ type, label, icon: Icon }) => (
           <button
             key={type}
-            onClick={() => {
-              const newTypes = filters.activeTypes.includes(type)
-                ? filters.activeTypes.filter(t => t !== type)
-                : [...filters.activeTypes, type];
-              setFilter('activeTypes', newTypes.length ? newTypes : Object.values(CitiesTypeOptions));
-            }}
+            onClick={() =>
+              setFilter(
+                "activeTypes",
+                filters.activeTypes.includes(type)
+                  ? filters.activeTypes.filter((t) => t !== type)
+                  : [...filters.activeTypes, type]
+              )
+            }
             className={cn(
-              "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
-              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-              "disabled:pointer-events-none disabled:opacity-50",
+              "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
               filters.activeTypes.includes(type)
-                ? "bg-primary text-primary-foreground shadow hover:bg-primary/90"
-                : "hover:bg-accent hover:text-accent-foreground"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted hover:bg-muted/80"
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="w-4 h-4" />
             {label}
           </button>
         ))}
       </div>
 
-      {/* Filter Tags (Display Only) */}
-      <div className="relative flex items-center">
-        <div className="flex-none pl-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative h-10 w-10 hover:bg-accent hover:text-accent-foreground"
-            onClick={() => handleScroll("left")}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        </div>
-
-        <div className="absolute left-12 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10" />
-        <div className="absolute right-12 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10" />
+      {/* Tags */}
+      <div className="relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10"
+          onClick={() => handleScroll("left")}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
 
         <div
           ref={scrollRef}
-          className="flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          className="flex gap-2 overflow-x-auto px-8 pb-3 scrollbar-none scroll-smooth"
         >
-          <div className="flex gap-6 min-w-max py-3 px-8">
-            <div className="flex gap-4 min-w-max py-2">
-              {filterOptions.map((option) => {
-                const isSelected = filters.tags.includes(option.id);
-                return (
-                  <button
-                    key={option.id}
-                    onClick={() => {
-                      const newTags = isSelected
-                        ? filters.tags.filter(id => id !== option.id)
-                        : [...filters.tags, option.id];
-                      setFilter('tags', newTags);
-                    }}
-                    className={cn(
-                      "inline-flex items-center justify-center rounded-full whitespace-nowrap text-sm font-medium transition-colors",
-                      "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                      "disabled:pointer-events-none disabled:opacity-50",
-                      "h-9 px-4 py-2",
-                      isSelected
-                        ? "bg-primary text-primary-foreground shadow hover:bg-primary/90"
-                        : "hover:bg-accent hover:text-accent-foreground"
-                    )}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {PLACE_TAGS.map((tag) => (
+            <button
+              key={tag}
+              onClick={() =>
+                setFilter(
+                  "tags",
+                  filters.tags.includes(tag)
+                    ? filters.tags.filter((t) => t !== tag)
+                    : [...filters.tags, tag]
+                )
+              }
+              className={cn(
+                "whitespace-nowrap px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
+                filters.tags.includes(tag)
+                  ? "bg-secondary text-secondary-foreground"
+                  : "bg-muted hover:bg-muted/80"
+              )}
+            >
+              {tag
+                .split("-")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}
+            </button>
+          ))}
         </div>
 
-        <div className="flex-none pr-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative h-10 w-10 hover:bg-accent hover:text-accent-foreground"
-            onClick={() => handleScroll("right")}
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10"
+          onClick={() => handleScroll("right")}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

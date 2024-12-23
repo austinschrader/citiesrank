@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Vancouver",
+    "country": "Canada",
+    "type": ["city"],
+    "cost": 85,
+    "interesting": 95,
+    "transit": 90,
+    "description": "Vancouver is a coastal city known for its stunning natural beauty, diverse culture, and high quality of life. Surrounded by mountains and ocean, it offers an exceptional blend of urban amenities and outdoor activities.",
+    "population": 2632000,
+    "highlights": [
+      "Stanley Park",
+      "Granville Island",
+      "Grouse Mountain",
+      "Gastown district",
+      "Vancouver Aquarium",
+      "English Bay Beach",
+      "Museum of Anthropology"
+    ],
+    "averageRating": 4.6,
+    "totalReviews": 9500,
+    "tags": [
+      "nature",
+      "outdoor",
+      "culture",
+      "food",
+      "mountains",
+      "ocean",
+      "urban",
+      "sustainable",
+      "diverse"
+    ],
+    "crowdLevel": 70,
+    "recommendedStay": 85,
+    "bestSeason": 75,
+    "accessibility": 90,
+    "costIndex": 5,
+    "safetyScore": 9.0,
+    "walkScore": 8.5,
+    "transitScore": 9.0,
+    "latitude": 49.2827,
+    "longitude": -123.1207
+  }
+]

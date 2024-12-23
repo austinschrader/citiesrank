@@ -15,6 +15,7 @@ import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   Bookmark,
+  Compass,
   Home,
   LogOut,
   MapPin,
@@ -43,6 +44,13 @@ export const Header = () => {
       iconClass: "text-indigo-500",
     },
     {
+      label: "Feed",
+      mobileLabel: "Feed",
+      icon: Compass,
+      to: "/feed",
+      description: "Your personalized city updates and discoveries",
+    },
+    {
       label: "My Places",
       mobileLabel: "Places",
       icon: MapPin,
@@ -55,11 +63,11 @@ export const Header = () => {
     ...(user?.isAdmin
       ? [
           {
-            label: "Import Places",
+            label: "Import Data",
             mobileLabel: "Import",
             icon: Upload,
-            to: "/admin/import-places",
-            description: "Import places from JSON file",
+            to: "/admin/import",
+            description: "Import places and feed items",
             iconClass: "text-emerald-500",
           },
         ]

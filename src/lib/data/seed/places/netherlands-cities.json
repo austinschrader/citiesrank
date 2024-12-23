@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Amsterdam",
+    "country": "Netherlands",
+    "type": ["city"],
+    "latitude": 52.3676,
+    "longitude": 4.9041,
+    "population": 872680,
+    "description": "Amsterdam is known for its artistic heritage, elaborate canal system, and narrow houses with gabled facades. The city's Museum District houses works by Rembrandt and Van Gogh, while Anne Frank House commemorates WWII history.",
+    "accessibility": 90,
+    "bestSeason": 75,
+    "cost": 80,
+    "costIndex": 4,
+    "crowdLevel": 85,
+    "highlights": [
+      "Canal Ring",
+      "Rijksmuseum",
+      "Van Gogh Museum",
+      "Anne Frank House",
+      "Royal Palace"
+    ],
+    "interesting": 95,
+    "recommendedStay": 85,
+    "safetyScore": 8.5,
+    "transitScore": 9.5,
+    "walkScore": 9.0,
+    "transit": 95,
+    "averageRating": 4.7,
+    "totalReviews": 12500,
+    "tags": [
+      "cultural",
+      "historic",
+      "cycling",
+      "museums",
+      "nightlife"
+    ]
+  }
+]

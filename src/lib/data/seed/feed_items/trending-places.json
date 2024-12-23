@@ -1,0 +1,34 @@
+[
+  {
+    "type": "trending_place",
+    "source_type": "place",
+    "source_name": "Portland",
+    "place": "portland-united-states",
+    "stats": {
+      "views_last_week": 1500,
+      "view_increase": 25,
+      "saves_last_week": 120
+    },
+    "content": {
+      "title": "Portland is Trending",
+      "description": "More travelers are discovering Portland's unique charm and vibrant culture"
+    },
+    "timestamp": "2024-12-22 00:00:00.000Z"
+  },
+  {
+    "type": "trending_place",
+    "source_type": "place",
+    "source_name": "Seattle",
+    "place": "seattle-united-states",
+    "stats": {
+      "views_last_week": 2000,
+      "view_increase": 30,
+      "saves_last_week": 150
+    },
+    "content": {
+      "title": "Seattle Gains Popularity",
+      "description": "Tech hub Seattle sees surge in travel interest"
+    },
+    "timestamp": "2024-12-21 00:00:00.000Z"
+  }
+]

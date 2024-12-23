@@ -98,18 +98,10 @@ function createBufferFeature(place: MapPlace, radiusKm: number) {
   return turf.buffer(point, radiusKm, { units: 'kilometers' }) as any;
 }
 
-function calculateCityRadius(population?: string): number {
-  if (!population) return 5;
-  
-  // Convert population string to number, removing commas
-  const pop = parseInt(population.replace(/,/g, ''));
-  
-  // Calculate radius based on population
-  // Using a logarithmic scale: radius = base_radius * log10(population/base_population)
-  const baseRadius = 5; // 5km base radius
-  const basePopulation = 100000; // Base population for calculation
-  
-  if (pop <= basePopulation) return baseRadius;
-  
-  return baseRadius * Math.log10(pop/basePopulation);
+/**
+ * Calculate radius for city circle based on population
+ */
+function calculateCityRadius(population: number): number {
+  if (!population) return 5000;
+  return Math.max(5000, Math.min(50000, Math.sqrt(population) * 10));
 }

@@ -1,0 +1,52 @@
+[
+  {
+    "type": "tag_spotlight",
+    "source_type": "tag",
+    "source_name": "Digital Nomad Friendly",
+    "tag": "digital-nomad-friendly",
+    "content": {
+      "title": "Digital Nomad Destinations on the Rise",
+      "description": "Cities adapting to remote work culture with improved infrastructure",
+      "featured_places": [
+        {
+          "id": "lisbon-portugal",
+          "highlight": "New coworking spaces and tech hubs"
+        },
+        {
+          "id": "mexico-city-mexico",
+          "highlight": "Growing digital nomad community"
+        }
+      ]
+    },
+    "stats": {
+      "places_count": 25,
+      "average_rating": 4.5
+    },
+    "timestamp": "2024-12-22 00:00:00.000Z"
+  },
+  {
+    "type": "tag_spotlight",
+    "source_type": "tag",
+    "source_name": "Food Scene",
+    "tag": "food-scene",
+    "content": {
+      "title": "Emerging Food Destinations",
+      "description": "Cities gaining recognition for their culinary excellence",
+      "featured_places": [
+        {
+          "id": "lyon-france",
+          "highlight": "Traditional French gastronomy"
+        },
+        {
+          "id": "osaka-japan",
+          "highlight": "Street food paradise"
+        }
+      ]
+    },
+    "stats": {
+      "places_count": 30,
+      "average_rating": 4.8
+    },
+    "timestamp": "2024-12-21 00:00:00.000Z"
+  }
+]

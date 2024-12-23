@@ -7,7 +7,7 @@
     "interesting": 90,
     "transit": 75,
     "description": "Oregon's largest city, known for its eclectic culture, food scene, abundant green spaces, and quirky charm.",
-    "population": "652K",
+    "population": 652000,
     "highlights": [
       "Powell's City of Books",
       "Washington Park",
@@ -39,7 +39,7 @@
     "interesting": 85,
     "transit": 45,
     "description": "Historic port city at the mouth of the Columbia River, featuring Victorian architecture and rich maritime heritage.",
-    "population": "10K",
+    "population": 10000,
     "highlights": [
       "Astoria Column",
       "Columbia River Maritime Museum",
@@ -71,7 +71,7 @@
     "interesting": 85,
     "transit": 35,
     "description": "High desert outdoor recreation hub known for mountain activities, craft breweries, and year-round adventures.",
-    "population": "102K",
+    "population": 102000,
     "highlights": [
       "Smith Rock State Park",
       "Mount Bachelor",
@@ -103,7 +103,7 @@
     "interesting": 85,
     "transit": 55,
     "description": "Cultural oasis in Southern Oregon, home to the renowned Oregon Shakespeare Festival and mineral springs.",
-    "population": "21K",
+    "population": 21000,
     "highlights": [
       "Oregon Shakespeare Festival",
       "Lithia Park",
@@ -135,7 +135,7 @@
     "interesting": 85,
     "transit": 45,
     "description": "Columbia River Gorge hub known as the windsurfing capital of the world, with scenic orchards and outdoor recreation.",
-    "population": "8K",
+    "population": 8000,
     "highlights": [
       "Hood River Waterfront Park",
       "Fruit Loop",
@@ -167,7 +167,7 @@
     "interesting": 85,
     "transit": 40,
     "description": "Historic coastal city featuring Oregon's top aquarium, working waterfront, and iconic lighthouses.",
-    "population": "10K",
+    "population": 10000,
     "highlights": [
       "Oregon Coast Aquarium",
       "Yaquina Head Lighthouse",
@@ -199,7 +199,7 @@
     "interesting": 80,
     "transit": 45,
     "description": "Classic Oregon beach resort town with historic promenade, family attractions, and wide sandy beaches.",
-    "population": "7K",
+    "population": 7000,
     "highlights": [
       "Seaside Promenade",
       "Seaside Aquarium",
@@ -231,7 +231,7 @@
     "interesting": 90,
     "transit": 40,
     "description": "Upscale coastal town known for iconic Haystack Rock, art galleries, and pristine beaches.",
-    "population": "1.7K",
+    "population": 1700,
     "highlights": [
       "Haystack Rock",
       "Ecola State Park",
@@ -263,7 +263,7 @@
     "interesting": 80,
     "transit": 65,
     "description": "University town known for track and field heritage, counterculture history, and vibrant arts scene.",
-    "population": "176K",
+    "population": 176000,
     "highlights": [
       "Hayward Field",
       "University of Oregon Campus",
@@ -295,7 +295,7 @@
     "interesting": 75,
     "transit": 60,
     "description": "Oregon's capital city featuring historic government buildings, parks, and Willamette Valley cultural sites.",
-    "population": "175K",
+    "population": 175000,
     "highlights": [
       "Oregon State Capitol",
       "Riverfront City Park",
@@ -327,7 +327,7 @@
     "interesting": 75,
     "transit": 50,
     "description": "Southern Oregon's largest city, serving as gateway to Crater Lake and regional wine country.",
-    "population": "85K",
+    "population": 85000,
     "highlights": [
       "Rogue Valley Wine Trail",
       "Craterian Theater",
@@ -359,7 +359,7 @@
     "interesting": 80,
     "transit": 35,
     "description": "Charming Western-themed town nestled in the Cascade Mountains, known for arts, outdoor recreation, and events.",
-    "population": "3K",
+    "population": 3000,
     "highlights": [
       "Sisters Folk Festival",
       "Cascade Avenue Shopping",
@@ -391,7 +391,7 @@
     "interesting": 75,
     "transit": 45,
     "description": "Gateway city to the Wild and Scenic Rogue River, known for outdoor adventures and family attractions.",
-    "population": "38K",
+    "population": 38000,
     "highlights": [
       "Wildlife Images Rehabilitation Center",
       "Riverside Park",
@@ -423,7 +423,7 @@
     "interesting": 75,
     "transit": 25,
     "description": "Historic gold rush town serving as gateway to Hells Canyon and the Wallowas, offering well-preserved architecture and Oregon Trail history.",
-    "population": "10K",
+    "population": 10000,
     "highlights": [
       "National Historic Oregon Trail Interpretive Center",
       "Geiser Grand Hotel",
@@ -455,7 +455,7 @@
     "interesting": 80,
     "transit": 40,
     "description": "Heart of Oregon's wine country, featuring aviation history and a charming historic downtown.",
-    "population": "34K",
+    "population": 34000,
     "highlights": [
       "Evergreen Aviation & Space Museum",
       "Third Street Historic District",
@@ -487,7 +487,7 @@
     "interesting": 80,
     "transit": 40,
     "description": "Coastal city known for vast sand dunes, historic riverfront, and scenic lighthouses.",
-    "population": "9K",
+    "population": 9000,
     "highlights": [
       "Oregon Dunes National Recreation Area",
       "Historic Old Town",
@@ -519,7 +519,7 @@
     "interesting": 75,
     "transit": 45,
     "description": "Historic Columbia River port city known for sunshine, cherry orchards, and cultural heritage.",
-    "population": "15K",
+    "population": 15000,
     "highlights": [
       "Columbia Gorge Discovery Center",
       "Fort Dalles Museum",
@@ -551,7 +551,7 @@
     "interesting": 80,
     "transit": 35,
     "description": "Preserved 1850s gold rush town, known for summer music festivals and wine tasting.",
-    "population": "3K",
+    "population": 3000,
     "highlights": [
       "Britt Music Festival",
       "Historic Downtown District",
@@ -583,7 +583,7 @@
     "interesting": 80,
     "transit": 40,
     "description": "Historic western town famous for its annual Round-Up rodeo and Native American heritage.",
-    "population": "17K",
+    "population": 17000,
     "highlights": [
       "Pendleton Round-Up",
       "Pendleton Underground Tours",
@@ -615,7 +615,7 @@
     "interesting": 80,
     "transit": 40,
     "description": "Seven miles of sandy beaches known for glass float hunting, casino gaming, and family attractions.",
-    "population": "9K",
+    "population": 9000,
     "highlights": [
       "Glass Float Hunting",
       "Chinook Winds Casino",
@@ -647,7 +647,7 @@
     "interesting": 75,
     "transit": 35,
     "description": "Dairy country hub known for cheese production, coastal access, and forestry heritage.",
-    "population": "5K",
+    "population": 5000,
     "highlights": [
       "Tillamook Creamery",
       "Cape Lookout State Park",
@@ -679,7 +679,7 @@
     "interesting": 85,
     "transit": 30,
     "description": "Scenic coastal village known for dramatic shoreline, tide pools, and proximity to Cape Perpetua.",
-    "population": "780",
+    "population": 780,
     "highlights": [
       "Cape Perpetua Scenic Area",
       "Thor's Well",

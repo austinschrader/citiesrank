@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Berlin",
+    "country": "Germany",
+    "type": ["city"],
+    "cost": 70,
+    "interesting": 95,
+    "transit": 90,
+    "description": "Berlin is a dynamic cultural capital known for its avant-garde art scene, rich history, and vibrant nightlife. The city seamlessly blends historical significance with modern creativity, offering world-class museums, diverse neighborhoods, and an unparalleled creative atmosphere.",
+    "population": 3669495,
+    "highlights": [
+      "East Side Gallery",
+      "Brandenburg Gate",
+      "Museum Island",
+      "Alternative art scene",
+      "Historical landmarks",
+      "Diverse food culture",
+      "Vibrant nightlife"
+    ],
+    "averageRating": 4.5,
+    "totalReviews": 10500,
+    "tags": [
+      "culture",
+      "history",
+      "art",
+      "nightlife",
+      "alternative",
+      "urban",
+      "food",
+      "music",
+      "startup"
+    ],
+    "crowdLevel": 70,
+    "recommendedStay": 90,
+    "bestSeason": 75,
+    "accessibility": 90,
+    "costIndex": 3,
+    "safetyScore": 8.0,
+    "walkScore": 8.5,
+    "transitScore": 9.0,
+    "latitude": 52.5200,
+    "longitude": 13.4050
+  }
+]

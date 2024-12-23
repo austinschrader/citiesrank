@@ -8,7 +8,6 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
-import { createSlug } from "@/features/places/utils/placeUtils";
 import { getImageUrl } from "@/lib/cloudinary";
 import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -73,7 +72,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [showHints, setShowHints] = useState(true);
   const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [lastTap, setLastTap] = useState(0);
-  console.log(currentPlace.imageUrl);
   const [navigation, setNavigation] = useState<NavigationState>({
     direction: 0,
     isRandomMode: false,
@@ -107,14 +105,17 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     const loadImages = async () => {
       // For cities, we have multiple numbered images
       // For sights, we just have one image
-      const imageUrls = currentPlace.type === "city"
-        ? Array.from({ length: 4 }, (_, i) => {
-            const base = currentPlace.imageUrl.replace(/^places\//, '').replace(/-\d+$/, '');
-            return `places/${base}-${i + 1}`;
-          })
-        : [currentPlace.imageUrl];
+      const imageUrls =
+        currentPlace.type === "city"
+          ? Array.from({ length: 4 }, (_, i) => {
+              const base = currentPlace.imageUrl
+                .replace(/^places\//, "")
+                .replace(/-\d+$/, "");
+              return `places/${base}-${i + 1}`;
+            })
+          : [currentPlace.imageUrl];
 
-      const images = imageUrls.map(url => 
+      const images = imageUrls.map((url) =>
         getImageUrl(url, isMobile ? "mobile" : "wide")
       );
 
@@ -127,8 +128,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
           });
         })
       );
-
-      console.log(images);
 
       setPreloadedImages(images);
     };
@@ -526,7 +525,9 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   ) : (
                     <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full drop-shadow-sm">
                       <Sparkles className="w-3 h-3 text-emerald-400" />
-                      <span className="text-sm font-medium text-white">New</span>
+                      <span className="text-sm font-medium text-white">
+                        New
+                      </span>
                     </div>
                   )}
                 </div>

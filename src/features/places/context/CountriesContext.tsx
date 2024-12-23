@@ -104,6 +104,7 @@ export function CountriesProvider({ children }: CountriesProviderProps) {
 
   const refreshCountries = async () => {
     try {
+      console.log(' refreshCountries called');
       setState((prev) => ({
         ...prev,
         countryStatus: { loading: true, error: null },
@@ -111,7 +112,12 @@ export function CountriesProvider({ children }: CountriesProviderProps) {
 
       const countriesData = await pb
         .collection("countries")
-        .getFullList<CountriesResponse>();
+        .getFullList<CountriesResponse>({
+          $autoCancel: false
+        });
+      
+      console.log(' refreshCountries fetched:', countriesData.length, 'countries');
+
       const sortedCountries = [...countriesData].sort((a, b) =>
         a.name.localeCompare(b.name)
       );
@@ -124,6 +130,7 @@ export function CountriesProvider({ children }: CountriesProviderProps) {
         countryStatus: { loading: false, error: null },
       }));
     } catch (error) {
+      console.error(' Error in refreshCountries:', error);
       setState((prev) => ({
         ...prev,
         countryStatus: { loading: false, error: String(error) },

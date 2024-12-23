@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Lisbon",
+    "country": "Portugal",
+    "type": ["city"],
+    "latitude": 38.7223,
+    "longitude": -9.1393,
+    "population": 544000,
+    "description": "Lisbon, Portugal's capital, is a historic coastal city known for its colorful architecture, vibrant culture, and growing digital nomad scene. The city offers a perfect blend of traditional charm and modern amenities.",
+    "accessibility": 85,
+    "bestSeason": 90,
+    "cost": 65,
+    "costIndex": 4,
+    "crowdLevel": 70,
+    "highlights": [
+      "Belém Tower",
+      "Time Out Market",
+      "São Jorge Castle",
+      "Alfama district",
+      "LX Factory"
+    ],
+    "interesting": 85,
+    "recommendedStay": 120,
+    "safetyScore": 8.5,
+    "transitScore": 8.0,
+    "walkScore": 7.5,
+    "transit": 80,
+    "averageRating": 4.5,
+    "totalReviews": 8500,
+    "tags": ["digital nomad", "history", "food", "coastal", "nightlife"]
+  }
+]

@@ -1,10 +1,7 @@
-import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
-import { MapProvider } from "@/features/map/context/MapContext";
-import { CitiesProvider } from "@/features/places/context/CitiesContext";
-import { CountriesProvider } from "@/features/places/context/CountriesContext";
 import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
+import { MapProvider } from "@/features/map/context/MapContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
@@ -15,7 +12,14 @@ import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
 import { MyPlacesPage } from "@/pages/places/MyPlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { FeedProvider } from '@/features/feed/context/FeedContext';
+import { FeedView } from '@/features/feed/components/FeedView';
+import { FollowingManagement } from '@/features/feed/components/FollowingManagement';
 import { Route, Routes } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { CitiesProvider } from "@/features/places/context/CitiesContext";
+import { CountriesProvider } from "@/features/places/context/CountriesContext";
+
 
 function App() {
   return (
@@ -25,23 +29,27 @@ function App() {
           <PreferencesProvider>
             <FiltersProvider>
               <MapProvider>
-                <FavoritesProvider>
-                  <RootLayout>
-                    <Routes>
-                      <Route path="/" element={<ExplorerPage />} />
-                      <Route path="/explore" element={<PlacesPage />} />
-                      <Route path="/favorites" element={<FavoritesPage />} />
-                      <Route path="/profile" element={<ProfilePage />} />
-                      <Route path="/my-places" element={<MyPlacesPage />} />
-                      <Route
-                        path="/places/:placeType/:id"
-                        element={<PlaceDetailsPage />}
-                      />
-                      <Route path="/admin/*" element={<AdminRoutes />} />
-                    </Routes>
-                  </RootLayout>
-                  <Toaster />
-                </FavoritesProvider>
+                <FeedProvider>
+                  <FavoritesProvider>
+                    <RootLayout>
+                      <Routes>
+                        <Route path="/" element={<ExplorerPage />} />
+                        <Route path="/explore" element={<PlacesPage />} />
+                        <Route path="/favorites" element={<FavoritesPage />} />
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/my-places" element={<MyPlacesPage />} />
+                        <Route path="/feed" element={<FeedView />} />
+                        <Route path="/following" element={<FollowingManagement />} />
+                        <Route
+                          path="/places/:placeType/:id"
+                          element={<PlaceDetailsPage />}
+                        />
+                        <Route path="/admin/*" element={<AdminRoutes />} />
+                      </Routes>
+                    </RootLayout>
+                    <Toaster />
+                  </FavoritesProvider>
+                </FeedProvider>
               </MapProvider>
             </FiltersProvider>
           </PreferencesProvider>

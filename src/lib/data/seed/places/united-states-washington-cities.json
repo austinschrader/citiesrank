@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Seattle",
+    "country": "United States",
+    "type": ["city"],
+    "latitude": 47.6062,
+    "longitude": -122.3321,
+    "population": 737000,
+    "description": "Seattle is a vibrant city known for its tech industry, coffee culture, and stunning natural surroundings. Home to major companies like Amazon and Microsoft, it balances urban innovation with outdoor adventure.",
+    "accessibility": 80,
+    "bestSeason": 85,
+    "cost": 85,
+    "costIndex": 5,
+    "crowdLevel": 75,
+    "highlights": [
+      "Space Needle",
+      "Pike Place Market",
+      "Amazon Spheres",
+      "Mount Rainier views",
+      "Ferry system"
+    ],
+    "interesting": 85,
+    "recommendedStay": 96,
+    "safetyScore": 7.5,
+    "transitScore": 8.5,
+    "walkScore": 8.0,
+    "transit": 85,
+    "averageRating": 4.4,
+    "totalReviews": 9500,
+    "tags": ["tech", "coffee", "outdoors", "music", "seafood"]
+  }
+]

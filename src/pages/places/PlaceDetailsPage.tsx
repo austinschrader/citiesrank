@@ -1,5 +1,6 @@
 // file location: src/pages/places/PlaceDetailsPage.tsx
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -9,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useFeed } from "@/features/feed/context/FeedContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useSearch } from "@/features/places/components/search/hooks/useSearch";
 import { useCities } from "@/features/places/context/CitiesContext";
@@ -18,9 +20,11 @@ import {
 } from "@/features/places/context/FiltersContext";
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
 import { LocationMap } from "@/features/places/detail/shared/LocationMap";
+import { getTagLabel, PlaceTag } from "@/features/places/types/tags";
 import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import {
   CitiesResponse,
+  CitiesTypeOptions,
 } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import {
@@ -51,6 +55,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   const { cities, cityStatus } = useCities();
   const { searchQuery } = useSearch();
   const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
+  const { followPlace, unfollowPlace, followedPlaces, followTag, unfollowTag, followedTags } = useFeed();
 
   // Reset filters when entering the page
   useEffect(() => {
@@ -103,7 +108,9 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
               <>
                 <li>
                   <Link
-                    to={`/places/${parentPlace.type || "country"}/${parentPlace.slug}`}
+                    to={`/places/${parentPlace.type || "country"}/${
+                      parentPlace.slug
+                    }`}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {parentPlace.name}
@@ -126,7 +133,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
           <StatCard
             icon={Users}
             title="Population"
-            value={placeData.population}
+            value={placeData.population?.toLocaleString() || "Unknown"}
             colorClass="bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
           />
           <StatCard
@@ -192,6 +199,27 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
               </CardContent>
             </Card>
 
+            {/* Tags Section */}
+            <Card className="overflow-hidden border-none shadow-lg">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">Tags</h2>
+                <div className="flex flex-wrap gap-2">
+                  {(placeData.tags as PlaceTag[] || []).map((tag: PlaceTag) => (
+                    <Button
+                      key={tag}
+                      variant={followedTags.includes(tag) ? "secondary" : "outline"}
+                      size="sm"
+                      className="rounded-full"
+                      onClick={() => followedTags.includes(tag) ? unfollowTag(tag) : followTag(tag)}
+                    >
+                      {getTagLabel(tag)}
+                      {followedTags.includes(tag) ? " ✓" : ""}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {childPlaces.length > 0 && (
               <Card className="overflow-hidden border-none shadow-lg">
                 <CardContent className="p-4 sm:p-6">
@@ -201,12 +229,21 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                     </h2>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                       <Select
-                        value={filters.activeTypes.length === 1 ? filters.activeTypes[0] : "all"}
+                        value={
+                          filters.activeTypes.length === 1
+                            ? filters.activeTypes[0]
+                            : "all"
+                        }
                         onValueChange={(value: string) => {
                           if (value === "all") {
-                            setFilter("activeTypes", Object.values(CitiesTypeOptions));
+                            setFilter(
+                              "activeTypes",
+                              Object.values(CitiesTypeOptions)
+                            );
                           } else {
-                            setFilter("activeTypes", [value as CitiesTypeOptions]);
+                            setFilter("activeTypes", [
+                              value as CitiesTypeOptions,
+                            ]);
                           }
                         }}
                       >
@@ -366,6 +403,29 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                 </CardContent>
               </Card>
             )}
+            <Card className="overflow-hidden border-none shadow-lg">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold mb-4">Follow</h2>
+                <div className="flex items-center gap-4 mb-6">
+                  <Button
+                    variant={
+                      followedPlaces.includes(placeData.id)
+                        ? "secondary"
+                        : "default"
+                    }
+                    onClick={() =>
+                      followedPlaces.includes(placeData.id)
+                        ? unfollowPlace(placeData.id)
+                        : followPlace(placeData.id)
+                    }
+                  >
+                    {followedPlaces.includes(placeData.id)
+                      ? "Following"
+                      : "Follow"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

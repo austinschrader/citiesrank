@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Chiang Mai",
+    "country": "Thailand",
+    "type": ["city"],
+    "latitude": 18.7883,
+    "longitude": 98.9853,
+    "population": 127000,
+    "description": "Chiang Mai is a cultural hub in northern Thailand, famous for its temples, digital nomad community, and laid-back lifestyle. The city combines ancient traditions with modern coworking spaces and cafes.",
+    "accessibility": 75,
+    "bestSeason": 85,
+    "cost": 40,
+    "costIndex": 2,
+    "crowdLevel": 60,
+    "highlights": [
+      "Doi Suthep Temple",
+      "Night Bazaar",
+      "Old City temples",
+      "Elephant Nature Park",
+      "Nimman Road"
+    ],
+    "interesting": 80,
+    "recommendedStay": 168,
+    "safetyScore": 8.0,
+    "transitScore": 6.5,
+    "walkScore": 7.0,
+    "transit": 65,
+    "averageRating": 4.4,
+    "totalReviews": 6000,
+    "tags": ["digital nomad", "temples", "culture", "food", "affordable"]
+  }
+]

@@ -37,11 +37,20 @@ const normalizeScore = (score: number | null | undefined): number => {
   return score > 10 ? score / 10 : score;
 };
 
-export const validatePlace = (data: Partial<CitiesRecord>): ValidationResult => {
+export const validatePlace = (
+  data: Partial<CitiesRecord>
+): ValidationResult => {
   const errors: string[] = [];
+  console.log("Validating place data:", data);
 
   // Helper function to validate text fields
-  const validateText = (value: any, field: string, min?: number, max?: number) => {
+  const validateText = (
+    value: any,
+    field: string,
+    min?: number,
+    max?: number
+  ) => {
+    console.log(`Validating text field: ${field}`, value, typeof value);
     if (!value || typeof value !== "string") {
       errors.push(`${field} is required and must be a string`);
       return;
@@ -56,6 +65,7 @@ export const validatePlace = (data: Partial<CitiesRecord>): ValidationResult => 
 
   // Helper function to validate number fields
   const validateNumber = (value: any, field: string, required = false) => {
+    console.log(`Validating number field: ${field}`, value, typeof value);
     if (required && (value === undefined || value === null)) {
       errors.push(`${field} is required`);
       return;
@@ -73,13 +83,9 @@ export const validatePlace = (data: Partial<CitiesRecord>): ValidationResult => 
   // Required number fields
   validateNumber(data.cost, "cost", true);
 
-  // Population can be "Unknown"
-  if (data.population && typeof data.population !== "string") {
-    errors.push("population must be a string");
-  }
-
-  // Validate all number fields - they're optional but must be numbers if present
+  // Population and other optional number fields
   const numberFields = [
+    "population",
     "interesting",
     "transit",
     "crowdLevel",
@@ -95,7 +101,11 @@ export const validatePlace = (data: Partial<CitiesRecord>): ValidationResult => 
     "averageRating",
     "totalReviews",
   ];
-  numberFields.forEach((field) => validateNumber(data[field as keyof CitiesRecord], field));
+  numberFields.forEach((field) =>
+    validateNumber(data[field as keyof CitiesRecord], field)
+  );
+
+  console.log("Validation errors:", errors);
 
   // Transform the data
   const normalizedName = normalizeString(data.name || "");
@@ -108,10 +118,16 @@ export const validatePlace = (data: Partial<CitiesRecord>): ValidationResult => 
     description: data.description || "",
     slug,
     type: data.type || CitiesTypeOptions.sight,
-    population: data.population || "Unknown",
-    highlights: data.highlights || ["Explore the location", "Experience local culture", "Visit historic sites", "Enjoy local atmosphere", "Discover hidden gems"],
+    population: typeof data.population === "number" ? data.population : 0,
+    highlights: data.highlights || [
+      "Explore the location",
+      "Experience local culture",
+      "Visit historic sites",
+      "Enjoy local atmosphere",
+      "Discover hidden gems",
+    ],
     // Required number fields with defaults
-    cost: typeof data.cost === 'number' ? data.cost : 5,
+    cost: typeof data.cost === "number" ? data.cost : 5,
     interesting: normalizeScore(data.interesting) || 0,
     transit: normalizeScore(data.transit) || 0,
     crowdLevel: normalizeScore(data.crowdLevel) || 0,
@@ -145,13 +161,18 @@ export const uploadPlace = async (
   pb: any,
   placeData: Partial<CitiesRecord>,
   imageFile?: File
-): Promise<{ success: boolean; error?: string; id?: string; slug?: string }> => {
+): Promise<{
+  success: boolean;
+  error?: string;
+  id?: string;
+  slug?: string;
+}> => {
   try {
     console.log("Original place data:", placeData);
     console.log("User ID being sent:", placeData.userId);
     const validationResult = validatePlace(placeData);
     console.log("Transformed place data:", validationResult.data);
-    
+
     if (!validationResult.isValid) {
       return {
         success: false,
@@ -161,7 +182,9 @@ export const uploadPlace = async (
 
     // Check if place already exists
     try {
-      await pb.collection("cities").getFirstListItem(`slug="${validationResult.data.slug}"`);
+      await pb
+        .collection("cities")
+        .getFirstListItem(`slug="${validationResult.data.slug}"`);
       return {
         success: false,
         error: `A place with the slug "${validationResult.data.slug}" already exists`,
@@ -175,7 +198,10 @@ export const uploadPlace = async (
     // Upload image to Cloudinary if provided
     if (imageFile) {
       try {
-        const publicId = await uploadImage(imageFile, validationResult.data.slug);
+        const publicId = await uploadImage(
+          imageFile,
+          validationResult.data.slug
+        );
         validationResult.data.imageUrl = publicId;
       } catch (error) {
         return {
@@ -191,15 +217,17 @@ export const uploadPlace = async (
     // Create the place record with userId as array
     const recordData = {
       ...validationResult.data,
-      userId: validationResult.data.userId ? [validationResult.data.userId] : undefined
+      userId: validationResult.data.userId
+        ? [validationResult.data.userId]
+        : undefined,
     };
-    
+
     console.log("Final record data being sent to PocketBase:", recordData);
-    
+
     // Verify user exists before creating record
     if (recordData.userId) {
       try {
-        const user = await pb.collection('users').getOne(recordData.userId[0]);
+        const user = await pb.collection("users").getOne(recordData.userId[0]);
         console.log("Found user:", user);
       } catch (error) {
         console.error("Failed to find user:", error);
@@ -209,12 +237,15 @@ export const uploadPlace = async (
         };
       }
     }
-    
+
     const record = await pb.collection("cities").create(recordData);
-    
+
     return { success: true, id: record.id, slug: record.slug };
   } catch (error) {
-    const message = error instanceof ClientResponseError ? error.message : "Unknown error occurred";
+    const message =
+      error instanceof ClientResponseError
+        ? error.message
+        : "Unknown error occurred";
     return { success: false, error: message };
   }
 };

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Barcelona",
+    "country": "Spain",
+    "type": ["city"],
+    "cost": 70,
+    "interesting": 95,
+    "transit": 90,
+    "description": "Barcelona is a vibrant Mediterranean city known for its stunning architecture, rich culture, and excellent quality of life. The city perfectly balances historic charm with modern innovation, offering beautiful beaches, world-class cuisine, and a thriving arts scene, all while maintaining its distinct Catalan identity.",
+    "population": 5575812,
+    "highlights": [
+      "Gaudi's architectural masterpieces",
+      "Beautiful Mediterranean beaches",
+      "Rich Catalan culture and cuisine",
+      "Excellent public transportation",
+      "Perfect climate year-round"
+    ],
+    "averageRating": 4.2,
+    "totalReviews": 11000,
+    "tags": [
+      "beach",
+      "culture",
+      "architecture",
+      "food",
+      "art",
+      "mediterranean",
+      "nightlife",
+      "urban",
+      "historic"
+    ],
+    "crowdLevel": 75,
+    "recommendedStay": 90,
+    "bestSeason": 85,
+    "accessibility": 90,
+    "costIndex": 4,
+    "safetyScore": 8.0,
+    "walkScore": 9.5,
+    "transitScore": 9.0,
+    "latitude": 41.3851,
+    "longitude": 2.1734
+  }
+]

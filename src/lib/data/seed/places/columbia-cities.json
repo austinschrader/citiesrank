@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Medellin",
+    "country": "Colombia",
+    "type": ["city"],
+    "latitude": 6.2442,
+    "longitude": -75.5812,
+    "population": 2500000,
+    "description": "Medellin, known as the 'City of Eternal Spring', has transformed into a modern tech hub and digital nomad hotspot. The city is famous for its perfect weather, innovative public transportation, and vibrant culture.",
+    "accessibility": 75,
+    "bestSeason": 90,
+    "cost": 45,
+    "costIndex": 2,
+    "crowdLevel": 70,
+    "highlights": [
+      "Plaza Botero",
+      "Parque Arvi",
+      "Comuna 13",
+      "Metrocable",
+      "El Poblado"
+    ],
+    "interesting": 85,
+    "recommendedStay": 168,
+    "safetyScore": 7.0,
+    "transitScore": 8.5,
+    "walkScore": 7.5,
+    "transit": 85,
+    "averageRating": 4.3,
+    "totalReviews": 7500,
+    "tags": [
+      "digital nomad",
+      "innovation",
+      "spring weather",
+      "culture",
+      "affordable"
+    ]
+  }
+]
