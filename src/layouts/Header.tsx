@@ -36,7 +36,7 @@ export const Header = () => {
 
   const navItems = [
     {
-      label: "MapSpace",
+      label: "Map",
       mobileLabel: "MapSpace",
       icon: Map,
       to: "/",
@@ -44,8 +44,8 @@ export const Header = () => {
       iconClass: "text-indigo-500",
     },
     {
-      label: "Your Spaces",
-      mobileLabel: "Spaces",
+      label: "Your Places",
+      mobileLabel: "Places",
       icon: PenTool,
       to: "/created-spaces",
       description: "Manage your contributed spaces",
