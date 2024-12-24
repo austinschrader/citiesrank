@@ -1,65 +1,39 @@
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Search } from "lucide-react";
+import { useState } from "react";
 import { CATEGORIES } from "../constants";
-import { FeaturedCard } from "./FeaturedCard";
 
 export const ExplorerHeader = () => {
+  const [hideCloned, setHideCloned] = useState(false);
+
   return (
     <div className="p-4 space-y-4">
-      <div className="grid grid-cols-12 gap-2 h-64">
-        <div className="col-span-6 relative rounded-lg overflow-hidden">
-          <img
-            src="/featured/1.jpg"
-            className="object-cover w-full h-full"
-            alt="Featured"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60">
-            <div className="absolute bottom-4 left-4">
-              <Badge>Top This Week</Badge>
-              <h2 className="text-xl text-white font-semibold mt-2">
-                30 Days Through Southeast Asia
-              </h2>
-              <p className="text-white/80">22 locations • 45k followers</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-span-3 space-y-2">
-          <FeaturedCard
-            title="Most Popular Route"
-            list="Pacific Coast Highway"
-            image="/featured/2.jpg"
-          />
-          <FeaturedCard
-            title="Editor's Pick"
-            list="Hidden Tokyo Vinyl Bars"
-            image="/featured/3.jpg"
-          />
-        </div>
-
-        <div className="col-span-3 space-y-2">
-          <FeaturedCard
-            title="Trending Now"
-            list="European Christmas Markets"
-            image="/featured/4.jpg"
-          />
-          <FeaturedCard
-            title="New & Notable"
-            list="NYC Rooftop Cinema Guide"
-            image="/featured/5.jpg"
-          />
-        </div>
-      </div>
-
       <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-medium text-blue-600">Lists</h1>
+          <span className="text-blue-500 text-sm">
+            • Find your next adventure
+          </span>
+        </div>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+          <Input
+            placeholder="Search destinations, routes, or lists..."
+            className="pl-10"
+          />
+        </div>
+
         <Select defaultValue="week">
-          <SelectTrigger className="w-[180px]">Time Range</SelectTrigger>
+          <SelectTrigger className="w-[140px]">Time Range</SelectTrigger>
           <SelectContent>
             {CATEGORIES.TIMEFRAMES.map((range) => (
               <SelectItem key={range} value={range.toLowerCase()}>
@@ -70,7 +44,7 @@ export const ExplorerHeader = () => {
         </Select>
 
         <Select defaultValue="popular">
-          <SelectTrigger>Sort By</SelectTrigger>
+          <SelectTrigger className="w-[120px]">Sort By</SelectTrigger>
           <SelectContent>
             {["Popular", "Trending", "New", "Curated"].map((sort) => (
               <SelectItem key={sort} value={sort.toLowerCase()}>
@@ -80,8 +54,19 @@ export const ExplorerHeader = () => {
           </SelectContent>
         </Select>
 
-        <Switch>Hide Cloned Lists</Switch>
+        <Separator orientation="vertical" className="h-8" />
+
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="hide-cloned"
+            checked={hideCloned}
+            onCheckedChange={setHideCloned}
+          />
+          <Label htmlFor="hide-cloned">Hide Cloned Lists</Label>
+        </div>
       </div>
+
+      <Separator />
     </div>
   );
 };

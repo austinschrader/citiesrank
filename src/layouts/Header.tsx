@@ -73,10 +73,10 @@ export const Header = () => {
           <div className="flex-none hidden md:block">
             <Link to="/" className="flex flex-col group">
               <span className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text transition-all duration-300 group-hover:from-purple-500 group-hover:to-pink-500">
-                TheMapSpace
+                MapSpace
               </span>
               <span className="text-sm text-muted-foreground transition-opacity duration-300 group-hover:opacity-80">
-                The social layer of the world
+                Find your next adventure
               </span>
             </Link>
           </div>
