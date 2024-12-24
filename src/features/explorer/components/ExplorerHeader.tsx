@@ -1,79 +1,87 @@
-import { Button } from "@/components/ui/button";
-import { TimeWindow } from "@/features/explorer/components/TimeWindow";
-import { useMap } from "@/features/map/context/MapContext";
-import { Activity, PlusCircle, Users } from "lucide-react";
-import { useState } from "react";
-import { ViewModeToggle } from "./filters/ViewModeToggle";
-
-type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
-type TimeRange = "now" | "today" | "week" | "month";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { CATEGORIES } from "../constants";
+import { FeaturedCard } from "./FeaturedCard";
 
 export const ExplorerHeader = () => {
-  const { viewMode } = useMap();
-  const [energyMode, setEnergyMode] = useState<EnergyMode>("buzzing");
-  const [timeRange, setTimeRange] = useState<TimeRange>("now");
-
-  const getContextMessage = () => {
-    switch (energyMode) {
-      case "buzzing":
-        return "The Mission and Hayes Valley are on fire right now ";
-      case "fresh":
-        return "Fresh spots and stories just dropped ";
-      case "trending":
-        return "These places are taking off ";
-      case "upcoming":
-        return "Coming up next ";
-      default:
-        return "";
-    }
-  };
-
   return (
-    <div className="sticky top-0 z-10 p-4 border-b bg-background/95 backdrop-blur-lg">
-      <div className="flex items-center justify-between">
-        {/* Left: Title and Activity */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <Activity className="h-5 w-5 text-purple-500" />
-            <h1 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Spaces Feed
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-purple-500" />
-            <span className="text-sm font-medium">142 exploring nearby</span>
+    <div className="p-4 space-y-4">
+      <div className="grid grid-cols-12 gap-2 h-64">
+        <div className="col-span-6 relative rounded-lg overflow-hidden">
+          <img
+            src="/featured/1.jpg"
+            className="object-cover w-full h-full"
+            alt="Featured"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60">
+            <div className="absolute bottom-4 left-4">
+              <Badge>Top This Week</Badge>
+              <h2 className="text-xl text-white font-semibold mt-2">
+                30 Days Through Southeast Asia
+              </h2>
+              <p className="text-white/80">22 locations • 45k followers</p>
+            </div>
           </div>
         </div>
 
-        {/* Center: Time Window */}
-        <TimeWindow
-          energyMode={energyMode}
-          timeRange={timeRange}
-          onEnergyChange={setEnergyMode}
-          onTimeChange={setTimeRange}
-        />
-        <div className="flex items-center gap-3">
-          {viewMode === "map" && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 bg-background/80"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Add Space
-            </Button>
-          )}
-          <ViewModeToggle />
+        <div className="col-span-3 space-y-2">
+          <FeaturedCard
+            title="Most Popular Route"
+            list="Pacific Coast Highway"
+            image="/featured/2.jpg"
+          />
+          <FeaturedCard
+            title="Editor's Pick"
+            list="Hidden Tokyo Vinyl Bars"
+            image="/featured/3.jpg"
+          />
+        </div>
+
+        <div className="col-span-3 space-y-2">
+          <FeaturedCard
+            title="Trending Now"
+            list="European Christmas Markets"
+            image="/featured/4.jpg"
+          />
+          <FeaturedCard
+            title="New & Notable"
+            list="NYC Rooftop Cinema Guide"
+            image="/featured/5.jpg"
+          />
         </div>
       </div>
 
-      {/* View Context */}
-      {viewMode === "map" && (
-        <div className="mt-3 text-sm text-muted-foreground">
-          {getContextMessage()}
-        </div>
-      )}
+      <div className="flex items-center gap-4">
+        <Select defaultValue="week">
+          <SelectTrigger className="w-[180px]">Time Range</SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.TIMEFRAMES.map((range) => (
+              <SelectItem key={range} value={range.toLowerCase()}>
+                {range}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select defaultValue="popular">
+          <SelectTrigger>Sort By</SelectTrigger>
+          <SelectContent>
+            {["Popular", "Trending", "New", "Curated"].map((sort) => (
+              <SelectItem key={sort} value={sort.toLowerCase()}>
+                {sort}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Switch>Hide Cloned Lists</Switch>
+      </div>
     </div>
   );
 };
