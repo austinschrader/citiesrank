@@ -12,6 +12,7 @@ export enum Collections {
 	FeedItems = "feed_items",
 	ListPlaces = "list_places",
 	Lists = "lists",
+	SavedLists = "saved_lists",
 	UserPreferences = "user_preferences",
 	Users = "users",
 }
@@ -131,6 +132,11 @@ export type ListsRecord = {
 	user: RecordIdString
 }
 
+export type SavedListsRecord = {
+	list?: RecordIdString
+	user?: RecordIdString
+}
+
 export type UserPreferencesRecord<Tfollowed_places = unknown, Tfollowed_tags = unknown> = {
 	followed_places?: null | Tfollowed_places
 	followed_tags?: null | Tfollowed_tags
@@ -155,6 +161,7 @@ export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & B
 export type FeedItemsResponse<Tcontent = unknown, Tstats = unknown, Texpand = unknown> = Required<FeedItemsRecord<Tcontent, Tstats>> & BaseSystemFields<Texpand>
 export type ListPlacesResponse<Texpand = unknown> = Required<ListPlacesRecord> & BaseSystemFields<Texpand>
 export type ListsResponse<Texpand = unknown> = Required<ListsRecord> & BaseSystemFields<Texpand>
+export type SavedListsResponse<Texpand = unknown> = Required<SavedListsRecord> & BaseSystemFields<Texpand>
 export type UserPreferencesResponse<Tfollowed_places = unknown, Tfollowed_tags = unknown, Texpand = unknown> = Required<UserPreferencesRecord<Tfollowed_places, Tfollowed_tags>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
@@ -167,6 +174,7 @@ export type CollectionRecords = {
 	feed_items: FeedItemsRecord
 	list_places: ListPlacesRecord
 	lists: ListsRecord
+	saved_lists: SavedListsRecord
 	user_preferences: UserPreferencesRecord
 	users: UsersRecord
 }
@@ -178,6 +186,7 @@ export type CollectionResponses = {
 	feed_items: FeedItemsResponse
 	list_places: ListPlacesResponse
 	lists: ListsResponse
+	saved_lists: SavedListsResponse
 	user_preferences: UserPreferencesResponse
 	users: UsersResponse
 }
@@ -192,6 +201,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'feed_items'): RecordService<FeedItemsResponse>
 	collection(idOrName: 'list_places'): RecordService<ListPlacesResponse>
 	collection(idOrName: 'lists'): RecordService<ListsResponse>
+	collection(idOrName: 'saved_lists'): RecordService<SavedListsResponse>
 	collection(idOrName: 'user_preferences'): RecordService<UserPreferencesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

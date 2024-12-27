@@ -19,6 +19,7 @@ import { ListsExplorer } from '@/features/lists/components/ListsExplorer';
 import { ListDetailsPage } from '@/features/lists/pages/ListDetailsPage';
 import { CreateListPage } from '@/features/lists/pages/CreateListPage';
 import { ListsProvider } from '@/features/lists/context/ListsContext';
+import { SavedListsProvider } from '@/features/lists/context/SavedListsContext';
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
@@ -27,8 +28,8 @@ import { CountriesProvider } from "@/features/places/context/CountriesContext";
 
 function App() {
   return (
-    <CitiesProvider>
-      <CountriesProvider>
+    <CountriesProvider>
+      <CitiesProvider>
         <AuthProvider>
           <PreferencesProvider>
             <FiltersProvider>
@@ -36,26 +37,28 @@ function App() {
                 <FeedProvider>
                   <FavoritesProvider>
                     <ListsProvider>
-                      <RootLayout>
-                        <Routes>
-                          <Route path="/" element={<ExplorerPage />} />
-                          <Route path="/explore" element={<PlacesPage />} />
-                          <Route path="/favorites" element={<FavoritesPage />} />
-                          <Route path="/profile" element={<ProfilePage />} />
-                          <Route path="/my-places" element={<MyPlacesPage />} />
-                          <Route path="/feed" element={<FeedView />} />
-                          <Route path="/following" element={<FollowingManagement />} />
-                          <Route path="/lists" element={<ListsExplorer />} />
-                          <Route path="/lists/create" element={<CreateListPage />} />
-                          <Route path="/lists/:id" element={<ListDetailsPage />} />
-                          <Route
-                            path="/places/:placeType/:id"
-                            element={<PlaceDetailsPage />}
-                          />
-                          <Route path="/admin/*" element={<AdminRoutes />} />
-                        </Routes>
-                      </RootLayout>
-                      <Toaster />
+                      <SavedListsProvider>
+                        <RootLayout>
+                          <Routes>
+                            <Route path="/" element={<ExplorerPage />} />
+                            <Route path="/explore" element={<PlacesPage />} />
+                            <Route path="/favorites" element={<FavoritesPage />} />
+                            <Route path="/profile" element={<ProfilePage />} />
+                            <Route path="/my-places" element={<MyPlacesPage />} />
+                            <Route path="/feed" element={<FeedView />} />
+                            <Route path="/following" element={<FollowingManagement />} />
+                            <Route path="/lists" element={<ListsExplorer />} />
+                            <Route path="/lists/create" element={<CreateListPage />} />
+                            <Route path="/lists/:id" element={<ListDetailsPage />} />
+                            <Route
+                              path="/places/:placeType/:id"
+                              element={<PlaceDetailsPage />}
+                            />
+                            <Route path="/admin/*" element={<AdminRoutes />} />
+                          </Routes>
+                        </RootLayout>
+                        <Toaster />
+                      </SavedListsProvider>
                     </ListsProvider>
                   </FavoritesProvider>
                 </FeedProvider>
@@ -63,8 +66,8 @@ function App() {
             </FiltersProvider>
           </PreferencesProvider>
         </AuthProvider>
-      </CountriesProvider>
-    </CitiesProvider>
+      </CitiesProvider>
+    </CountriesProvider>
   );
 }
 

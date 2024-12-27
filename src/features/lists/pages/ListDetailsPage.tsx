@@ -3,11 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useLists } from "@/features/lists/context/ListsContext";
+import { useSavedLists } from "@/features/lists/context/SavedListsContext";
+import { useToast } from "@/hooks/use-toast";
 import { CitiesResponse, ListsResponse } from "@/lib/types/pocketbase-types";
 import { Loader2, MapPin, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 type ListWithPlaces = ListsResponse & {
   places: CitiesResponse[];
   stats: {
@@ -30,9 +31,12 @@ export const ListDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getList } = useLists();
+  const { saveList, unsaveList, isSaved } = useSavedLists();
+  const { toast } = useToast();
 
   // State hooks
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [list, setList] = useState<ListWithPlaces | null>(null);
   const [selectedImage, setSelectedImage] = useState<{
@@ -72,6 +76,37 @@ export const ListDetailsPage = () => {
       mounted = false;
     };
   }, [loadList]);
+
+  const handleSave = useCallback(async () => {
+    if (!list) return;
+
+    try {
+      setIsSaving(true);
+      if (isSaved(list.id)) {
+        await unsaveList(list.id);
+        toast({
+          title: "List unsaved",
+          description: "This list has been removed from your saved lists",
+        });
+      } else {
+        await saveList(list.id);
+        toast({
+          title: "List saved",
+          description: "This list has been added to your saved lists",
+        });
+      }
+      await loadList(); // Reload to get updated saves count
+    } catch (error) {
+      console.error("Failed to save list:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save list. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [list, isSaved, saveList, unsaveList, toast, loadList]);
 
   const handleImageClick = useCallback((place: CitiesResponse) => {
     setSelectedImage({
@@ -113,7 +148,7 @@ export const ListDetailsPage = () => {
 
   const handleShare = useCallback(async () => {
     if (!list) return;
-    
+
     try {
       if (navigator.share) {
         await navigator.share({
@@ -158,7 +193,7 @@ export const ListDetailsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Back Button */}
-      <div className="fixed top-4 left-4 z-10">
+      <div className="fixed top-4 left-4 z-50">
         <Button
           variant="outline"
           size="icon"
@@ -169,9 +204,9 @@ export const ListDetailsPage = () => {
         </Button>
       </div>
 
-      {/* Hero Section */}
-      <div className="relative h-[50vh] bg-black">
-        {coverImage && (
+      {/* Cover Image */}
+      <div className="relative h-[50vh] w-full overflow-hidden">
+        {coverImage ? (
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-300 hover:scale-105"
             style={{
@@ -179,8 +214,10 @@ export const ListDetailsPage = () => {
             }}
             onClick={() => list.places[0] && handleImageClick(list.places[0])}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
           </div>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
         )}
 
         {/* Header Content */}
@@ -207,39 +244,27 @@ export const ListDetailsPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
           {/* Places Grid */}
-          <div className="lg:col-span-2">
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Places in this List</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {list.places.map((place, index) => (
                 <Card
                   key={place.id}
-                  className="group overflow-hidden hover:shadow-lg transition-all duration-300"
+                  className="overflow-hidden group hover:shadow-lg transition-shadow duration-300"
                 >
-                  {/* Rank Badge */}
-                  <div className="absolute top-4 left-4 z-10">
-                    <div className="bg-gradient-to-r from-purple-500/90 to-purple-600/90 backdrop-blur-sm px-3 py-1 rounded-full text-white shadow-lg">
-                      <span className="font-medium">#{index + 1}</span>
-                    </div>
-                  </div>
-
+                  {/* Image */}
                   <div className="relative aspect-[4/3]">
                     <img
                       src={place.imageUrl}
                       alt={place.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <h3 className="text-xl font-semibold text-white mb-2">
-                          {place.name}
-                        </h3>
-                        <p className="text-white/90 text-sm line-clamp-2">
-                          {place.description}
-                        </p>
-                      </div>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Expand Button */}
                     <Button
                       variant="outline"
                       size="icon"
@@ -250,43 +275,12 @@ export const ListDetailsPage = () => {
                     </Button>
                   </div>
 
-                  {/* Place Info */}
+                  {/* Content */}
                   <div className="p-4">
-                    <div className="mb-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold">{place.name}</h3>
-                        <span className="text-sm text-purple-500 font-medium">
-                          #{index + 1}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {place.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{place.country}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <X className="h-4 w-4 mr-1" />
-                          Save
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="hover:bg-purple-50 hover:text-purple-600"
-                        >
-                          <X className="h-4 w-4 mr-1" />
-                          Share
-                        </Button>
-                      </div>
-                    </div>
+                    <h3 className="text-lg font-semibold mb-2">{place.name}</h3>
+                    <p className="text-muted-foreground line-clamp-2">
+                      {place.description}
+                    </p>
                   </div>
                 </Card>
               ))}
@@ -294,36 +288,14 @@ export const ListDetailsPage = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-8">
-              {/* Primary Actions */}
-              <div className="space-y-3 mb-6">
-                <Button
-                  className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
-                  size="lg"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Save List
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-purple-200 hover:bg-purple-50 hover:text-purple-600 transition-all duration-300"
-                  size="lg"
-                  onClick={handleShare}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Share List
-                </Button>
-              </div>
-
-              <Separator className="mb-6" />
-
-              {/* List Stats */}
-              <div className="space-y-4 mb-6">
+          <div className="space-y-6">
+            <Card className="p-6">
+              <h3 className="text-lg font-semibold mb-4">List Stats</h3>
+              <div className="space-y-2">
                 <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Places</span>
                   <span className="font-semibold text-purple-600">
-                    {list.stats.places}
+                    {list.place_count || 0}
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
@@ -336,77 +308,76 @@ export const ListDetailsPage = () => {
 
               <Separator className="mb-6" />
 
-              {/* Curator Info - More Subtle */}
-              <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-50 transition-colors duration-200">
-                <img
-                  src={list.curator.avatar}
-                  alt={list.curator.name}
-                  className="w-8 h-8 rounded-full ring-2 ring-purple-100"
-                />
-                <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Curated by</p>
-                  <p className="font-medium text-purple-900">
-                    {list.curator.name}
-                  </p>
-                </div>
+              {/* Actions */}
+              <div className="flex flex-col gap-3">
+                <Button
+                  variant={isSaved(list.id) ? "outline" : "default"}
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  size="lg"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      <X className="h-4 w-4 mr-2" />
+                      {isSaved(list.id) ? "Unsave List" : "Save List"}
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="lg" onClick={handleShare}>
+                  <X className="h-4 w-4 mr-2" />
+                  Share List
+                </Button>
               </div>
             </Card>
           </div>
         </div>
       </div>
 
-      {/* Image Gallery Modal */}
+      {/* Image Dialog */}
       <Dialog
         open={!!selectedImage}
-        onOpenChange={() => setSelectedImage(null)}
+        onOpenChange={(open) => !open && setSelectedImage(null)}
       >
-        <DialogContent className="max-w-7xl h-[90vh] p-0 bg-black/95">
-          <div className="relative h-full flex items-center justify-center">
-            {/* Close Button */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute top-4 right-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
-              onClick={() => setSelectedImage(null)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+        <DialogContent className="max-w-4xl">
+          {selectedImage && (
+            <div className="relative">
+              {/* Navigation Buttons */}
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute left-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
+                onClick={handlePreviousImage}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="absolute right-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
+                onClick={handleNextImage}
+              >
+                <X className="h-4 w-4" />
+              </Button>
 
-            {/* Navigation Buttons */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute left-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
-              onClick={handlePreviousImage}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute right-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
-              onClick={handleNextImage}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+              {/* Image */}
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.title}
+                className="w-full aspect-video object-cover rounded-lg"
+              />
 
-            {/* Image */}
-            {selectedImage && (
-              <div className="relative w-full h-full">
-                <img
-                  src={selectedImage.url}
-                  alt={selectedImage.title}
-                  className="absolute inset-0 h-full w-full object-contain"
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {selectedImage.title}
-                  </h3>
-                  <p className="text-white/90">{selectedImage.description}</p>
-                </div>
+              {/* Image Info */}
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">{selectedImage.title}</h3>
+                <p className="text-muted-foreground mt-2">
+                  {selectedImage.description}
+                </p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
