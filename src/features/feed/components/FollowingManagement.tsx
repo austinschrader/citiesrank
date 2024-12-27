@@ -7,16 +7,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useCities } from "@/features/places/context/CitiesContext";
+import { ChevronLeft } from "lucide-react";
 import { getPlaceImageBySlug } from "@/lib/bunny";
 import { Loader2, MapPin, Tag } from "lucide-react";
 import { useMemo } from "react";
 import { useFeed } from "../context/FeedContext";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useNavigate } from "react-router-dom";
 
 export const FollowingManagement = () => {
   const { followedPlaces, followedTags, unfollowPlace, unfollowTag } =
     useFeed();
   const { cities, cityStatus } = useCities();
+  const navigate = useNavigate();
 
   // Filter followed places from the cities list
   const followedPlacesData = useMemo(() => {
@@ -32,7 +35,18 @@ export const FollowingManagement = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-6">
+    <div className="max-w-2xl mx-auto py-6 px-4 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="h-10 w-10"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
+        <h1 className="text-2xl font-bold">Following</h1>
+      </div>
       <Card className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <MapPin className="w-5 h-5" />
