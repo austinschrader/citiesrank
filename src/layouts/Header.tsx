@@ -44,6 +44,14 @@ export const Header = () => {
       iconClass: "text-indigo-500",
     },
     {
+      label: "Lists",
+      mobileLabel: "Lists",
+      icon: Bookmark,
+      to: "/lists",
+      description: "Curated collections of amazing places",
+      iconClass: "text-blue-500",
+    },
+    {
       label: "Feed",
       mobileLabel: "Feed",
       icon: Compass,

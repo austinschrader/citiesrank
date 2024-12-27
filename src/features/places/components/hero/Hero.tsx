@@ -6,7 +6,7 @@
  */
 
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
-import { getImageUrl } from "@/lib/cloudinary";
+import { getImageUrl } from "@/lib/bunny";
 import { useSearchForm } from "../../search/hooks/useSearchForm";
 import { PLACE_TYPES } from "./constants";
 import { SearchInput } from "./SearchInput";

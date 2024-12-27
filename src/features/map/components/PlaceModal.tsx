@@ -8,7 +8,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
 import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
-import { getImageUrl } from "@/lib/cloudinary";
+import { getImageUrl } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
@@ -103,33 +103,30 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   // Image preloading
   useEffect(() => {
     const loadImages = async () => {
-      // For cities, we have multiple numbered images
-      // For sights, we just have one image
-      const imageUrls =
-        currentPlace.type === "city"
-          ? Array.from({ length: 4 }, (_, i) => {
-              const base = currentPlace.imageUrl
-                .replace(/^places\//, "")
-                .replace(/-\d+$/, "");
-              return `places/${base}-${i + 1}`;
-            })
-          : [currentPlace.imageUrl];
-
-      const images = imageUrls.map((url) =>
-        getImageUrl(url, isMobile ? "mobile" : "wide")
-      );
-
-      await Promise.all(
-        images.map((url) => {
-          const img = new Image();
-          img.src = url;
-          return new Promise<string>((resolve) => {
-            img.onload = () => resolve(url);
+      const base = currentPlace.imageUrl.replace(/^places\//, "").replace(/-\d+$/, "");
+      const loadedImages: string[] = [];
+      
+      // Try loading images until we get a failure
+      for (let i = 1; i <= 4; i++) {
+        const url = getImageUrl(`${base}-${i}`);
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+              loadedImages.push(url);
+              resolve();
+            };
+            img.onerror = reject;
+            img.src = url;
           });
-        })
-      );
+        } catch {
+          // Stop when we hit a 404
+          break;
+        }
+      }
 
-      setPreloadedImages(images);
+      console.log("Found images:", loadedImages);
+      setPreloadedImages(loadedImages);
     };
 
     loadImages();
@@ -398,6 +395,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   </div>
 
                   <img
+                    key={preloadedImages[currentImageIndex]}
                     src={preloadedImages[currentImageIndex]}
                     alt={currentPlace.name}
                     onClick={(e) => {

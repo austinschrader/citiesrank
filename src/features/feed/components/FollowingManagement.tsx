@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { getImageUrl } from "@/lib/cloudinary";
+import { getPlaceImageBySlug } from "@/lib/bunny";
 import { Loader2, MapPin, Tag } from "lucide-react";
 import { useMemo } from "react";
 import { useFeed } from "../context/FeedContext";
@@ -50,7 +50,7 @@ export const FollowingManagement = () => {
                 <div className="flex items-center gap-3">
                   {place.imageUrl && (
                     <img
-                      src={getImageUrl(place.imageUrl, "thumbnail")}
+                      src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
                       alt={place.name}
                       className="w-12 h-12 rounded-lg object-cover"
                     />
