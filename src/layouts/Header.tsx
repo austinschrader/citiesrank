@@ -128,19 +128,6 @@ export const Header = () => {
                 ))}
             </nav>
 
-            {/* Add Place Button (Desktop) */}
-            {user && (
-              <Link to="/my-places">
-                <Button
-                  size="sm"
-                  className="hidden md:flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Place
-                </Button>
-              </Link>
-            )}
-
             {/* Mobile Navigation */}
             <nav className="flex md:hidden items-center gap-2 flex-1 justify-around">
               {navItems
