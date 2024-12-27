@@ -80,8 +80,8 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         // Update local state immediately for better UX
         setLists((prev) => [...prev, list]);
 
-        // Add places to the list in the background
-        Promise.all(
+        // Add places to the list and wait for them to complete
+        await Promise.all(
           places.map((place, index) =>
             pb.collection("list_places").create({
               list: list.id,
@@ -89,9 +89,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
               rank: index + 1,
             })
           )
-        ).catch((err) => {
-          console.error("Failed to add all places to list:", err);
-        });
+        );
 
         return list;
       } catch (err) {

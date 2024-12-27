@@ -15,6 +15,7 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
 import L, { LatLngTuple } from "leaflet";
+import { pb } from "@/lib/pocketbase";
 import { debounce } from "lodash";
 import React, {
   createContext,
@@ -110,6 +111,7 @@ interface MapContextValue extends MapState {
   setViewMode: (mode: ViewMode) => void;
   hasMorePlaces: boolean;
   loadMorePlaces: () => void;
+  visibleLists: any[];
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -134,6 +136,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const [viewMode, setViewMode] = useState<ViewMode>(
     window.innerWidth <= 640 ? "map" : "split"
   );
+  const [visibleLists, setVisibleLists] = useState<any[]>([]);
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -226,6 +229,35 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     numPrioritizedToShow,
   ]);
 
+  useEffect(() => {
+    if (!mapBounds) return;
+
+    const bounds = {
+      south: Number(mapBounds.getSouth().toFixed(4)),
+      north: Number(mapBounds.getNorth().toFixed(4)),
+      west: Number(mapBounds.getWest().toFixed(4)),
+      east: Number(mapBounds.getEast().toFixed(4))
+    };
+
+    const filter = `center_lat >= ${bounds.south} && center_lat <= ${bounds.north} && center_lng >= ${bounds.west} && center_lng <= ${bounds.east}`;
+    console.log('Fetching lists with filter:', filter);
+    
+    pb.collection('list_locations')
+      .getFullList({
+        filter,
+        expand: 'list'
+      })
+      .then(locations => {
+        console.log('Raw locations:', locations);
+        const lists = locations.map(loc => loc.expand?.list).filter(Boolean);
+        console.log('Processed lists:', lists);
+        setVisibleLists(lists);
+      })
+      .catch(error => {
+        console.error('Error fetching visible lists:', error);
+      });
+  }, [mapBounds]);
+
   const loadMorePlaces = useCallback(() => {
     setNumPrioritizedToShow((prev) => {
       const increment =
@@ -277,6 +309,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       getGeographicLevel,
       viewMode,
       setViewMode,
+      visibleLists,
     }),
     [
       state,
@@ -289,6 +322,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       getVisiblePlacesForCurrentView,
       loadMorePlaces,
       viewMode,
+      visibleLists,
     ]
   );
 

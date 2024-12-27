@@ -6,7 +6,7 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ResultsPanel } from "./ResultsPanel";
+import { ExplorerTabs } from "./ExplorerTabs";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -159,7 +159,7 @@ export const SplitExplorer = () => {
                 : "w-[800px]"
             )}
           >
-            <ResultsPanel
+            <ExplorerTabs
               isLoadingMore={isLoadingMore}
               observerTarget={observerTarget}
               isResultsPanelCollapsed={isResultsPanelCollapsed}
