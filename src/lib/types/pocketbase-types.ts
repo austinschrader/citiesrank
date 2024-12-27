@@ -10,6 +10,7 @@ export enum Collections {
 	Countries = "countries",
 	Favorites = "favorites",
 	FeedItems = "feed_items",
+	ListPlaces = "list_places",
 	Lists = "lists",
 	UserPreferences = "user_preferences",
 	Users = "users",
@@ -115,40 +116,18 @@ export type FeedItemsRecord<Tcontent = unknown, Tstats = unknown> = {
 	type: FeedItemsTypeOptions
 }
 
-export enum ListsStatusOptions {
-	"published" = "published",
-	"draft" = "draft",
+export type ListPlacesRecord = {
+	description?: string
+	list: RecordIdString
+	place: RecordIdString
+	rank?: number
 }
 
-export enum ListsCollectionOptions {
-	"want-to-visit" = "want-to-visit",
-	"visited" = "visited",
-	"planning" = "planning",
-	"favorites" = "favorites",
-}
-
-export enum ListsPrivacyOptions {
-	"public" = "public",
-	"private" = "private",
-	"followers" = "followers",
-}
-export type ListsRecord<Ttags = unknown> = {
-	author: RecordIdString
-	category: string
-	collection?: ListsCollectionOptions
-	description: string
-	isVerified?: boolean
-	likes?: number
-	places?: RecordIdString[]
-	privacy: ListsPrivacyOptions
-	relatedLists?: RecordIdString[]
+export type ListsRecord = {
+	description?: string
 	saves?: number
-	shares?: number
-	status: ListsStatusOptions
-	tags: null | Ttags
 	title: string
-	totalPlaces: number
-	views?: number
+	user: RecordIdString
 }
 
 export type UserPreferencesRecord<Tfollowed_places = unknown, Tfollowed_tags = unknown> = {
@@ -173,7 +152,8 @@ export type CitiesResponse<Thighlights = unknown, Ttags = unknown, Texpand = unk
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
 export type FeedItemsResponse<Tcontent = unknown, Tstats = unknown, Texpand = unknown> = Required<FeedItemsRecord<Tcontent, Tstats>> & BaseSystemFields<Texpand>
-export type ListsResponse<Ttags = unknown, Texpand = unknown> = Required<ListsRecord<Ttags>> & BaseSystemFields<Texpand>
+export type ListPlacesResponse<Texpand = unknown> = Required<ListPlacesRecord> & BaseSystemFields<Texpand>
+export type ListsResponse<Texpand = unknown> = Required<ListsRecord> & BaseSystemFields<Texpand>
 export type UserPreferencesResponse<Tfollowed_places = unknown, Tfollowed_tags = unknown, Texpand = unknown> = Required<UserPreferencesRecord<Tfollowed_places, Tfollowed_tags>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
@@ -184,6 +164,7 @@ export type CollectionRecords = {
 	countries: CountriesRecord
 	favorites: FavoritesRecord
 	feed_items: FeedItemsRecord
+	list_places: ListPlacesRecord
 	lists: ListsRecord
 	user_preferences: UserPreferencesRecord
 	users: UsersRecord
@@ -194,6 +175,7 @@ export type CollectionResponses = {
 	countries: CountriesResponse
 	favorites: FavoritesResponse
 	feed_items: FeedItemsResponse
+	list_places: ListPlacesResponse
 	lists: ListsResponse
 	user_preferences: UserPreferencesResponse
 	users: UsersResponse
@@ -207,6 +189,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'favorites'): RecordService<FavoritesResponse>
 	collection(idOrName: 'feed_items'): RecordService<FeedItemsResponse>
+	collection(idOrName: 'list_places'): RecordService<ListPlacesResponse>
 	collection(idOrName: 'lists'): RecordService<ListsResponse>
 	collection(idOrName: 'user_preferences'): RecordService<UserPreferencesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
