@@ -26,15 +26,8 @@ export const ExplorerTabs = ({
   const { visibleLists } = useMap();
 
   return (
-    <div
-      className={cn(
-        "absolute right-0 top-0 h-full w-full md:w-[400px] bg-white shadow-lg transition-transform duration-300 overflow-hidden",
-        {
-          "translate-x-full": isResultsPanelCollapsed,
-        }
-      )}
-    >
-      <Tabs defaultValue="places" className="h-full flex flex-col">
+    <div className="h-full flex">
+      <Tabs defaultValue="places" className="h-full flex flex-col w-full">
         <div className="flex items-center justify-between p-4 border-b">
           <TabsList>
             <TabsTrigger value="places">Places</TabsTrigger>

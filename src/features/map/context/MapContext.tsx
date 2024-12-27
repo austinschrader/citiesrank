@@ -240,7 +240,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     };
 
     const filter = `center_lat >= ${bounds.south} && center_lat <= ${bounds.north} && center_lng >= ${bounds.west} && center_lng <= ${bounds.east}`;
-    console.log('Fetching lists with filter:', filter);
     
     pb.collection('list_locations')
       .getFullList({
@@ -248,9 +247,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         expand: 'list'
       })
       .then(locations => {
-        console.log('Raw locations:', locations);
         const lists = locations.map(loc => loc.expand?.list).filter(Boolean);
-        console.log('Processed lists:', lists);
         setVisibleLists(lists);
       })
       .catch(error => {
