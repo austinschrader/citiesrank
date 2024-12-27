@@ -1,5 +1,6 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { CitiesResponse, ListsResponse, UsersResponse } from "@/lib/types/pocketbase-types";
+import { ExpandedList, ListWithPlaces } from "@/features/lists/types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { ClientResponseError } from "pocketbase";
 import {
   createContext,
@@ -9,23 +10,8 @@ import {
   useState,
 } from "react";
 
-type ListWithPlaces = ListsResponse & {
-  places: CitiesResponse[];
-  stats: {
-    places: number;
-    saves: number;
-  };
-  curator: {
-    name: string;
-    avatar: string;
-  };
-  expand: {
-    user: UsersResponse;
-  };
-};
-
 interface ListsContextType {
-  lists: ListsResponse[];
+  lists: ExpandedList[];
   isLoading: boolean;
   error: ClientResponseError | null;
   createList: ({
@@ -36,9 +22,9 @@ interface ListsContextType {
     title: string;
     description?: string;
     places: string[];
-  }) => Promise<ListsResponse>;
+  }) => Promise<ExpandedList>;
   getList: (id: string) => Promise<ListWithPlaces>;
-  getUserLists: () => Promise<ListsResponse[]>;
+  getUserLists: () => Promise<ExpandedList[]>;
   updateList: (
     id: string,
     {
@@ -50,7 +36,7 @@ interface ListsContextType {
       description?: string;
       places?: string[];
     }
-  ) => Promise<ListsResponse>;
+  ) => Promise<ExpandedList>;
   deleteList: (id: string) => Promise<void>;
   addPlaceToList: (listId: string, place: CitiesResponse) => Promise<void>;
   removePlaceFromList: (listId: string, place: CitiesResponse) => Promise<void>;
@@ -60,7 +46,7 @@ const ListsContext = createContext<ListsContextType | null>(null);
 
 export function ListsProvider({ children }: { children: ReactNode }) {
   const { pb, user } = useAuth();
-  const [lists, setLists] = useState<ListsResponse[]>([]);
+  const [lists, setLists] = useState<ExpandedList[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ClientResponseError | null>(null);
 
@@ -79,12 +65,17 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setError(null);
 
         // Create the list first
-        const list = await pb.collection("lists").create({
-          title,
-          description,
-          user: user?.id,
-          place_count: places.length,
-        }) as ListsResponse;
+        const list = (await pb.collection("lists").create(
+          {
+            title,
+            description,
+            user: user?.id,
+            place_count: places.length,
+          },
+          {
+            expand: "users",
+          }
+        )) as ExpandedList;
 
         // Update local state immediately for better UX
         setLists((prev) => [...prev, list]);
@@ -99,7 +90,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
             })
           )
         ).catch((err) => {
-          console.error('Failed to add all places to list:', err);
+          console.error("Failed to add all places to list:", err);
         });
 
         return list;
@@ -120,51 +111,83 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
 
-        // Get the list with $autoCancel false to prevent cancellation
-        const list = await pb.collection("lists").getOne<ListsResponse & { expand: { user: UsersResponse } }>(id, {
-          $autoCancel: false,
-          expand: 'user',
-        });
-
-        // Get the places in the list
-        const listPlaces = await pb
-          .collection("list_places")
-          .getFullList({ 
-            filter: `list = "${id}"`,
-            sort: "rank",
+        console.log("Step 1: Fetching list with ID:", id);
+        // First, try just getting the list without any expansion
+        const basicList = await pb
+          .collection("lists")
+          .getOne<ExpandedList>(id, {
             $autoCancel: false,
           });
+        console.log("Basic list data:", basicList);
 
-        // Get the actual place records
-        const places = await pb.collection("cities").getFullList({
-          filter: listPlaces.map(lp => `id = "${lp.place}"`).join(" || "),
+        console.log("Step 2: Fetching list with user expansion");
+        // Now try with just user expansion
+        const listWithUser = await pb
+          .collection("lists")
+          .getOne<ExpandedList>(id, {
+            $autoCancel: false,
+            expand: "user",
+          });
+        console.log("List with user:", listWithUser?.expand?.user);
+
+        console.log("Step 3: Fetching list_places records");
+        // Get the list_places records separately first
+        const listPlaces = await pb.collection("list_places").getFullList({
+          filter: `list = "${id}"`,
+          sort: "rank",
           $autoCancel: false,
-        }) as CitiesResponse[];
+        });
+        console.log("List places records:", listPlaces);
 
-        // Sort places according to rank
-        const sortedPlaces = listPlaces
-          .map((lp) => places.find((p) => p.id === lp.place))
+        console.log("Step 4: Fetching list_places with place expansion");
+        // Now try getting list_places with expanded place data
+        const listPlacesExpanded = await pb
+          .collection("list_places")
+          .getFullList({
+            filter: `list = "${id}"`,
+            sort: "rank",
+            expand: "place",
+            $autoCancel: false,
+          });
+        console.log("List places filter:", `list = "${id}"`);
+        console.log("List places with expansion:", listPlacesExpanded);
+
+        console.log("Step 5: Attempting full list expansion");
+        // Finally try the full expansion
+        const list = await pb.collection("lists").getOne<ExpandedList>(id, {
+          $autoCancel: false,
+          expand: "user,places_via_list",
+        });
+        console.log("Full expanded list:", list);
+
+        // Get the actual place records from the expanded data
+        const places = listPlacesExpanded
+          .map((lp) => lp.expand?.place)
           .filter((p): p is CitiesResponse => !!p);
+
+        console.log("Step 6: Final processed places:", places);
 
         const listWithPlaces: ListWithPlaces = {
           ...list,
-          places: sortedPlaces,
+          places,
           stats: {
             places: list.place_count || 0,
             saves: list.saves || 0,
           },
           curator: {
-            name: list.expand?.user?.name || 'Anonymous',
-            avatar: list.expand?.user?.avatar || '',
+            name: list.expand?.user?.name || "Anonymous",
+            avatar: list.expand?.user?.avatar || "",
           },
-          expand: {
-            user: list.expand.user
-          }
         };
 
+        console.log(
+          "Step 7: Final processed list with places:",
+          listWithPlaces
+        );
         return listWithPlaces;
       } catch (err) {
         const error = err as ClientResponseError;
+        console.error("Error in getList:", error);
         setError(error);
         throw error;
       } finally {
@@ -184,17 +207,53 @@ export function ListsProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       setError(null);
 
-      const records = await pb
-        .collection("lists")
-        .getFullList({
-          filter: `user = "${user.id}"`,
-          $autoCancel: false,
-        }) as ListsResponse[];
+      // First get lists with user expansion
+      const lists = (await pb.collection("lists").getFullList({
+        filter: `user = "${user.id}"`,
+        expand: "user",
+        sort: "-created",
+        $autoCancel: false,
+      })) as ExpandedList[];
 
-      setLists(records);
-      return records;
+      console.log("Lists:", lists);
+      console.log("List IDs:", lists.map((l) => l.id));
+
+      // Get list_places for each list
+      const allListPlaces = await Promise.all(
+        lists.map((list) =>
+          pb.collection("list_places").getFullList({
+            filter: `list = "${list.id}"`,
+            expand: "place",
+            sort: "rank",
+            $autoCancel: false,
+          })
+        )
+      );
+
+      console.log("All list places:", allListPlaces);
+
+      // Combine all list places
+      const placesByList = allListPlaces.reduce((acc, listPlaces, index) => {
+        const listId = lists[index].id;
+        acc[listId] = listPlaces
+          .map((lp) => lp.expand?.place)
+          .filter((p): p is CitiesResponse => !!p);
+        return acc;
+      }, {} as Record<string, CitiesResponse[]>);
+
+      // Transform the expanded places into the format we need
+      const listsWithPlaces = lists.map((list) => ({
+        ...list,
+        places: placesByList[list.id] || [],
+      }));
+
+      console.log("Final lists with places:", listsWithPlaces);
+
+      setLists(listsWithPlaces);
+      return listsWithPlaces;
     } catch (err) {
       const error = err as ClientResponseError;
+      console.error("Error fetching lists:", error);
       setError(error);
       throw error;
     } finally {
@@ -220,11 +279,13 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setError(null);
 
         // Update list metadata
-        const data: Record<string, any> = {};
+        const data: any = {};
         if (title) data.title = title;
         if (description) data.description = description;
 
-        const list = await pb.collection("lists").update(id, data) as ListsResponse;
+        const list = (await pb.collection("lists").update(id, data, {
+          expand: "users",
+        })) as ExpandedList;
 
         // If places are provided, update them
         if (places) {
@@ -350,15 +411,19 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         });
 
         // Update place_count on the list
-        const list = await pb.collection("lists").getOne(listId, {
+        const list = (await pb.collection("lists").getOne(listId, {
           $autoCancel: false,
-        }) as ListsResponse;
-        
-        await pb.collection("lists").update(listId, {
-          place_count: (list.place_count || 1) - 1,
-        }, {
-          $autoCancel: false,
-        });
+        })) as ExpandedList;
+
+        await pb.collection("lists").update(
+          listId,
+          {
+            place_count: (list.place_count || 1) - 1,
+          },
+          {
+            $autoCancel: false,
+          }
+        );
 
         // Update lists in state
         setLists((prev) =>
@@ -370,19 +435,21 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         );
 
         // Reorder remaining places
-        const remainingPlaces = await pb
-          .collection("list_places")
-          .getFullList({
-            filter: `list = "${listId}"`,
-            sort: "rank",
-            $autoCancel: false,
-          });
+        const remainingPlaces = await pb.collection("list_places").getFullList({
+          filter: `list = "${listId}"`,
+          sort: "rank",
+          $autoCancel: false,
+        });
 
         await Promise.all(
           remainingPlaces.map((place, index) =>
-            pb.collection("list_places").update(place.id, { rank: index + 1 }, {
-              $autoCancel: false,
-            })
+            pb.collection("list_places").update(
+              place.id,
+              { rank: index + 1 },
+              {
+                $autoCancel: false,
+              }
+            )
           )
         );
       } catch (err) {
