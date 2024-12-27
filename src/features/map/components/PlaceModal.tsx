@@ -103,9 +103,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   // Image preloading
   useEffect(() => {
     const loadImages = async () => {
-      const base = currentPlace.imageUrl.replace(/^places\//, "").replace(/-\d+$/, "");
+      const base = currentPlace.imageUrl
+        .replace(/^places\//, "")
+        .replace(/-\d+$/, "");
       const loadedImages: string[] = [];
-      
+
       // Try loading images until we get a failure
       for (let i = 1; i <= 4; i++) {
         const url = getImageUrl(`${base}-${i}`);
@@ -125,7 +127,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         }
       }
 
-      console.log("Found images:", loadedImages);
       setPreloadedImages(loadedImages);
     };
 
