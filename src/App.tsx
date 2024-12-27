@@ -16,6 +16,7 @@ import { FeedProvider } from '@/features/feed/context/FeedContext';
 import { FeedView } from '@/features/feed/components/FeedView';
 import { FollowingManagement } from '@/features/feed/components/FollowingManagement';
 import { ListsExplorer } from '@/features/lists/components/ListsExplorer';
+import { ListDetailsPage } from '@/features/lists/pages/ListDetailsPage';
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
@@ -42,6 +43,7 @@ function App() {
                         <Route path="/feed" element={<FeedView />} />
                         <Route path="/following" element={<FollowingManagement />} />
                         <Route path="/lists" element={<ListsExplorer />} />
+                        <Route path="/lists/:id" element={<ListDetailsPage />} />
                         <Route
                           path="/places/:placeType/:id"
                           element={<PlaceDetailsPage />}

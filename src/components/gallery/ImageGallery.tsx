@@ -1,5 +1,4 @@
-import { getImageUrl } from "@/lib/cloudinary";
-import { createSlug } from "@/lib/imageUtils";
+import { getPlaceImage } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -11,7 +10,7 @@ interface ImageGalleryProps {
   showControls?: boolean;
   onImageClick?: () => void;
   variant?: "default" | "hero";
-  priority?: boolean; // Add priority prop for hero images
+  priority?: boolean;
 }
 
 export const ImageGallery = ({
@@ -28,23 +27,22 @@ export const ImageGallery = ({
   const loadedImages = useRef(new Set<string>());
   const preloadedImages = useRef<HTMLImageElement[]>([]);
 
-  const citySlug = useMemo(() => createSlug(cityName), [cityName]);
-  const countrySlug = useMemo(() => createSlug(country), [country]);
-
   // Generate image URLs only once
   const images = useMemo(() => {
     return Array.from({ length: 4 }, (_, i) => {
       return {
         title: `${cityName}, ${country} - Image ${i + 1}`,
         sources: {
-          mobile: getImageUrl(imageUrl, "mobile"),
-          tablet: getImageUrl(imageUrl, "tablet"),
-          desktop: getImageUrl(imageUrl, "wide"),
-          fullscreen: getImageUrl(imageUrl, "fullscreen"),
+          mobile: getPlaceImage(cityName, country, i + 1, "mobile"),
+          tablet: getPlaceImage(cityName, country, i + 1, "tablet"),
+          desktop: getPlaceImage(cityName, country, i + 1, "wide"),
+          fullscreen: getPlaceImage(cityName, country, i + 1, "fullscreen"),
         },
       };
     });
-  }, [citySlug, countrySlug, cityName, country, imageUrl]);
+  }, [cityName, country]);
+
+  const countrySlug = useMemo(() => country, [country]);
 
   // Preload adjacent images
   const preloadAdjacentImages = useCallback(
