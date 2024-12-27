@@ -2,150 +2,118 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getImageUrl } from "@/lib/bunny";
-import {
-  ArrowLeft,
-  BookmarkPlus,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Expand,
-  Heart,
-  MapPin,
-  Share2,
-  Users,
-  X,
-} from "lucide-react";
-import { useCallback, useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useLists } from "@/features/lists/context/ListsContext";
+import { CitiesResponse, ListsResponse } from "@/lib/types/pocketbase-types";
+import { Loader2, MapPin, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface Place {
-  id: string;
-  name: string;
-  country: string;
-  description: string;
-  rating: number;
-  imageUrl: string;
-}
-
-interface ListDetails {
-  id: string;
-  title: string;
-  description: string;
+type ListWithPlaces = ListsResponse & {
+  places: CitiesResponse[];
+  stats: {
+    places: number;
+    saves: number;
+  };
   curator: {
     name: string;
     avatar: string;
   };
-  stats: {
-    places: number;
-    saves: number;
-    shares: number;
-    contributors: number;
+  expand?: {
+    user: {
+      name: string;
+      avatar: string;
+    };
   };
-  places: Place[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ListsResponse {
-  id: string;
-  title: string;
-  description: string;
-  curator: {
-    name: string;
-    avatar: string;
-  };
-  stats: {
-    places: number;
-    saves: number;
-    shares: number;
-    contributors: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface CitiesResponse {
-  id: string;
-  name: string;
-  country: string;
-  description: string;
-  rating: number;
-  imageUrl: string;
-}
+};
 
 export const ListDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getList, updateList, deleteList } = useLists();
+  const { getList } = useLists();
+
+  // State hooks
   const [isLoading, setIsLoading] = useState(false);
-  const [list, setList] = useState<ListsResponse & { places: CitiesResponse[] } | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [list, setList] = useState<ListWithPlaces | null>(null);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
     title: string;
     description: string;
   } | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
+  // Load list data
+  const loadList = useCallback(async () => {
     if (!id) return;
 
-    const loadList = async () => {
-      try {
-        setIsLoading(true);
-        const listData = await getList(id);
-        setList(listData);
-      } catch (error) {
-        console.error('Failed to load list:', error);
-        // TODO: Add toast notification for error
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadList();
+    try {
+      setIsLoading(true);
+      setError(null);
+      const listData = await getList(id);
+      setList(listData as ListWithPlaces);
+    } catch (error) {
+      console.error("Failed to load list:", error);
+      setError(error as Error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [id, getList]);
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center gap-2 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="rounded-full"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-semibold">Loading...</h1>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    let mounted = true;
 
-  if (!list) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center gap-2 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="rounded-full"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-semibold">List not found</h1>
-        </div>
-      </div>
-    );
-  }
+    const load = async () => {
+      if (!mounted) return;
+      await loadList();
+    };
 
-  const coverImage = list.places[0]?.imageUrl;
+    load();
+
+    return () => {
+      mounted = false;
+    };
+  }, [loadList]);
+
+  const handleImageClick = useCallback((place: CitiesResponse) => {
+    setSelectedImage({
+      url: place.imageUrl,
+      title: place.name,
+      description: place.description,
+    });
+  }, []);
+
+  const handlePreviousImage = useCallback(() => {
+    if (!selectedImage || !list) return;
+    const currentIndex = list.places.findIndex(
+      (place) => place.imageUrl === selectedImage.url
+    );
+    const previousIndex =
+      currentIndex > 0 ? currentIndex - 1 : list.places.length - 1;
+    const previousPlace = list.places[previousIndex];
+    setSelectedImage({
+      url: previousPlace.imageUrl,
+      title: previousPlace.name,
+      description: previousPlace.description,
+    });
+  }, [selectedImage, list]);
+
+  const handleNextImage = useCallback(() => {
+    if (!selectedImage || !list) return;
+    const currentIndex = list.places.findIndex(
+      (place) => place.imageUrl === selectedImage.url
+    );
+    const nextIndex =
+      currentIndex < list.places.length - 1 ? currentIndex + 1 : 0;
+    const nextPlace = list.places[nextIndex];
+    setSelectedImage({
+      url: nextPlace.imageUrl,
+      title: nextPlace.name,
+      description: nextPlace.description,
+    });
+  }, [selectedImage, list]);
 
   const handleShare = useCallback(async () => {
+    if (!list) return;
+    
     try {
       if (navigator.share) {
         await navigator.share({
@@ -161,43 +129,31 @@ export const ListDetailsPage = () => {
     }
   }, [list]);
 
-  const handleImageClick = (place: CitiesResponse) => {
-    setSelectedImage({
-      url: getImageUrl(place.imageUrl, "fullscreen"),
-      title: place.name,
-      description: place.description,
-    });
-  };
+  const coverImage = useMemo(() => list?.places[0]?.imageUrl, [list]);
 
-  const handlePreviousImage = () => {
-    if (!selectedImage) return;
-    const currentIndex = list.places.findIndex(
-      (place) => getImageUrl(place.imageUrl, "fullscreen") === selectedImage.url
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+        </div>
+      </div>
     );
-    const previousIndex =
-      currentIndex > 0 ? currentIndex - 1 : list.places.length - 1;
-    const previousPlace = list.places[previousIndex];
-    setSelectedImage({
-      url: getImageUrl(previousPlace.imageUrl, "fullscreen"),
-      title: previousPlace.name,
-      description: previousPlace.description,
-    });
-  };
+  }
 
-  const handleNextImage = () => {
-    if (!selectedImage) return;
-    const currentIndex = list.places.findIndex(
-      (place) => getImageUrl(place.imageUrl, "fullscreen") === selectedImage.url
+  if (error || !list) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold mb-2">Failed to load list</h2>
+          <p className="text-muted-foreground mb-4">
+            {error?.message || "Something went wrong"}
+          </p>
+          <Button onClick={() => navigate("/lists")}>Back to Lists</Button>
+        </div>
+      </div>
     );
-    const nextIndex =
-      currentIndex < list.places.length - 1 ? currentIndex + 1 : 0;
-    const nextPlace = list.places[nextIndex];
-    setSelectedImage({
-      url: getImageUrl(nextPlace.imageUrl, "fullscreen"),
-      title: nextPlace.name,
-      description: nextPlace.description,
-    });
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -209,7 +165,7 @@ export const ListDetailsPage = () => {
           className="rounded-full bg-white/90 backdrop-blur-sm hover:bg-white/95 hover:scale-105 transition-all duration-300 shadow-lg"
           onClick={() => navigate(-1)}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <X className="h-4 w-4" />
         </Button>
       </div>
 
@@ -219,7 +175,7 @@ export const ListDetailsPage = () => {
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-300 hover:scale-105"
             style={{
-              backgroundImage: `url(${getImageUrl(coverImage, "fullscreen")})`,
+              backgroundImage: `url(${coverImage})`,
             }}
             onClick={() => list.places[0] && handleImageClick(list.places[0])}
           >
@@ -227,32 +183,24 @@ export const ListDetailsPage = () => {
           </div>
         )}
 
-        {/* Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-          <div className="container mx-auto">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-              {list.title}
-            </h1>
-            <p className="text-lg text-white/90 max-w-2xl mb-6">
-              {list.description}
-            </p>
+        {/* Header Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
+          <h1 className="text-4xl font-bold text-white mb-4">{list.title}</h1>
+          <p className="text-lg text-white/90 mb-6">{list.description}</p>
 
-            {/* Stats and Actions */}
-            <div className="flex flex-wrap items-center gap-6 text-white/80">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Users className="h-4 w-4" />
-                <span>{list.stats.contributors} contributors</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                <MapPin className="h-4 w-4" />
-                <span>{list.stats.places} places</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                <Calendar className="h-4 w-4" />
-                <span>
-                  Updated {new Date(list.updatedAt).toLocaleDateString()}
-                </span>
-              </div>
+          {/* Stats and Actions */}
+          <div className="flex flex-wrap items-center gap-6 text-white/80">
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+              <MapPin className="h-4 w-4" />
+              <span>{list.place_count || 0} places</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+              <MapPin className="h-4 w-4" />
+              <span>Created by {list.expand?.user?.name || "Anonymous"}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+              <MapPin className="h-4 w-4" />
+              <span>Updated {new Date(list.updated).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -278,7 +226,7 @@ export const ListDetailsPage = () => {
 
                   <div className="relative aspect-[4/3]">
                     <img
-                      src={getImageUrl(place.imageUrl, "standard")}
+                      src={place.imageUrl}
                       alt={place.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
@@ -298,7 +246,7 @@ export const ListDetailsPage = () => {
                       className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
                       onClick={() => handleImageClick(place)}
                     >
-                      <Expand className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </Button>
                   </div>
 
@@ -326,7 +274,7 @@ export const ListDetailsPage = () => {
                           size="sm"
                           className="hover:bg-purple-50 hover:text-purple-600"
                         >
-                          <Heart className="h-4 w-4 mr-1" />
+                          <X className="h-4 w-4 mr-1" />
                           Save
                         </Button>
                         <Button
@@ -334,7 +282,7 @@ export const ListDetailsPage = () => {
                           size="sm"
                           className="hover:bg-purple-50 hover:text-purple-600"
                         >
-                          <Share2 className="h-4 w-4 mr-1" />
+                          <X className="h-4 w-4 mr-1" />
                           Share
                         </Button>
                       </div>
@@ -354,7 +302,7 @@ export const ListDetailsPage = () => {
                   className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
                   size="lg"
                 >
-                  <BookmarkPlus className="h-4 w-4 mr-2" />
+                  <X className="h-4 w-4 mr-2" />
                   Save List
                 </Button>
                 <Button
@@ -363,7 +311,7 @@ export const ListDetailsPage = () => {
                   size="lg"
                   onClick={handleShare}
                 >
-                  <Share2 className="h-4 w-4 mr-2" />
+                  <X className="h-4 w-4 mr-2" />
                   Share List
                 </Button>
               </div>
@@ -382,12 +330,6 @@ export const ListDetailsPage = () => {
                   <span className="text-muted-foreground">Saves</span>
                   <span className="font-semibold text-purple-600">
                     {list.stats.saves}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
-                  <span className="text-muted-foreground">Shares</span>
-                  <span className="font-semibold text-purple-600">
-                    {list.stats.shares}
                   </span>
                 </div>
               </div>
@@ -437,7 +379,7 @@ export const ListDetailsPage = () => {
               className="absolute left-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
               onClick={handlePreviousImage}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
@@ -445,7 +387,7 @@ export const ListDetailsPage = () => {
               className="absolute right-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
               onClick={handleNextImage}
             >
-              <ChevronRight className="h-4 w-4" />
+              <X className="h-4 w-4" />
             </Button>
 
             {/* Image */}

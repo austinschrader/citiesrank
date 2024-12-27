@@ -2,32 +2,35 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { useLists } from "@/features/lists/context/ListsContext";
+import { PlaceSearch } from "@/features/places/components/filters/PlaceSearch";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { PlaceSearch } from "@/features/places/components/filters/PlaceSearch";
+import { useToast } from "@/hooks/use-toast";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { Check, Plus, X } from "lucide-react";
+import { Check, Loader2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLists } from "@/features/lists/context/ListsContext";
 
 export const CreateListPage = () => {
   const navigate = useNavigate();
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
   const { createList } = useLists();
+  const { toast } = useToast();
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [itemsPerPage] = useState(25);
   const [page, setPage] = useState(1);
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedCities, setSelectedCities] = useState<CitiesResponse[]>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<CitiesResponse[]>([]);
 
   // Get filtered and paginated cities
   const allFilteredPlaces = getFilteredCities(cities, () => ({
@@ -41,18 +44,18 @@ export const CreateListPage = () => {
       accessibility: 1,
     },
   }));
-  const paginatedFilteredPlaces = allFilteredPlaces.slice(0, page * itemsPerPage);
+  const paginatedFilteredPlaces = allFilteredPlaces.slice(
+    0,
+    page * itemsPerPage
+  );
 
   // Handle infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !isLoadingMore && paginatedFilteredPlaces.length < allFilteredPlaces.length) {
-          setIsLoadingMore(true);
-          // Simulate loading delay
+        if (entries[0].isIntersecting && !isLoadingMore) {
           setTimeout(() => {
             setPage((prev) => prev + 1);
-            setIsLoadingMore(false);
           }, 500);
         }
       },
@@ -67,7 +70,7 @@ export const CreateListPage = () => {
   }, [isLoadingMore, paginatedFilteredPlaces.length, allFilteredPlaces.length]);
 
   const handleSelect = useCallback((city: CitiesResponse) => {
-    setSelectedCities((prev) => {
+    setSelectedPlaces((prev) => {
       if (prev.some((c) => c.id === city.id)) {
         return prev;
       }
@@ -76,28 +79,50 @@ export const CreateListPage = () => {
   }, []);
 
   const handleRemove = useCallback((cityId: string) => {
-    setSelectedCities((prev) => prev.filter((city) => city.id !== cityId));
+    setSelectedPlaces((prev) => prev.filter((city) => city.id !== cityId));
   }, []);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      
+
       try {
+        setIsSubmitting(true);
+
         const list = await createList({
           title,
           description,
-          places: selectedCities,
+          places: selectedPlaces.map((place) => place.id),
+        });
+
+        toast({
+          title: "List created!",
+          description: "Your new list has been created successfully.",
         });
 
         // Navigate to the new list
         navigate(`/lists/${list.id}`);
       } catch (error) {
-        console.error('Failed to create list:', error);
-        // TODO: Add toast notification for error
+        console.error("Failed to create list:", error);
+        toast({
+          title: "Failed to create list",
+          description:
+            "Please try again. If the problem persists, contact support.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     },
-    [title, description, selectedCities, createList, navigate]
+    [
+      title,
+      description,
+      selectedPlaces,
+      createList,
+      navigate,
+      toast,
+      isSubmitting,
+    ]
   );
 
   return (
@@ -161,7 +186,7 @@ export const CreateListPage = () => {
                     <Check
                       className={cn(
                         "h-4 w-4",
-                        selectedCities.some((c) => c.id === city.id)
+                        selectedPlaces.some((c) => c.id === city.id)
                           ? "opacity-100 text-purple-500"
                           : "opacity-0"
                       )}
@@ -181,7 +206,7 @@ export const CreateListPage = () => {
             {/* Selected Cities */}
             <div className="space-y-2 mt-4">
               <Label>Selected Places</Label>
-              {selectedCities.map((city, index) => (
+              {selectedPlaces.map((city, index) => (
                 <div
                   key={city.id}
                   className="flex items-center gap-2 p-3 bg-muted rounded-lg group"
@@ -215,15 +240,23 @@ export const CreateListPage = () => {
             <Button
               variant="outline"
               onClick={() => navigate(-1)}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               className="bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700"
-              disabled={!title || selectedCities.length === 0}
+              disabled={!title || selectedPlaces.length === 0 || isSubmitting}
             >
-              Create List
+              {isSubmitting ? (
+                <>
+                  <span className="mr-2">Creating...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </>
+              ) : (
+                "Create List"
+              )}
             </Button>
           </div>
         </Card>

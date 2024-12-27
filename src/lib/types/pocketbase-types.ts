@@ -125,6 +125,7 @@ export type ListPlacesRecord = {
 
 export type ListsRecord = {
 	description?: string
+	place_count?: number
 	saves?: number
 	title: string
 	user: RecordIdString
