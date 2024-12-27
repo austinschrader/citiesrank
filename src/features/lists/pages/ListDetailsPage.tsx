@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { getImageUrl } from "@/lib/bunny";
-import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
   BookmarkPlus,
@@ -158,7 +156,27 @@ export const ListDetailsPage = () => {
     },
   };
 
-  const list = lists[id || "1"];
+  const list = lists[id!];
+
+  if (!list) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center gap-2 mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="rounded-full"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-2xl font-semibold">List not found</h1>
+        </div>
+      </div>
+    );
+  }
+
+  const coverImage = list.places[0]?.imageUrl;
 
   const handleShare = useCallback(async () => {
     try {
@@ -204,7 +222,8 @@ export const ListDetailsPage = () => {
     const currentIndex = list.places.findIndex(
       (place) => getImageUrl(place.imageUrl, "fullscreen") === selectedImage.url
     );
-    const nextIndex = currentIndex < list.places.length - 1 ? currentIndex + 1 : 0;
+    const nextIndex =
+      currentIndex < list.places.length - 1 ? currentIndex + 1 : 0;
     const nextPlace = list.places[nextIndex];
     setSelectedImage({
       url: getImageUrl(nextPlace.imageUrl, "fullscreen"),
@@ -233,18 +252,17 @@ export const ListDetailsPage = () => {
 
       {/* Hero Section */}
       <div className="relative h-[50vh] bg-black">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-300 hover:scale-105"
-          style={{
-            backgroundImage: `url(${getImageUrl(
-              list.places[0].imageUrl,
-              "fullscreen"
-            )})`,
-          }}
-          onClick={() => handleImageClick(list.places[0])}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        </div>
+        {coverImage && (
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-300 hover:scale-105"
+            style={{
+              backgroundImage: `url(${getImageUrl(coverImage, "fullscreen")})`,
+            }}
+            onClick={() => list.places[0] && handleImageClick(list.places[0])}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          </div>
+        )}
 
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
@@ -268,7 +286,9 @@ export const ListDetailsPage = () => {
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                 <Calendar className="h-4 w-4" />
-                <span>Updated {new Date(list.updatedAt).toLocaleDateString()}</span>
+                <span>
+                  Updated {new Date(list.updatedAt).toLocaleDateString()}
+                </span>
               </div>
             </div>
           </div>
@@ -324,7 +344,9 @@ export const ListDetailsPage = () => {
                     <div className="mb-3">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold">{place.name}</h3>
-                        <span className="text-sm text-purple-500 font-medium">#{index + 1}</span>
+                        <span className="text-sm text-purple-500 font-medium">
+                          #{index + 1}
+                        </span>
                       </div>
                       <p className="text-sm text-muted-foreground line-clamp-2">
                         {place.description}
@@ -389,15 +411,21 @@ export const ListDetailsPage = () => {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Places</span>
-                  <span className="font-semibold text-purple-600">{list.stats.places}</span>
+                  <span className="font-semibold text-purple-600">
+                    {list.stats.places}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Saves</span>
-                  <span className="font-semibold text-purple-600">{list.stats.saves}</span>
+                  <span className="font-semibold text-purple-600">
+                    {list.stats.saves}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Shares</span>
-                  <span className="font-semibold text-purple-600">{list.stats.shares}</span>
+                  <span className="font-semibold text-purple-600">
+                    {list.stats.shares}
+                  </span>
                 </div>
               </div>
 
@@ -412,7 +440,9 @@ export const ListDetailsPage = () => {
                 />
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">Curated by</p>
-                  <p className="font-medium text-purple-900">{list.curator.name}</p>
+                  <p className="font-medium text-purple-900">
+                    {list.curator.name}
+                  </p>
                 </div>
               </div>
             </Card>
@@ -421,7 +451,10 @@ export const ListDetailsPage = () => {
       </div>
 
       {/* Image Gallery Modal */}
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+      <Dialog
+        open={!!selectedImage}
+        onOpenChange={() => setSelectedImage(null)}
+      >
         <DialogContent className="max-w-7xl h-[90vh] p-0 bg-black/95">
           <div className="relative h-full flex items-center justify-center">
             {/* Close Button */}

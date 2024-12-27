@@ -4,6 +4,7 @@ import {
   Camera,
   Heart,
   MapPin,
+  Plus,
   Share2,
   Users,
 } from "lucide-react";
@@ -67,6 +68,13 @@ export const ListsExplorer = () => {
               Discover curated collections of amazing places
             </p>
           </div>
+          <button
+            onClick={() => navigate('/lists/create')}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-300 shadow-sm hover:shadow group font-medium"
+          >
+            <Plus className="h-5 w-5" />
+            Create List
+          </button>
         </div>
 
         {/* View Switcher */}
