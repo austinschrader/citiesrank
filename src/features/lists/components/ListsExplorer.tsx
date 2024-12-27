@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useLists } from "@/features/lists/context/ListsContext";
 import { ExpandedList } from "@/features/lists/types";
-import { getPlaceImage } from "@/lib/bunny";
+import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import {
   ArrowRight,
   Globe,
@@ -91,11 +91,10 @@ export const ListsExplorer = () => {
             {/* Preview Grid */}
             <div className="flex gap-1 h-64 overflow-hidden">
               {list.places?.slice(0, 3).map((place) => {
-                console.log("Place data:", place);
                 return (
                   <div key={place.id} className="flex-1 relative">
                     <img
-                      src={getPlaceImage(
+                      src={getPlaceImageByCityAndCountry(
                         place.name,
                         place.country,
                         1,

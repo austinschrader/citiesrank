@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { getPlaceImage } from "@/lib/cloudinary";
+import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { Heart, LogIn, Map, Star, Zap } from "lucide-react";
 
 interface SignUpDialogProps {
@@ -26,11 +26,11 @@ export function SignUpDialog({
 }: SignUpDialogProps) {
   const { signInWithGoogle } = useAuth();
   const citySlug = `${city.toLowerCase()}-${country.toLowerCase()}-${imageNumber}`;
-  const bgImage = getPlaceImage(citySlug, "standard");
+  const bgImage = getPlaceImageByCityAndCountry(citySlug, "standard");
 
   // If no title is provided, generate one based on the city
   const defaultTitle = city ? `Discover ${city}` : "Discover Your Perfect City";
-  const defaultDescription = city 
+  const defaultDescription = city
     ? `Join thousands of travelers exploring ${city} and other amazing destinations`
     : "Join thousands of travelers finding their ideal destinations";
 

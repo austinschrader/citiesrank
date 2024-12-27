@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLists } from "@/features/lists/context/ListsContext";
 import { useSavedLists } from "@/features/lists/context/SavedListsContext";
 import { useToast } from "@/hooks/use-toast";
-import { getPlaceImage } from "@/lib/bunny";
+import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { CitiesResponse, ListsResponse } from "@/lib/types/pocketbase-types";
 import { Loader2, MapPin, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -211,7 +211,7 @@ export const ListDetailsPage = () => {
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-300 hover:scale-105"
             style={{
-              backgroundImage: `url(${getPlaceImage(
+              backgroundImage: `url(${getPlaceImageByCityAndCountry(
                 list.places[0].name,
                 list.places[0].country,
                 1,
@@ -264,7 +264,12 @@ export const ListDetailsPage = () => {
                   {/* Image */}
                   <div className="relative aspect-[4/3]">
                     <img
-                      src={getPlaceImage(place.name, place.country, 1, "standard")}
+                      src={getPlaceImageByCityAndCountry(
+                        place.name,
+                        place.country,
+                        1,
+                        "standard"
+                      )}
                       alt={place.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />

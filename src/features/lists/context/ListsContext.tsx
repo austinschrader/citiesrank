@@ -111,16 +111,13 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
 
-        console.log("Step 1: Fetching list with ID:", id);
         // First, try just getting the list without any expansion
         const basicList = await pb
           .collection("lists")
           .getOne<ExpandedList>(id, {
             $autoCancel: false,
           });
-        console.log("Basic list data:", basicList);
 
-        console.log("Step 2: Fetching list with user expansion");
         // Now try with just user expansion
         const listWithUser = await pb
           .collection("lists")
@@ -128,18 +125,14 @@ export function ListsProvider({ children }: { children: ReactNode }) {
             $autoCancel: false,
             expand: "user",
           });
-        console.log("List with user:", listWithUser?.expand?.user);
 
-        console.log("Step 3: Fetching list_places records");
         // Get the list_places records separately first
         const listPlaces = await pb.collection("list_places").getFullList({
           filter: `list = "${id}"`,
           sort: "rank",
           $autoCancel: false,
         });
-        console.log("List places records:", listPlaces);
 
-        console.log("Step 4: Fetching list_places with place expansion");
         // Now try getting list_places with expanded place data
         const listPlacesExpanded = await pb
           .collection("list_places")
@@ -149,23 +142,16 @@ export function ListsProvider({ children }: { children: ReactNode }) {
             expand: "place",
             $autoCancel: false,
           });
-        console.log("List places filter:", `list = "${id}"`);
-        console.log("List places with expansion:", listPlacesExpanded);
-
-        console.log("Step 5: Attempting full list expansion");
         // Finally try the full expansion
         const list = await pb.collection("lists").getOne<ExpandedList>(id, {
           $autoCancel: false,
           expand: "user,places_via_list",
         });
-        console.log("Full expanded list:", list);
 
         // Get the actual place records from the expanded data
         const places = listPlacesExpanded
           .map((lp) => lp.expand?.place)
           .filter((p): p is CitiesResponse => !!p);
-
-        console.log("Step 6: Final processed places:", places);
 
         const listWithPlaces: ListWithPlaces = {
           ...list,
@@ -180,10 +166,6 @@ export function ListsProvider({ children }: { children: ReactNode }) {
           },
         };
 
-        console.log(
-          "Step 7: Final processed list with places:",
-          listWithPlaces
-        );
         return listWithPlaces;
       } catch (err) {
         const error = err as ClientResponseError;
@@ -215,9 +197,6 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         $autoCancel: false,
       })) as ExpandedList[];
 
-      console.log("Lists:", lists);
-      console.log("List IDs:", lists.map((l) => l.id));
-
       // Get list_places for each list
       const allListPlaces = await Promise.all(
         lists.map((list) =>
@@ -229,8 +208,6 @@ export function ListsProvider({ children }: { children: ReactNode }) {
           })
         )
       );
-
-      console.log("All list places:", allListPlaces);
 
       // Combine all list places
       const placesByList = allListPlaces.reduce((acc, listPlaces, index) => {
@@ -246,8 +223,6 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         ...list,
         places: placesByList[list.id] || [],
       }));
-
-      console.log("Final lists with places:", listsWithPlaces);
 
       setLists(listsWithPlaces);
       return listsWithPlaces;

@@ -1,4 +1,4 @@
-import { getPlaceImage } from "@/lib/bunny";
+import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -33,10 +33,30 @@ export const ImageGallery = ({
       return {
         title: `${cityName}, ${country} - Image ${i + 1}`,
         sources: {
-          mobile: getPlaceImage(cityName, country, i + 1, "mobile"),
-          tablet: getPlaceImage(cityName, country, i + 1, "tablet"),
-          desktop: getPlaceImage(cityName, country, i + 1, "wide"),
-          fullscreen: getPlaceImage(cityName, country, i + 1, "fullscreen"),
+          mobile: getPlaceImageByCityAndCountry(
+            cityName,
+            country,
+            i + 1,
+            "mobile"
+          ),
+          tablet: getPlaceImageByCityAndCountry(
+            cityName,
+            country,
+            i + 1,
+            "tablet"
+          ),
+          desktop: getPlaceImageByCityAndCountry(
+            cityName,
+            country,
+            i + 1,
+            "wide"
+          ),
+          fullscreen: getPlaceImageByCityAndCountry(
+            cityName,
+            country,
+            i + 1,
+            "fullscreen"
+          ),
         },
       };
     });

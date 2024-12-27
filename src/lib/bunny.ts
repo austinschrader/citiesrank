@@ -3,7 +3,7 @@
 const CDN_URL = import.meta.env.VITE_BUNNY_CDN_URL;
 
 if (!CDN_URL) {
-  throw new Error('VITE_BUNNY_CDN_URL is not defined');
+  throw new Error("VITE_BUNNY_CDN_URL is not defined");
 }
 
 type ImageSize =
@@ -31,30 +31,30 @@ const SIZES: Record<
 };
 
 const getBaseUrl = () => {
-  return CDN_URL.startsWith('http') ? CDN_URL : `https://${CDN_URL}`;
+  return CDN_URL.startsWith("http") ? CDN_URL : `https://${CDN_URL}`;
 };
 
 export const getImageUrl = (path: string, size: ImageSize = "standard") => {
   const { width, height, quality } = SIZES[size];
   const baseUrl = getBaseUrl();
-  return `${baseUrl}/${path}?width=${width}&height=${height}&quality=${quality}&format=webp`;
+  return `${baseUrl}/${path}.jpg`;
 };
 
-export const getPlaceImage = (
+export const getPlaceImageByCityAndCountry = (
   cityName: string,
   countryName: string,
   index: number = 1,
   size: ImageSize = "standard"
 ): string => {
-  const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
-  const countrySlug = countryName.toLowerCase().replace(/\s+/g, '-');
-  return getImageUrl(`${citySlug}-${countrySlug}-${index}.jpg`, size);
+  const citySlug = cityName.toLowerCase().replace(/\s+/g, "-");
+  const countrySlug = countryName.toLowerCase().replace(/\s+/g, "-");
+  return getImageUrl(`${citySlug}-${countrySlug}-${index}`, size);
 };
 
-
-export const getListPreviewImage = (
-  index: number,
-  size: ImageSize = "thumbnail"
+export const getPlaceImageBySlug = (
+  placeSlug: string,
+  index: number = 1,
+  size: ImageSize = "standard"
 ): string => {
-  return getImageUrl(`lists/preview-${index}.jpg`, size);
+  return getImageUrl(`${placeSlug}-${index}`, size);
 };

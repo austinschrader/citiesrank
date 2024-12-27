@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { getImageUrl } from "@/lib/cloudinary";
+import { getImageUrl } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import { Check, FolderPlus } from "lucide-react";
 import React, { useState } from "react";

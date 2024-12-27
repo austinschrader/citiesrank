@@ -8,7 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getImageUrl } from "@/lib/cloudinary";
+import {
+  getPlaceImageByCityAndCountry,
+  getPlaceImageBySlug,
+} from "@/lib/bunny";
 import {
   Calendar,
   Camera,
@@ -67,7 +70,7 @@ export const FeedView = () => {
       </div>
       {item.place.imageUrl && (
         <img
-          src={getImageUrl(item.place.imageUrl, "thumbnail")}
+          src={getPlaceImageBySlug(item.place.imageUrl.replace(/-1$/, ''), 1, "thumbnail")}
           alt={item.place.name}
           className="w-full h-48 object-cover rounded-lg mb-3"
         />
@@ -141,7 +144,7 @@ export const FeedView = () => {
           {item.content.images.map((image, idx) => (
             <img
               key={idx}
-              src={getImageUrl(image, "standard")}
+              src={getPlaceImageBySlug(image.replace(/-1$/, ''), 1, "standard")}
               alt={`Update from ${item.place.name}`}
               className="w-full h-24 object-cover rounded-lg"
             />
@@ -174,7 +177,7 @@ export const FeedView = () => {
         {item.places.slice(0, 3).map((place) => (
           <Link key={place.id} to={`/places/${place.id}`}>
             <img
-              src={getImageUrl(place.imageUrl, "standard")}
+              src={getPlaceImageBySlug(place.imageUrl.replace(/-1$/, ''), 1, "standard")}
               alt={place.name}
               className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
@@ -225,7 +228,7 @@ export const FeedView = () => {
             {item.similarPlaces.map((place) => (
               <div key={place.id} className="relative group">
                 <img
-                  src={getImageUrl(place.imageUrl, "standard")}
+                  src={getPlaceImageBySlug(place.imageUrl.replace(/-1$/, ''), 1, "standard")}
                   alt={place.name}
                   className="w-full h-24 object-cover rounded-lg"
                 />
@@ -287,7 +290,7 @@ export const FeedView = () => {
         {item.featuredPlaces.slice(0, 3).map((place) => (
           <Link key={place.id} to={`/places/${place.id}`}>
             <img
-              src={getImageUrl(place.imageUrl, "standard")}
+              src={getPlaceImageBySlug(place.imageUrl.replace(/-1$/, ''), 1, "standard")}
               alt={place.name}
               className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
@@ -308,7 +311,7 @@ export const FeedView = () => {
         {item.topPhotos.map((photo, idx) => (
           <img
             key={idx}
-            src={getImageUrl(photo, "standard")}
+            src={getPlaceImageBySlug(photo.replace(/-1$/, ''), 1, "standard")}
             alt={`Challenge photo ${idx + 1}`}
             className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
           />
@@ -350,7 +353,7 @@ export const FeedView = () => {
       </div>
       <div className="relative">
         <img
-          src={getImageUrl(item.sight.image, "standard")}
+          src={getPlaceImageBySlug(item.sight.image.replace(/-1$/, ''), 1, "standard")}
           alt={item.sight.name}
           className="w-full h-32 object-cover rounded-lg"
         />
@@ -374,7 +377,7 @@ export const FeedView = () => {
         </div>
       </div>
       <img
-        src={getImageUrl(item.memory.image, "wide")}
+        src={getPlaceImageBySlug(item.memory.image.replace(/-1$/, ''), 1, "wide")}
         alt={item.memory.title}
         className="w-full h-48 object-cover rounded-lg mb-3"
       />
