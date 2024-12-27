@@ -224,7 +224,7 @@ export const ListDetailsPage = () => {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full bg-background/80 backdrop-blur-sm"
+          className="rounded-full bg-white/90 backdrop-blur-sm hover:bg-white/95 hover:scale-105 transition-all duration-300 shadow-lg"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -243,13 +243,13 @@ export const ListDetailsPage = () => {
           }}
           onClick={() => handleImageClick(list.places[0])}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         </div>
 
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
           <div className="container mx-auto">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
               {list.title}
             </h1>
             <p className="text-lg text-white/90 max-w-2xl mb-6">
@@ -257,16 +257,16 @@ export const ListDetailsPage = () => {
             </p>
 
             {/* Stats and Actions */}
-            <div className="flex flex-wrap items-center gap-4 text-white/80">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-6 text-white/80">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                 <Users className="h-4 w-4" />
                 <span>{list.stats.contributors} contributors</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                 <MapPin className="h-4 w-4" />
                 <span>{list.stats.places} places</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                 <Calendar className="h-4 w-4" />
                 <span>Updated {new Date(list.updatedAt).toLocaleDateString()}</span>
               </div>
@@ -288,7 +288,7 @@ export const ListDetailsPage = () => {
                 >
                   {/* Rank Badge */}
                   <div className="absolute top-4 left-4 z-10">
-                    <div className="bg-background/80 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <div className="bg-gradient-to-r from-purple-500/90 to-purple-600/90 backdrop-blur-sm px-3 py-1 rounded-full text-white shadow-lg">
                       <span className="font-medium">#{index + 1}</span>
                     </div>
                   </div>
@@ -299,7 +299,7 @@ export const ListDetailsPage = () => {
                       alt={place.name}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="absolute bottom-4 left-4 right-4">
                         <h3 className="text-xl font-semibold text-white mb-2">
                           {place.name}
@@ -312,7 +312,7 @@ export const ListDetailsPage = () => {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="absolute top-4 right-4 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
                       onClick={() => handleImageClick(place)}
                     >
                       <Expand className="h-4 w-4" />
@@ -324,7 +324,7 @@ export const ListDetailsPage = () => {
                     <div className="mb-3">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold">{place.name}</h3>
-                        <span className="text-sm text-muted-foreground">#{index + 1}</span>
+                        <span className="text-sm text-purple-500 font-medium">#{index + 1}</span>
                       </div>
                       <p className="text-sm text-muted-foreground line-clamp-2">
                         {place.description}
@@ -336,11 +336,19 @@ export const ListDetailsPage = () => {
                         <span>{place.country}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hover:bg-purple-50 hover:text-purple-600"
+                        >
                           <Heart className="h-4 w-4 mr-1" />
                           Save
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hover:bg-purple-50 hover:text-purple-600"
+                        >
                           <Share2 className="h-4 w-4 mr-1" />
                           Share
                         </Button>
@@ -357,13 +365,16 @@ export const ListDetailsPage = () => {
             <Card className="p-6 sticky top-8">
               {/* Primary Actions */}
               <div className="space-y-3 mb-6">
-                <Button className="w-full" size="lg">
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  size="lg"
+                >
                   <BookmarkPlus className="h-4 w-4 mr-2" />
                   Save List
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full border-purple-200 hover:bg-purple-50 hover:text-purple-600 transition-all duration-300"
                   size="lg"
                   onClick={handleShare}
                 >
@@ -376,32 +387,32 @@ export const ListDetailsPage = () => {
 
               {/* List Stats */}
               <div className="space-y-4 mb-6">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Places</span>
-                  <span className="font-semibold">{list.stats.places}</span>
+                  <span className="font-semibold text-purple-600">{list.stats.places}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Saves</span>
-                  <span className="font-semibold">{list.stats.saves}</span>
+                  <span className="font-semibold text-purple-600">{list.stats.saves}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                   <span className="text-muted-foreground">Shares</span>
-                  <span className="font-semibold">{list.stats.shares}</span>
+                  <span className="font-semibold text-purple-600">{list.stats.shares}</span>
                 </div>
               </div>
 
               <Separator className="mb-6" />
 
               {/* Curator Info - More Subtle */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-50 transition-colors duration-200">
                 <img
                   src={list.curator.avatar}
                   alt={list.curator.name}
-                  className="w-8 h-8 rounded-full"
+                  className="w-8 h-8 rounded-full ring-2 ring-purple-100"
                 />
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground">Curated by</p>
-                  <p className="font-medium">{list.curator.name}</p>
+                  <p className="font-medium text-purple-900">{list.curator.name}</p>
                 </div>
               </div>
             </Card>
