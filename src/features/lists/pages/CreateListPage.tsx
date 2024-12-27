@@ -13,11 +13,13 @@ import { cn } from "@/lib/utils";
 import { Check, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLists } from "@/features/lists/context/ListsContext";
 
 export const CreateListPage = () => {
   const navigate = useNavigate();
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
+  const { createList } = useLists();
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [itemsPerPage] = useState(25);
@@ -81,17 +83,21 @@ export const CreateListPage = () => {
     async (e: React.FormEvent) => {
       e.preventDefault();
       
-      // TODO: Add API call to create list
-      console.log({
-        title,
-        description,
-        cities: selectedCities,
-      });
+      try {
+        const list = await createList({
+          title,
+          description,
+          places: selectedCities,
+        });
 
-      // For now, just go back to lists page until we have the API
-      navigate('/lists');
+        // Navigate to the new list
+        navigate(`/lists/${list.id}`);
+      } catch (error) {
+        console.error('Failed to create list:', error);
+        // TODO: Add toast notification for error
+      }
     },
-    [title, description, selectedCities, navigate]
+    [title, description, selectedCities, createList, navigate]
   );
 
   return (

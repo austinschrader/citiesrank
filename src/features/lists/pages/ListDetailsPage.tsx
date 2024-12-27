@@ -16,8 +16,9 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLists } from "@/features/lists/context/ListsContext";
 
 interface Place {
   id: string;
@@ -47,10 +48,39 @@ interface ListDetails {
   updatedAt: string;
 }
 
+interface ListsResponse {
+  id: string;
+  title: string;
+  description: string;
+  curator: {
+    name: string;
+    avatar: string;
+  };
+  stats: {
+    places: number;
+    saves: number;
+    shares: number;
+    contributors: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface CitiesResponse {
+  id: string;
+  name: string;
+  country: string;
+  description: string;
+  rating: number;
+  imageUrl: string;
+}
+
 export const ListDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { getList, updateList, deleteList } = useLists();
   const [isLoading, setIsLoading] = useState(false);
+  const [list, setList] = useState<ListsResponse & { places: CitiesResponse[] } | null>(null);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
     title: string;
@@ -58,105 +88,42 @@ export const ListDetailsPage = () => {
   } | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Mock data for now - replace with real API call
-  const lists: Record<string, ListDetails> = {
-    "1": {
-      id: "1",
-      title: "Hidden Waterfalls of the Pacific Northwest",
-      description:
-        "Discover the most breathtaking waterfalls tucked away in the pristine wilderness of the Pacific Northwest. From towering cascades to serene forest pools, this curated collection showcases nature's most spectacular water features in Washington, Oregon, and British Columbia.",
-      curator: {
-        name: "Alice Chen",
-        avatar: "/avatars/alice-chen.jpg",
-      },
-      stats: {
-        places: 12,
-        saves: 245,
-        shares: 89,
-        contributors: 3,
-      },
-      places: [
-        {
-          id: "1",
-          name: "Multnomah Falls",
-          country: "United States",
-          description:
-            "A majestic 620-foot-tall roaring cascade of icy water, making it the tallest waterfall in Oregon.",
-          rating: 4.8,
-          imageUrl: "oregon-waterfall-1.jpg",
-        },
-        {
-          id: "2",
-          name: "Snoqualmie Falls",
-          country: "United States",
-          description:
-            "One of Washington's most popular scenic attractions, plunging 268 feet into a deep pool.",
-          rating: 4.7,
-          imageUrl: "oregon-waterfall-2.jpg",
-        },
-      ],
-      createdAt: "2023-12-01",
-      updatedAt: "2023-12-15",
-    },
-    "2": {
-      id: "2",
-      title: "NYC's Most Photogenic Fire Escapes",
-      description:
-        "A visual journey through New York City's iconic fire escapes, showcasing the architectural beauty and urban character of these essential safety features. From SoHo's cast-iron facades to the Lower East Side's historic tenements, discover the most Instagram-worthy fire escapes in the Big Apple.",
-      curator: {
-        name: "Street Photography Club",
-        avatar: "/avatars/street-photo-club.jpg",
-      },
-      stats: {
-        places: 15,
-        saves: 378,
-        shares: 156,
-        contributors: 5,
-      },
-      places: [
-        {
-          id: "1",
-          name: "SoHo Cast Iron District",
-          country: "United States",
-          description:
-            "Historic cast-iron buildings featuring ornate fire escapes that have become synonymous with SoHo's architectural identity. These wrought-iron structures create stunning geometric patterns against the facade.",
-          rating: 4.9,
-          imageUrl: "nyc-fire-escape-1.jpg",
-        },
-        {
-          id: "2",
-          name: "Lower East Side Tenements",
-          country: "United States",
-          description:
-            "Classic New York tenement buildings with zigzagging fire escapes that tell stories of immigrant life and urban development. Perfect for moody black and white photography.",
-          rating: 4.7,
-          imageUrl: "nyc-fire-escape-2.jpg",
-        },
-        {
-          id: "3",
-          name: "West Village Brownstones",
-          country: "United States",
-          description:
-            "Charming brownstone buildings with well-preserved fire escapes that add character to the tree-lined streets. Best photographed during golden hour when the light creates dramatic shadows.",
-          rating: 4.8,
-          imageUrl: "nyc-fire-escape-3.jpg",
-        },
-        {
-          id: "4",
-          name: "Chinatown Facades",
-          country: "United States",
-          description:
-            "Vibrant buildings with fire escapes draped in hanging laundry and plants, creating a unique urban tableau that captures daily life in Chinatown.",
-          rating: 4.6,
-          imageUrl: "nyc-fire-escape-4.jpg",
-        },
-      ],
-      createdAt: "2023-11-15",
-      updatedAt: "2023-12-20",
-    },
-  };
+  useEffect(() => {
+    if (!id) return;
 
-  const list = lists[id!];
+    const loadList = async () => {
+      try {
+        setIsLoading(true);
+        const listData = await getList(id);
+        setList(listData);
+      } catch (error) {
+        console.error('Failed to load list:', error);
+        // TODO: Add toast notification for error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadList();
+  }, [id, getList]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center gap-2 mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="rounded-full"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-2xl font-semibold">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
 
   if (!list) {
     return (
@@ -194,7 +161,7 @@ export const ListDetailsPage = () => {
     }
   }, [list]);
 
-  const handleImageClick = (place: Place) => {
+  const handleImageClick = (place: CitiesResponse) => {
     setSelectedImage({
       url: getImageUrl(place.imageUrl, "fullscreen"),
       title: place.name,
@@ -231,10 +198,6 @@ export const ListDetailsPage = () => {
       description: nextPlace.description,
     });
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="min-h-screen bg-background">
