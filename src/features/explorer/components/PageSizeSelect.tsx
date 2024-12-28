@@ -17,7 +17,7 @@ export const PageSizeSelect = () => {
       value={itemsPerPage.toString()}
       onValueChange={(val) => setItemsPerPage(Number(val))}
     >
-      <SelectTrigger className="text-md font-medium text-indigo-600">
+      <SelectTrigger className="h-10 px-3 py-1.5 text-md font-medium text-indigo-600">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

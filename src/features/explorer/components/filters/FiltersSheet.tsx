@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
   Sheet,
   SheetClose,
   SheetContent,
@@ -13,14 +21,6 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, Star } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 
 const placeTypeIcons = {
   [CitiesTypeOptions.country]: {
@@ -89,7 +89,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
       <SheetTrigger asChild>
         <Button
           className={cn(
-            "h-9 px-3 py-1.5 gap-2 relative group",
+            "h-10 px-3 py-1.5 gap-2 relative group",
             "bg-white/5 border-white/10 backdrop-blur-sm",
             "hover:bg-white/10 transition-all duration-200",
             activeFiltersCount > 0 &&
@@ -263,7 +263,9 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                   onClick={() => {
                     setFilters({
                       ...filters,
-                      activeTypes: Object.keys(placeTypeIcons) as CitiesTypeOptions[],
+                      activeTypes: Object.keys(
+                        placeTypeIcons
+                      ) as CitiesTypeOptions[],
                       populationCategory: null,
                       averageRating: null,
                       search: "",

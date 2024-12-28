@@ -6,13 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import {
-  ChevronDown,
-  Flame,
-  Sparkles,
-  Timer,
-  Zap,
-} from "lucide-react";
+import { ChevronDown, Flame, Sparkles, Timer, Zap } from "lucide-react";
 import React from "react";
 
 type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
@@ -67,7 +61,7 @@ export const TimeWindow = ({
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
+            className="h-10 px-3 py-1.5 gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
           >
             <div className="flex items-center gap-2">
               {React.createElement(energyModes[energyMode].icon, {
@@ -115,7 +109,7 @@ export const TimeWindow = ({
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
+              className="h-10 px-3 py-1.5 gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
             >
               <span className="text-md font-medium text-indigo-600">
                 {timeRanges[timeRange]}
