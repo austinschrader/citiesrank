@@ -57,7 +57,7 @@ export const Header = () => {
       label: "Latest",
       mobileLabel: "Latest",
       icon: Sparkles,
-      to: "/latest",
+      to: "/feed",
       description: "See the most recent updates and activity",
       iconClass: "text-green-500",
     },
