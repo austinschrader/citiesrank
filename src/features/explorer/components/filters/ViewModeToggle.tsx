@@ -31,7 +31,7 @@ export const ViewModeToggle = () => {
       </div>
 
       {/* Desktop View: Full Interface */}
-      <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 shadow-sm">
+      <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-lg bg-white/5 backdrop-blur-sm">
         {[
           { mode: "list" as const, icon: Rows, label: "Space" },
           {
@@ -48,7 +48,7 @@ export const ViewModeToggle = () => {
               "flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200",
               viewMode === mode
                 ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                : "text-muted-foreground hover:text-foreground hover:bg-white/10",
+                : "text-muted-foreground hover:text-foreground hover:bg-white/5",
               "relative overflow-hidden group"
             )}
           >

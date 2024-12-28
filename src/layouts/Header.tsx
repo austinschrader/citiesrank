@@ -37,11 +37,11 @@ export const Header = () => {
 
   const navItems = [
     {
-      label: "MapSpace",
-      mobileLabel: "MapSpace",
+      label: "Discover",
+      mobileLabel: "Discover",
       icon: Map,
       to: "/",
-      description: "Explore the world through places",
+      description: "Find your next favorite place on our interactive map",
       iconClass: "text-indigo-500",
     },
     {
@@ -49,15 +49,15 @@ export const Header = () => {
       mobileLabel: "Lists",
       icon: Bookmark,
       to: "/lists",
-      description: "Curated collections of amazing places",
+      description: "Create and organize lists of your favorite places",
       iconClass: "text-blue-500",
     },
     {
-      label: "Feed",
-      mobileLabel: "Feed",
+      label: "Latest",
+      mobileLabel: "Latest",
       icon: Compass,
       to: "/feed",
-      description: "Your personalized city updates and discoveries",
+      description: "Fresh lists and popular places updated daily",
     },
     // Only show admin links to admin users
     ...(user?.isAdmin
@@ -81,10 +81,10 @@ export const Header = () => {
           <div className="flex-none hidden md:block">
             <Link to="/" className="flex flex-col group">
               <span className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text transition-all duration-300 group-hover:from-purple-500 group-hover:to-pink-500">
-                MapSpace
+                RoamRoster
               </span>
               <span className="text-sm text-muted-foreground transition-opacity duration-300 group-hover:opacity-80">
-                The social layer of the world
+                Collect places. Share stories.
               </span>
             </Link>
           </div>
