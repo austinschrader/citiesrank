@@ -10,26 +10,36 @@ interface PageHeaderProps {
 }
 
 export const PageHeader = ({ className }: PageHeaderProps) => {
-  const { mode, energyMode, exploringCount } = useHeader();
+  const { mode, energyMode, exploringCount, viewMode } = useHeader();
   const { currentLocation } = useLocation();
 
   const getHeaderTitle = () => {
+    // First check if we're in a location-specific view
+    if (mode === "discover" && currentLocation) {
+      return `Exploring ${currentLocation}`;
+    }
+
+    // Then check if we're in discover mode with a specific view mode
+    if (mode === "discover") {
+      if (viewMode === "lists") {
+        return "Discover Curated Lists";
+      }
+      
+      // For places view, use the energy mode titles
+      switch (energyMode) {
+        case "buzzing":
+          return "Discover Trending Places";
+        case "fresh":
+          return "Fresh Finds";
+        case "trending":
+          return "Trending Places";
+        case "upcoming":
+          return "Coming Soon";
+      }
+    }
+
+    // For other modes
     switch (mode) {
-      case "discover":
-        if (currentLocation) {
-          return `Exploring ${currentLocation}`;
-        }
-        switch (energyMode) {
-          case "buzzing":
-            return "Discover Trending Places";
-          case "fresh":
-            return "Fresh Finds";
-          case "trending":
-            return "Trending Places";
-          case "upcoming":
-            return "Coming Soon";
-        }
-        return "Discover Places";
       case "lists":
         return "Collections";
       case "latest":
@@ -45,7 +55,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
     }
   };
 
-  const showExploringCount = mode === "discover" && exploringCount !== null;
+  const showExploringCount = mode === "discover" && exploringCount !== null && viewMode === "places";
 
   return (
     <div className={cn("sticky top-[57px] z-10 border-b bg-background/95 backdrop-blur-lg", className)}>
