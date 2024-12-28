@@ -1,6 +1,12 @@
 import { createContext, useContext, useState } from "react";
 
-export type HeaderMode = "discover" | "lists" | "latest" | "profile" | "favorites" | "places";
+export type HeaderMode =
+  | "discover"
+  | "lists"
+  | "latest"
+  | "profile"
+  | "favorites"
+  | "places";
 export type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
 export type TimeRange = "now" | "today" | "week" | "month";
 export type ViewMode = "places" | "lists";
@@ -33,7 +39,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("places");
+  const [viewMode, setViewMode] = useState<ViewMode>("lists");
   const [itemsPerPage, setItemsPerPage] = useState<number>(25);
 
   return (
