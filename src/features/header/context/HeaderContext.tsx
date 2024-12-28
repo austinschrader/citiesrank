@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 export type HeaderMode = "discover" | "lists" | "latest" | "profile" | "favorites" | "places";
 export type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
 export type TimeRange = "now" | "today" | "week" | "month";
+export type ViewMode = "places" | "lists";
 
 interface HeaderContextValue {
   mode: HeaderMode;
@@ -17,6 +18,8 @@ interface HeaderContextValue {
   setShowControls: (show: boolean) => void;
   exploringCount: number | null;
   setExploringCount: (count: number | null) => void;
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
 }
 
 const HeaderContext = createContext<HeaderContextValue | null>(null);
@@ -28,6 +31,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("places");
 
   return (
     <HeaderContext.Provider
@@ -44,6 +48,8 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
         setShowControls,
         exploringCount,
         setExploringCount,
+        viewMode,
+        setViewMode,
       }}
     >
       {children}
