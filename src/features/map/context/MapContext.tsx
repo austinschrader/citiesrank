@@ -1,23 +1,22 @@
 /**
  * Map context for managing map state and place visibility.
- * 
+ *
  * Handles:
  * - Map state (zoom, center, bounds)
  * - Place visibility filtering
  * - Place prioritization for display
  * - View mode (map/list/split)
- * 
+ *
  * Uses FiltersContext for user-defined filters and
  * placeFiltering utilities for visibility rules.
  */
 
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { useLists } from "@/features/lists/context/ListsContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
+import { pb } from "@/lib/pocketbase";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
 import L, { LatLngTuple } from "leaflet";
-import { pb } from "@/lib/pocketbase";
-import { debounce } from "lodash";
 import React, {
   createContext,
   useCallback,
@@ -71,7 +70,7 @@ const getRandomCenter = () => {
 };
 
 const randomCountry = getRandomCenter();
-const DEFAULT_CENTER: LatLngTuple = [45.5152, -122.6784]; // Portland, OR
+const DEFAULT_CENTER: LatLngTuple = [40.7128, -74.006]; // NYC
 const DEFAULT_ZOOM = 9;
 
 interface MapState {
@@ -129,7 +128,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
+    []
+  );
   const [prioritizedPlaces, setPrioritizedPlaces] = useState<MapPlace[]>([]);
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
@@ -238,26 +239,30 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       south: Number(mapBounds.getSouth().toFixed(4)),
       north: Number(mapBounds.getNorth().toFixed(4)),
       west: Number(mapBounds.getWest().toFixed(4)),
-      east: Number(mapBounds.getEast().toFixed(4))
+      east: Number(mapBounds.getEast().toFixed(4)),
     };
 
     const filter = `center_lat >= ${bounds.south} && center_lat <= ${bounds.north} && center_lng >= ${bounds.west} && center_lng <= ${bounds.east}`;
-    
-    pb.collection('list_locations')
+
+    pb.collection("list_locations")
       .getFullList({
         filter,
-        expand: 'list'
+        expand: "list",
       })
-      .then(async locations => {
+      .then(async (locations) => {
         // Get unique list IDs
-        const listIds = [...new Set(locations.map(loc => loc.expand?.list?.id).filter(Boolean))];
-        
+        const listIds = [
+          ...new Set(
+            locations.map((loc) => loc.expand?.list?.id).filter(Boolean)
+          ),
+        ];
+
         // Get full list data for each list using ListsContext
-        const lists = await Promise.all(listIds.map(id => getList(id)));
+        const lists = await Promise.all(listIds.map((id) => getList(id)));
         setVisibleLists(lists);
       })
-      .catch(error => {
-        console.error('Error fetching visible lists:', error);
+      .catch((error) => {
+        console.error("Error fetching visible lists:", error);
       });
   }, [mapBounds, getList]);
 
