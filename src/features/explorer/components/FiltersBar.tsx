@@ -121,6 +121,14 @@ export const FiltersBar = () => {
 
           {/* Right: View Controls and Utilities */}
           <div className="flex items-center gap-4">
+            {/* Results Controls */}
+            <div className="flex items-center gap-4 px-4 py-1.5 rounded-lg bg-gray-50">
+              <PageSizeSelect />
+              <FiltersSheet sort={sort} onSortChange={setSort} />
+            </div>
+
+            <div className="h-8 w-px bg-indigo-200/60" />
+
             {/* View Controls */}
             <div className="flex items-center gap-4 px-4 py-1 rounded-lg bg-gray-50">
               <TimeWindow
@@ -131,14 +139,6 @@ export const FiltersBar = () => {
               />
               <div className="h-8 w-px bg-gray-200" />
               <ViewModeToggle />
-            </div>
-
-            <div className="h-8 w-px bg-indigo-200/60" />
-
-            {/* Results Controls */}
-            <div className="flex items-center gap-4 px-4 py-1.5 rounded-lg bg-gray-50">
-              <PageSizeSelect />
-              <FiltersSheet sort={sort} onSortChange={setSort} />
             </div>
           </div>
         </div>

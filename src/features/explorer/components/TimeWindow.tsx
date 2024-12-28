@@ -67,7 +67,7 @@ export const TimeWindow = ({
           <Button
             variant="outline"
             size="sm"
-            className="gap-2 bg-background/80 w-[100px] justify-between"
+            className="gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
           >
             <div className="flex items-center gap-2">
               {React.createElement(energyModes[energyMode].icon, {
@@ -79,7 +79,7 @@ export const TimeWindow = ({
                   energyMode === "upcoming" && "text-green-500"
                 ),
               })}
-              <span className="text-sm font-medium">
+              <span className="text-md font-medium text-indigo-600">
                 {energyModes[energyMode].label}
               </span>
             </div>
@@ -91,7 +91,7 @@ export const TimeWindow = ({
             <DropdownMenuItem
               key={key}
               onClick={() => onEnergyChange(key as EnergyMode)}
-              className="gap-2"
+              className="gap-2 text-md font-medium text-indigo-600"
             >
               {React.createElement(mode.icon, {
                 className: cn(
@@ -115,17 +115,20 @@ export const TimeWindow = ({
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 bg-background/80 w-[100px] justify-between"
+              className="gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
             >
-              <span className="text-sm font-medium">{timeRanges[timeRange]}</span>
+              <span className="text-md font-medium text-indigo-600">
+                {timeRanges[timeRange]}
+              </span>
               <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
+          <DropdownMenuContent align="center" className="w-[150px]">
             {Object.entries(timeRanges).map(([key, label]) => (
               <DropdownMenuItem
                 key={key}
                 onClick={() => onTimeChange(key as TimeRange)}
+                className="gap-2 text-md font-medium text-indigo-600"
               >
                 {label}
               </DropdownMenuItem>
