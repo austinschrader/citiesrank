@@ -15,10 +15,11 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import {
   Bookmark,
-  Compass,
   LogOut,
-  Map,
+  MapPin,
   Plus,
+  Scroll,
+  Sparkles,
   Upload,
   UserCircle,
 } from "lucide-react";
@@ -39,7 +40,7 @@ export const Header = () => {
     {
       label: "Discover",
       mobileLabel: "Discover",
-      icon: Map,
+      icon: MapPin,
       to: "/",
       description: "Find your next favorite place on our interactive map",
       iconClass: "text-indigo-500",
@@ -47,7 +48,7 @@ export const Header = () => {
     {
       label: "Lists",
       mobileLabel: "Lists",
-      icon: Bookmark,
+      icon: Scroll,
       to: "/lists",
       description: "Create and organize lists of your favorite places",
       iconClass: "text-blue-500",
@@ -55,9 +56,10 @@ export const Header = () => {
     {
       label: "Latest",
       mobileLabel: "Latest",
-      icon: Compass,
-      to: "/feed",
-      description: "Fresh lists and popular places updated daily",
+      icon: Sparkles,
+      to: "/latest",
+      description: "See the most recent updates and activity",
+      iconClass: "text-green-500",
     },
     // Only show admin links to admin users
     ...(user?.isAdmin

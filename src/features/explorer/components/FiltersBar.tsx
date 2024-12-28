@@ -7,7 +7,7 @@ import { TimeWindow } from "@/features/explorer/components/TimeWindow";
 import { useHeader } from "@/features/header/context/HeaderContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { List, ListPlus, Map, MapPin, Search } from "lucide-react";
+import { Landmark, ListPlus, Scroll, Search, Wrench } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PageSizeSelect } from "./PageSizeSelect";
@@ -68,7 +68,7 @@ export const FiltersBar = () => {
                     : inactiveButtonStyles
                 )}
               >
-                <Map className="h-4 w-4" />
+                <Landmark className="w-4 h-4" />
                 <span>Places</span>
               </Toggle>
               <Toggle
@@ -80,7 +80,7 @@ export const FiltersBar = () => {
                     : inactiveButtonStyles
                 )}
               >
-                <List className="h-4 w-4" />
+                <Scroll className="w-4 h-4" />
                 <span>Lists</span>
               </Toggle>
             </div>
@@ -96,7 +96,7 @@ export const FiltersBar = () => {
               >
                 {viewMode === "places" ? (
                   <>
-                    <MapPin className="w-4 h-4" />
+                    <Wrench className="w-4 h-4" />
                     Manage Places
                   </>
                 ) : (
