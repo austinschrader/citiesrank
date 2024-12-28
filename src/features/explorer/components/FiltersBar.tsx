@@ -12,6 +12,17 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PageSizeSelect } from "./PageSizeSelect";
 
+const baseButtonStyles =
+  "inline-flex items-center justify-center gap-2 h-9 px-4 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
+const activeButtonStyles = cn(
+  baseButtonStyles,
+  "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
+);
+const inactiveButtonStyles = cn(
+  baseButtonStyles,
+  "bg-white/80 hover:bg-indigo-500 hover:text-white text-indigo-600 shadow-sm"
+);
+
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
   const {
@@ -25,103 +36,101 @@ export const FiltersBar = () => {
   const [sort, setSort] = useState("popular");
 
   return (
-    <div className="border-b bg-card/50 backdrop-blur-sm">
+    <div className="border-b bg-white/90 backdrop-blur-sm">
       <div className="h-full flex flex-col w-full">
         <div className="py-2.5 px-4 flex items-center justify-between gap-8">
-          {/* Left: Search */}
-          <div className="relative w-full max-w-md">
-            <Input
-              type="text"
-              placeholder="Discover active spaces nearby..."
-              className="w-full pl-9 h-10 bg-background/60"
-              value={filters.search || ""}
-              onChange={(e) =>
-                setFilters({ ...filters, search: e.target.value })
-              }
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          {/* Left: Search and View Toggle */}
+          <div className="flex items-center gap-6">
+            {/* Search */}
+            <div className="relative w-[280px]">
+              <Input
+                type="text"
+                placeholder="Discover active spaces nearby..."
+                className="w-full pl-9 h-9 bg-white shadow-sm border hover:border-indigo-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200/50 rounded-lg transition-all duration-200 text-sm placeholder:text-indigo-300"
+                value={filters.search || ""}
+                onChange={(e) =>
+                  setFilters({ ...filters, search: e.target.value })
+                }
+              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400" />
+            </div>
+
+            <div className="h-6 w-px bg-indigo-200" />
+
+            {/* Places/Lists Toggle */}
+            <div className="flex items-center gap-1.5">
+              <Toggle
+                pressed={viewMode === "places"}
+                onPressedChange={() => setViewMode("places")}
+                className={cn(
+                  viewMode === "places"
+                    ? activeButtonStyles
+                    : inactiveButtonStyles
+                )}
+              >
+                <Map className="h-4 w-4" />
+                <span>Places</span>
+              </Toggle>
+              <Toggle
+                pressed={viewMode === "lists"}
+                onPressedChange={() => setViewMode("lists")}
+                className={cn(
+                  viewMode === "lists"
+                    ? activeButtonStyles
+                    : inactiveButtonStyles
+                )}
+              >
+                <List className="h-4 w-4" />
+                <span>Lists</span>
+              </Toggle>
+            </div>
           </div>
 
-          {/* Right: Controls Group */}
-          <div className="flex items-center space-x-6">
-            {/* Places/Lists Toggle with Actions */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center space-x-1">
-                <Toggle
-                  pressed={viewMode === "places"}
-                  onPressedChange={() => setViewMode("places")}
-                  size="sm"
-                  className="data-[state=on]:bg-indigo-100"
-                >
-                  <Map className="h-4 w-4" />
-                  <span className="ml-2">Places</span>
-                </Toggle>
-                <Toggle
-                  pressed={viewMode === "lists"}
-                  onPressedChange={() => setViewMode("lists")}
-                  size="sm"
-                  className="data-[state=on]:bg-indigo-100"
-                >
-                  <List className="h-4 w-4" />
-                  <span className="ml-2">Lists</span>
-                </Toggle>
-              </div>
-
-              {viewMode === "places" ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className={cn(
-                    "bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600",
-                    "transition-all duration-200 shadow-sm"
-                  )}
-                >
-                  <Link to="/my-places" className="flex items-center gap-2">
+          {/* Right: Controls */}
+          <div className="flex items-center">
+            {/* Primary Action */}
+            <Button variant="ghost" className={cn(activeButtonStyles)} asChild>
+              <Link
+                to={viewMode === "places" ? "/my-places" : "/lists/create"}
+                className="flex items-center gap-2"
+              >
+                {viewMode === "places" ? (
+                  <>
                     <MapPin className="w-4 h-4" />
                     Manage Places
-                  </Link>
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className={cn(
-                    "bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:from-indigo-600 hover:to-purple-600",
-                    "transition-all duration-200 shadow-sm"
-                  )}
-                >
-                  <Link to="/lists/create" className="flex items-center gap-2">
+                  </>
+                ) : (
+                  <>
                     <ListPlus className="w-4 h-4" />
-                    Create New List
-                  </Link>
-                </Button>
-              )}
-            </div>
+                    Create List
+                  </>
+                )}
+              </Link>
+            </Button>
 
-            {/* Energy and Time Controls */}
-            <div className="flex items-center border-l border-border pl-6">
-              <TimeWindow
-                energyMode={energyMode}
-                timeRange={timeRange}
-                onEnergyChange={setEnergyMode}
-                onTimeChange={setTimeRange}
-              />
-            </div>
+            <div className="h-8 w-px bg-indigo-200 mx-6" />
 
-            {/* View Mode Toggle */}
-            <div className="border-l border-border pl-6">
-              <ViewModeToggle />
-            </div>
+            {/* Time Window */}
+            <TimeWindow
+              energyMode={energyMode}
+              timeRange={timeRange}
+              onEnergyChange={setEnergyMode}
+              onTimeChange={setTimeRange}
+            />
 
-            {/* Page Size Select */}
+            <div className="h-8 w-px bg-indigo-200 mx-6" />
+
+            {/* View Mode */}
+            <ViewModeToggle />
+
+            <div className="h-8 w-px bg-indigo-200 mx-6" />
+
             <PageSizeSelect />
 
+            <div className="h-8 w-px bg-indigo-200 mx-6" />
+
             {/* Filters */}
-            <div className="border-l border-border pl-6">
-              <FiltersSheet sort={sort} onSortChange={setSort} />
-            </div>
+            <FiltersSheet sort={sort} onSortChange={setSort} />
           </div>
         </div>
       </div>
