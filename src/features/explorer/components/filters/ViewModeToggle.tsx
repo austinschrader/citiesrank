@@ -1,6 +1,6 @@
 import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
-import { Layout, List, Map, Rows } from "lucide-react";
+import { Grid, List, Map, MapPin, SplitSquareVertical } from "lucide-react";
 
 export const ViewModeToggle = () => {
   const { viewMode, setViewMode } = useMap();
@@ -33,13 +33,9 @@ export const ViewModeToggle = () => {
       {/* Desktop View: Full Interface */}
       <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-lg bg-white/5 backdrop-blur-sm">
         {[
-          { mode: "list" as const, icon: Rows, label: "Space" },
-          {
-            mode: "split" as const,
-            icon: Layout,
-            label: "MapSpace",
-          },
-          { mode: "map" as const, icon: Map, label: "Map" },
+          { mode: "list" as const, icon: Grid, label: "Gallery" }, // Clean grid icon
+          { mode: "split" as const, icon: SplitSquareVertical, label: "Split" }, // Clear split view
+          { mode: "map" as const, icon: MapPin, label: "Map" }, // More distinctive than map
         ].map(({ mode, icon: Icon, label }) => (
           <button
             key={mode}

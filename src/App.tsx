@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { FeedView } from "@/features/feed/components/FeedView";
@@ -24,6 +23,8 @@ import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import { HeaderProvider } from "./features/header/context/HeaderContext";
+import { LocationProvider } from "./features/location/context/LocationContext";
 import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 
 function App() {
@@ -38,45 +39,60 @@ function App() {
               <ListsProvider>
                 <SavedListsProvider>
                   <MapProvider>
-                    <FeedProvider>
-                      <FavoritesProvider>
-                        <RootLayout>
-                          <Routes>
-                            <Route path="/" element={<ExplorerPage />} />
-                            <Route path="/explore" element={<PlacesPage />} />
-                            <Route
-                              path="/favorites"
-                              element={<FavoritesPage />}
-                            />
-                            <Route path="/profile" element={<ProfilePage />} />
-                            <Route
-                              path="/my-places"
-                              element={<CreatedSpacesPage />}
-                            />
-                            <Route path="/feed" element={<FeedView />} />
-                            <Route
-                              path="/following"
-                              element={<FollowingManagement />}
-                            />
-                            <Route path="/lists" element={<ListsExplorer />} />
-                            <Route
-                              path="/lists/create"
-                              element={<CreateListPage />}
-                            />
-                            <Route
-                              path="/lists/:id"
-                              element={<ListDetailsPage />}
-                            />
-                            <Route
-                              path="/places/:placeType/:id"
-                              element={<PlaceDetailsPage />}
-                            />
-                            <Route path="/admin/*" element={<AdminRoutes />} />
-                          </Routes>
-                        </RootLayout>
-                        <Toaster />
-                      </FavoritesProvider>
-                    </FeedProvider>
+                    <LocationProvider>
+                      <HeaderProvider>
+                        <FeedProvider>
+                          <FavoritesProvider>
+                            <RootLayout>
+                              <Routes>
+                                <Route path="/" element={<ExplorerPage />} />
+                                <Route
+                                  path="/explore"
+                                  element={<PlacesPage />}
+                                />
+                                <Route
+                                  path="/favorites"
+                                  element={<FavoritesPage />}
+                                />
+                                <Route
+                                  path="/profile"
+                                  element={<ProfilePage />}
+                                />
+                                <Route
+                                  path="/my-places"
+                                  element={<CreatedSpacesPage />}
+                                />
+                                <Route path="/feed" element={<FeedView />} />
+                                <Route
+                                  path="/following"
+                                  element={<FollowingManagement />}
+                                />
+                                <Route
+                                  path="/lists"
+                                  element={<ListsExplorer />}
+                                />
+                                <Route
+                                  path="/lists/create"
+                                  element={<CreateListPage />}
+                                />
+                                <Route
+                                  path="/lists/:id"
+                                  element={<ListDetailsPage />}
+                                />
+                                <Route
+                                  path="/places/:placeType/:id"
+                                  element={<PlaceDetailsPage />}
+                                />
+                                <Route
+                                  path="/admin/*"
+                                  element={<AdminRoutes />}
+                                />
+                              </Routes>
+                            </RootLayout>
+                          </FavoritesProvider>
+                        </FeedProvider>
+                      </HeaderProvider>
+                    </LocationProvider>
                   </MapProvider>
                 </SavedListsProvider>
               </ListsProvider>

@@ -1,4 +1,3 @@
-import { ExplorerHeader } from "@/features/explorer/components/ExplorerHeader";
 import { FiltersBar } from "@/features/explorer/components/FiltersBar";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
@@ -140,7 +139,6 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex flex-col">
       <div className="flex flex-col h-full">
-        <ExplorerHeader />
         <FiltersBar />
         <div className="flex-1 flex overflow-hidden">
           <div
