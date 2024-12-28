@@ -6,7 +6,9 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ExplorerTabs } from "./ExplorerTabs";
+import { ResultsPanel } from "./ResultsPanel";
+import { ListPreview } from "@/features/lists/components/ListPreview";
+import { useHeader } from "@/features/header/context/HeaderContext";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -18,15 +20,14 @@ export const SplitExplorer = () => {
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     setVisiblePlaces,
-    viewMode,
+    viewMode: mapViewMode,
+    visibleLists,
   } = useMap();
-  const [numFilteredToShow, setNumFilteredToShow] = useState(
-    pageSizeOptions[0]
-  );
+  const { viewMode, itemsPerPage, setItemsPerPage } = useHeader();
+  const [numFilteredToShow, setNumFilteredToShow] = useState(itemsPerPage);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
 
   // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
@@ -72,23 +73,29 @@ export const SplitExplorer = () => {
 
   // Set initial visible places
   useEffect(() => {
-    if (cities.length > 0 && viewMode === "map") {
+    if (cities.length > 0 && mapViewMode === "map") {
       setVisiblePlaces(filteredPlaces);
     }
-  }, [cities.length, viewMode]);
+  }, [cities.length, mapViewMode]);
 
   useEffect(() => {
-    setIsResultsPanelCollapsed(viewMode === "map");
-  }, [viewMode]);
+    setIsResultsPanelCollapsed(mapViewMode === "map");
+  }, [mapViewMode]);
 
   // Reset pagination when view changes
   useEffect(() => {
     setNumPrioritizedToShow(pageSizeOptions[0]);
     setNumFilteredToShow(pageSizeOptions[0]);
-  }, [viewMode, setNumPrioritizedToShow]);
+  }, [mapViewMode, setNumPrioritizedToShow]);
+
+  // Effect to sync numFilteredToShow with itemsPerPage
+  useEffect(() => {
+    setNumFilteredToShow(itemsPerPage);
+    setNumPrioritizedToShow(itemsPerPage);
+  }, [itemsPerPage, setNumPrioritizedToShow]);
 
   const hasMore = useCallback(() => {
-    if (viewMode === "list") {
+    if (mapViewMode === "list") {
       return numFilteredToShow < filteredPlaces.length;
     }
     return numPrioritizedToShow < visiblePlacesInView.length;
@@ -97,7 +104,7 @@ export const SplitExplorer = () => {
     visiblePlacesInView.length,
     numFilteredToShow,
     filteredPlaces.length,
-    viewMode,
+    mapViewMode,
   ]);
 
   const loadMore = useCallback(() => {
@@ -105,14 +112,14 @@ export const SplitExplorer = () => {
 
     setIsLoadingMore(true);
     setTimeout(() => {
-      if (viewMode === "list") {
+      if (mapViewMode === "list") {
         setNumFilteredToShow((prev) => prev + itemsPerPage);
       } else {
         setNumPrioritizedToShow((prev) => prev + itemsPerPage);
       }
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, viewMode, itemsPerPage]);
+  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, mapViewMode, itemsPerPage]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -137,59 +144,72 @@ export const SplitExplorer = () => {
   }, [hasMore, isLoadingMore, loadMore]);
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex flex-col h-full">
-        <FiltersBar />
-        <div className="flex items-center justify-between px-4 py-2 border-b">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              {filteredPlaces.length} places found
-            </span>
-          </div>
-        </div>
-        <div className="flex-1 flex overflow-hidden">
+    <div className="h-full flex flex-col">
+      <FiltersBar />
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full flex">
           <div
-            key={viewMode}
             className={cn(
-              "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden",
-              viewMode === "map"
-                ? "w-0 invisible"
-                : viewMode === "list"
+              "transition-all duration-300 ease-in-out overflow-hidden",
+              mapViewMode === "list"
                 ? "w-full"
-                : "w-[800px]"
+                : mapViewMode === "map"
+                ? "w-0 invisible"
+                : "w-1/2"
             )}
           >
-            <ExplorerTabs
-              isLoadingMore={isLoadingMore}
-              observerTarget={observerTarget}
-              isResultsPanelCollapsed={isResultsPanelCollapsed}
-              setIsResultsPanelCollapsed={setIsResultsPanelCollapsed}
-              paginatedFilteredPlaces={paginatedFilteredPlaces}
-              itemsPerPage={itemsPerPage}
-              onPageSizeChange={(newSize) => {
-                setItemsPerPage(newSize);
-                setNumFilteredToShow(newSize);
-                setNumPrioritizedToShow(newSize);
-              }}
-            />
+            {viewMode === "places" ? (
+              <ResultsPanel
+                isLoadingMore={isLoadingMore}
+                observerTarget={observerTarget}
+                isResultsPanelCollapsed={false}
+                setIsResultsPanelCollapsed={() => {}}
+                paginatedFilteredPlaces={paginatedFilteredPlaces}
+                itemsPerPage={itemsPerPage}
+                onPageSizeChange={setItemsPerPage}
+              />
+            ) : (
+              <div className="h-full flex flex-col">
+                <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold">Lists</h2>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="font-medium">{visibleLists.length}</span>
+                        <span className="text-muted-foreground">lists in view</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-auto">
+                  {visibleLists.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      No lists found in this area
+                    </div>
+                  ) : (
+                    <div className="p-4 space-y-4">
+                      {visibleLists.map((list) => (
+                        <ListPreview key={list.id} list={list} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
+
           <div
-            key={`map-${viewMode}`}
+            key={`map-${mapViewMode}`}
             className={cn(
               "relative transition-all duration-300 ease-in-out overflow-hidden",
-              viewMode === "list"
+              mapViewMode === "list"
                 ? "w-0 invisible"
-                : viewMode === "map"
+                : mapViewMode === "map"
                 ? "w-full"
-                : "flex-1"
+                : "w-1/2"
             )}
           >
-            <div
-              className={cn(
-                "absolute inset-0",
-                viewMode === "list" && "pointer-events-none"
-              )}
-            >
+            <div className="absolute inset-0">
               <CityMap className="h-full" />
             </div>
           </div>

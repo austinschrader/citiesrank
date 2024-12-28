@@ -5,30 +5,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useHeader } from "@/features/header/context/HeaderContext";
 
 const pageSizeOptions = [15, 25, 50, 100, 500] as const;
 
-interface PageSizeSelectProps {
-  value: number;
-  onChange: (value: number) => void;
-}
+export const PageSizeSelect = () => {
+  const { itemsPerPage, setItemsPerPage } = useHeader();
 
-export const PageSizeSelect = ({ value, onChange }: PageSizeSelectProps) => {
   return (
     <Select
-      value={value.toString()}
-      onValueChange={(value) => {
-        const newSize = parseInt(value);
-        onChange(newSize);
-      }}
+      value={itemsPerPage.toString()}
+      onValueChange={(val) => setItemsPerPage(Number(val))}
     >
-      <SelectTrigger className="w-[120px]">
-        <SelectValue placeholder="Places per page" />
+      <SelectTrigger className="h-9 px-3 py-1.5 text-md font-medium text-indigo-600">
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {pageSizeOptions.map((size) => (
-          <SelectItem key={size} value={size.toString()}>
-            {size} places
+          <SelectItem
+            key={size}
+            value={size.toString()}
+            className="text-md font-medium"
+          >
+            {size} per page
           </SelectItem>
         ))}
       </SelectContent>

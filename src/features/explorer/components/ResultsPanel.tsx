@@ -1,6 +1,5 @@
 import { useMap } from "@/features/map/context/MapContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { PageSizeSelect } from "./PageSizeSelect"; 
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
@@ -21,8 +20,6 @@ export const ResultsPanel = ({
   observerTarget,
   isResultsPanelCollapsed,
   paginatedFilteredPlaces,
-  itemsPerPage,
-  onPageSizeChange,
 }: ResultsPanelProps) => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
@@ -68,46 +65,28 @@ export const ResultsPanel = ({
               : "opacity-100"
           )}
         >
-          {/* Header Section with Flexbox Layout */}
-          <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
-            {isLoadingMore && (
-              <div className="relative h-1 bg-muted overflow-hidden">
-                <div className="absolute inset-0 bg-primary/80 animate-loading-bar" />
-              </div>
-            )}
-            <div className="p-4">
-              {/* Results count and page size selector */}
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">
-                    {displayPlaces.length} loaded
-                  </span>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="font-medium">{placesInView}</span>
-                  <span className="text-muted-foreground">places in view</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <PageSizeSelect
-                    value={itemsPerPage}
-                    onChange={onPageSizeChange}
-                  />
-                  {isLoadingMore && (
-                    <div className="flex items-center gap-2 bg-primary px-3 py-1.5 rounded-full">
-                      <div className="w-3 h-3 border-2 border-background border-t-transparent rounded-full animate-spin" />
-                      <span className="text-sm font-medium text-background">
-                        Loading more...
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Results Grid */}
           <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-6">
-              {/* Grid of cards */}
+              <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
+                <div className="p-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold">Places</h2>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">
+                          {displayPlaces.length} loaded
+                        </span>
+                        <span className="text-muted-foreground">•</span>
+                        <span className="font-medium">{placesInView}</span>
+                        <span className="text-muted-foreground">
+                          places in view
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div
                 className={cn(
                   "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
