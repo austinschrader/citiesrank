@@ -49,7 +49,7 @@ export const ViewModeToggle = () => {
             )}
           >
             <Icon className="h-4 w-4" />
-            <span className="text-sm font-medium capitalize hidden sm:inline">
+            <span className="text-md font-medium capitalize hidden sm:inline">
               {label}
             </span>
             {viewMode === mode && (

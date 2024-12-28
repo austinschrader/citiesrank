@@ -97,7 +97,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
           )}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          <span className="relative z-10">All Filters</span>
+          <span className="relative z-10 text-md font-medium">All Filters</span>
           {activeFiltersCount > 0 && (
             <div className="flex items-center gap-1">
               <div className="h-1 w-1 rounded-full bg-white/70" />

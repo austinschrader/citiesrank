@@ -17,7 +17,7 @@ export const PageSizeSelect = () => {
       value={itemsPerPage.toString()}
       onValueChange={(val) => setItemsPerPage(Number(val))}
     >
-      <SelectTrigger className="text-sm font-medium text-indigo-600">
+      <SelectTrigger className="text-md font-medium text-indigo-600">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -25,7 +25,7 @@ export const PageSizeSelect = () => {
           <SelectItem
             key={size}
             value={size.toString()}
-            className="text-sm font-medium"
+            className="text-md font-medium"
           >
             {size} per page
           </SelectItem>
