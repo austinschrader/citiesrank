@@ -1,3 +1,4 @@
+import { ExplorerHeader } from "@/features/explorer/components/ExplorerHeader";
 import { FiltersBar } from "@/features/explorer/components/FiltersBar";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
@@ -139,14 +140,8 @@ export const SplitExplorer = () => {
   return (
     <div className="h-screen flex flex-col">
       <div className="flex flex-col h-full">
+        <ExplorerHeader />
         <FiltersBar />
-        <div className="flex items-center justify-between px-4 py-2 border-b">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              {filteredPlaces.length} places found
-            </span>
-          </div>
-        </div>
         <div className="flex-1 flex overflow-hidden">
           <div
             key={viewMode}
@@ -156,7 +151,7 @@ export const SplitExplorer = () => {
                 ? "w-0 invisible"
                 : viewMode === "list"
                 ? "w-full"
-                : "w-[800px]"
+                : "w-1/2"
             )}
           >
             <ExplorerTabs
@@ -173,6 +168,7 @@ export const SplitExplorer = () => {
               }}
             />
           </div>
+
           <div
             key={`map-${viewMode}`}
             className={cn(
@@ -181,15 +177,10 @@ export const SplitExplorer = () => {
                 ? "w-0 invisible"
                 : viewMode === "map"
                 ? "w-full"
-                : "flex-1"
+                : "w-1/2"
             )}
           >
-            <div
-              className={cn(
-                "absolute inset-0",
-                viewMode === "list" && "pointer-events-none"
-              )}
-            >
+            <div className="absolute inset-0">
               <CityMap className="h-full" />
             </div>
           </div>

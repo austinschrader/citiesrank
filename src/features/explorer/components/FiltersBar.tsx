@@ -1,71 +1,35 @@
 import { Input } from "@/components/ui/input";
-import { ActiveFilters } from "@/features/explorer/components/filters/ActiveFilters";
-import { CitySizeDropdown } from "@/features/explorer/components/filters/CitySizeSheet";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
-import { PlaceTypesSheet } from "@/features/explorer/components/filters/PlaceTypesSheet";
-import { RatingFilter } from "@/features/explorer/components/filters/RatingFilter";
-import { SortControl } from "@/features/explorer/components/filters/SortControl";
-import { TravelStyleDropdown } from "@/features/explorer/components/filters/TravelStyleDropdown";
-import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { Search } from "lucide-react";
+import { useState } from "react";
 
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
-
-  const activeFiltersCount =
-    (filters.activeTypes?.length || 0) +
-    (filters.populationCategory ? 1 : 0) +
-    (filters.averageRating ? 1 : 0);
+  const [sort, setSort] = useState("popular");
 
   return (
-    <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-      <div className="flex flex-wrap items-center gap-4 px-4 py-3 max-w-full overflow-x-hidden">
-        {/* Search */}
-        <div className="relative flex-1 min-w-[200px]">
-          <Input
-            type="text"
-            placeholder="Search places..."
-            className="w-full pl-9 h-10 bg-background/60"
-            value={filters.search || ""}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        </div>
+    <div className="border-b bg-card/50 backdrop-blur-sm">
+      <div className="px-4 py-3">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 max-w-2xl">
+            <Input
+              type="text"
+              placeholder="Discover active spaces nearby..."
+              className="w-full pl-9 h-10 bg-background/60"
+              value={filters.search || ""}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          </div>
 
-        {/* Mobile View: Essential Controls */}
-        <div className="flex items-center gap-3 sm:hidden">
-          <FiltersSheet />
-          <SortControl />
-          <ViewModeToggle />
-        </div>
-
-        {/* Desktop View: Full Controls */}
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:gap-3">
           <div className="flex items-center gap-3">
-            <PlaceTypesSheet />
-            <CitySizeDropdown />
-            <TravelStyleDropdown />
-            <RatingFilter />
-            <FiltersSheet />
-          </div>
-
-          {/* Active Filters */}
-          <div className="flex-1 min-w-0">
-            {(filters.activeTypes.length > 0 ||
-              filters.populationCategory ||
-              filters.averageRating) && (
-              <div className="flex flex-wrap items-center gap-2">
-                <ActiveFilters />
-              </div>
-            )}
-          </div>
-
-          {/* Right Side Controls */}
-          <div className="flex items-center gap-4">
-            <SortControl />
-            <div className="h-6 w-px bg-border" />
-            <ViewModeToggle />
+            <FiltersSheet 
+              sort={sort}
+              onSortChange={setSort}
+            />
           </div>
         </div>
       </div>

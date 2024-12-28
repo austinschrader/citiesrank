@@ -1,7 +1,18 @@
+import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
-import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
+import { FeedView } from "@/features/feed/components/FeedView";
+import { FollowingManagement } from "@/features/feed/components/FollowingManagement";
+import { FeedProvider } from "@/features/feed/context/FeedContext";
+import { ListsExplorer } from "@/features/lists/components/ListsExplorer";
+import { ListsProvider } from "@/features/lists/context/ListsContext";
+import { SavedListsProvider } from "@/features/lists/context/SavedListsContext";
+import { CreateListPage } from "@/features/lists/pages/CreateListPage";
+import { ListDetailsPage } from "@/features/lists/pages/ListDetailsPage";
 import { MapProvider } from "@/features/map/context/MapContext";
+import { CitiesProvider } from "@/features/places/context/CitiesContext";
+import { CountriesProvider } from "@/features/places/context/CountriesContext";
+import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
@@ -10,23 +21,14 @@ import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
-import { MyPlacesPage } from "@/pages/places/MyPlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
-import { FeedProvider } from '@/features/feed/context/FeedContext';
-import { FeedView } from '@/features/feed/components/FeedView';
-import { FollowingManagement } from '@/features/feed/components/FollowingManagement';
-import { ListsExplorer } from '@/features/lists/components/ListsExplorer';
-import { ListDetailsPage } from '@/features/lists/pages/ListDetailsPage';
-import { CreateListPage } from '@/features/lists/pages/CreateListPage';
-import { ListsProvider } from '@/features/lists/context/ListsContext';
-import { SavedListsProvider } from '@/features/lists/context/SavedListsContext';
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import { CitiesProvider } from "@/features/places/context/CitiesContext";
-import { CountriesProvider } from "@/features/places/context/CountriesContext";
-
+import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 
 function App() {
+  const [isNewUser, setIsNewUser] = useState(true);
+
   return (
     <CountriesProvider>
       <CitiesProvider>
@@ -42,14 +44,29 @@ function App() {
                           <Routes>
                             <Route path="/" element={<ExplorerPage />} />
                             <Route path="/explore" element={<PlacesPage />} />
-                            <Route path="/favorites" element={<FavoritesPage />} />
+                            <Route
+                              path="/favorites"
+                              element={<FavoritesPage />}
+                            />
                             <Route path="/profile" element={<ProfilePage />} />
-                            <Route path="/my-places" element={<MyPlacesPage />} />
+                            <Route
+                              path="/my-places"
+                              element={<CreatedSpacesPage />}
+                            />
                             <Route path="/feed" element={<FeedView />} />
-                            <Route path="/following" element={<FollowingManagement />} />
+                            <Route
+                              path="/following"
+                              element={<FollowingManagement />}
+                            />
                             <Route path="/lists" element={<ListsExplorer />} />
-                            <Route path="/lists/create" element={<CreateListPage />} />
-                            <Route path="/lists/:id" element={<ListDetailsPage />} />
+                            <Route
+                              path="/lists/create"
+                              element={<CreateListPage />}
+                            />
+                            <Route
+                              path="/lists/:id"
+                              element={<ListDetailsPage />}
+                            />
                             <Route
                               path="/places/:placeType/:id"
                               element={<PlaceDetailsPage />}
