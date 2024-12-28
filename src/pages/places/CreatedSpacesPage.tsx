@@ -1,9 +1,9 @@
-import { AddPlaceDialog } from "@/components/place-upload/AddPlaceDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useHeader } from "@/features/header/context/HeaderContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,10 @@ import {
   MapPin,
   MessageCircle,
   PenTool,
-  PlusCircle,
   Share2,
   Star,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Helper components
@@ -199,6 +198,13 @@ export function CreatedSpacesPage() {
   const { cities } = useCities();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const navigate = useNavigate();
+  const { setMode } = useHeader();
+
+  // Set header mode
+  useEffect(() => {
+    setMode("places");
+    return () => setMode("discover");
+  }, [setMode]);
 
   // Filter places created by the current user
   const myPlaces = cities.filter((city) => city.userId === user?.id);
@@ -220,88 +226,27 @@ export function CreatedSpacesPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] -mx-4 sm:-mx-8">
-      {/* Header */}
-      <div className="sticky top-0 z-10 px-4 sm:px-8 py-4 border-b bg-background/95 backdrop-blur-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <PenTool className="h-5 w-5 text-indigo-500" />
-            <span className="font-medium">Created Spaces</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-indigo-500" />
-              <span className="text-sm">
-                {myPlaces.length} contribution{myPlaces.length !== 1 && "s"}
-              </span>
+    <div className="h-full flex flex-col">
+      <div className="flex-1 container py-6">
+        {myPlaces.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="rounded-full bg-muted w-12 h-12 flex items-center justify-center mx-auto mb-4">
+              <PenTool className="h-6 w-6 text-muted-foreground" />
             </div>
-            <AddPlaceDialog
-              open={showUploadDialog}
-              onOpenChange={setShowUploadDialog}
-            >
-              <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium rounded-lg shadow-sm transition-all duration-200">
-                <PlusCircle className="h-4 w-4" />
-                Create Space
-              </button>
-            </AddPlaceDialog>
-          </div>
-        </div>
-      </div>
-
-      {myPlaces.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
-          <div className="text-center max-w-md mx-auto px-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <PenTool className="w-8 h-8 text-indigo-500" />
-            </div>
-            <h2 className="text-xl font-bold mb-2">Create your first space</h2>
-            <p className="text-gray-600 mb-8">
-              Share your favorite places with the MapSpace community. Add
-              photos, descriptions, and insider tips.
+            <h3 className="text-lg font-medium mb-2">No spaces yet</h3>
+            <p className="text-muted-foreground mb-6">
+              Start creating and sharing your favorite places with the
+              community.
             </p>
-            <div className="space-y-4">
-              <AddPlaceDialog
-                open={showUploadDialog}
-                onOpenChange={setShowUploadDialog}
-              >
-                <button className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium py-2.5 rounded-lg shadow-sm">
-                  Create New Space
-                </button>
-              </AddPlaceDialog>
-              <button
-                className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-lg border shadow-sm"
-                onClick={() => navigate("/")}
-              >
-                Explore MapSpace
-              </button>
-            </div>
           </div>
-        </div>
-      ) : (
-        <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {myPlaces.map((place) => (
               <PlaceCard key={place.id} place={place} />
             ))}
-            <Card className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-200 bg-white/50 hover:bg-white/80 transition-colors">
-              <AddPlaceDialog
-                open={showUploadDialog}
-                onOpenChange={setShowUploadDialog}
-              >
-                <div className="text-center cursor-pointer">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <PlusCircle className="w-6 h-6 text-indigo-500" />
-                  </div>
-                  <h3 className="font-medium mb-1">Add another space</h3>
-                  <p className="text-sm text-gray-500">
-                    Share more places with the community
-                  </p>
-                </div>
-              </AddPlaceDialog>
-            </Card>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

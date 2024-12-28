@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-export type HeaderMode = "discover" | "lists" | "latest" | "profile" | "favorites";
+export type HeaderMode = "discover" | "lists" | "latest" | "profile" | "favorites" | "places";
 export type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
 export type TimeRange = "now" | "today" | "week" | "month";
 

@@ -1,7 +1,9 @@
 import { useLocation } from "@/features/location/context/LocationContext";
 import { cn } from "@/lib/utils";
-import { Activity, Users } from "lucide-react";
+import { Activity, PlusCircle, Users } from "lucide-react";
 import { useHeader } from "../context/HeaderContext";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface PageHeaderProps {
   className?: string;
@@ -29,13 +31,15 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
         }
         break;
       case "lists":
-        return "My Collections";
+        return "Collections";
       case "latest":
         return "What's New";
       case "profile":
         return "Your Profile";
       case "favorites":
         return "Favorite Places";
+      case "places":
+        return "Your Places";
     }
   };
 
@@ -44,19 +48,39 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
   return (
     <div className={cn("sticky top-[57px] z-10 border-b bg-background/95 backdrop-blur-lg", className)}>
       <div className="max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)] mx-auto">
-        <div className="flex items-center gap-6 py-2.5">
-          <div className="flex items-center gap-3">
-            <Activity className="h-5 w-5 text-purple-500" />
-            <h1 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              {getHeaderTitle()}
-            </h1>
+        <div className="flex items-center justify-between py-2.5">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <Activity className="h-5 w-5 text-purple-500" />
+              <h1 className="text-lg font-semibold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                {getHeaderTitle()}
+              </h1>
+            </div>
+
+            {showExploringCount && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Users className="h-4 w-4" />
+                <span className="text-sm">{exploringCount} exploring</span>
+              </div>
+            )}
           </div>
 
-          {showExploringCount && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span className="text-sm">{exploringCount} exploring</span>
-            </div>
+          {/* Action Buttons */}
+          {(mode === "places" || mode === "lists") && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+              asChild
+            >
+              <Link 
+                to={mode === "places" ? "/places/create" : "/lists/create"} 
+                className="flex items-center gap-2"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span className="text-sm">New {mode === "places" ? "Place" : "List"}</span>
+              </Link>
+            </Button>
           )}
         </div>
       </div>
