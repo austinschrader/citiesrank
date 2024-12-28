@@ -1,19 +1,27 @@
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Toggle } from "@/components/ui/toggle";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { TimeWindow } from "@/features/explorer/components/TimeWindow";
 import { useHeader } from "@/features/header/context/HeaderContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { Search, Map, List, MapPin, ListPlus } from "lucide-react";
-import { useState } from "react";
-import { Toggle } from "@/components/ui/toggle";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { List, ListPlus, Map, MapPin, Search } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { PageSizeSelect } from "./PageSizeSelect";
 
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
-  const { energyMode, timeRange, setEnergyMode, setTimeRange, viewMode, setViewMode } = useHeader();
+  const {
+    energyMode,
+    timeRange,
+    setEnergyMode,
+    setTimeRange,
+    viewMode,
+    setViewMode,
+  } = useHeader();
   const [sort, setSort] = useState("popular");
 
   return (
@@ -107,12 +115,12 @@ export const FiltersBar = () => {
               <ViewModeToggle />
             </div>
 
+            {/* Page Size Select */}
+            <PageSizeSelect />
+
             {/* Filters */}
             <div className="border-l border-border pl-6">
-              <FiltersSheet 
-                sort={sort}
-                onSortChange={setSort}
-              />
+              <FiltersSheet sort={sort} onSortChange={setSort} />
             </div>
           </div>
         </div>

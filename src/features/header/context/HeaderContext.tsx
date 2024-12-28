@@ -20,6 +20,8 @@ interface HeaderContextValue {
   setExploringCount: (count: number | null) => void;
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
+  itemsPerPage: number;
+  setItemsPerPage: (size: number) => void;
 }
 
 const HeaderContext = createContext<HeaderContextValue | null>(null);
@@ -32,6 +34,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("places");
+  const [itemsPerPage, setItemsPerPage] = useState<number>(25);
 
   return (
     <HeaderContext.Provider
@@ -50,6 +53,8 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
         setExploringCount,
         viewMode,
         setViewMode,
+        itemsPerPage,
+        setItemsPerPage,
       }}
     >
       {children}

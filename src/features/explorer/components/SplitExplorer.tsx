@@ -23,12 +23,11 @@ export const SplitExplorer = () => {
     viewMode: mapViewMode,
     visibleLists,
   } = useMap();
-  const { viewMode } = useHeader();
-  const [numFilteredToShow, setNumFilteredToShow] = useState(pageSizeOptions[0]);
+  const { viewMode, itemsPerPage, setItemsPerPage } = useHeader();
+  const [numFilteredToShow, setNumFilteredToShow] = useState(itemsPerPage);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
 
   // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
@@ -88,6 +87,12 @@ export const SplitExplorer = () => {
     setNumPrioritizedToShow(pageSizeOptions[0]);
     setNumFilteredToShow(pageSizeOptions[0]);
   }, [mapViewMode, setNumPrioritizedToShow]);
+
+  // Effect to sync numFilteredToShow with itemsPerPage
+  useEffect(() => {
+    setNumFilteredToShow(itemsPerPage);
+    setNumPrioritizedToShow(itemsPerPage);
+  }, [itemsPerPage, setNumPrioritizedToShow]);
 
   const hasMore = useCallback(() => {
     if (mapViewMode === "list") {
@@ -161,23 +166,34 @@ export const SplitExplorer = () => {
                 setIsResultsPanelCollapsed={() => {}}
                 paginatedFilteredPlaces={paginatedFilteredPlaces}
                 itemsPerPage={itemsPerPage}
-                onPageSizeChange={(newSize) => {
-                  setItemsPerPage(newSize);
-                  setNumFilteredToShow(newSize);
-                  setNumPrioritizedToShow(newSize);
-                }}
+                onPageSizeChange={setItemsPerPage}
               />
             ) : (
-              <div className="h-full overflow-auto">
-                {visibleLists.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8">
-                    No lists found in this area
+              <div className="h-full flex flex-col">
+                <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold">Lists</h2>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="font-medium">{visibleLists.length}</span>
+                        <span className="text-muted-foreground">lists in view</span>
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  visibleLists.map((list) => (
-                    <ListPreview key={list.id} list={list} />
-                  ))
-                )}
+                </div>
+                <div className="flex-1 overflow-auto">
+                  {visibleLists.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      No lists found in this area
+                    </div>
+                  ) : (
+                    <div className="p-4 space-y-4">
+                      {visibleLists.map((list) => (
+                        <ListPreview key={list.id} list={list} />
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
