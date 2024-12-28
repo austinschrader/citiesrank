@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ListPreview } from "@/features/lists/components/ListPreview";
 import { useMap } from "@/features/map/context/MapContext";
-import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 import { ResultsPanel } from "./ResultsPanel";
 
 interface ExplorerTabsProps {
@@ -55,16 +54,7 @@ export const ExplorerTabs = ({
               </div>
             ) : (
               visibleLists.map((list) => (
-                <Link key={list.id} to={`/lists/${list.id}`}>
-                  <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                    <h3 className="font-medium">
-                      {list.title || "Untitled List"}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {list.description || "No description"}
-                    </p>
-                  </div>
-                </Link>
+                <ListPreview key={list.id} list={list} />
               ))
             )}
           </div>

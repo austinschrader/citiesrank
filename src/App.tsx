@@ -33,11 +33,11 @@ function App() {
         <AuthProvider>
           <PreferencesProvider>
             <FiltersProvider>
-              <MapProvider>
-                <FeedProvider>
-                  <FavoritesProvider>
-                    <ListsProvider>
-                      <SavedListsProvider>
+              <ListsProvider>
+                <SavedListsProvider>
+                  <MapProvider>
+                    <FeedProvider>
+                      <FavoritesProvider>
                         <RootLayout>
                           <Routes>
                             <Route path="/" element={<ExplorerPage />} />
@@ -58,11 +58,11 @@ function App() {
                           </Routes>
                         </RootLayout>
                         <Toaster />
-                      </SavedListsProvider>
-                    </ListsProvider>
-                  </FavoritesProvider>
-                </FeedProvider>
-              </MapProvider>
+                      </FavoritesProvider>
+                    </FeedProvider>
+                  </MapProvider>
+                </SavedListsProvider>
+              </ListsProvider>
             </FiltersProvider>
           </PreferencesProvider>
         </AuthProvider>

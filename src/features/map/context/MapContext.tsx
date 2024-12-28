@@ -12,6 +12,7 @@
  */
 
 import { useFilters } from "@/features/places/context/FiltersContext";
+import { useLists } from "@/features/lists/context/ListsContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
 import L, { LatLngTuple } from "leaflet";
@@ -118,6 +119,7 @@ const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
   const { filters } = useFilters();
+  const { getList } = useLists();
   const [state, setState] = useState<MapState>({
     zoom: DEFAULT_ZOOM,
     center: DEFAULT_CENTER,
@@ -246,14 +248,18 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         filter,
         expand: 'list'
       })
-      .then(locations => {
-        const lists = locations.map(loc => loc.expand?.list).filter(Boolean);
+      .then(async locations => {
+        // Get unique list IDs
+        const listIds = [...new Set(locations.map(loc => loc.expand?.list?.id).filter(Boolean))];
+        
+        // Get full list data for each list using ListsContext
+        const lists = await Promise.all(listIds.map(id => getList(id)));
         setVisibleLists(lists);
       })
       .catch(error => {
         console.error('Error fetching visible lists:', error);
       });
-  }, [mapBounds]);
+  }, [mapBounds, getList]);
 
   const loadMorePlaces = useCallback(() => {
     setNumPrioritizedToShow((prev) => {

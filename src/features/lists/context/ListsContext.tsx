@@ -1,5 +1,6 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ExpandedList, ListWithPlaces } from "@/features/lists/types";
+import { updateListLocation } from "@/features/lists/utils/listLocation";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { ClientResponseError } from "pocketbase";
 import {
@@ -74,6 +75,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
           },
           {
             expand: "users",
+            $autoCancel: false,
           }
         )) as ExpandedList;
 
@@ -87,9 +89,14 @@ export function ListsProvider({ children }: { children: ReactNode }) {
               list: list.id,
               place: place,
               rank: index + 1,
+            }, {
+              $autoCancel: false
             })
           )
         );
+
+        // Now that list_places are created, we can update the list location
+        await updateListLocation(list.id);
 
         return list;
       } catch (err) {
@@ -424,6 +431,58 @@ export function ListsProvider({ children }: { children: ReactNode }) {
               }
             )
           )
+        );
+      } catch (err) {
+        const error = err as ClientResponseError;
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [pb]
+  );
+
+  const updateListLocation = useCallback(
+    async (listId: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Get the list places
+        const listPlaces = await pb.collection("list_places").getFullList({
+          filter: `list = "${listId}"`,
+          expand: "place",
+          sort: "rank",
+          $autoCancel: false,
+        });
+
+        // Get the actual place records from the expanded data
+        const places = listPlaces
+          .map((lp) => lp.expand?.place)
+          .filter((p): p is CitiesResponse => !!p);
+
+        if (places.length === 0) {
+          console.warn(`No places found for list ${listId}`);
+          return;
+        }
+
+        // Calculate center
+        const lats = places.map(p => p.latitude);
+        const lngs = places.map(p => p.longitude);
+        const center_lat = lats.reduce((a, b) => a + b, 0) / lats.length;
+        const center_lng = lngs.reduce((a, b) => a + b, 0) / lngs.length;
+
+        // Update list location
+        await pb.collection("list_locations").create(
+          {
+            list: listId,
+            center_lat,
+            center_lng,
+          },
+          {
+            $autoCancel: false,
+          }
         );
       } catch (err) {
         const error = err as ClientResponseError;
