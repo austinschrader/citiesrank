@@ -1,6 +1,7 @@
 import { pb } from "@/lib/pocketbase";
+import { ClientResponseError } from "pocketbase";
 
-export async function updateListLocation(listId: string) {
+export async function updateListLocation(listId: string): Promise<void> {
   try {
     console.log('Updating location for list:', listId);
     
@@ -48,7 +49,7 @@ export async function updateListLocation(listId: string) {
       .getFirstListItem(`list = "${listId}"`, {
         $autoCancel: false
       })
-      .catch((err) => {
+      .catch((err: ClientResponseError) => {
         console.log('No existing location found:', err);
         return null;
       });
@@ -83,10 +84,8 @@ export async function updateListLocation(listId: string) {
     console.log('Successfully updated list location');
   } catch (error) {
     console.error('Error updating list location:', error);
-    if (error.data) {
+    if (error instanceof ClientResponseError) {
       console.error('Error data:', error.data);
-    }
-    if (error.response) {
       console.error('Error response:', error.response);
     }
     throw error;
