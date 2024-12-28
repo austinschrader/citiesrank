@@ -21,7 +21,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
         }
         switch (energyMode) {
           case "buzzing":
-            return "What's Hot Now";
+            return "Discover Trending Places";
           case "fresh":
             return "Fresh Finds";
           case "trending":
@@ -29,7 +29,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
           case "upcoming":
             return "Coming Soon";
         }
-        break;
+        return "Discover Places";
       case "lists":
         return "Collections";
       case "latest":
@@ -40,6 +40,8 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
         return "Favorite Places";
       case "places":
         return "Your Places";
+      default:
+        return "Discover Places";
     }
   };
 
