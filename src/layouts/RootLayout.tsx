@@ -2,7 +2,6 @@
 import { SignUpBanner } from "@/features/auth/components/SignUpBanner";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Header } from "@/layouts/Header";
-import { AddPlaceButton } from "@/components/place-upload/AddPlaceButton";
 import "leaflet/dist/leaflet.css";
 
 interface RootLayoutProps {
@@ -19,7 +18,6 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
       <main className="flex-1 relative max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)] mx-auto w-full">
         {children}
       </main>
-      {user && <AddPlaceButton />}
     </div>
   );
 };

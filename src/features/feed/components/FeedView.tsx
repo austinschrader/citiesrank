@@ -8,15 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  getPlaceImageByCityAndCountry,
-  getPlaceImageBySlug,
-} from "@/lib/bunny";
+import { getPlaceImageBySlug } from "@/lib/bunny";
 import {
   Calendar,
   Camera,
   Heart,
   MapPin,
+  Settings,
   Sparkles,
   Tag,
   Trophy,
@@ -24,6 +22,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFeed } from "../context/FeedContext";
+import { useState } from "react";
 import {
   FeedItem,
   FriendActivityItem,
@@ -70,7 +69,11 @@ export const FeedView = () => {
       </div>
       {item.place.imageUrl && (
         <img
-          src={getPlaceImageBySlug(item.place.imageUrl.replace(/-1$/, ''), 1, "thumbnail")}
+          src={getPlaceImageBySlug(
+            item.place.imageUrl.replace(/-1$/, ""),
+            1,
+            "thumbnail"
+          )}
           alt={item.place.name}
           className="w-full h-48 object-cover rounded-lg mb-3"
         />
@@ -144,7 +147,7 @@ export const FeedView = () => {
           {item.content.images.map((image, idx) => (
             <img
               key={idx}
-              src={getPlaceImageBySlug(image.replace(/-1$/, ''), 1, "standard")}
+              src={getPlaceImageBySlug(image.replace(/-1$/, ""), 1, "standard")}
               alt={`Update from ${item.place.name}`}
               className="w-full h-24 object-cover rounded-lg"
             />
@@ -177,7 +180,11 @@ export const FeedView = () => {
         {item.places.slice(0, 3).map((place) => (
           <Link key={place.id} to={`/places/${place.id}`}>
             <img
-              src={getPlaceImageBySlug(place.imageUrl.replace(/-1$/, ''), 1, "standard")}
+              src={getPlaceImageBySlug(
+                place.imageUrl.replace(/-1$/, ""),
+                1,
+                "standard"
+              )}
               alt={place.name}
               className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
@@ -228,7 +235,11 @@ export const FeedView = () => {
             {item.similarPlaces.map((place) => (
               <div key={place.id} className="relative group">
                 <img
-                  src={getPlaceImageBySlug(place.imageUrl.replace(/-1$/, ''), 1, "standard")}
+                  src={getPlaceImageBySlug(
+                    place.imageUrl.replace(/-1$/, ""),
+                    1,
+                    "standard"
+                  )}
                   alt={place.name}
                   className="w-full h-24 object-cover rounded-lg"
                 />
@@ -290,7 +301,11 @@ export const FeedView = () => {
         {item.featuredPlaces.slice(0, 3).map((place) => (
           <Link key={place.id} to={`/places/${place.id}`}>
             <img
-              src={getPlaceImageBySlug(place.imageUrl.replace(/-1$/, ''), 1, "standard")}
+              src={getPlaceImageBySlug(
+                place.imageUrl.replace(/-1$/, ""),
+                1,
+                "standard"
+              )}
               alt={place.name}
               className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
             />
@@ -311,7 +326,7 @@ export const FeedView = () => {
         {item.topPhotos.map((photo, idx) => (
           <img
             key={idx}
-            src={getPlaceImageBySlug(photo.replace(/-1$/, ''), 1, "standard")}
+            src={getPlaceImageBySlug(photo.replace(/-1$/, ""), 1, "standard")}
             alt={`Challenge photo ${idx + 1}`}
             className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
           />
@@ -353,7 +368,11 @@ export const FeedView = () => {
       </div>
       <div className="relative">
         <img
-          src={getPlaceImageBySlug(item.sight.image.replace(/-1$/, ''), 1, "standard")}
+          src={getPlaceImageBySlug(
+            item.sight.image.replace(/-1$/, ""),
+            1,
+            "standard"
+          )}
           alt={item.sight.name}
           className="w-full h-32 object-cover rounded-lg"
         />
@@ -377,7 +396,11 @@ export const FeedView = () => {
         </div>
       </div>
       <img
-        src={getPlaceImageBySlug(item.memory.image.replace(/-1$/, ''), 1, "wide")}
+        src={getPlaceImageBySlug(
+          item.memory.image.replace(/-1$/, ""),
+          1,
+          "wide"
+        )}
         alt={item.memory.title}
         className="w-full h-48 object-cover rounded-lg mb-3"
       />
@@ -434,12 +457,43 @@ export const FeedView = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-4">
-      {feedItems.map((item) => (
-        <div key={item.id} className="mb-4">
-          {renderFeedItem(item)}
+    <div className="max-w-2xl mx-auto py-6 px-4 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Your Feed</h1>
+        <Link to="/following">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Settings className="h-4 w-4" />
+            Following
+          </Button>
+        </Link>
+      </div>
+
+      {feedItems.length === 0 ? (
+        <div className="max-w-2xl mx-auto p-4 text-center">
+          <div className="bg-gray-50 rounded-lg p-8">
+            <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Your feed is empty
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Follow some places or tags to start seeing updates!
+            </p>
+            <Link to="/explore">
+              <Button>Explore Places</Button>
+            </Link>
+          </div>
         </div>
-      ))}
+      ) : (
+        feedItems.map((item) => (
+          <div key={item.id} className="mb-4">
+            {renderFeedItem(item)}
+          </div>
+        ))
+      )}
     </div>
   );
 };

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Check, Loader2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { updateListLocation } from "../utils/listLocation";
 
 export const CreateListPage = () => {
   const navigate = useNavigate();
@@ -94,6 +95,8 @@ export const CreateListPage = () => {
           description,
           places: selectedPlaces.map((place) => place.id),
         });
+
+        await updateListLocation(list.id);
 
         toast({
           title: "List created!",

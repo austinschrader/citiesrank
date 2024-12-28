@@ -10,6 +10,7 @@ export enum Collections {
 	Countries = "countries",
 	Favorites = "favorites",
 	FeedItems = "feed_items",
+	ListLocations = "list_locations",
 	ListPlaces = "list_places",
 	Lists = "lists",
 	SavedLists = "saved_lists",
@@ -117,6 +118,12 @@ export type FeedItemsRecord<Tcontent = unknown, Tstats = unknown> = {
 	type: FeedItemsTypeOptions
 }
 
+export type ListLocationsRecord = {
+	center_lat?: number
+	center_lng?: number
+	list?: RecordIdString
+}
+
 export type ListPlacesRecord = {
 	description?: string
 	list: RecordIdString
@@ -159,6 +166,7 @@ export type CitiesResponse<Thighlights = unknown, Ttags = unknown, Texpand = unk
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
 export type FeedItemsResponse<Tcontent = unknown, Tstats = unknown, Texpand = unknown> = Required<FeedItemsRecord<Tcontent, Tstats>> & BaseSystemFields<Texpand>
+export type ListLocationsResponse<Texpand = unknown> = Required<ListLocationsRecord> & BaseSystemFields<Texpand>
 export type ListPlacesResponse<Texpand = unknown> = Required<ListPlacesRecord> & BaseSystemFields<Texpand>
 export type ListsResponse<Texpand = unknown> = Required<ListsRecord> & BaseSystemFields<Texpand>
 export type SavedListsResponse<Texpand = unknown> = Required<SavedListsRecord> & BaseSystemFields<Texpand>
@@ -172,6 +180,7 @@ export type CollectionRecords = {
 	countries: CountriesRecord
 	favorites: FavoritesRecord
 	feed_items: FeedItemsRecord
+	list_locations: ListLocationsRecord
 	list_places: ListPlacesRecord
 	lists: ListsRecord
 	saved_lists: SavedListsRecord
@@ -184,6 +193,7 @@ export type CollectionResponses = {
 	countries: CountriesResponse
 	favorites: FavoritesResponse
 	feed_items: FeedItemsResponse
+	list_locations: ListLocationsResponse
 	list_places: ListPlacesResponse
 	lists: ListsResponse
 	saved_lists: SavedListsResponse
@@ -199,6 +209,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'favorites'): RecordService<FavoritesResponse>
 	collection(idOrName: 'feed_items'): RecordService<FeedItemsResponse>
+	collection(idOrName: 'list_locations'): RecordService<ListLocationsResponse>
 	collection(idOrName: 'list_places'): RecordService<ListPlacesResponse>
 	collection(idOrName: 'lists'): RecordService<ListsResponse>
 	collection(idOrName: 'saved_lists'): RecordService<SavedListsResponse>

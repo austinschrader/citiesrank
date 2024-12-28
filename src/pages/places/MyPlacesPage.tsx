@@ -1,4 +1,4 @@
-import { PlaceUpload } from "@/components/place-upload/PlaceUpload";
+import { AddPlaceDialog } from "@/components/place-upload/AddPlaceDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -36,7 +35,6 @@ import {
 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AddPlaceDialog } from "@/components/place-upload/AddPlaceDialog";
 
 export function MyPlacesPage() {
   const { user } = useAuth();
@@ -101,8 +99,11 @@ export function MyPlacesPage() {
             Manage and organize your uploaded places
           </p>
         </div>
-        <AddPlaceDialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-          <Button className="gap-2">
+        <AddPlaceDialog
+          open={showUploadDialog}
+          onOpenChange={setShowUploadDialog}
+        >
+          <Button className="hidden md:flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md hover:shadow-lg transition-all duration-200">
             <Plus className="h-4 w-4" />
             Add Place
           </Button>
@@ -122,7 +123,10 @@ export function MyPlacesPage() {
                 details about interesting locations.
               </p>
             </div>
-            <AddPlaceDialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+            <AddPlaceDialog
+              open={showUploadDialog}
+              onOpenChange={setShowUploadDialog}
+            >
               <Button
                 onClick={() => setShowUploadDialog(true)}
                 className="mt-2 gap-2"
@@ -142,7 +146,11 @@ export function MyPlacesPage() {
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                 <img
-                  src={`https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,g_auto,h_480,w_640/v1/${place.imageUrl}`}
+                  src={`https://res.cloudinary.com/${
+                    import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+                  }/image/upload/c_fill,g_auto,h_480,w_640/v1/${
+                    place.imageUrl
+                  }`}
                   alt={place.name}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
