@@ -89,7 +89,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
       <SheetTrigger asChild>
         <Button
           className={cn(
-            "h-10 px-3 py-1.5 gap-2 relative group",
+            "h-9 px-3 py-1.5 gap-2 relative group",
             "bg-white/5 border-white/10 backdrop-blur-sm",
             "hover:bg-white/10 transition-all duration-200",
             activeFiltersCount > 0 &&

@@ -22,10 +22,6 @@ const inactiveButtonStyles = cn(
   baseButtonStyles,
   "bg-white/80 hover:bg-indigo-500 hover:text-white text-indigo-600 shadow-sm"
 );
-const secondaryButtonStyles = cn(
-  baseButtonStyles,
-  "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-);
 
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
@@ -69,7 +65,8 @@ export const FiltersBar = () => {
                 className={cn(
                   viewMode === "lists"
                     ? activeButtonStyles
-                    : inactiveButtonStyles
+                    : inactiveButtonStyles,
+                  "h-9 text-md font-medium"
                 )}
               >
                 <Scroll className="w-4 h-4" />
@@ -81,7 +78,8 @@ export const FiltersBar = () => {
                 className={cn(
                   viewMode === "places"
                     ? activeButtonStyles
-                    : inactiveButtonStyles
+                    : inactiveButtonStyles,
+                  "h-9 text-md font-medium"
                 )}
               >
                 <Landmark className="w-4 h-4" />
@@ -96,7 +94,8 @@ export const FiltersBar = () => {
               variant="ghost"
               className={cn(
                 activeButtonStyles,
-                "bg-green-500 hover:bg-green-600"
+                "bg-green-500 hover:bg-green-600",
+                "h-9 text-md font-medium"
               )}
               asChild
             >
@@ -122,7 +121,7 @@ export const FiltersBar = () => {
           {/* Right: View Controls and Utilities */}
           <div className="flex items-center gap-4">
             {/* Results Controls */}
-            <div className="flex items-center gap-4 px-4 py-1.5 rounded-lg bg-gray-50">
+            <div className="flex items-center gap-4 px-4 py-1.5 rounded-lg">
               <PageSizeSelect />
               <FiltersSheet sort={sort} onSortChange={setSort} />
             </div>
@@ -130,7 +129,7 @@ export const FiltersBar = () => {
             <div className="h-8 w-px bg-indigo-200/60" />
 
             {/* View Controls */}
-            <div className="flex items-center gap-4 px-4 py-1 rounded-lg bg-gray-50">
+            <div className="flex items-center gap-4 px-4 py-1 rounded-lg">
               <TimeWindow
                 energyMode={energyMode}
                 timeRange={timeRange}
