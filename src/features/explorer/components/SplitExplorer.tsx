@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { FiltersBar } from "@/features/explorer/components/FiltersBar";
 import { useHeader } from "@/features/header/context/HeaderContext";
 import { ListPreview } from "@/features/lists/components/ListPreview";
@@ -7,7 +8,9 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
+import { PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import Split from "react-split";
 import { ResultsPanel } from "./ResultsPanel";
 
@@ -152,7 +155,7 @@ export const SplitExplorer = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <FiltersBar />
+      <FiltersBar paginatedFilteredPlaces={paginatedFilteredPlaces} />
       <div className="flex-1 overflow-hidden">
         <Split
           className="h-full flex"
@@ -189,33 +192,41 @@ export const SplitExplorer = () => {
               />
             ) : (
               <div className="h-full flex flex-col">
-                <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold">Lists</h2>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium">
-                          {visibleLists.length}
-                        </span>
-                        <span className="text-muted-foreground">
-                          lists in view
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 <div className="flex-1 overflow-auto">
-                  {visibleLists.length === 0 ? (
-                    <div className="text-center text-gray-500 py-8">
-                      No lists found in this area
-                    </div>
-                  ) : (
-                    <div className="p-4 space-y-4">
-                      {visibleLists.map((list) => (
-                        <ListPreview key={list.id} list={list} />
-                      ))}
-                    </div>
-                  )}
+                  <div className="p-4 space-y-6">
+                    {visibleLists.length === 0 ? (
+                      <div className="h-full flex items-center justify-center">
+                        <div className="text-center space-y-4 max-w-sm">
+                          <div className="space-y-2">
+                            <p className="text-gray-500">No lists found</p>
+                            <p className="text-sm text-muted-foreground">
+                              Try zooming out or create a list
+                            </p>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2 h-9 text-md font-medium"
+                            asChild
+                          >
+                            <Link
+                              to="/lists/create"
+                              className="flex items-center gap-2"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              <span>New List</span>
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {visibleLists.map((list) => (
+                          <ListPreview key={list.id} list={list} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
