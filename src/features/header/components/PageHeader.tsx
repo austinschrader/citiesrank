@@ -1,16 +1,29 @@
+import { Button } from "@/components/ui/button";
 import { useLocation } from "@/features/location/context/LocationContext";
 import { cn } from "@/lib/utils";
-import { Activity, PlusCircle, Users } from "lucide-react";
-import { useHeader } from "../context/HeaderContext";
-import { Button } from "@/components/ui/button";
+import {
+  Activity,
+  ChevronDown,
+  ChevronUp,
+  PlusCircle,
+  Users,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import { useHeader } from "../context/HeaderContext";
 
 interface PageHeaderProps {
   className?: string;
 }
 
 export const PageHeader = ({ className }: PageHeaderProps) => {
-  const { mode, energyMode, exploringCount, viewMode } = useHeader();
+  const {
+    mode,
+    energyMode,
+    exploringCount,
+    viewMode,
+    isFiltersCollapsed,
+    setIsFiltersCollapsed,
+  } = useHeader();
   const { currentLocation } = useLocation();
 
   const getHeaderTitle = () => {
@@ -24,7 +37,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
       if (viewMode === "lists") {
         return "Discover Curated Lists";
       }
-      
+
       // For places view, use the energy mode titles
       switch (energyMode) {
         case "buzzing":
@@ -55,10 +68,16 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
     }
   };
 
-  const showExploringCount = mode === "discover" && exploringCount !== null && viewMode === "places";
+  const showExploringCount =
+    mode === "discover" && exploringCount !== null && viewMode === "places";
 
   return (
-    <div className={cn("sticky top-[57px] z-10 border-b bg-background/95 backdrop-blur-lg", className)}>
+    <div
+      className={cn(
+        "sticky top-[57px] z-10 border-b bg-background/95 backdrop-blur-lg",
+        className
+      )}
+    >
       <div className="max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)] mx-auto">
         <div className="flex items-center justify-between py-2.5">
           <div className="flex items-center gap-6">
@@ -78,22 +97,39 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
           </div>
 
           {/* Action Buttons */}
-          {(mode === "places" || mode === "lists") && (
+          <div className="flex items-center gap-2">
+            {(mode === "places" || mode === "lists") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+                asChild
+              >
+                <Link
+                  to={mode === "places" ? "/places/create" : "/lists/create"}
+                  className="flex items-center gap-2"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  <span className="text-sm">
+                    New {mode === "places" ? "Place" : "List"}
+                  </span>
+                </Link>
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
               className="text-muted-foreground hover:text-foreground"
-              asChild
+              onClick={() => setIsFiltersCollapsed(!isFiltersCollapsed)}
             >
-              <Link 
-                to={mode === "places" ? "/places/create" : "/lists/create"} 
-                className="flex items-center gap-2"
-              >
-                <PlusCircle className="h-4 w-4" />
-                <span className="text-sm">New {mode === "places" ? "Place" : "List"}</span>
-              </Link>
+              {isFiltersCollapsed ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronUp className="h-4 w-4" />
+              )}
             </Button>
-          )}
+          </div>
         </div>
       </div>
     </div>

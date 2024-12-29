@@ -28,6 +28,8 @@ interface HeaderContextValue {
   setViewMode: (mode: ViewMode) => void;
   itemsPerPage: number;
   setItemsPerPage: (size: number) => void;
+  isFiltersCollapsed: boolean;
+  setIsFiltersCollapsed: (collapsed: boolean) => void;
 }
 
 const HeaderContext = createContext<HeaderContextValue | null>(null);
@@ -41,6 +43,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [exploringCount, setExploringCount] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("lists");
   const [itemsPerPage, setItemsPerPage] = useState<number>(25);
+  const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
 
   return (
     <HeaderContext.Provider
@@ -61,6 +64,8 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
         setViewMode,
         itemsPerPage,
         setItemsPerPage,
+        isFiltersCollapsed,
+        setIsFiltersCollapsed,
       }}
     >
       {children}

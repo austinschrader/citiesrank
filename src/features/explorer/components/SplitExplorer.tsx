@@ -189,21 +189,6 @@ export const SplitExplorer = () => {
               />
             ) : (
               <div className="h-full flex flex-col">
-                <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-lg font-semibold">Lists</h2>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium">
-                          {visibleLists.length}
-                        </span>
-                        <span className="text-muted-foreground">
-                          lists in view
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 <div className="flex-1 overflow-auto">
                   {visibleLists.length === 0 ? (
                     <div className="text-center text-gray-500 py-8">

@@ -52,7 +52,7 @@ export const ResultsPanel = ({
     <div className="h-full flex">
       <div
         className={cn(
-          "flex flex-col border-r bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
+          "flex flex-col  bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
           isResultsPanelCollapsed ? "w-0" : "w-full"
         )}
       >
@@ -67,7 +67,6 @@ export const ResultsPanel = ({
         >
           {/* Results Grid */}
           <div className="flex-1 min-h-0 overflow-y-auto">
-
             <div className="p-4 space-y-6">
               <div
                 className={cn(
