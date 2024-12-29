@@ -67,25 +67,7 @@ export const ResultsPanel = ({
         >
           {/* Results Grid */}
           <div className="flex-1 min-h-0 overflow-y-auto">
-            <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
-              <div className="p-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Places</h2>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">
-                        {displayPlaces.length} loaded
-                      </span>
-                      <span className="text-muted-foreground">•</span>
-                      <span className="font-medium">{placesInView}</span>
-                      <span className="text-muted-foreground">
-                        places in view
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
             <div className="p-4 space-y-6">
               <div
                 className={cn(

@@ -152,7 +152,7 @@ export const SplitExplorer = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <FiltersBar />
+      <FiltersBar paginatedFilteredPlaces={paginatedFilteredPlaces} />
       <div className="flex-1 overflow-hidden">
         <Split
           className="h-full flex"

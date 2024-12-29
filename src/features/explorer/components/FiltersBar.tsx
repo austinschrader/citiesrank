@@ -5,9 +5,19 @@ import { FiltersSheet } from "@/features/explorer/components/filters/FiltersShee
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { TimeWindow } from "@/features/explorer/components/TimeWindow";
 import { useHeader } from "@/features/header/context/HeaderContext";
+import { useMap } from "@/features/map/context/MapContext";
+import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, Landmark, ListPlus, Scroll, Search, Wrench } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Landmark,
+  ListPlus,
+  Scroll,
+  Search,
+  Wrench,
+} from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PageSizeSelect } from "./PageSizeSelect";
@@ -23,26 +33,61 @@ const inactiveButtonStyles = cn(
   "bg-white/80 hover:bg-indigo-500 hover:text-white text-indigo-600 shadow-sm"
 );
 
-export const FiltersBar = () => {
+interface FiltersBarProps {
+  paginatedFilteredPlaces: any[];
+}
+
+export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
   const { filters, setFilters } = useFilters();
   const {
     energyMode,
     timeRange,
     setEnergyMode,
     setTimeRange,
-    viewMode,
     setViewMode,
+    viewMode,
   } = useHeader();
   const [sort, setSort] = useState("popular");
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  const { cities } = useCities();
+  const { getFilteredCities } = useFilters();
+  const { prioritizedPlaces, visiblePlacesInView, viewMode: mapViewMode } = useMap();
+
+  // Get all filtered places for total count
+  const allFilteredPlaces = getFilteredCities(cities, () => ({
+    matchScore: 1,
+    attributeMatches: {
+      budget: 1,
+      crowds: 1,
+      tripLength: 1,
+      season: 1,
+      transit: 1,
+      accessibility: 1,
+    },
+  }));
+
+  // Use different data source based on view mode
+  const displayPlaces =
+    mapViewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+
+  // Get the correct total count based on view mode
+  const totalPlaces =
+    mapViewMode === "list"
+      ? allFilteredPlaces.length
+      : visiblePlacesInView.length;
+  const placesInView =
+    mapViewMode === "list" ? totalPlaces : visiblePlacesInView.length;
+
   return (
     <div className="border-b bg-white/90 backdrop-blur-sm">
       <div className="h-full flex flex-col w-full">
-        <div className={cn(
-          "overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out",
-          isCollapsed ? "max-h-0 opacity-0" : "max-h-[200px] opacity-100"
-        )}>
+        <div
+          className={cn(
+            "overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out",
+            isCollapsed ? "max-h-0 opacity-0" : "max-h-[200px] opacity-100"
+          )}
+        >
           <div className="py-2.5 px-4 flex items-center justify-between gap-8">
             {/* Left: Primary Actions */}
             <div className="flex items-center gap-6">
@@ -58,6 +103,26 @@ export const FiltersBar = () => {
                   }
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400" />
+              </div>
+
+              <div className="shrink-0 border-b bg-background/50 backdrop-blur-sm">
+                <div className="p-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold">Places</h2>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">
+                          {displayPlaces.length} loaded
+                        </span>
+                        <span className="text-muted-foreground">•</span>
+                        <span className="font-medium">{placesInView}</span>
+                        <span className="text-muted-foreground">
+                          places in view
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="h-8 w-px bg-indigo-200/60" />
