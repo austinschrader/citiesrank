@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlaceCard";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
 import { RefObject } from "react";
 import { Link } from "react-router-dom";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
@@ -97,23 +98,54 @@ export const ResultsPanel = ({
                   </div>
                 </div>
               ) : (
-                <div
-                  className={cn(
-                    "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
-                    viewMode === "list"
-                      ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-                      : "grid-cols-2"
-                  )}
-                >
+                <div className="grid grid-cols-3 gap-4">
                   {displayPlaces.map((place) => (
-                    <PlaceCard key={place.id} city={place} variant="basic" />
+                    <div key={place.id} className="group relative">
+                      <CompactPlaceCard
+                        city={place}
+                        onClick={() => {
+                          // Handle click event
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                        <div className="text-white p-4 space-y-2">
+                          <div className="text-lg font-semibold">{place.name}, {place.country}</div>
+                          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span>💰</span>
+                              <span>Cost: {place.costIndex}/100</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>🛡️</span>
+                              <span>Safety: {place.safetyScore}/100</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>🚇</span>
+                              <span>Transit: {place.transitScore}/100</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>📅</span>
+                              <span>Best: {place.bestSeason}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>⏱️</span>
+                              <span>Stay: {place.recommendedStay}d</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>👥</span>
+                              <span>{(place.population / 1000000).toFixed(1)}M</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   ))}
+                  <div ref={observerTarget} className="h-4" />
                 </div>
               )}
 
               {/* Loading indicator */}
               <div
-                ref={observerTarget}
                 className={cn(
                   "h-32 flex items-center justify-center transition-all duration-200",
                   isLoadingMore && displayPlaces.length < cities.length

@@ -124,9 +124,15 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
               onClick={() => setIsFiltersCollapsed(!isFiltersCollapsed)}
             >
               {isFiltersCollapsed ? (
-                <ChevronDown className="h-4 w-4" />
+                <>
+                  <p>Show Filters</p>
+                  <ChevronDown className="h-4 w-4" />
+                </>
               ) : (
-                <ChevronUp className="h-4 w-4" />
+                <>
+                  <p>Hide Filters</p>
+                  <ChevronUp className="h-4 w-4" />
+                </>
               )}
             </Button>
           </div>
