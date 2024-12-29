@@ -1,9 +1,12 @@
+import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
+import { PlusCircle } from "lucide-react";
 import { RefObject } from "react";
+import { Link } from "react-router-dom";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
@@ -68,18 +71,45 @@ export const ResultsPanel = ({
           {/* Results Grid */}
           <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-6">
-              <div
-                className={cn(
-                  "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
-                  viewMode === "list"
-                    ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-                    : "grid-cols-2"
-                )}
-              >
-                {displayPlaces.map((place) => (
-                  <PlaceCard key={place.id} city={place} variant="basic" />
-                ))}
-              </div>
+              {displayPlaces.length === 0 ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center space-y-4 max-w-sm">
+                    <div className="space-y-2">
+                      <p className="text-gray-500">No places found</p>
+                      <p className="text-sm text-muted-foreground">
+                        Try zooming out or add a new place
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 h-9"
+                      asChild
+                    >
+                      <Link
+                        to="/places/create"
+                        className="flex items-center gap-2"
+                      >
+                        <PlusCircle className="h-4 w-4" />
+                        <span>New Place</span>
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={cn(
+                    "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
+                    viewMode === "list"
+                      ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                      : "grid-cols-2"
+                  )}
+                >
+                  {displayPlaces.map((place) => (
+                    <PlaceCard key={place.id} city={place} variant="basic" />
+                  ))}
+                </div>
+              )}
 
               {/* Loading indicator */}
               <div

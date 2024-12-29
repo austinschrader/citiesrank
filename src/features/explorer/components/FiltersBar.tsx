@@ -8,15 +8,7 @@ import { useHeader } from "@/features/header/context/HeaderContext";
 import { useMap } from "@/features/map/context/MapContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import {
-  ChevronDown,
-  ChevronUp,
-  Landmark,
-  ListPlus,
-  Scroll,
-  Search,
-  Wrench,
-} from "lucide-react";
+import { Landmark, PlusCircle, Scroll, Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PageSizeSelect } from "./PageSizeSelect";
@@ -143,12 +135,9 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
           {/* Right Section */}
           <div className="flex items-center gap-4">
             <Button
-              variant="ghost"
-              className={cn(
-                activeButtonStyles,
-                "bg-green-500 hover:bg-green-600",
-                "h-9 text-md font-medium"
-              )}
+              variant="outline"
+              size="sm"
+              className="gap-2 h-9 text-md font-medium"
               asChild
             >
               <Link
@@ -157,13 +146,13 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
               >
                 {viewMode === "places" ? (
                   <>
-                    <Wrench className="h-4 w-4" />
-                    <span>Curate Places</span>
+                    <PlusCircle className="h-4 w-4" />
+                    <span>New Place</span>
                   </>
                 ) : (
                   <>
-                    <ListPlus className="h-4 w-4" />
-                    <span>New Collection</span>
+                    <PlusCircle className="h-4 w-4" />
+                    <span>New List</span>
                   </>
                 )}
               </Link>
