@@ -229,7 +229,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                 )}
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {[4, 3, 2].map((rating) => (
+                {[4.7, 4.5, 4, 3, 2].map((rating) => (
                   <button
                     key={rating}
                     onClick={() => handleRatingChange(rating)}
