@@ -1,4 +1,6 @@
 import { FiltersBar } from "@/features/explorer/components/FiltersBar";
+import { useHeader } from "@/features/header/context/HeaderContext";
+import { ListPreview } from "@/features/lists/components/ListPreview";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
@@ -6,9 +8,8 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Split from "react-split";
 import { ResultsPanel } from "./ResultsPanel";
-import { ListPreview } from "@/features/lists/components/ListPreview";
-import { useHeader } from "@/features/header/context/HeaderContext";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -119,7 +120,13 @@ export const SplitExplorer = () => {
       }
       setIsLoadingMore(false);
     }, 500);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, mapViewMode, itemsPerPage]);
+  }, [
+    hasMore,
+    isLoadingMore,
+    setNumPrioritizedToShow,
+    mapViewMode,
+    itemsPerPage,
+  ]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -147,7 +154,19 @@ export const SplitExplorer = () => {
     <div className="h-full flex flex-col">
       <FiltersBar />
       <div className="flex-1 overflow-hidden">
-        <div className="h-full flex">
+        <Split
+          className="h-full flex"
+          sizes={
+            mapViewMode === "list"
+              ? [100, 0]
+              : mapViewMode === "map"
+              ? [0, 100]
+              : [50, 50]
+          }
+          minSize={300}
+          gutterSize={4}
+          snapOffset={0}
+        >
           <div
             className={cn(
               "transition-all duration-300 ease-in-out overflow-hidden",
@@ -175,8 +194,12 @@ export const SplitExplorer = () => {
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-semibold">Lists</h2>
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium">{visibleLists.length}</span>
-                        <span className="text-muted-foreground">lists in view</span>
+                        <span className="font-medium">
+                          {visibleLists.length}
+                        </span>
+                        <span className="text-muted-foreground">
+                          lists in view
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -213,7 +236,7 @@ export const SplitExplorer = () => {
               <CityMap className="h-full" />
             </div>
           </div>
-        </div>
+        </Split>
       </div>
     </div>
   );

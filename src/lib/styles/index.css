@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
+    system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -132,16 +133,24 @@ button:focus-visible {
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "kern", "liga", "calt", "ss01", "ss02", "cv01", "cv02", "cv03";
-    font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+    font-feature-settings: "kern", "liga", "calt", "ss01", "ss02", "cv01",
+      "cv02", "cv03";
+    font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Display",
+      "Segoe UI", system-ui, sans-serif;
     letter-spacing: -0.011em;
     font-size: 15px;
     line-height: 1.6;
   }
 
   /* Typography Scale */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: ui-rounded, -apple-system, BlinkMacSystemFont, "SF Pro Display",
+      "Segoe UI", system-ui, sans-serif;
     @apply tracking-tight font-semibold;
     letter-spacing: -0.022em;
     text-wrap: balance;
@@ -177,7 +186,8 @@ button:focus-visible {
     text-wrap: pretty;
   }
 
-  span, div {
+  span,
+  div {
     @apply text-[15px];
     line-height: 1.6;
   }
@@ -244,4 +254,28 @@ button:focus-visible {
 
 .animate-loading-bar {
   animation: loading-bar 1.5s ease-in-out infinite;
+}
+
+/* Split styles */
+.gutter {
+  background-color: rgb(229, 231, 235);
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.gutter:hover {
+  background-color: rgb(99, 102, 241);
+}
+
+.gutter.gutter-horizontal {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==");
+  cursor: col-resize;
+}
+
+.dark .gutter {
+  background-color: rgb(31, 41, 55);
+}
+
+.dark .gutter:hover {
+  background-color: rgb(99, 102, 241);
 }
