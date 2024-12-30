@@ -1,8 +1,10 @@
-import { PlaceModal } from "@/features/map/components/PlaceModal";
+import { Button } from "@/components/ui/button";
+import { getPlaceImageBySlug } from "@/lib/bunny";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { useState } from "react";
-import { Marker } from "react-leaflet";
+import { Star } from "lucide-react";
+import { useRef, useState } from "react";
+import { Marker, Popup } from "react-leaflet";
 import { MapMarkerProps, MapPlace } from "../types";
 
 // Helper functions
@@ -114,46 +116,71 @@ const createMarkerHtml = (
 };
 
 export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
-  const [showModal, setShowModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const markerRef = useRef(null);
 
-  if (!place.latitude || !place.longitude) return null;
-
-  const markerStyle = getMarkerStyle(place.type, place.averageRating);
-
+  const style = getMarkerStyle(place.type, place.averageRating);
+  const markerHtml = createMarkerHtml(style, place, isSelected, isHovered);
   const icon = L.divIcon({
     className: "custom-marker",
-    html: createMarkerHtml(markerStyle, place, isSelected, isHovered),
-    iconSize: [markerStyle.size, markerStyle.size],
-    iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
+    html: markerHtml,
+    iconSize: [style.size, style.size],
+    iconAnchor: [style.size / 2, style.size / 2],
   });
 
-  const handleMarkerClick = (e: L.LeafletMouseEvent) => {
-    L.DomEvent.stopPropagation(e);
-    setShowModal(true);
-    if (onSelect) {
-      onSelect(place);
-    }
+  const handleMarkerClick = () => {
+    onSelect?.(place);
+    setIsPopupOpen(true);
   };
 
+  console.log(getPlaceImageBySlug(place.imageUrl, 1, "thumbnail"));
+
   return (
-    <>
-      <Marker
-        position={[place.latitude, place.longitude]}
-        icon={icon}
+    <Marker
+      ref={markerRef}
+      position={[place.latitude, place.longitude]}
+      icon={icon}
+      eventHandlers={{
+        click: handleMarkerClick,
+        mouseover: () => setIsHovered(true),
+        mouseout: () => setIsHovered(false),
+      }}
+    >
+      <Popup
+        className="custom-popup"
+        offset={[0, -style.size / 2]}
         eventHandlers={{
-          click: handleMarkerClick,
-          mouseover: () => setIsHovered(true),
-          mouseout: () => setIsHovered(false),
+          remove: () => setIsPopupOpen(false),
         }}
-      />
-      {showModal && (
-        <PlaceModal
-          place={place}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </>
+      >
+        <div className="flex flex-col p-2 min-w-[200px]">
+          {/* {place.images?.[0] && ( */}
+          {place.imageUrl && (
+            <img
+              src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
+              alt={place.name}
+              className="w-full h-32 object-cover rounded-lg mb-2"
+            />
+          )}
+          <h3 className="font-semibold text-lg mb-1">{place.name}</h3>
+          {place.averageRating && (
+            <div className="flex items-center gap-1 text-sm">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <span>{place.averageRating.toFixed(1)}</span>
+            </div>
+          )}
+          <Button
+            variant="default"
+            className="mt-2"
+            onClick={() => onSelect?.(place)}
+          >
+            View Details
+          </Button>
+        </div>
+      </Popup>
+    </Marker>
   );
 };
+
+export default MapMarker;
