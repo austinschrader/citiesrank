@@ -3,7 +3,7 @@ import { useSelection } from "@/features/map/context/SelectionContext";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { DollarSign, Footprints, Train, Users, X } from "lucide-react";
-import { useState, forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { PlaceCard } from "../cards/PlaceCard";
 
 type PlaceStatKey = keyof Pick<
@@ -109,29 +109,44 @@ const StatsOverlay = ({ place }: { place: CitiesResponse }) => {
 
 export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
   ({ places, className }, ref) => {
-    const { setCenter } = useMap();
+    const { setCenter, viewMode } = useMap();
     const { selectedPlace, setSelectedPlace } = useSelection();
-    const [hoveredPlace, setHoveredPlace] = useState<CitiesResponse | null>(null);
+    const [hoveredPlace, setHoveredPlace] = useState<CitiesResponse | null>(
+      null
+    );
 
     return (
-      <div ref={ref} className={cn("grid grid-cols-1 gap-4", className)}>
+      <div
+        ref={ref}
+        className={cn(
+          "grid gap-4 auto-rows-[minmax(min-content,max-content)]",
+          viewMode === "list"
+            ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+          className
+        )}
+      >
         {places.map((place) => (
           <div
             key={place.id}
             data-id={place.id}
             className={cn(
-              "relative transition-all duration-200",
-              selectedPlace?.id === place.id
-                ? "ring-2 ring-rose-500 rounded-xl shadow-lg"
+              "group relative rounded-xl overflow-hidden hover:shadow-xl transition-all duration-200",
+              selectedPlace?.id === place.id && viewMode == "list"
+                ? "ring-2 ring-rose-500 shadow-lg"
                 : ""
             )}
             onMouseEnter={() => {
               setHoveredPlace(place);
-              setSelectedPlace(place);
+              if (viewMode == "list") {
+                setSelectedPlace(place);
+              }
             }}
             onMouseLeave={() => {
               setHoveredPlace(null);
-              setSelectedPlace(null);
+              if (viewMode == "list") {
+                setSelectedPlace(null);
+              }
             }}
           >
             <PlaceCard
