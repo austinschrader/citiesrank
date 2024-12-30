@@ -102,12 +102,12 @@ export const SplitExplorer = () => {
     if (mapViewMode === "list") {
       return numFilteredToShow < filteredPlaces.length;
     }
-    return numPrioritizedToShow < visiblePlacesInView.length;
+    // For gallery view, check against filtered places instead of visible places
+    return numPrioritizedToShow < filteredPlaces.length;
   }, [
     numPrioritizedToShow,
-    visiblePlacesInView.length,
-    numFilteredToShow,
     filteredPlaces.length,
+    numFilteredToShow,
     mapViewMode,
   ]);
 
@@ -129,6 +129,7 @@ export const SplitExplorer = () => {
     setNumPrioritizedToShow,
     mapViewMode,
     itemsPerPage,
+    numPrioritizedToShow,
   ]);
 
   // Intersection Observer for infinite scroll
@@ -139,7 +140,7 @@ export const SplitExplorer = () => {
           loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: "100px" }
     );
 
     if (observerTarget.current) {
@@ -151,7 +152,15 @@ export const SplitExplorer = () => {
         observer.unobserve(observerTarget.current);
       }
     };
-  }, [hasMore, isLoadingMore, loadMore]);
+  }, [
+    hasMore,
+    isLoadingMore,
+    loadMore,
+    numPrioritizedToShow,
+    filteredPlaces.length,
+    viewMode,
+    mapViewMode,
+  ]);
 
   return (
     <div className="h-full flex flex-col">

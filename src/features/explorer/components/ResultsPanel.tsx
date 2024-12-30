@@ -60,7 +60,7 @@ export const ResultsPanel = ({
     <div className="h-full flex">
       <div
         className={cn(
-          "flex flex-col  bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
+          "flex flex-col bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out w-full",
           isResultsPanelCollapsed ? "w-0" : "w-full"
         )}
       >
@@ -77,7 +77,7 @@ export const ResultsPanel = ({
           <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-6">
               {displayPlaces.length === 0 ? (
-                <div className="h-full flex items-center justify-center">
+                <div className="flex items-center justify-center">
                   <div className="text-center space-y-4 max-w-sm">
                     <div className="space-y-2">
                       <p className="text-gray-500">No places found</p>
@@ -112,18 +112,16 @@ export const ResultsPanel = ({
                   />
                   <div
                     ref={observerTarget}
-                    className={cn(
-                      "h-32 flex items-center justify-center transition-all duration-200",
-                      isLoadingMore && displayPlaces.length < cities.length
-                        ? "opacity-100"
-                        : "opacity-0"
-                    )}
-                  >
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                  </div>
+                    className="h-4"
+                    style={{ visibility: displayPlaces.length < cities.length ? 'visible' : 'hidden' }}
+                  />
+                  {isLoadingMore && (
+                    <div className="flex items-center justify-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                    </div>
+                  )}
                 </>
               )}
-
             </div>
           </div>
         </div>
