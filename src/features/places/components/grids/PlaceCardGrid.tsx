@@ -117,9 +117,14 @@ export const PlaceCardGrid = ({ places, className }: PlaceCardGridProps) => {
         "grid gap-4 auto-rows-[minmax(min-content,max-content)]",
         viewMode === "list"
           ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-          : "grid-cols-1 sm:grid-cols-2",
+          : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+        "transition-[opacity,transform] duration-300",
         className
       )}
+      style={{
+        visibility: viewMode === "map" ? "hidden" : "visible",
+        position: viewMode === "map" ? "absolute" : "relative",
+      }}
     >
       {places.map((place) => (
         <div

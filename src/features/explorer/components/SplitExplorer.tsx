@@ -166,18 +166,19 @@ export const SplitExplorer = () => {
               ? [0, 100]
               : [50, 50]
           }
-          minSize={300}
+          minSize={0}
           gutterSize={4}
           snapOffset={0}
         >
           <div
             className={cn(
-              "transition-all duration-300 ease-in-out overflow-hidden",
+              "transition-all duration-300 ease-in-out",
               mapViewMode === "list"
-                ? "w-full"
+                ? "flex-1"
                 : mapViewMode === "map"
-                ? "w-0 invisible"
-                : "w-1/2"
+                ? "w-0"
+                : "flex-1",
+              mapViewMode === "map" && "hidden"
             )}
           >
             {viewMode === "places" ? (
@@ -235,12 +236,13 @@ export const SplitExplorer = () => {
           <div
             key={`map-${mapViewMode}`}
             className={cn(
-              "relative transition-all duration-300 ease-in-out overflow-hidden",
+              "relative transition-all duration-300 ease-in-out",
               mapViewMode === "list"
-                ? "w-0 invisible"
+                ? "w-0"
                 : mapViewMode === "map"
-                ? "w-full"
-                : "w-1/2"
+                ? "flex-1"
+                : "flex-1",
+              mapViewMode === "list" && "hidden"
             )}
           >
             <div className="absolute inset-0">
