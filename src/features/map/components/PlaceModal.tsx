@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogPortal,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogPortal } from "@/components/ui/dialog";
 import {
   Popover,
   PopoverContent,
@@ -348,16 +343,12 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       <DialogPortal>
         <DialogContent
           ref={contentRef}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm 
+          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-black/90 backdrop-blur-sm w-[90vw] max-w-3xl h-[80vh] rounded-xl
             data-[state=open]:animate-in data-[state=closed]:animate-out 
             data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
           onPointerDownOutside={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
         >
-          <DialogClose className="absolute right-4 top-4 z-30 rounded-full p-1.5 bg-white/80 hover:bg-white transition-colors">
-            <X className="h-5 w-5 text-black" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
           {/* Main Image Container */}
           <div className="absolute inset-0">
             {preloadedImages[currentImageIndex] && (
