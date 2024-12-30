@@ -225,7 +225,10 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
         offset={[0, -markerStyle.size / 2]}
         closeButton={false}
         eventHandlers={{
-          remove: () => setIsHovered(false),
+          remove: () => {
+            setIsHovered(false);
+            setSelectedPlace(null);
+          },
         }}
       >
         <PlacePopupCard place={place} onSelect={onSelect} />
