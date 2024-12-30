@@ -102,12 +102,12 @@ export const SplitExplorer = () => {
     if (mapViewMode === "list") {
       return numFilteredToShow < filteredPlaces.length;
     }
-    return numPrioritizedToShow < visiblePlacesInView.length;
+    // For gallery view, check against filtered places instead of visible places
+    return numPrioritizedToShow < filteredPlaces.length;
   }, [
     numPrioritizedToShow,
-    visiblePlacesInView.length,
-    numFilteredToShow,
     filteredPlaces.length,
+    numFilteredToShow,
     mapViewMode,
   ]);
 
@@ -129,6 +129,7 @@ export const SplitExplorer = () => {
     setNumPrioritizedToShow,
     mapViewMode,
     itemsPerPage,
+    numPrioritizedToShow,
   ]);
 
   // Intersection Observer for infinite scroll
@@ -139,7 +140,7 @@ export const SplitExplorer = () => {
           loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1, rootMargin: "100px" }
     );
 
     if (observerTarget.current) {
@@ -151,7 +152,15 @@ export const SplitExplorer = () => {
         observer.unobserve(observerTarget.current);
       }
     };
-  }, [hasMore, isLoadingMore, loadMore]);
+  }, [
+    hasMore,
+    isLoadingMore,
+    loadMore,
+    numPrioritizedToShow,
+    filteredPlaces.length,
+    viewMode,
+    mapViewMode,
+  ]);
 
   return (
     <div className="h-full flex flex-col">
@@ -166,18 +175,19 @@ export const SplitExplorer = () => {
               ? [0, 100]
               : [50, 50]
           }
-          minSize={300}
+          minSize={0}
           gutterSize={4}
           snapOffset={0}
         >
           <div
             className={cn(
-              "transition-all duration-300 ease-in-out overflow-hidden",
+              "transition-all duration-300 ease-in-out",
               mapViewMode === "list"
-                ? "w-full"
+                ? "flex-1"
                 : mapViewMode === "map"
-                ? "w-0 invisible"
-                : "w-1/2"
+                ? "w-0"
+                : "flex-1",
+              mapViewMode === "map" && "hidden"
             )}
           >
             {viewMode === "places" ? (
@@ -235,12 +245,13 @@ export const SplitExplorer = () => {
           <div
             key={`map-${mapViewMode}`}
             className={cn(
-              "relative transition-all duration-300 ease-in-out overflow-hidden",
+              "relative transition-all duration-300 ease-in-out",
               mapViewMode === "list"
-                ? "w-0 invisible"
+                ? "w-0"
                 : mapViewMode === "map"
-                ? "w-full"
-                : "w-1/2"
+                ? "flex-1"
+                : "flex-1",
+              mapViewMode === "list" && "hidden"
             )}
           >
             <div className="absolute inset-0">

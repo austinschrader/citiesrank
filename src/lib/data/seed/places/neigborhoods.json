@@ -22,6 +22,7 @@
     "population": 15000,
     "safetyScore": 9.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Battery Park Esplanade",
       "Brookfield Place shopping and dining",
@@ -54,6 +55,7 @@
     "population": 60000,
     "safetyScore": 8.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Wall Street and the New York Stock Exchange",
       "One World Trade Center and the 9/11 Memorial",
@@ -86,6 +88,7 @@
     "population": 2000,
     "safetyScore": 8.0,
     "walkScore": 8.5,
+    "type": "neighborhood",
     "highlights": [
       "South Street Seaport Museum",
       "Pier 17 dining and entertainment",
@@ -118,6 +121,7 @@
     "population": 20000,
     "safetyScore": 9.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Tribeca Film Festival",
       "Trendy restaurants and cafes",
@@ -150,6 +154,7 @@
     "population": 8000,
     "safetyScore": 7.5,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "New York County Courthouse",
       "Foley Square",
@@ -181,6 +186,7 @@
     "population": 90000,
     "safetyScore": 7.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Authentic dim sum and Chinese cuisine",
       "Chinatown markets and shops",
@@ -212,6 +218,7 @@
     "population": 3000,
     "safetyScore": 7.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Mulberry Street restaurants",
       "San Gennaro Festival",
@@ -243,6 +250,7 @@
     "population": 13000,
     "safetyScore": 8.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Art galleries",
       "Boutique shopping",
@@ -274,6 +282,7 @@
     "population": 22000,
     "safetyScore": 8.5,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Washington Square Park",
       "Comedy Cellar",
@@ -305,6 +314,7 @@
     "population": 16000,
     "safetyScore": 9.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "High-end dining",
       "Bleecker Street shopping",
@@ -336,6 +346,7 @@
     "population": 5000,
     "safetyScore": 8.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Astor Place",
       "The Public Theater",
@@ -367,6 +378,7 @@
     "population": 28000,
     "safetyScore": 7.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "St. Mark's Place",
       "Tompkins Square Park",
@@ -398,6 +410,7 @@
     "population": 60000,
     "safetyScore": 7.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Tenement Museum",
       "Essex Market",
@@ -429,6 +442,7 @@
     "population": 30000,
     "safetyScore": 7.5,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "East River waterfront",
       "Local Chinese eateries",
@@ -460,6 +474,7 @@
     "population": 16000,
     "safetyScore": 9.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Gramercy Park (private)",
       "Irving Place restaurants",
@@ -491,6 +506,7 @@
     "population": 30000,
     "safetyScore": 8.5,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "Peter Cooper Village",
       "Tree-lined walkways",
@@ -522,6 +538,7 @@
     "population": 20000,
     "safetyScore": 8.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Flatiron Building",
       "Madison Square Park",
@@ -553,6 +570,7 @@
     "population": 35000,
     "safetyScore": 7.5,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Union Square Greenmarket",
       "Historic park with sculptures and fountains",
@@ -584,6 +602,7 @@
     "population": 47000,
     "safetyScore": 8.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "High Line park",
       "Chelsea Market",
@@ -615,6 +634,7 @@
     "population": 50000,
     "safetyScore": 7.0,
     "walkScore": 10.0,
+    "type": "neighborhood",
     "highlights": [
       "Broadway theaters",
       "New Year's Eve Ball Drop",
@@ -648,6 +668,7 @@
     "population": 25000,
     "safetyScore": 7.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Hell's Kitchen Flea Market",
       "Theater District",
@@ -680,6 +701,7 @@
     "population": 15000,
     "safetyScore": 8.0,
     "walkScore": 8.5,
+    "type": "neighborhood",
     "highlights": [
       "The High Line",
       "Fashion Week events",
@@ -712,6 +734,7 @@
     "population": 8000,
     "safetyScore": 8.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Korean BBQ restaurants",
       "Bowlmor Lanes (bowling alley)",
@@ -744,6 +767,7 @@
     "population": 20000,
     "safetyScore": 8.5,
     "walkScore": 8.5,
+    "type": "neighborhood",
     "highlights": [
       "The Morgan Library & Museum",
       "Grand Central Terminal",
@@ -776,6 +800,7 @@
     "population": 10000,
     "safetyScore": 9.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "The Vessel",
       "Edge Observation Deck",
@@ -808,6 +833,7 @@
     "population": 7000,
     "safetyScore": 8.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "The High Line",
       "Whitney Museum of American Art",
@@ -840,6 +866,7 @@
     "population": 100000,
     "safetyScore": 7.5,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Empire State Building",
       "Rockefeller Center",
@@ -873,6 +900,7 @@
     "population": 30000,
     "safetyScore": 8.0,
     "walkScore": 10.0,
+    "type": "neighborhood",
     "highlights": [
       "Broadway theaters",
       "Times Square",
@@ -905,6 +933,7 @@
     "population": 35000,
     "safetyScore": 7.0,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "The Morgan Library & Museum",
       "Tudor City",
@@ -936,6 +965,7 @@
     "population": 30000,
     "safetyScore": 7.5,
     "walkScore": 8.5,
+    "type": "neighborhood",
     "highlights": [
       "United Nations Headquarters",
       "Turtle Bay Gardens",
@@ -967,6 +997,7 @@
     "population": 15000,
     "safetyScore": 9.0,
     "walkScore": 8.5,
+    "type": "neighborhood",
     "highlights": [
       "Sutton Place Park",
       "East River views",
@@ -998,6 +1029,7 @@
     "population": 220000,
     "safetyScore": 9.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Metropolitan Museum of Art",
       "Central Park",
@@ -1030,6 +1062,7 @@
     "population": 45000,
     "safetyScore": 8.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "NewYork-Presbyterian Hospital",
       "The Lenox Hill Neighborhood House",
@@ -1061,6 +1094,7 @@
     "population": 30000,
     "safetyScore": 9.0,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "The Met Fifth Avenue",
       "Cooper Hewitt Smithsonian Design Museum",
@@ -1093,6 +1127,7 @@
     "population": 100000,
     "safetyScore": 8.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Central Park",
       "The American Museum of Natural History",
@@ -1125,6 +1160,7 @@
     "population": 25000,
     "safetyScore": 8.0,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "Lincoln Center for the Performing Arts",
       "The Metropolitan Opera House",
@@ -1157,6 +1193,7 @@
     "population": 12000,
     "safetyScore": 7.0,
     "walkScore": 7.5,
+    "type": "neighborhood",
     "highlights": [
       "Central Park West",
       "Columbia University",
@@ -1189,6 +1226,7 @@
     "population": 25000,
     "safetyScore": 8.0,
     "walkScore": 8.5,
+    "type": "neighborhood",
     "highlights": [
       "Columbia University",
       "Riverside Park",
@@ -1221,6 +1259,7 @@
     "population": 100000,
     "safetyScore": 6.5,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "Apollo Theater",
       "Marcus Garvey Park",
@@ -1253,6 +1292,7 @@
     "population": 50000,
     "safetyScore": 7.5,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "Carl Schurz Park",
       "East River Promenade",
@@ -1284,6 +1324,7 @@
     "population": 115000,
     "safetyScore": 6.0,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "El Museo del Barrio",
       "Harlem River Drive",
@@ -1316,6 +1357,7 @@
     "population": 43000,
     "safetyScore": 7.5,
     "walkScore": 8.2,
+    "type": "neighborhood",
     "highlights": [
       "The City College of New York",
       "Hamilton Grange National Memorial",
@@ -1348,6 +1390,7 @@
     "population": 12000,
     "safetyScore": 6.5,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "The Apollo Theater",
       "Sugar Hill Children’s Museum of Art & Storytelling",
@@ -1380,6 +1423,7 @@
     "population": 150000,
     "safetyScore": 7.0,
     "walkScore": 7.5,
+    "type": "neighborhood",
     "highlights": [
       "Fort Tryon Park",
       "The Cloisters",
@@ -1412,6 +1456,7 @@
     "population": 50000,
     "safetyScore": 7.5,
     "walkScore": 7.0,
+    "type": "neighborhood",
     "highlights": [
       "Fort Tryon Park",
       "The Cloisters",
@@ -1444,6 +1489,7 @@
     "population": 40000,
     "safetyScore": 7.0,
     "walkScore": 7.5,
+    "type": "neighborhood",
     "highlights": [
       "Inwood Hill Park",
       "The Little Red Lighthouse",
@@ -1476,6 +1522,7 @@
     "population": 8000,
     "safetyScore": 7.5,
     "walkScore": 6.5,
+    "type": "neighborhood",
     "highlights": [
       "Henry Hudson Bridge views",
       "Spuyten Duyvil Creek",
@@ -1507,6 +1554,7 @@
     "population": 11000,
     "safetyScore": 8.0,
     "walkScore": 7.0,
+    "type": "neighborhood",
     "highlights": [
       "Roosevelt Island Tramway",
       "FDR Four Freedoms Park",
@@ -1540,6 +1588,7 @@
     "population": 0,
     "safetyScore": 9.0,
     "walkScore": 10.0,
+    "type": "neighborhood",
     "highlights": [
       "Bethesda Terrace",
       "The Mall and Literary Walk",
@@ -1573,6 +1622,7 @@
     "population": 0,
     "safetyScore": 8.0,
     "walkScore": 6.0,
+    "type": "neighborhood",
     "highlights": [
       "Icahn Stadium",
       "Randalls Island Park",
@@ -1604,6 +1654,7 @@
     "population": 2500,
     "safetyScore": 7.5,
     "walkScore": 6.0,
+    "type": "neighborhood",
     "highlights": ["Ward’s Island Park", "Wards Island Bridge"],
     "tags": ["residential", "quiet", "outdoor"]
   },
@@ -1631,6 +1682,7 @@
     "population": 0,
     "safetyScore": 9.0,
     "walkScore": 8.0,
+    "type": "neighborhood",
     "highlights": [
       "Governors Island National Monument",
       "The Hills",
@@ -1663,6 +1715,7 @@
     "population": 0,
     "safetyScore": 9.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Ellis Island Immigration Museum",
       "Statue of Liberty views",
@@ -1694,6 +1747,7 @@
     "population": 40000,
     "safetyScore": 8.5,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Place des Vosges",
       "Picasso Museum",
@@ -1727,6 +1781,7 @@
     "population": 7000,
     "safetyScore": 9.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Hanami-koji Street",
       "Yasaka Shrine",
@@ -1760,6 +1815,7 @@
     "population": 50000,
     "safetyScore": 8.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Santa Maria in Trastevere",
       "Piazza di Santa Maria",
@@ -1793,6 +1849,7 @@
     "population": 85000,
     "safetyScore": 8.0,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "East Side Gallery",
       "Görlitzer Park",
@@ -1826,6 +1883,7 @@
     "population": 20000,
     "safetyScore": 8.5,
     "walkScore": 7.5,
+    "type": "neighborhood",
     "highlights": [
       "São Jorge Castle",
       "Lisbon Cathedral",
@@ -1859,6 +1917,7 @@
     "population": 75000,
     "safetyScore": 9.0,
     "walkScore": 9.5,
+    "type": "neighborhood",
     "highlights": [
       "Superkilen Park",
       "Assistens Cemetery",
@@ -1892,6 +1951,7 @@
     "population": 55000,
     "safetyScore": 9.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Vintage clothing stores",
       "Independent theaters",
@@ -1925,6 +1985,7 @@
     "population": 30000,
     "safetyScore": 8.5,
     "walkScore": 9.0,
+    "type": "neighborhood",
     "highlights": [
       "Brunswick Street art",
       "Rose Street Artists' Market",

@@ -1,6 +1,11 @@
+/**
+ * Panel displaying search results in grid layout
+ * Uses: PlaceCardGrid for layout, CitiesContext for data
+ * Location: src/features/explorer/components
+ */
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { PlaceCardGrid } from "@/features/places/components/grids/PlaceCardGrid";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
@@ -55,7 +60,7 @@ export const ResultsPanel = ({
     <div className="h-full flex">
       <div
         className={cn(
-          "flex flex-col  bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out",
+          "flex flex-col bg-card/50 backdrop-blur-sm transition-all duration-300 ease-in-out w-full",
           isResultsPanelCollapsed ? "w-0" : "w-full"
         )}
       >
@@ -72,7 +77,7 @@ export const ResultsPanel = ({
           <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-6">
               {displayPlaces.length === 0 ? (
-                <div className="h-full flex items-center justify-center">
+                <div className="flex items-center justify-center">
                   <div className="text-center space-y-4 max-w-sm">
                     <div className="space-y-2">
                       <p className="text-gray-500">No places found</p>
@@ -97,37 +102,26 @@ export const ResultsPanel = ({
                   </div>
                 </div>
               ) : (
-                <div
-                  className={cn(
-                    "grid gap-6 auto-rows-[minmax(min-content,max-content)]",
-                    viewMode === "list"
-                      ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-                      : "grid-cols-2"
+                <>
+                  <PlaceCardGrid 
+                    places={displayPlaces}
+                    className={cn(
+                      "transition-all duration-300",
+                      isResultsPanelCollapsed ? "opacity-0" : "opacity-100"
+                    )}
+                  />
+                  <div
+                    ref={observerTarget}
+                    className="h-4"
+                    style={{ visibility: displayPlaces.length < cities.length ? 'visible' : 'hidden' }}
+                  />
+                  {isLoadingMore && (
+                    <div className="flex items-center justify-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                    </div>
                   )}
-                >
-                  {displayPlaces.map((place) => (
-                    <PlaceCard key={place.id} city={place} variant="basic" />
-                  ))}
-                </div>
+                </>
               )}
-
-              {/* Loading indicator */}
-              <div
-                ref={observerTarget}
-                className={cn(
-                  "h-32 flex items-center justify-center transition-all duration-200",
-                  isLoadingMore && displayPlaces.length < cities.length
-                    ? "opacity-100"
-                    : "opacity-0"
-                )}
-              >
-                <div className="flex flex-col items-center gap-3 bg-primary px-6 py-4 rounded-xl">
-                  <div className="animate-spin h-10 w-10 border-[3px] border-background border-t-transparent rounded-full" />
-                  <span className="text-sm font-medium text-background animate-pulse">
-                    Loading more places...
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
