@@ -9,6 +9,7 @@ import { SavedListsProvider } from "@/features/lists/context/SavedListsContext";
 import { CreateListPage } from "@/features/lists/pages/CreateListPage";
 import { ListDetailsPage } from "@/features/lists/pages/ListDetailsPage";
 import { MapProvider } from "@/features/map/context/MapContext";
+import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { CountriesProvider } from "@/features/places/context/CountriesContext";
 import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
@@ -39,60 +40,62 @@ function App() {
               <ListsProvider>
                 <SavedListsProvider>
                   <MapProvider>
-                    <LocationProvider>
-                      <HeaderProvider>
-                        <FeedProvider>
-                          <FavoritesProvider>
-                            <RootLayout>
-                              <Routes>
-                                <Route path="/" element={<ExplorerPage />} />
-                                <Route
-                                  path="/explore"
-                                  element={<PlacesPage />}
-                                />
-                                <Route
-                                  path="/favorites"
-                                  element={<FavoritesPage />}
-                                />
-                                <Route
-                                  path="/profile"
-                                  element={<ProfilePage />}
-                                />
-                                <Route
-                                  path="/my-places"
-                                  element={<CreatedSpacesPage />}
-                                />
-                                <Route path="/feed" element={<FeedView />} />
-                                <Route
-                                  path="/following"
-                                  element={<FollowingManagement />}
-                                />
-                                <Route
-                                  path="/lists"
-                                  element={<ListsExplorer />}
-                                />
-                                <Route
-                                  path="/lists/create"
-                                  element={<CreateListPage />}
-                                />
-                                <Route
-                                  path="/lists/:id"
-                                  element={<ListDetailsPage />}
-                                />
-                                <Route
-                                  path="/places/:placeType/:id"
-                                  element={<PlaceDetailsPage />}
-                                />
-                                <Route
-                                  path="/admin/*"
-                                  element={<AdminRoutes />}
-                                />
-                              </Routes>
-                            </RootLayout>
-                          </FavoritesProvider>
-                        </FeedProvider>
-                      </HeaderProvider>
-                    </LocationProvider>
+                    <SelectionProvider>
+                      <LocationProvider>
+                        <HeaderProvider>
+                          <FeedProvider>
+                            <FavoritesProvider>
+                              <RootLayout>
+                                <Routes>
+                                  <Route path="/" element={<ExplorerPage />} />
+                                  <Route
+                                    path="/explore"
+                                    element={<PlacesPage />}
+                                  />
+                                  <Route
+                                    path="/favorites"
+                                    element={<FavoritesPage />}
+                                  />
+                                  <Route
+                                    path="/profile"
+                                    element={<ProfilePage />}
+                                  />
+                                  <Route
+                                    path="/my-places"
+                                    element={<CreatedSpacesPage />}
+                                  />
+                                  <Route path="/feed" element={<FeedView />} />
+                                  <Route
+                                    path="/following"
+                                    element={<FollowingManagement />}
+                                  />
+                                  <Route
+                                    path="/lists"
+                                    element={<ListsExplorer />}
+                                  />
+                                  <Route
+                                    path="/lists/create"
+                                    element={<CreateListPage />}
+                                  />
+                                  <Route
+                                    path="/lists/:id"
+                                    element={<ListDetailsPage />}
+                                  />
+                                  <Route
+                                    path="/places/:placeType/:id"
+                                    element={<PlaceDetailsPage />}
+                                  />
+                                  <Route
+                                    path="/admin/*"
+                                    element={<AdminRoutes />}
+                                  />
+                                </Routes>
+                              </RootLayout>
+                            </FavoritesProvider>
+                          </FeedProvider>
+                        </HeaderProvider>
+                      </LocationProvider>
+                    </SelectionProvider>
                   </MapProvider>
                 </SavedListsProvider>
               </ListsProvider>

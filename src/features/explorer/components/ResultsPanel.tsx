@@ -5,12 +5,12 @@
  */
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
+import { useSelection } from "@/features/map/context/SelectionContext";
 import { PlaceCardGrid } from "@/features/places/components/grids/PlaceCardGrid";
 import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
-import { RefObject } from "react";
+import { RefObject, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 interface ResultsPanelProps {
@@ -30,21 +30,21 @@ export const ResultsPanel = ({
   paginatedFilteredPlaces,
 }: ResultsPanelProps) => {
   const { cities } = useCities();
-  const { getFilteredCities } = useFilters();
   const { prioritizedPlaces, visiblePlacesInView, viewMode } = useMap();
+  const { selectedPlace } = useSelection();
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  // Get all filtered places for total count
-  const allFilteredPlaces = getFilteredCities(cities, () => ({
-    matchScore: 1,
-    attributeMatches: {
-      budget: 1,
-      crowds: 1,
-      tripLength: 1,
-      season: 1,
-      transit: 1,
-      accessibility: 1,
-    },
-  }));
+  // Scroll to selected place when it changes
+  useEffect(() => {
+    if (selectedPlace && gridRef.current) {
+      const selectedElement = gridRef.current.querySelector(
+        `[data-id="${selectedPlace.id}"]`
+      );
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [selectedPlace]);
 
   // Use different data source based on view mode
   const displayPlaces =
@@ -52,7 +52,9 @@ export const ResultsPanel = ({
 
   // Get the correct total count based on view mode
   const totalPlaces =
-    viewMode === "list" ? allFilteredPlaces.length : visiblePlacesInView.length;
+    viewMode === "list"
+      ? paginatedFilteredPlaces.length
+      : visiblePlacesInView.length;
   const placesInView =
     viewMode === "list" ? totalPlaces : visiblePlacesInView.length;
 
@@ -103,7 +105,8 @@ export const ResultsPanel = ({
                 </div>
               ) : (
                 <>
-                  <PlaceCardGrid 
+                  <PlaceCardGrid
+                    ref={gridRef}
                     places={displayPlaces}
                     className={cn(
                       "transition-all duration-300",
@@ -113,7 +116,12 @@ export const ResultsPanel = ({
                   <div
                     ref={observerTarget}
                     className="h-4"
-                    style={{ visibility: displayPlaces.length < cities.length ? 'visible' : 'hidden' }}
+                    style={{
+                      visibility:
+                        displayPlaces.length < cities.length
+                          ? "visible"
+                          : "hidden",
+                    }}
                   />
                   {isLoadingMore && (
                     <div className="flex items-center justify-center py-4">

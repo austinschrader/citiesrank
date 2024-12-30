@@ -1,13 +1,19 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { getPlaceImageBySlug } from "@/lib/bunny";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { Star } from "lucide-react";
+import { ArrowUpRight, Badge, Heart, Star } from "lucide-react";
 import { useRef, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import { MapMarkerProps, MapPlace } from "../types";
+import { useSelection } from "../context/SelectionContext";
 
-// Helper functions
+interface PlacePopupCardProps {
+  place: MapPlace;
+  onSelect?: (place: MapPlace) => void;
+}
+
 const getMarkerStyle = (type?: string, rating?: number) => {
   const getRatingColor = (rating?: number) => {
     if (!rating) return ratingColors.new; // Show emerald for new places
@@ -115,30 +121,97 @@ const createMarkerHtml = (
   </div>`;
 };
 
+const PlacePopupCard = ({ place, onSelect }: PlacePopupCardProps) => {
+  const { selectedPlace } = useSelection();
+  const imageUrl = getPlaceImageBySlug(place.imageUrl, 1, "thumbnail");
+  const isSelected = selectedPlace?.slug === place.slug;
+
+  return (
+    <div
+      className="cursor-pointer"
+      onClick={() => onSelect?.(place)}
+    >
+      <Card className={`w-[300px] overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-200 ${
+        isSelected ? "ring-2 ring-rose-500" : ""
+      }`}>
+        {/* Image Container with Like Button */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
+          {imageUrl && (
+            <div className="relative group">
+              <img
+                src={imageUrl}
+                alt={place.name}
+                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <button 
+                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 hover:bg-white transition-colors duration-200"
+                onClick={(e) => e.stopPropagation()} // Prevent card click when clicking heart
+              >
+                <Heart className="w-4 h-4 text-gray-700 hover:text-rose-500 transition-colors duration-200" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <CardContent className="p-4">
+          {/* Header Section */}
+          <div className="space-y-2">
+            <div className="flex items-start justify-between">
+              <h3 className="font-semibold text-lg leading-tight line-clamp-2">
+                {place.name}
+              </h3>
+            </div>
+
+            {/* Rating and Type */}
+            <div className="flex items-center gap-2">
+              {place.averageRating && (
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="ml-1 text-sm font-medium">
+                    {place.averageRating.toFixed(1)}
+                  </span>
+                </div>
+              )}
+              {place.type && <Badge className="text-xs">{place.type}</Badge>}
+            </div>
+          </div>
+
+          {/* Description or Additional Info */}
+          {place.description && (
+            <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+              {place.description}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const markerRef = useRef(null);
+  const { selectedPlace, setSelectedPlace } = useSelection();
+  const isPlaceSelected = selectedPlace?.slug === place.slug;
 
-  const style = getMarkerStyle(place.type, place.averageRating);
-  const markerHtml = createMarkerHtml(style, place, isSelected, isHovered);
+  const markerStyle = getMarkerStyle(place.type, place.averageRating);
+  const markerHtml = createMarkerHtml(markerStyle, place, isPlaceSelected, isHovered);
   const icon = L.divIcon({
     className: "custom-marker",
     html: markerHtml,
-    iconSize: [style.size, style.size],
-    iconAnchor: [style.size / 2, style.size / 2],
+    iconSize: [markerStyle.size, markerStyle.size],
+    iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
   });
 
   const handleMarkerClick = () => {
+    setSelectedPlace(place);
     onSelect?.(place);
-    setIsPopupOpen(true);
+    setIsHovered(true);
   };
-
-  console.log(getPlaceImageBySlug(place.imageUrl, 1, "thumbnail"));
 
   return (
     <Marker
-      ref={markerRef}
+      ref={null}
       position={[place.latitude, place.longitude]}
       icon={icon}
       eventHandlers={{
@@ -149,35 +222,13 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
     >
       <Popup
         className="custom-popup"
-        offset={[0, -style.size / 2]}
+        offset={[0, -markerStyle.size / 2]}
+        closeButton={false}
         eventHandlers={{
-          remove: () => setIsPopupOpen(false),
+          remove: () => setIsHovered(false),
         }}
       >
-        <div className="flex flex-col p-2 min-w-[200px]">
-          {/* {place.images?.[0] && ( */}
-          {place.imageUrl && (
-            <img
-              src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
-              alt={place.name}
-              className="w-full h-32 object-cover rounded-lg mb-2"
-            />
-          )}
-          <h3 className="font-semibold text-lg mb-1">{place.name}</h3>
-          {place.averageRating && (
-            <div className="flex items-center gap-1 text-sm">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span>{place.averageRating.toFixed(1)}</span>
-            </div>
-          )}
-          <Button
-            variant="default"
-            className="mt-2"
-            onClick={() => onSelect?.(place)}
-          >
-            View Details
-          </Button>
-        </div>
+        <PlacePopupCard place={place} onSelect={onSelect} />
       </Popup>
     </Marker>
   );
