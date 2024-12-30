@@ -110,7 +110,7 @@ const StatsOverlay = ({ place }: { place: CitiesResponse }) => {
 export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
   ({ places, className }, ref) => {
     const { setCenter } = useMap();
-    const { selectedPlace } = useSelection();
+    const { selectedPlace, setSelectedPlace } = useSelection();
     const [hoveredPlace, setHoveredPlace] = useState<CitiesResponse | null>(null);
 
     return (
@@ -125,8 +125,14 @@ export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
                 ? "ring-2 ring-rose-500 rounded-xl shadow-lg"
                 : ""
             )}
-            onMouseEnter={() => setHoveredPlace(place)}
-            onMouseLeave={() => setHoveredPlace(null)}
+            onMouseEnter={() => {
+              setHoveredPlace(place);
+              setSelectedPlace(place);
+            }}
+            onMouseLeave={() => {
+              setHoveredPlace(null);
+              setSelectedPlace(null);
+            }}
           >
             <PlaceCard
               city={place}
