@@ -14,7 +14,7 @@ interface PlacePopupCardProps {
   onSelect?: (place: MapPlace) => void;
 }
 
-const getMarkerStyle = (type?: string, rating?: number) => {
+const getMarkerStyle = (type?: string, rating?: number, isSelected?: boolean) => {
   const getRatingColor = (rating?: number) => {
     if (!rating) return ratingColors.new; // Show emerald for new places
     if (rating >= 4.8) return ratingColors.best;
@@ -31,7 +31,7 @@ const getMarkerStyle = (type?: string, rating?: number) => {
       : markerColors.default;
 
   return {
-    color: typeColor,
+    color: isSelected ? "#e11d48" : typeColor, // Use rose-600 for selected markers
     ratingColor: getRatingColor(rating),
     size: 40,
   };
@@ -194,7 +194,7 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
   const isPlaceSelected = selectedPlace?.slug === place.slug;
 
-  const markerStyle = getMarkerStyle(place.type, place.averageRating);
+  const markerStyle = getMarkerStyle(place.type, place.averageRating, isPlaceSelected);
   const markerHtml = createMarkerHtml(markerStyle, place, isPlaceSelected, isHovered);
   const icon = L.divIcon({
     className: "custom-marker",
