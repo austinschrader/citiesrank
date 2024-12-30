@@ -132,19 +132,19 @@ export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
             data-id={place.id}
             className={cn(
               "group relative rounded-xl overflow-hidden hover:shadow-xl transition-all duration-200",
-              selectedPlace?.id === place.id && viewMode == "list"
-                ? "ring-2 ring-rose-500 shadow-lg"
+              selectedPlace?.id === place.id && viewMode != "map"
+                ? "ring-[3px] ring-rose-500 shadow-lg scale-[1.02] shadow-rose-500/20"
                 : ""
             )}
             onMouseEnter={() => {
               setHoveredPlace(place);
-              if (viewMode == "list") {
+              if (viewMode != "map") {
                 setSelectedPlace(place);
               }
             }}
             onMouseLeave={() => {
               setHoveredPlace(null);
-              if (viewMode == "list") {
+              if (viewMode != "map") {
                 setSelectedPlace(null);
               }
             }}

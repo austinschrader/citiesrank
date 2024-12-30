@@ -204,7 +204,7 @@ export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
   });
 
   const handleMarkerClick = () => {
-    setSelectedPlace(place);
+    setSelectedPlace(place, true);
     onSelect?.(place);
     setIsHovered(true);
   };

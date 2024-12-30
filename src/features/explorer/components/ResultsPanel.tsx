@@ -31,12 +31,12 @@ export const ResultsPanel = ({
 }: ResultsPanelProps) => {
   const { cities } = useCities();
   const { prioritizedPlaces, visiblePlacesInView, viewMode } = useMap();
-  const { selectedPlace } = useSelection();
+  const { selectedPlace, fromMap } = useSelection();
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Scroll to selected place when it changes
   useEffect(() => {
-    if (selectedPlace && gridRef.current) {
+    if (selectedPlace && gridRef.current && fromMap) {
       const selectedElement = gridRef.current.querySelector(
         `[data-id="${selectedPlace.id}"]`
       );
@@ -44,7 +44,7 @@ export const ResultsPanel = ({
         selectedElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [selectedPlace]);
+  }, [selectedPlace, fromMap]);
 
   // Use different data source based on view mode
   const displayPlaces =

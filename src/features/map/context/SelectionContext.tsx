@@ -1,18 +1,25 @@
 import { MapPlace } from "../types";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useCallback } from "react";
 
 interface SelectionContextType {
   selectedPlace: MapPlace | null;
-  setSelectedPlace: (place: MapPlace | null) => void;
+  setSelectedPlace: (place: MapPlace | null, isFromMap?: boolean) => void;
+  fromMap: boolean;
 }
 
 const SelectionContext = createContext<SelectionContextType | undefined>(undefined);
 
 export function SelectionProvider({ children }: { children: ReactNode }) {
   const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null);
+  const [fromMap, setFromMap] = useState(false);
+
+  const setSelectedPlaceWithSource = useCallback((place: MapPlace | null, isFromMap = false) => {
+    setSelectedPlace(place);
+    setFromMap(isFromMap);
+  }, []);
 
   return (
-    <SelectionContext.Provider value={{ selectedPlace, setSelectedPlace }}>
+    <SelectionContext.Provider value={{ selectedPlace, setSelectedPlace: setSelectedPlaceWithSource, fromMap }}>
       {children}
     </SelectionContext.Provider>
   );
