@@ -38,24 +38,24 @@ export const Header = () => {
 
   const navItems = [
     {
-      label: "Discover",
-      mobileLabel: "Discover",
+      label: "Explore",
+      mobileLabel: "Explore",
       icon: MapPin,
       to: "/",
       description: "Find your next favorite place on our interactive map",
       iconClass: "text-indigo-500",
     },
     {
-      label: "Lists",
-      mobileLabel: "Lists",
+      label: "All Collections",
+      mobileLabel: "All Collections",
       icon: Scroll,
       to: "/lists",
       description: "Create and organize lists of your favorite places",
       iconClass: "text-blue-500",
     },
     {
-      label: "Latest",
-      mobileLabel: "Latest",
+      label: "Happening Now",
+      mobileLabel: "Happening Now",
       icon: Sparkles,
       to: "/feed",
       description: "See the most recent updates and activity",

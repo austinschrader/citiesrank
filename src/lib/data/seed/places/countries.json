@@ -22,6 +22,7 @@
     "population": 67390000,
     "safetyScore": 8.5,
     "walkScore": 8.0,
+    "type": "country",
     "highlights": [
       "Eiffel Tower and Parisian landmarks",
       "French Riviera beaches",
@@ -58,6 +59,7 @@
     "population": 125700000,
     "safetyScore": 9.5,
     "walkScore": 9.0,
+    "type": "country",
     "highlights": [
       "Mount Fuji",
       "Historic Kyoto temples",
@@ -94,6 +96,7 @@
     "population": 60360000,
     "safetyScore": 8.0,
     "walkScore": 8.5,
+    "type": "country",
     "highlights": [
       "Roman ruins and history",
       "Renaissance art",
@@ -130,6 +133,7 @@
     "population": 476000000,
     "safetyScore": 8.5,
     "walkScore": 8.5,
+    "type": "country",
     "highlights": [
       "Barcelona architecture",
       "Madrid museums",
@@ -166,6 +170,7 @@
     "population": 67220000,
     "safetyScore": 8.0,
     "walkScore": 8.0,
+    "type": "country",
     "highlights": [
       "London landmarks",
       "Scottish Highlands",
@@ -202,6 +207,7 @@
     "population": 83200000,
     "safetyScore": 9.0,
     "walkScore": 8.5,
+    "type": "country",
     "highlights": [
       "Berlin Wall history",
       "Bavarian castles",
@@ -238,6 +244,7 @@
     "population": 1070000,
     "safetyScore": 8.0,
     "walkScore": 7.5,
+    "type": "country",
     "highlights": [
       "Ancient ruins",
       "Greek islands",
@@ -274,6 +281,7 @@
     "population": 1000000,
     "safetyScore": 8.5,
     "walkScore": 8.0,
+    "type": "country",
     "highlights": [
       "Historic Lisbon",
       "Porto wine culture",

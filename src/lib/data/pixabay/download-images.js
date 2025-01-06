@@ -1,15 +1,15 @@
 import axios from "axios";
+import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
 import { normalizeString } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Construct the path to .env
-const envPath = path.join(__dirname, "../.env");
+const envPath = path.join(__dirname, "../../../../.env");
 
 // Debug info
 console.log("Current directory:", __dirname);
@@ -23,7 +23,9 @@ if (fs.existsSync(envPath)) {
   console.log(
     envContents
       .split("\n")
-      .map((line) => (line.startsWith("PIXABAY_API_KEY") ? "PIXABAY_API_KEY=***" : line))
+      .map((line) =>
+        line.startsWith("PIXABAY_API_KEY") ? "PIXABAY_API_KEY=***" : line
+      )
       .join("\n")
   );
 }
@@ -39,168 +41,135 @@ console.log("VITE_PIXABAY_API_KEY exists:", !!process.env.VITE_PIXABAY_API_KEY);
 
 const API_KEY = process.env.PIXABAY_API_KEY;
 if (!API_KEY) {
-  throw new Error("Missing PIXABAY_API_KEY in environment variables. Please add it to your .env file.");
+  throw new Error(
+    "Missing PIXABAY_API_KEY in environment variables. Please add it to your .env file."
+  );
 }
 
 const BASE_URL = "https://pixabay.com/api/";
-const IMAGES_PER_CITY = 4;
+const IMAGES_PER_CITY = 1;
 
 const cities = [
-  { city: "Paris", country: "France" },
-  { city: "Versailles", country: "France" },
-  { city: "Fontainebleau", country: "France" },
-  { city: "Nice", country: "France" },
-  { city: "Marseille", country: "France" },
-  { city: "Cannes", country: "France" },
-  { city: "Aix-en-Provence", country: "France" },
-  { city: "Saint-Tropez", country: "France" },
-  { city: "Avignon", country: "France" },
+  // { city: "Concarneau", country: "France" },
+  // { city: "Rouen", country: "France" },
+  // { city: "Caen", country: "France" },
+  // { city: "Honfleur", country: "France" },
+  // { city: "Bayeux", country: "France" },
+  // { city: "Etretat", country: "France" },
+  // { city: "Mont Saint-Michel", country: "France" },
+  // { city: "Strasbourg", country: "France" },
 
-  { city: "Arles", country: "France" },
-  { city: "Grasse", country: "France" },
-  { city: "Menton", country: "France" },
-  { city: "Toulouse", country: "France" },
+  // { city: "Colmar", country: "France" },
+  // { city: "Metz", country: "France" },
+  // { city: "Reims", country: "France" },
+  // { city: "Mulhouse", country: "France" },
+  // { city: "Dijon", country: "France" },
+  // { city: "Beaune", country: "France" },
+  // { city: "Besançon", country: "France" },
+  // { city: "Auxerre", country: "France" },
 
-  { city: "Montpellier", country: "France" },
-  { city: "Carcassonne", country: "France" },
-  { city: "Albi", country: "France" },
-  { city: "Nîmes", country: "France" },
-  { city: "Collioure", country: "France" },
-  { city: "Lourdes", country: "France" },
-  { city: "Bordeaux", country: "France" },
-  { city: "Saint-Émilion", country: "France" },
-  { city: "Biarritz", country: "France" },
+  // { city: "Lyon", country: "France" },
+  // { city: "Grenoble", country: "France" },
+  // { city: "Annecy", country: "France" },
+  // { city: "Clermont-Ferrand", country: "France" },
+  // { city: "Chamonix", country: "France" },
+  // { city: "Vienne", country: "France" },
+  // { city: "Aix-les-Bains", country: "France" },
+  // { city: "Nantes", country: "France" },
 
-  { city: "Arcachon", country: "France" },
-  { city: "La Rochelle", country: "France" },
-  { city: "Cognac", country: "France" },
-  { city: "Angoulême", country: "France" },
-  { city: "Rennes", country: "France" },
-  { city: "Saint-Malo", country: "France" },
-  { city: "Quimper", country: "France" },
-  { city: "Dinan", country: "France" },
-  { city: "Vannes", country: "France" },
+  // { city: "Angers", country: "France" },
+  // { city: "Le Mans", country: "France" },
+  // { city: "La Roche-sur-Yon", country: "France" },
+  // { city: "Tours", country: "France" },
+  // { city: "Bourges", country: "France" },
+  // { city: "Orléans", country: "France" },
+  // { city: "Blois", country: "France" },
 
-  { city: "Concarneau", country: "France" },
-  { city: "Rouen", country: "France" },
-  { city: "Caen", country: "France" },
-  { city: "Honfleur", country: "France" },
-  { city: "Bayeux", country: "France" },
-  { city: "Etretat", country: "France" },
-  { city: "Mont Saint-Michel", country: "France" },
-  { city: "Strasbourg", country: "France" },
+  // { city: "Amboise", country: "France" },
+  // { city: "Ajaccio", country: "France" },
+  // { city: "Bonifacio", country: "France" },
+  // { city: "Calvi", country: "France" },
+  // { city: "Bastia", country: "France" },
+  // { city: "L'Aquila", country: "Italy" },
+  // { city: "Sulmona", country: "Italy" },
+  // { city: "Pescara", country: "Italy" },
 
-  { city: "Colmar", country: "France" },
-  { city: "Metz", country: "France" },
-  { city: "Reims", country: "France" },
-  { city: "Mulhouse", country: "France" },
-  { city: "Dijon", country: "France" },
-  { city: "Beaune", country: "France" },
-  { city: "Besançon", country: "France" },
-  { city: "Auxerre", country: "France" },
+  // { city: "Matera", country: "Italy" },
+  // { city: "Potenza", country: "Italy" },
+  // { city: "Tropea", country: "Italy" },
+  // { city: "Scilla", country: "Italy" },
+  // { city: "Reggio Calabria", country: "Italy" },
+  // { city: "Sorrento", country: "Italy" },
+  // { city: "Positano", country: "Italy" },
+  // { city: "Pompeii", country: "Italy" },
 
-  { city: "Lyon", country: "France" },
-  { city: "Grenoble", country: "France" },
-  { city: "Annecy", country: "France" },
-  { city: "Clermont-Ferrand", country: "France" },
-  { city: "Chamonix", country: "France" },
-  { city: "Vienne", country: "France" },
-  { city: "Aix-les-Bains", country: "France" },
-  { city: "Nantes", country: "France" },
+  // { city: "Ravenna", country: "Italy" },
+  // { city: "Parma", country: "Italy" },
+  // { city: "Modena", country: "Italy" },
+  // { city: "Ferrara", country: "Italy" },
+  // { city: "Trieste", country: "Italy" },
+  // { city: "Udine", country: "Italy" },
+  // { city: "Grado", country: "Italy" },
 
-  { city: "Angers", country: "France" },
-  { city: "Le Mans", country: "France" },
-  { city: "La Roche-sur-Yon", country: "France" },
-  { city: "Tours", country: "France" },
-  { city: "Bourges", country: "France" },
-  { city: "Orléans", country: "France" },
-  { city: "Blois", country: "France" },
+  // { city: "Tivoli", country: "Italy" },
+  // { city: "Viterbo", country: "Italy" },
+  // { city: "Genoa", country: "Italy" },
+  // { city: "Monterosso al Mare", country: "Italy" },
+  // { city: "Vernazza", country: "Italy" },
+  // { city: "Corniglia", country: "Italy" },
+  // { city: "Manarola", country: "Italy" },
+  // { city: "Riomaggiore", country: "Italy" },
 
-  { city: "Amboise", country: "France" },
-  { city: "Ajaccio", country: "France" },
-  { city: "Bonifacio", country: "France" },
-  { city: "Calvi", country: "France" },
-  { city: "Bastia", country: "France" },
-  { city: "L'Aquila", country: "Italy" },
-  { city: "Sulmona", country: "Italy" },
-  { city: "Pescara", country: "Italy" },
+  // { city: "Bergamo", country: "Italy" },
+  // { city: "Como", country: "Italy" },
+  // { city: "Lecco", country: "Italy" },
+  // { city: "Pavia", country: "Italy" },
+  // { city: "Ancona", country: "Italy" },
+  // { city: "Urbino", country: "Italy" },
+  // { city: "Ascoli Piceno", country: "Italy" },
+  // { city: "Campobasso", country: "Italy" },
+  // { city: "Termoli", country: "Italy" },
 
-  { city: "Matera", country: "Italy" },
-  { city: "Potenza", country: "Italy" },
-  { city: "Tropea", country: "Italy" },
-  { city: "Scilla", country: "Italy" },
-  { city: "Reggio Calabria", country: "Italy" },
-  { city: "Sorrento", country: "Italy" },
-  { city: "Positano", country: "Italy" },
-  { city: "Pompeii", country: "Italy" },
+  // { city: "Asti", country: "Italy" },
+  // { city: "Bari", country: "Italy" },
+  // { city: "Lecce", country: "Italy" },
+  // { city: "Alberobello", country: "Italy" },
+  // { city: "Polignano a Mare", country: "Italy" },
+  // { city: "Ostuni", country: "Italy" },
+  // { city: "Cagliari", country: "Italy" },
+  // { city: "Alghero", country: "Italy" },
+  // { city: "Olbia", country: "Italy" },
+  // { city: "Bosa", country: "Italy" },
+  // { city: "Palermo", country: "Italy" },
 
-  { city: "Ravenna", country: "Italy" },
-  { city: "Parma", country: "Italy" },
-  { city: "Modena", country: "Italy" },
-  { city: "Ferrara", country: "Italy" },
-  { city: "Trieste", country: "Italy" },
-  { city: "Udine", country: "Italy" },
-  { city: "Grado", country: "Italy" },
+  // { city: "Catania", country: "Italy" },
+  // { city: "Taormina", country: "Italy" },
+  // { city: "Siracusa", country: "Italy" },
+  // { city: "Agrigento", country: "Italy" },
+  // { city: "Noto", country: "Italy" },
+  // { city: "Cefalù", country: "Italy" },
+  // { city: "Lucca", country: "Italy" },
+  // { city: "Arezzo", country: "Italy" },
 
-  { city: "Tivoli", country: "Italy" },
-  { city: "Viterbo", country: "Italy" },
-  { city: "Genoa", country: "Italy" },
-  { city: "Monterosso al Mare", country: "Italy" },
-  { city: "Vernazza", country: "Italy" },
-  { city: "Corniglia", country: "Italy" },
-  { city: "Manarola", country: "Italy" },
-  { city: "Riomaggiore", country: "Italy" },
+  // { city: "Volterra", country: "Italy" },
+  // { city: "Bolzano", country: "Italy" },
+  // { city: "Trento", country: "Italy" },
+  // { city: "Merano", country: "Italy" },
+  // { city: "Bressanone", country: "Italy" },
+  // { city: "Perugia", country: "Italy" },
+  // { city: "Assisi", country: "Italy" },
+  // { city: "Todi", country: "Italy" },
+  // { city: "Norcia", country: "Italy" },
 
-  { city: "Bergamo", country: "Italy" },
-  { city: "Como", country: "Italy" },
-  { city: "Lecco", country: "Italy" },
-  { city: "Pavia", country: "Italy" },
-  { city: "Ancona", country: "Italy" },
-  { city: "Urbino", country: "Italy" },
-  { city: "Ascoli Piceno", country: "Italy" },
-  { city: "Campobasso", country: "Italy" },
-  { city: "Termoli", country: "Italy" },
+  // { city: "Spoleto", country: "Italy" },
+  // { city: "Ravello", country: "Italy" },
+  // { city: "Portofino", country: "Italy" },
+  // { city: "San Gimignano", country: "Italy" },
+  // { city: "Orvieto", country: "Italy" },
 
-  { city: "Asti", country: "Italy" },
-  { city: "Bari", country: "Italy" },
-  { city: "Lecce", country: "Italy" },
-  { city: "Alberobello", country: "Italy" },
-  { city: "Polignano a Mare", country: "Italy" },
-  { city: "Ostuni", country: "Italy" },
-  { city: "Cagliari", country: "Italy" },
-  { city: "Alghero", country: "Italy" },
-  { city: "Olbia", country: "Italy" },
-  { city: "Bosa", country: "Italy" },
-  { city: "Palermo", country: "Italy" },
-
-  { city: "Catania", country: "Italy" },
-  { city: "Taormina", country: "Italy" },
-  { city: "Siracusa", country: "Italy" },
-  { city: "Agrigento", country: "Italy" },
-  { city: "Noto", country: "Italy" },
-  { city: "Cefalù", country: "Italy" },
-  { city: "Lucca", country: "Italy" },
-  { city: "Arezzo", country: "Italy" },
-
-  { city: "Volterra", country: "Italy" },
-  { city: "Bolzano", country: "Italy" },
-  { city: "Trento", country: "Italy" },
-  { city: "Merano", country: "Italy" },
-  { city: "Bressanone", country: "Italy" },
-  { city: "Perugia", country: "Italy" },
-  { city: "Assisi", country: "Italy" },
-  { city: "Todi", country: "Italy" },
-  { city: "Norcia", country: "Italy" },
-
-  { city: "Spoleto", country: "Italy" },
-  { city: "Ravello", country: "Italy" },
-  { city: "Portofino", country: "Italy" },
-  { city: "San Gimignano", country: "Italy" },
-  { city: "Orvieto", country: "Italy" },
-
-  { city: "Padua", country: "Italy" },
-  { city: "Vicenza", country: "Italy" },
-  { city: "Treviso", country: "Italy" },
+  // { city: "Padua", country: "Italy" },
+  // { city: "Vicenza", country: "Italy" },
+  // { city: "Treviso", country: "Italy" },
   { city: "Tokyo", country: "Japan" },
 
   { city: "Kyoto", country: "Japan" },
@@ -347,7 +316,11 @@ async function searchAndDownloadCityImages() {
 
       const searchResponse = await axios.get(searchUrl);
 
-      if (!searchResponse.data || !searchResponse.data.hits || searchResponse.data.hits.length === 0) {
+      if (
+        !searchResponse.data ||
+        !searchResponse.data.hits ||
+        searchResponse.data.hits.length === 0
+      ) {
         console.log(`No images found for ${location.city}`);
         continue;
       }
@@ -359,13 +332,17 @@ async function searchAndDownloadCityImages() {
         const imageUrl = image.largeImageURL;
         const imageNumber = i + 1;
         // Use the new formatting function here
-        const filename = `${formatForFilename(location.city)}-${formatForFilename(location.country)}-${imageNumber}.jpg`;
+        const filename = `${formatForFilename(
+          location.city
+        )}-${formatForFilename(location.country)}-${imageNumber}.jpg`;
         const filepath = path.join(downloadDir, filename);
 
         // Download the image
         console.log(`Downloading image ${imageNumber} for ${location.city}...`);
         await downloadImage(imageUrl, filepath);
-        console.log(`Successfully downloaded image ${imageNumber} for ${location.city} to ${filename}`);
+        console.log(
+          `Successfully downloaded image ${imageNumber} for ${location.city} to ${filename}`
+        );
 
         // Wait for 1 second before next request to respect rate limits
         await new Promise((resolve) => setTimeout(resolve, 1000));

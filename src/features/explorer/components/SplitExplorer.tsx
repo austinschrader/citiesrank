@@ -208,7 +208,9 @@ export const SplitExplorer = () => {
                       <div className="h-full flex items-center justify-center">
                         <div className="text-center space-y-4 max-w-sm">
                           <div className="space-y-2">
-                            <p className="text-gray-500">No lists found</p>
+                            <p className="text-gray-500">
+                              No collections found
+                            </p>
                             <p className="text-sm text-muted-foreground">
                               Try zooming out or create a list
                             </p>

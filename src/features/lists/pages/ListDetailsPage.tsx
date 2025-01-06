@@ -185,7 +185,7 @@ export const ListDetailsPage = () => {
           <p className="text-muted-foreground mb-4">
             {error?.message || "Something went wrong"}
           </p>
-          <Button onClick={() => navigate("/lists")}>Back to Lists</Button>
+          <Button onClick={() => navigate("/lists")}>Back to Collections</Button>
         </div>
       </div>
     );

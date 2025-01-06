@@ -90,7 +90,7 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
                 )}
               >
                 <Scroll className="w-4 h-4" />
-                <span>Lists</span>
+                <span>Collections</span>
               </Toggle>
               <Toggle
                 pressed={viewMode === "places"}
