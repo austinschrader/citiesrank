@@ -1,19 +1,20 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
 import { getPlaceImageBySlug } from "@/lib/bunny";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { Badge, Heart, Star } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 import { useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useSelection } from "../context/SelectionContext";
 import { MapMarkerProps, MapPlace } from "../types";
+import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 
 interface PlacePopupCardProps {
   place: MapPlace;
-  onSelect?: (place: MapPlace) => void;
-  onClose?: () => void;
 }
 
 const getMarkerStyle = (
@@ -127,95 +128,134 @@ const createMarkerHtml = (
   </div>`;
 };
 
-const PlacePopupCard = ({ place, onSelect, onClose }: PlacePopupCardProps) => {
-  const { selectedPlace } = useSelection();
-  const imageUrl = getPlaceImageBySlug(place.imageUrl, 1, "thumbnail");
-  const isSelected = selectedPlace?.slug === place.slug;
+const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
+  const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
     window.open(`/places/${place.type}/${place.slug}`, "_blank");
-    onClose?.();
   };
 
   return (
-    <div className="cursor-pointer" onClick={() => onSelect?.(place)}>
-      <Card
-        className={`w-[300px] overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-200 ${
-          isSelected ? "ring-2 ring-rose-500" : ""
-        }`}
-      >
-        {/* Image Container with Like Button */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
-          {imageUrl && (
-            <div className="relative group">
-              <img
-                src={imageUrl}
-                alt={place.name}
-                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <button
-                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 hover:bg-white transition-colors duration-200"
-                onClick={(e) => e.stopPropagation()} // Prevent card click when clicking heart
+    <>
+      <Card className="w-[300px]">
+        <CardContent className="p-0">
+          {/* Image */}
+          <div className="relative aspect-video">
+            <img
+              src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
+              alt={place.name}
+              className="w-full h-full object-cover"
+            />
+            {place.type && (
+              <Badge
+                variant="outline"
+                className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
               >
-                <Heart className="w-4 h-4 text-gray-700 hover:text-rose-500 transition-colors duration-200" />
-              </button>
-            </div>
-          )}
-        </div>
-
-        <CardContent className="p-4">
-          {/* Header Section */}
-          <div className="space-y-2">
-            <div className="flex items-start justify-between">
-              <h3 className="font-semibold text-lg leading-tight line-clamp-2">
-                {place.name}
-              </h3>
-            </div>
-
-            {/* Rating and Type */}
-            <div className="flex items-center gap-2">
-              {place.averageRating && (
-                <div className="flex items-center">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="ml-1 text-sm font-medium">
-                    {place.averageRating.toFixed(1)}
-                  </span>
-                </div>
-              )}
-              {place.type && <Badge className="text-xs">{place.type}</Badge>}
-            </div>
+                {place.type}
+              </Badge>
+            )}
           </div>
 
-          {/* Description or Additional Info */}
-          {place.description && (
-            <p className="mt-2 text-sm text-gray-600 line-clamp-2">
-              {place.description}
-            </p>
-          )}
+          {/* Content */}
+          <div className="p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">{place.name}</h2>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsCollectionsDialogOpen(true)}
+                >
+                  <FolderPlus className="w-4 h-4 mr-2" />
+                  Save
+                </Button>
+                <Button size="sm" onClick={handleDetailsClick}>
+                  View Details
+                </Button>
+              </div>
+            </div>
+
+            {/* Social Stats */}
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <span>📸</span>
+                <span>24 photos</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span>⭐️</span>
+                <span>4.8 (126 reviews)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span>👥</span>
+                <span>89 visitors</span>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={() => setIsPhotoDialogOpen(true)}
+              >
+                📸 Add Photo
+              </Button>
+              <Button variant="outline" size="sm" className="flex-1">
+                ✍️ Write Review
+              </Button>
+              <Button variant="outline" size="sm" className="flex-1">
+                🎯 Check-in
+              </Button>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Recent Activity</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">
+                    Sarah added a photo • 2h ago
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">
+                    Mike wrote a review • 5h ago
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </CardContent>
-        <div className="flex justify-end p-4">
-          <Button onClick={handleDetailsClick}>View Details</Button>
-        </div>
       </Card>
-    </div>
+
+      {/* Dialogs */}
+      <SaveCollectionsDialog
+        isOpen={isCollectionsDialogOpen}
+        onClose={() => setIsCollectionsDialogOpen(false)}
+        placeId={place.id}
+      />
+      <PhotoUploadDialog
+        isOpen={isPhotoDialogOpen}
+        onClose={() => setIsPhotoDialogOpen(false)}
+        placeId={place.id}
+        placeName={place.name}
+      />
+    </>
   );
 };
 
-export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
+export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
-  const [isHovered, setIsHovered] = useState(false);
-  const navigate = useNavigate();
-
-  const handleDetailsClick = () => {
-    window.open(`/places/${place.type}/${place.slug}`, "_blank");
-  };
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const handleMarkerClick = () => {
     setSelectedPlace(place, true);
-    onSelect?.(place);
-    setIsHovered(true);
+    setIsPopupOpen(true);
   };
 
   const markerStyle = getMarkerStyle(
@@ -226,8 +266,7 @@ export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
   const markerHtml = createMarkerHtml(
     markerStyle,
     place,
-    selectedPlace?.slug === place.slug,
-    isHovered
+    selectedPlace?.slug === place.slug
   );
   const icon = L.divIcon({
     className: "custom-marker",
@@ -242,25 +281,13 @@ export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
       icon={icon}
       eventHandlers={{
         click: handleMarkerClick,
-        mouseover: () => setIsHovered(true),
-        mouseout: () => setIsHovered(false),
       }}
     >
-      <Popup
-        className="custom-popup"
-        offset={[0, -markerStyle.size / 2]}
-        closeButton={false}
-        eventHandlers={{
-          remove: () => {
-            setIsHovered(false);
-            setSelectedPlace(null);
-          },
-        }}
-      >
-        <div className="flex flex-col gap-4 min-w-[300px]">
-          <PlacePopupCard place={place} onSelect={onSelect} />
-        </div>
-      </Popup>
+      {selectedPlace?.slug === place.slug && (
+        <Popup closeButton={false} className="place-popup">
+          <PlacePopupCard place={place} />
+        </Popup>
+      )}
     </Marker>
   );
 };

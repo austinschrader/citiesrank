@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Yosemite",
+    "country": "United States",
+    "type": ["sight"],
+    "cost": 70,
+    "interesting": 95,
+    "transit": 55,
+    "description": "Iconic national park featuring granite cliffs, waterfalls, and diverse ecosystems.",
+    "population": 0,
+    "highlights": [
+      "Half Dome",
+      "Yosemite Falls",
+      "El Capitan",
+      "Glacier Point",
+      "Tunnel View",
+      "Mariposa Grove",
+      "Valley Floor"
+    ],
+    "averageRating": 4.9,
+    "totalReviews": 45000,
+    "tags": ["nature", "hiking", "outdoor"],
+    "crowdLevel": 85,
+    "recommendedStay": 96,
+    "bestSeason": 85,
+    "accessibility": 70,
+    "costIndex": 3.5,
+    "safetyScore": 8.5,
+    "walkScore": 5,
+    "transitScore": 5.5,
+    "latitude": 37.8651,
+    "longitude": -119.5383
+  }
+]
