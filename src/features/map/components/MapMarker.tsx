@@ -134,7 +134,8 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
   const navigate = useNavigate();
 
   const handleDetailsClick = () => {
-    window.open(`/places/${place.type}/${place.slug}`, "_blank");
+    // When using HashRouter, we need to include the hash (#) in the URL
+    window.open(`/#/places/${place.type}/${place.slug}`, "_blank");
   };
 
   return (
