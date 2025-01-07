@@ -124,18 +124,19 @@ export const isInPopulationRange = (
   category: PopulationCategory | null
 ): boolean => {
   if (!category) return true;
-
-  const pop = population || 0;
+  
+  // Special case: places with 0 population (like parks, landmarks) should always be shown
+  if (population === 0) return true;
 
   switch (category) {
     case "village":
-      return pop < 10000;
+      return population < 10000;
     case "town":
-      return pop >= 10000 && pop < 50000;
+      return population >= 10000 && population < 50000;
     case "city":
-      return pop >= 50000 && pop < 1000000;
+      return population >= 50000 && population < 1000000;
     case "megacity":
-      return pop >= 1000000;
+      return population >= 1000000;
     default:
       return true;
   }

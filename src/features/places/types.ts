@@ -21,7 +21,9 @@ export interface CompactPlaceCardProps extends BasePlaceCardProps {
   city: CitiesResponse;
 }
 
-export type PlaceCardProps =
-  | RankedPlaceCardProps
-  | BasicPlaceCardProps
-  | CompactPlaceCardProps;
+export type PlaceCardProps = {
+  city: CitiesResponse;
+  onClick?: () => void;
+  variant?: 'ranked' | 'basic' | 'compact';
+  matchScore?: MatchScore;
+};

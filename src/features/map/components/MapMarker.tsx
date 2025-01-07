@@ -1,12 +1,26 @@
-import { PlaceModal } from "@/features/map/components/PlaceModal";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { getPlaceImageBySlug } from "@/lib/bunny";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
+import { Badge, Heart, Star } from "lucide-react";
 import { useState } from "react";
-import { Marker } from "react-leaflet";
+import { Marker, Popup } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
+import { useSelection } from "../context/SelectionContext";
 import { MapMarkerProps, MapPlace } from "../types";
 
-// Helper functions
-const getMarkerStyle = (type?: string, rating?: number) => {
+interface PlacePopupCardProps {
+  place: MapPlace;
+  onSelect?: (place: MapPlace) => void;
+  onClose?: () => void;
+}
+
+const getMarkerStyle = (
+  type?: string,
+  rating?: number,
+  isSelected?: boolean
+) => {
   const getRatingColor = (rating?: number) => {
     if (!rating) return ratingColors.new; // Show emerald for new places
     if (rating >= 4.8) return ratingColors.best;
@@ -23,7 +37,7 @@ const getMarkerStyle = (type?: string, rating?: number) => {
       : markerColors.default;
 
   return {
-    color: typeColor,
+    color: isSelected ? "#e11d48" : typeColor, // Use rose-600 for selected markers
     ratingColor: getRatingColor(rating),
     size: 40,
   };
@@ -113,47 +127,142 @@ const createMarkerHtml = (
   </div>`;
 };
 
-export const MapMarker = ({ place, onSelect, isSelected }: MapMarkerProps) => {
-  const [showModal, setShowModal] = useState(false);
+const PlacePopupCard = ({ place, onSelect, onClose }: PlacePopupCardProps) => {
+  const { selectedPlace } = useSelection();
+  const imageUrl = getPlaceImageBySlug(place.imageUrl, 1, "thumbnail");
+  const isSelected = selectedPlace?.slug === place.slug;
+  const navigate = useNavigate();
+
+  const handleDetailsClick = () => {
+    window.open(`/places/${place.type}/${place.slug}`, "_blank");
+    onClose?.();
+  };
+
+  return (
+    <div className="cursor-pointer" onClick={() => onSelect?.(place)}>
+      <Card
+        className={`w-[300px] overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-200 ${
+          isSelected ? "ring-2 ring-rose-500" : ""
+        }`}
+      >
+        {/* Image Container with Like Button */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
+          {imageUrl && (
+            <div className="relative group">
+              <img
+                src={imageUrl}
+                alt={place.name}
+                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <button
+                className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 hover:bg-white transition-colors duration-200"
+                onClick={(e) => e.stopPropagation()} // Prevent card click when clicking heart
+              >
+                <Heart className="w-4 h-4 text-gray-700 hover:text-rose-500 transition-colors duration-200" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <CardContent className="p-4">
+          {/* Header Section */}
+          <div className="space-y-2">
+            <div className="flex items-start justify-between">
+              <h3 className="font-semibold text-lg leading-tight line-clamp-2">
+                {place.name}
+              </h3>
+            </div>
+
+            {/* Rating and Type */}
+            <div className="flex items-center gap-2">
+              {place.averageRating && (
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="ml-1 text-sm font-medium">
+                    {place.averageRating.toFixed(1)}
+                  </span>
+                </div>
+              )}
+              {place.type && <Badge className="text-xs">{place.type}</Badge>}
+            </div>
+          </div>
+
+          {/* Description or Additional Info */}
+          {place.description && (
+            <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+              {place.description}
+            </p>
+          )}
+        </CardContent>
+        <div className="flex justify-end p-4">
+          <Button onClick={handleDetailsClick}>View Details</Button>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export const MapMarker = ({ place, onSelect }: MapMarkerProps) => {
+  const { selectedPlace, setSelectedPlace } = useSelection();
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
 
-  if (!place.latitude || !place.longitude) return null;
+  const handleDetailsClick = () => {
+    window.open(`/places/${place.type}/${place.slug}`, "_blank");
+  };
 
-  const markerStyle = getMarkerStyle(place.type, place.averageRating);
+  const handleMarkerClick = () => {
+    setSelectedPlace(place, true);
+    onSelect?.(place);
+    setIsHovered(true);
+  };
 
+  const markerStyle = getMarkerStyle(
+    place.type,
+    place.averageRating,
+    selectedPlace?.slug === place.slug
+  );
+  const markerHtml = createMarkerHtml(
+    markerStyle,
+    place,
+    selectedPlace?.slug === place.slug,
+    isHovered
+  );
   const icon = L.divIcon({
     className: "custom-marker",
-    html: createMarkerHtml(markerStyle, place, isSelected, isHovered),
+    html: markerHtml,
     iconSize: [markerStyle.size, markerStyle.size],
     iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
   });
 
-  const handleMarkerClick = (e: L.LeafletMouseEvent) => {
-    L.DomEvent.stopPropagation(e);
-    setShowModal(true);
-    if (onSelect) {
-      onSelect(place);
-    }
-  };
-
   return (
-    <>
-      <Marker
-        position={[place.latitude, place.longitude]}
-        icon={icon}
+    <Marker
+      position={[place.latitude, place.longitude]}
+      icon={icon}
+      eventHandlers={{
+        click: handleMarkerClick,
+        mouseover: () => setIsHovered(true),
+        mouseout: () => setIsHovered(false),
+      }}
+    >
+      <Popup
+        className="custom-popup"
+        offset={[0, -markerStyle.size / 2]}
+        closeButton={false}
         eventHandlers={{
-          click: handleMarkerClick,
-          mouseover: () => setIsHovered(true),
-          mouseout: () => setIsHovered(false),
+          remove: () => {
+            setIsHovered(false);
+            setSelectedPlace(null);
+          },
         }}
-      />
-      {showModal && (
-        <PlaceModal
-          place={place}
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </>
+      >
+        <div className="flex flex-col gap-4 min-w-[300px]">
+          <PlacePopupCard place={place} onSelect={onSelect} />
+        </div>
+      </Popup>
+    </Marker>
   );
 };
+
+export default MapMarker;

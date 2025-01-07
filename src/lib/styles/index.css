@@ -279,3 +279,37 @@ button:focus-visible {
 .dark .gutter:hover {
   background-color: rgb(99, 102, 241);
 }
+
+/* Custom Map Popup Styles */
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  min-width: 200px;
+}
+
+.leaflet-popup-tip-container {
+  width: 24px !important;
+  height: 12px !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.custom-popup .leaflet-popup-close-button {
+  padding: 8px !important;
+  color: #666 !important;
+  transition: all 0.2s ease;
+}
+
+.custom-popup .leaflet-popup-close-button:hover {
+  color: #000 !important;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+}

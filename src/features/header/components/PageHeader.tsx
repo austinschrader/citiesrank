@@ -35,7 +35,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
     // Then check if we're in discover mode with a specific view mode
     if (mode === "discover") {
       if (viewMode === "lists") {
-        return "Discover Curated Lists";
+        return "Discover Curated Collections";
       }
 
       // For places view, use the energy mode titles

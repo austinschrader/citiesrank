@@ -94,15 +94,13 @@ export function filterPlacesByZoom(
 
   if (zoom > 8) {
     return places.filter(place => {
-      // Always show sights when zoomed in this far
-      if (place.type === CitiesTypeOptions.sight) {
+      // Always show cities, neighborhoods, and sights when zoomed in this far
+      if (
+        place.type === CitiesTypeOptions.city || 
+        place.type === CitiesTypeOptions.sight ||
+        place.type === CitiesTypeOptions.neighborhood
+      ) {
         return true;
-      }
-      // Show cities with population > 10k
-      if (place.type === CitiesTypeOptions.city) {
-        const population = getPopulation(place);
-        const show = population > 10000;
-        return show;
       }
       // For other types, use importance if available
       const importance = (place.averageRating || 0) * (place.totalReviews || 0);
@@ -111,13 +109,12 @@ export function filterPlacesByZoom(
   }
 
   return places.filter(place => {
-    // At lower zoom levels, be more selective
+    // At lower zoom levels, show all cities but be selective with other types
     if (place.type === CitiesTypeOptions.city) {
-      const population = getPopulation(place);
-      return population > 50000;
+      return true;
     }
-    // Don't show sights at low zoom levels
-    if (place.type === CitiesTypeOptions.sight) {
+    // Don't show sights or neighborhoods at low zoom levels
+    if (place.type === CitiesTypeOptions.sight || place.type === CitiesTypeOptions.neighborhood) {
       return false;
     }
     const importance = (place.averageRating || 0) * (place.totalReviews || 0);

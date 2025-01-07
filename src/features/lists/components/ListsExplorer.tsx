@@ -29,7 +29,7 @@ export const ListsExplorer = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Explore Lists</h1>
+          <h1 className="text-3xl font-bold mb-2">Explore Collections</h1>
           <p className="text-gray-600">
             Discover curated collections of amazing places
           </p>
@@ -51,7 +51,7 @@ export const ListsExplorer = () => {
 
         {lists.length === 0 && (
           <div className="text-center text-gray-500 py-8">
-            No lists found. Create your first list!
+            No collections found. Create your first list!
           </div>
         )}
       </div>
