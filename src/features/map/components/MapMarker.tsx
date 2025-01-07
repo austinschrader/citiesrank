@@ -206,9 +206,6 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
               <Button variant="outline" size="sm" className="flex-1">
                 ✍️ Write Review
               </Button>
-              <Button variant="outline" size="sm" className="flex-1">
-                🎯 Check-in
-              </Button>
             </div>
 
             {/* Recent Activity */}
