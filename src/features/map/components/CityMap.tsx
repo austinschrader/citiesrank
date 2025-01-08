@@ -10,6 +10,7 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
+import "leaflet/dist/leaflet.css";
 import { Filter, Loader2, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -17,6 +18,9 @@ import {
   TileLayer,
   useMap as useLeafletMap,
 } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import "react-leaflet-cluster/lib/assets/MarkerCluster.css";
+import "react-leaflet-cluster/lib/assets/MarkerCluster.Default.css";
 import { useMap } from "../context/MapContext";
 import { MapControls } from "./MapControls";
 import { MapLegend } from "./MapLegend";
@@ -124,17 +128,26 @@ export const CityMap = ({ className }: CityMapProps) => {
             [90, 180],
           ]}
           maxBoundsViscosity={1.0}
+          maxZoom={22}
         >
           <BoundsTracker />
           <MapControls onZoomChange={setZoom} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+            maxZoom={22}
           />
           {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
-          {prioritizedPlaces.map((place) => (
-            <MapMarker key={place.id} place={place} />
-          ))}
+          <MarkerClusterGroup
+            chunkedLoading
+            maxClusterRadius={60}
+            spiderfyOnMaxZoom={true}
+            disableClusteringAtZoom={20}
+          >
+            {prioritizedPlaces.map((place) => (
+              <MapMarker key={place.id} place={place} />
+            ))}
+          </MarkerClusterGroup>
         </MapContainer>
 
         {/* Status Indicator */}
