@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFeed } from "../context/FeedContext";
-import { useState } from "react";
 import {
   FeedItem,
   FriendActivityItem,
@@ -147,7 +146,11 @@ export const FeedView = () => {
           {item.content.images.map((image, idx) => (
             <img
               key={idx}
-              src={getPlaceImageBySlug(image.replace(/-1$/, ""), 1, "standard")}
+              src={getPlaceImageBySlug(
+                image.replace(/-1$/, ""),
+                1,
+                "thumbnail"
+              )}
               alt={`Update from ${item.place.name}`}
               className="w-full h-24 object-cover rounded-lg"
             />
@@ -183,7 +186,7 @@ export const FeedView = () => {
               src={getPlaceImageBySlug(
                 place.imageUrl.replace(/-1$/, ""),
                 1,
-                "standard"
+                "thumbnail"
               )}
               alt={place.name}
               className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
@@ -238,7 +241,7 @@ export const FeedView = () => {
                   src={getPlaceImageBySlug(
                     place.imageUrl.replace(/-1$/, ""),
                     1,
-                    "standard"
+                    "thumbnail"
                   )}
                   alt={place.name}
                   className="w-full h-24 object-cover rounded-lg"
@@ -304,7 +307,7 @@ export const FeedView = () => {
               src={getPlaceImageBySlug(
                 place.imageUrl.replace(/-1$/, ""),
                 1,
-                "standard"
+                "thumbnail"
               )}
               alt={place.name}
               className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
@@ -326,7 +329,7 @@ export const FeedView = () => {
         {item.topPhotos.map((photo, idx) => (
           <img
             key={idx}
-            src={getPlaceImageBySlug(photo.replace(/-1$/, ""), 1, "standard")}
+            src={getPlaceImageBySlug(photo.replace(/-1$/, ""), 1, "thumbnail")}
             alt={`Challenge photo ${idx + 1}`}
             className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
           />
@@ -371,7 +374,7 @@ export const FeedView = () => {
           src={getPlaceImageBySlug(
             item.sight.image.replace(/-1$/, ""),
             1,
-            "standard"
+            "thumbnail"
           )}
           alt={item.sight.name}
           className="w-full h-32 object-cover rounded-lg"

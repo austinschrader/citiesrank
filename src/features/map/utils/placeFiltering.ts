@@ -78,16 +78,9 @@ const getPopulation = (place: MapPlace): number => {
 export function filterPlacesByZoom(
   places: MapPlace[],
   zoom: number,
-  populationCategory: PopulationCategory | null
+  populationCategory: PopulationCategory | null = null
 ): MapPlace[] {
-  if (populationCategory) {
-    return places.filter(
-      (place) =>
-      place.type !== CitiesTypeOptions.city || 
-      isInPopulationRange(place.population, populationCategory)
-    );
-  }
-
+  // Remove population category filtering
   if (zoom > 12) {
     return places;
   }
@@ -189,30 +182,4 @@ export function filterPlacesByType(
     const isActive = activeTypes.includes(place.type as CitiesTypeOptions);
     return isActive;
   });
-}
-
-/**
- * Checks if a place's population falls within a specified range.
- * 
- * @param population - Population of the place
- * @param category - Population category to check against
- * @returns True if the place's population falls within the category's range
- */
-function isInPopulationRange(population: number | undefined, category: PopulationCategory | null): boolean {
-  if (!category) return true;
-  
-  const pop = population || 0;
-  
-  switch (category) {
-    case "village":
-      return pop < 10000;
-    case "town":
-      return pop >= 10000 && pop < 50000;
-    case "city":
-      return pop >= 50000 && pop < 1000000;
-    case "megacity":
-      return pop >= 1000000;
-    default:
-      return true;
-  }
 }
