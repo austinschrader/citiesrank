@@ -5,23 +5,23 @@
  * Uses MapContext for state management and Leaflet for map rendering.
  */
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { useCities } from "@/features/places/context/CitiesContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { cn } from "@/lib/utils";
+import { Filter, Loader2, Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
   TileLayer,
   useMap as useLeafletMap,
 } from "react-leaflet";
 import { useMap } from "../context/MapContext";
-import { MapCluster } from "./MapCluster";
 import { MapControls } from "./MapControls";
 import { MapLegend } from "./MapLegend";
+import { MapMarker } from "./MapMarker";
 import { PlaceGeoJson } from "./PlaceGeoJson";
-import { useFilters } from "@/features/places/context/FiltersContext";
-import { Button } from "@/components/ui/button";
-import { useCities } from "@/features/places/context/CitiesContext";
-import { Filter, Loader2, Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -62,7 +62,8 @@ export const CityMap = ({ className }: CityMapProps) => {
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     viewMode,
-    setVisiblePlaces
+    setVisiblePlaces,
+    prioritizedPlaces,
   } = useMap();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -78,8 +79,8 @@ export const CityMap = ({ className }: CityMapProps) => {
         tripLength: 1,
         season: filters.season ? 1 : 0,
         transit: 1,
-        accessibility: 1
-      }
+        accessibility: 1,
+      },
     }));
   }, [cities, getFilteredCities, filters]);
 
@@ -89,11 +90,11 @@ export const CityMap = ({ className }: CityMapProps) => {
   }, [filteredCities, setVisiblePlaces]);
 
   // Check if any filters are active
-  const hasActiveFilters = 
-    filters.search || 
-    filters.averageRating || 
-    filters.populationCategory || 
-    (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length);
+  const hasActiveFilters =
+    filters.search ||
+    filters.averageRating ||
+    filters.populationCategory ||
+    filters.activeTypes.length !== Object.values(CitiesTypeOptions).length;
 
   const hasMore = useCallback(() => {
     return numPrioritizedToShow < visiblePlacesInView.length;
@@ -125,32 +126,28 @@ export const CityMap = ({ className }: CityMapProps) => {
           maxBoundsViscosity={1.0}
         >
           <BoundsTracker />
-          <MapControls
-            onZoomChange={setZoom}
-          />
+          <MapControls onZoomChange={setZoom} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
           />
-          {/* Map Markers */}
-          <MapCluster />
-          {selectedPlace && (
-            <PlaceGeoJson
-              key={`geojson-${selectedPlace.id}`}
-              place={selectedPlace}
-            />
-          )}
+          {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
+          {prioritizedPlaces.map((place) => (
+            <MapMarker key={place.id} place={place} />
+          ))}
         </MapContainer>
 
         {/* Status Indicator */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
           <div className="flex flex-col items-center gap-2">
             {isLoadingMore ? (
-              <div className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-full",
-                "bg-background/95 backdrop-blur-sm shadow-lg border",
-                "text-foreground animate-in fade-in slide-in-from-top-2"
-              )}>
+              <div
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 rounded-full",
+                  "bg-background/95 backdrop-blur-sm shadow-lg border",
+                  "text-foreground animate-in fade-in slide-in-from-top-2"
+                )}
+              >
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Loading more places...</span>
               </div>
@@ -166,12 +163,16 @@ export const CityMap = ({ className }: CityMapProps) => {
               </Button>
             ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
               <div className="flex flex-col sm:flex-row items-center gap-2">
-                <div className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full",
-                  "bg-background/95 backdrop-blur-sm shadow-lg border",
-                  "text-muted-foreground text-sm sm:text-base"
-                )}>
-                  <span className="whitespace-nowrap">All {visiblePlacesInView.length} places loaded</span>
+                <div
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-full",
+                    "bg-background/95 backdrop-blur-sm shadow-lg border",
+                    "text-muted-foreground text-sm sm:text-base"
+                  )}
+                >
+                  <span className="whitespace-nowrap">
+                    All {visiblePlacesInView.length} places loaded
+                  </span>
                 </div>
                 <Button
                   variant="outline"

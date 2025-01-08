@@ -96,11 +96,7 @@ interface MapContextValue extends MapState {
   prioritizedPlaces: MapPlace[];
   getVisiblePlacesForCurrentView: (allPlaces: MapPlace[]) => MapPlace[];
   getVisiblePlaceTypes: (zoom: number) => CitiesTypeOptions[];
-  filterPlacesByZoom: (
-    places: MapPlace[],
-    zoom: number,
-    populationCategoryActive?: boolean
-  ) => MapPlace[];
+  filterPlacesByZoom: (places: MapPlace[], zoom: number) => MapPlace[];
   getPlaceGeoJson: (place: MapPlace) => Promise<FeatureCollection>;
   calculateMapBounds: (place: MapPlace) => {
     center: LatLngTuple;
@@ -196,9 +192,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const filterPlacesByZoomCallback = useCallback(
     (places: MapPlace[]): MapPlace[] => {
-      return filterPlacesByZoom(places, state.zoom, filters.populationCategory);
+      return filterPlacesByZoom(places, state.zoom, null);
     },
-    [state.zoom, filters.populationCategory]
+    [state.zoom]
   );
 
   const getVisiblePlacesForCurrentView = useCallback(
