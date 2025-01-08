@@ -298,22 +298,16 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
 
 export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  const handleMarkerClick = () => {
-    setSelectedPlace(place, true);
-    setIsPopupOpen(true);
-  };
 
   const markerStyle = getMarkerStyle(
     place.type,
     place.averageRating,
-    selectedPlace?.slug === place.slug
+    selectedPlace?.id === place.id
   );
   const markerHtml = createMarkerHtml(
     markerStyle,
     place,
-    selectedPlace?.slug === place.slug
+    selectedPlace?.id === place.id
   );
   const icon = L.divIcon({
     className: "custom-marker",
@@ -327,14 +321,15 @@ export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
       position={[place.latitude, place.longitude]}
       icon={icon}
       eventHandlers={{
-        click: handleMarkerClick,
+        click: (e) => {
+          e.originalEvent.stopPropagation();
+          setSelectedPlace(place, true);
+        }
       }}
     >
-      {selectedPlace?.slug === place.slug && (
-        <Popup closeButton={false} className="place-popup">
-          <PlacePopupCard place={place} />
-        </Popup>
-      )}
+      <Popup closeButton={false} className="place-popup">
+        <PlacePopupCard place={place} />
+      </Popup>
     </Marker>
   );
 };
