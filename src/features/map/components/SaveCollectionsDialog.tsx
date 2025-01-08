@@ -93,24 +93,39 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
         return;
       }
 
-      // Add to existing collections
-      await Promise.all(
-        selectedCollections.map((listId) =>
-          addPlaceToList(listId, { id: placeId } as any)
-        )
-      );
+      // Get current list_places records
+      const currentRecords = await pb.collection('list_places').getFullList({
+        filter: `place = "${placeId}"`,
+        $autoCancel: false
+      });
+
+      // Delete records that are no longer selected
+      const deletePromises = currentRecords
+        .filter(record => !selectedCollections.includes(record.list))
+        .map(record => pb.collection('list_places').delete(record.id));
+
+      // Add to newly selected collections
+      const currentListIds = currentRecords.map(record => record.list);
+      const addPromises = selectedCollections
+        .filter(listId => !currentListIds.includes(listId))
+        .map(listId => addPlaceToList(listId, { id: placeId } as any));
+
+      await Promise.all([...deletePromises, ...addPromises]);
+
+      const message = selectedCollections.length === 0
+        ? "Removed from all collections"
+        : `Added to ${selectedCollections.length} collection${selectedCollections.length === 1 ? "" : "s"}`;
 
       toast({
-        title: "Place saved",
-        description: `Added to ${selectedCollections.length} collection${
-          selectedCollections.length === 1 ? "" : "s"
-        }.`,
+        title: "Changes saved",
+        description: message,
       });
       onClose();
     } catch (error) {
+      console.error('Error saving place:', error);
       toast({
         title: "Error",
-        description: "Failed to save place to collection(s).",
+        description: "Failed to save changes. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -118,11 +133,11 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
     }
   };
 
-  const toggleCollection = (collectionId: string) => {
-    setSelectedCollections((prev) =>
-      prev.includes(collectionId)
-        ? prev.filter((id) => id !== collectionId)
-        : [...prev, collectionId]
+  const toggleCollection = (listId: string) => {
+    setSelectedCollections(prev =>
+      prev.includes(listId)
+        ? prev.filter(id => id !== listId)
+        : [...prev, listId]
     );
   };
 
@@ -206,11 +221,7 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
           {/* Save Button */}
           <div className="flex justify-end">
             <Button
-              disabled={
-                isSaving ||
-                (!isCreatingNew && selectedCollections.length === 0) ||
-                (isCreatingNew && !newCollectionName.trim())
-              }
+              disabled={isSaving || (isCreatingNew && !newCollectionName.trim())}
               onClick={handleSave}
             >
               {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

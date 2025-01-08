@@ -1,12 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
 import { getPlaceImageBySlug } from "@/lib/bunny";
+import { pb } from "@/lib/pocketbase";
+import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { FolderPlus } from "lucide-react";
-import { useState } from "react";
+import { Check, FolderPlus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useSelection } from "../context/SelectionContext";
@@ -131,10 +134,30 @@ const createMarkerHtml = (
 const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
   const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const checkIfSaved = async () => {
+      if (!user) return;
+
+      try {
+        const savedLists = await pb.collection("list_places").getList(1, 1, {
+          filter: `place = "${place.id}"`,
+          $autoCancel: false,
+        });
+
+        setIsSaved(savedLists.totalItems > 0);
+      } catch (error) {
+        console.error("Error checking if place is saved:", error);
+      }
+    };
+
+    checkIfSaved();
+  }, [place.id, user]);
+
   const handleDetailsClick = () => {
-    // When using HashRouter, we need to include the hash (#) in the URL
     window.open(`/#/places/${place.type}/${place.slug}`, "_blank");
   };
 
@@ -165,12 +188,25 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
               <h2 className="text-xl font-semibold">{place.name}</h2>
               <div className="flex items-center gap-2">
                 <Button
-                  variant="outline"
+                  variant={isSaved ? "secondary" : "outline"}
                   size="sm"
                   onClick={() => setIsCollectionsDialogOpen(true)}
+                  className={cn(
+                    "transition-all duration-200",
+                    isSaved && "bg-green-50 text-green-600 hover:bg-green-100"
+                  )}
                 >
-                  <FolderPlus className="w-4 h-4 mr-2" />
-                  Save
+                  {isSaved ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      Saved
+                    </>
+                  ) : (
+                    <>
+                      <FolderPlus className="w-4 h-4 mr-2" />
+                      Save
+                    </>
+                  )}
                 </Button>
                 <Button size="sm" onClick={handleDetailsClick}>
                   View Details
@@ -231,12 +267,25 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
         </CardContent>
       </Card>
 
-      {/* Dialogs */}
-      <SaveCollectionsDialog
-        isOpen={isCollectionsDialogOpen}
-        onClose={() => setIsCollectionsDialogOpen(false)}
-        placeId={place.id}
-      />
+      {isCollectionsDialogOpen && (
+        <SaveCollectionsDialog
+          isOpen={isCollectionsDialogOpen}
+          onClose={() => {
+            setIsCollectionsDialogOpen(false);
+            // Refresh saved status after dialog closes
+            if (user) {
+              pb.collection("list_places")
+                .getList(1, 1, {
+                  filter: `place = "${place.id}"`,
+                  $autoCancel: false,
+                })
+                .then((result) => setIsSaved(result.totalItems > 0));
+            }
+          }}
+          placeId={place.id}
+        />
+      )}
+
       <PhotoUploadDialog
         isOpen={isPhotoDialogOpen}
         onClose={() => setIsPhotoDialogOpen(false)}
