@@ -22,11 +22,12 @@ import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { DiscoveryPage } from "./pages/DiscoveryPage";
+import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./features/header/context/HeaderContext";
 import { LocationProvider } from "./features/location/context/LocationContext";
-import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 
 function App() {
   const [isNewUser, setIsNewUser] = useState(true);
@@ -51,6 +52,10 @@ function App() {
                                   <Route
                                     path="/explore"
                                     element={<PlacesPage />}
+                                  />
+                                  <Route
+                                    path="/discover"
+                                    element={<DiscoveryPage />}
                                   />
                                   <Route
                                     path="/favorites"

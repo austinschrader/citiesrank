@@ -1,17 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { getImageUrl } from "@/lib/bunny";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { Check, FolderPlus } from "lucide-react";
-import React, { useState } from "react";
-
-interface Collection {
-  id: string;
-  name: string;
-  imageUrl: string;
-  placeCount: number;
-}
+import { Check, FolderPlus, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useLists } from "@/features/lists/context/ListsContext";
+import { ExpandedList } from "@/features/lists/types";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { pb } from "@/lib/pocketbase";
 
 interface SaveCollectionsDialogProps {
   isOpen: boolean;
@@ -19,71 +16,129 @@ interface SaveCollectionsDialogProps {
   placeId: string;
 }
 
-const christmasMarketImage = getImageUrl("strasbourg-france-1", "thumbnail");
-const italyImage = getImageUrl("portofino-italy-3", "thumbnail");
-const germanyImage = getImageUrl("trier-germany-1", "thumbnail");
-const franceImage = getImageUrl("strasbourg-france-1", "thumbnail");
-
-// Mock data for collections
-const mockCollections: Collection[] = [
-  {
-    id: "1",
-    name: "Christmas Markets 2024",
-    imageUrl: christmasMarketImage,
-    placeCount: 12,
-  },
-  {
-    id: "2",
-    name: "German Castles",
-    imageUrl: germanyImage,
-    placeCount: 8,
-  },
-  {
-    id: "3",
-    name: "Mediterranean Summer",
-    imageUrl: italyImage,
-    placeCount: 15,
-  },
-  {
-    id: "4",
-    name: "Hidden Gems",
-    imageUrl: franceImage,
-    placeCount: 23,
-  },
-];
-
 export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
   isOpen,
   onClose,
   placeId,
 }) => {
-  const [collections, setCollections] = useState<Collection[]>(mockCollections);
+  const { lists, getUserLists, createList, addPlaceToList, isLoading: listsLoading } = useLists();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [userLists, setUserLists] = useState<ExpandedList[]>([]);
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
-  const toggleCollection = (collectionId: string) => {
-    setSelectedCollections((prev) =>
-      prev.includes(collectionId)
-        ? prev.filter((id) => id !== collectionId)
-        : [...prev, collectionId]
-    );
+  // Fetch user's lists and check which ones contain the place
+  useEffect(() => {
+    if (isOpen && user && !initialLoadDone) {
+      const loadData = async () => {
+        try {
+          const lists = await getUserLists();
+          setUserLists(lists);
+
+          // Find which lists contain this place
+          const containingLists = await pb.collection('list_places').getList(1, 50, {
+            filter: `place = "${placeId}"`,
+            $autoCancel: false
+          });
+
+          const listIds = containingLists.items.map(item => item.list);
+          setSelectedCollections(listIds);
+          setInitialLoadDone(true);
+        } catch (error) {
+          console.error('Error loading lists:', error);
+        }
+      };
+
+      loadData();
+    }
+  }, [isOpen, user, getUserLists, placeId, initialLoadDone]);
+
+  // Reset state when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setInitialLoadDone(false);
+      setIsCreatingNew(false);
+      setNewCollectionName("");
+    }
+  }, [isOpen]);
+
+  const handleSave = async () => {
+    if (!user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be signed in to save places to collections.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+
+      // If creating a new collection
+      if (isCreatingNew && newCollectionName.trim()) {
+        const newList = await createList({
+          title: newCollectionName.trim(),
+          places: [placeId],
+        });
+        toast({
+          title: "Collection created",
+          description: `Created "${newCollectionName}" and added place.`,
+        });
+        onClose();
+        return;
+      }
+
+      // Get current list_places records
+      const currentRecords = await pb.collection('list_places').getFullList({
+        filter: `place = "${placeId}"`,
+        $autoCancel: false
+      });
+
+      // Delete records that are no longer selected
+      const deletePromises = currentRecords
+        .filter(record => !selectedCollections.includes(record.list))
+        .map(record => pb.collection('list_places').delete(record.id));
+
+      // Add to newly selected collections
+      const currentListIds = currentRecords.map(record => record.list);
+      const addPromises = selectedCollections
+        .filter(listId => !currentListIds.includes(listId))
+        .map(listId => addPlaceToList(listId, { id: placeId } as any));
+
+      await Promise.all([...deletePromises, ...addPromises]);
+
+      const message = selectedCollections.length === 0
+        ? "Removed from all collections"
+        : `Added to ${selectedCollections.length} collection${selectedCollections.length === 1 ? "" : "s"}`;
+
+      toast({
+        title: "Changes saved",
+        description: message,
+      });
+      onClose();
+    } catch (error) {
+      console.error('Error saving place:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save changes. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const createNewCollection = () => {
-    if (!newCollectionName.trim()) return;
-
-    const newCollection: Collection = {
-      id: Date.now().toString(),
-      name: newCollectionName,
-      imageUrl: "/api/placeholder/400/400",
-      placeCount: 1,
-    };
-
-    setCollections((prev) => [newCollection, ...prev]);
-    setSelectedCollections((prev) => [...prev, newCollection.id]);
-    setNewCollectionName("");
-    setIsCreatingNew(false);
+  const toggleCollection = (listId: string) => {
+    setSelectedCollections(prev =>
+      prev.includes(listId)
+        ? prev.filter(id => id !== listId)
+        : [...prev, listId]
+    );
   };
 
   return (
@@ -102,76 +157,77 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
                 placeholder="Collection name"
                 value={newCollectionName}
                 onChange={(e) => setNewCollectionName(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && createNewCollection()}
-                className="flex-1"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && newCollectionName.trim()) {
+                    handleSave();
+                  }
+                }}
               />
-              <Button size="sm" onClick={createNewCollection}>
-                Create
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setIsCreatingNew(false);
+                  setNewCollectionName("");
+                }}
+              >
+                Cancel
               </Button>
             </div>
           ) : (
             <Button
               variant="outline"
-              className="w-full flex items-center gap-2 h-12"
+              className="w-full justify-start"
               onClick={() => setIsCreatingNew(true)}
             >
-              <FolderPlus className="w-4 h-4" />
+              <FolderPlus className="w-4 h-4 mr-2" />
               Create New Collection
             </Button>
           )}
 
-          {/* Collections Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            {collections.map((collection) => (
-              <button
-                key={collection.id}
-                onClick={() => toggleCollection(collection.id)}
-                className={cn(
-                  "group relative aspect-square overflow-hidden rounded-xl border-2",
-                  "transition-all duration-200",
-                  selectedCollections.includes(collection.id)
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-transparent hover:border-primary/50"
-                )}
-              >
-                <img
-                  src={collection.imageUrl}
-                  alt={collection.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <p className="text-sm font-medium text-white line-clamp-1">
-                    {collection.name}
-                  </p>
-                  <p className="text-xs text-white/70">
-                    {collection.placeCount} places
-                  </p>
-                </div>
-                <div
+          {/* Existing Collections */}
+          {listsLoading || !initialLoadDone ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : userLists.length > 0 ? (
+            <div className="space-y-2">
+              {userLists.map((list) => (
+                <button
+                  key={list.id}
                   className={cn(
-                    "absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center",
-                    "transition-all duration-200",
-                    selectedCollections.includes(collection.id)
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-black/50 text-white/70"
+                    "w-full flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors",
+                    selectedCollections.includes(list.id) && "bg-accent"
                   )}
+                  onClick={() => toggleCollection(list.id)}
                 >
-                  <Check className="w-4 h-4" />
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+                  <div className="flex-1 text-left">
+                    <div className="font-medium">{list.title}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {list.place_count || 0} places
+                    </div>
+                  </div>
+                  {selectedCollections.includes(list.id) && (
+                    <Check className="w-4 h-4 text-primary" />
+                  )}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              No collections yet
+            </div>
+          )}
 
-        {/* Bottom Actions */}
-        <div className="border-t p-4 flex justify-end gap-2 bg-muted/50">
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={onClose} disabled={selectedCollections.length === 0}>
-            Save
-          </Button>
+          {/* Save Button */}
+          <div className="flex justify-end">
+            <Button
+              disabled={isSaving || (isCreatingNew && !newCollectionName.trim())}
+              onClick={handleSave}
+            >
+              {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Save
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -61,6 +61,14 @@ export const Header = () => {
       description: "See the most recent updates and activity",
       iconClass: "text-green-500",
     },
+    {
+      label: "Achievements",
+      mobileLabel: "Achievements",
+      icon: Sparkles,
+      to: "/discover",
+      description: "Discover hidden gems and share your finds",
+      iconClass: "text-purple-500",
+    },
     // Only show admin links to admin users
     ...(user?.isAdmin
       ? [

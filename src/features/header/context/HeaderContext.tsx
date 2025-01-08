@@ -41,7 +41,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("lists");
+  const [viewMode, setViewMode] = useState<ViewMode>("places");
   const [itemsPerPage, setItemsPerPage] = useState<number>(25);
   const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
 
