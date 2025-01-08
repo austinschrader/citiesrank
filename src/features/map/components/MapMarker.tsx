@@ -296,19 +296,16 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
   );
 };
 
+/**
+ * file location: src/features/map/components/MapMarker.tsx
+ * Renders an individual map marker with a popup. Uses SelectionContext for
+ * marker selection state and PlacePopupCard for popup content.
+ */
 export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
 
-  const markerStyle = getMarkerStyle(
-    place.type,
-    place.averageRating,
-    selectedPlace?.id === place.id
-  );
-  const markerHtml = createMarkerHtml(
-    markerStyle,
-    place,
-    selectedPlace?.id === place.id
-  );
+  const markerStyle = getMarkerStyle(place.type, place.averageRating);
+  const markerHtml = createMarkerHtml(markerStyle, place);
   const icon = L.divIcon({
     className: "custom-marker",
     html: markerHtml,
@@ -324,10 +321,10 @@ export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
         click: (e) => {
           e.originalEvent.stopPropagation();
           setSelectedPlace(place, true);
-        }
+        },
       }}
     >
-      <Popup closeButton={false} className="place-popup">
+      <Popup closeButton={false} className="place-popup" offset={[0, -20]}>
         <PlacePopupCard place={place} />
       </Popup>
     </Marker>
