@@ -1,4 +1,4 @@
-import { uploadImage } from "@/lib/cloudinary";
+// import { uploadImage } from "@/lib/cloudinary";
 import { CitiesRecord, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { ClientResponseError } from "pocketbase";
 import slugify from "slugify";
@@ -198,11 +198,11 @@ export const uploadPlace = async (
     // Upload image to Cloudinary if provided
     if (imageFile) {
       try {
-        const publicId = await uploadImage(
-          imageFile,
-          validationResult.data.slug
-        );
-        validationResult.data.imageUrl = publicId;
+        // const publicId = await uploadImage(
+        //   imageFile,
+        //   validationResult.data.slug
+        // );
+        // validationResult.data.imageUrl = publicId;
       } catch (error) {
         return {
           success: false,
