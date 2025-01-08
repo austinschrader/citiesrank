@@ -18,9 +18,9 @@ import {
   useMap as useLeafletMap,
 } from "react-leaflet";
 import { useMap } from "../context/MapContext";
+import { MapCluster } from "./MapCluster";
 import { MapControls } from "./MapControls";
 import { MapLegend } from "./MapLegend";
-import { MapMarker } from "./MapMarker";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
 const pageSizeOptions = [15, 25, 50, 100];
@@ -132,9 +132,7 @@ export const CityMap = ({ className }: CityMapProps) => {
             url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
           />
           {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
-          {prioritizedPlaces.map((place) => (
-            <MapMarker key={place.id} place={place} />
-          ))}
+          <MapCluster />
         </MapContainer>
 
         {/* Status Indicator */}

@@ -5,19 +5,19 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
 import { getPlaceImageBySlug } from "@/lib/bunny";
 import { pb } from "@/lib/pocketbase";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
 import { Check, FolderPlus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useSelection } from "../context/SelectionContext";
-import { MapMarkerProps, MapPlace } from "../types";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 
 interface PlacePopupCardProps {
-  place: MapPlace;
+  place: CitiesResponse;
 }
 
 const getMarkerStyle = (
@@ -49,9 +49,10 @@ const getMarkerStyle = (
 
 const createMarkerHtml = (
   style: ReturnType<typeof getMarkerStyle>,
-  place: MapPlace,
+  place: CitiesResponse,
   isSelected?: boolean,
-  isHovered?: boolean
+  isHovered?: boolean,
+  clusterCount?: number
 ) => {
   const rating = place.averageRating ? place.averageRating.toFixed(1) : null;
   const scale = isSelected ? (isHovered ? 1.25 : 1.2) : isHovered ? 1.05 : 1;
@@ -125,6 +126,17 @@ const createMarkerHtml = (
                 color: #ffffff;
                 text-shadow: 0 1px 2px rgba(0,0,0,0.1);
               ">✨</div>`
+        }
+        ${
+          clusterCount
+            ? `<div style="
+          font-size: 12px;
+          font-weight: 600;
+          color: #ffffff;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+          margin-top: 4px;
+        ">+${clusterCount}</div>`
+            : ""
         }
       </div>
     </div>
@@ -301,17 +313,45 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
  * Renders an individual map marker with a popup. Uses SelectionContext for
  * marker selection state and PlacePopupCard for popup content.
  */
-export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
+interface MapMarkerProps {
+  place: CitiesResponse;
+  onSelect?: (place: CitiesResponse | null) => void;
+  clusterCount?: number;
+}
+
+export const MapMarker: React.FC<MapMarkerProps> = ({
+  place,
+  onSelect,
+  clusterCount,
+}) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
 
-  const markerStyle = getMarkerStyle(place.type, place.averageRating);
-  const markerHtml = createMarkerHtml(markerStyle, place);
-  const icon = L.divIcon({
-    className: "custom-marker",
-    html: markerHtml,
-    iconSize: [markerStyle.size, markerStyle.size],
-    iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
-  });
+  const markerStyle = useMemo(
+    () => getMarkerStyle(place.type, place.averageRating),
+    [place.type, place.averageRating]
+  );
+  const markerHtml = useMemo(
+    () =>
+      createMarkerHtml(
+        markerStyle,
+        place,
+        selectedPlace?.id === place.id,
+        false,
+        clusterCount
+      ),
+    [markerStyle, place, selectedPlace?.id, clusterCount]
+  );
+
+  const icon = useMemo(
+    () =>
+      L.divIcon({
+        html: markerHtml,
+        className: "custom-marker",
+        iconSize: [markerStyle.size, markerStyle.size],
+        iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
+      }),
+    [markerHtml, markerStyle.size]
+  );
 
   return (
     <Marker
@@ -321,6 +361,7 @@ export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
         click: (e) => {
           e.originalEvent.stopPropagation();
           setSelectedPlace(place, true);
+          onSelect?.(place);
         },
       }}
     >

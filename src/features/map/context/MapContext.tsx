@@ -232,20 +232,27 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     if (!mapBounds) return;
 
     const bounds = {
-      south: Number(mapBounds.getSouth().toFixed(4)),
-      north: Number(mapBounds.getNorth().toFixed(4)),
-      west: Number(mapBounds.getWest().toFixed(4)),
-      east: Number(mapBounds.getEast().toFixed(4)),
+      north: mapBounds.getNorth(),
+      south: mapBounds.getSouth(),
+      east: mapBounds.getEast(),
+      west: mapBounds.getWest(),
     };
 
     const filter = `center_lat >= ${bounds.south} && center_lat <= ${bounds.north} && center_lng >= ${bounds.west} && center_lng <= ${bounds.east}`;
+
+    let isSubscribed = true;
+    const controller = new AbortController();
 
     pb.collection("list_locations")
       .getFullList({
         filter,
         expand: "list",
+        $autoCancel: false,
+        signal: controller.signal,
       })
       .then(async (locations) => {
+        if (!isSubscribed) return;
+
         // Get unique list IDs
         const listIds = [
           ...new Set(
@@ -254,12 +261,24 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
         ];
 
         // Get full list data for each list using ListsContext
-        const lists = await Promise.all(listIds.map((id) => getList(id)));
-        setVisibleLists(lists);
+        const lists = await Promise.all(
+          listIds.map((id) => getList(id).catch(() => null))
+        ).then((results) => results.filter(Boolean));
+
+        if (isSubscribed) {
+          setVisibleLists(lists);
+        }
       })
       .catch((error) => {
-        console.error("Error fetching visible lists:", error);
+        if (error.name !== "AbortError") {
+          console.error("Error fetching visible lists:", error);
+        }
       });
+
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
   }, [mapBounds, getList]);
 
   const loadMorePlaces = useCallback(() => {
