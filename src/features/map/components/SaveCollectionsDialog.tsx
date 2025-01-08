@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -145,9 +145,12 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-0 gap-0 bg-background/95 backdrop-blur-sm">
         <div className="p-6 space-y-6">
-          <DialogTitle className="text-xl font-semibold">
-            Save to Collection
-          </DialogTitle>
+          <DialogHeader>
+            <DialogTitle>Save to Collection</DialogTitle>
+            <DialogDescription>
+              Add this place to your collections or create a new one.
+            </DialogDescription>
+          </DialogHeader>
 
           {/* New Collection Input */}
           {isCreatingNew ? (
