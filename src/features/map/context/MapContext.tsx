@@ -244,6 +244,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       .getFullList({
         filter,
         expand: "list",
+        $autoCancel: false,
       })
       .then(async (locations) => {
         // Get unique list IDs

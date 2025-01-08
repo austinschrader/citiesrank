@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
 import { Check, FolderPlus } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Marker, Popup } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useSelection } from "../context/SelectionContext";
@@ -18,6 +19,9 @@ import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 
 interface PlacePopupCardProps {
   place: MapPlace;
+  onOpenCollectionsDialog: () => void;
+  onOpenPhotoDialog: () => void;
+  isSaved?: boolean;
 }
 
 const getMarkerStyle = (
@@ -131,168 +135,123 @@ const createMarkerHtml = (
   </div>`;
 };
 
-const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
-  const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
-  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
+  place,
+  onOpenCollectionsDialog,
+  onOpenPhotoDialog,
+  isSaved = false,
+}) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkIfSaved = async () => {
-      if (!user) return;
-
-      try {
-        const savedLists = await pb.collection("list_places").getList(1, 1, {
-          filter: `place = "${place.id}"`,
-          $autoCancel: false,
-        });
-
-        setIsSaved(savedLists.totalItems > 0);
-      } catch (error) {
-        console.error("Error checking if place is saved:", error);
-      }
-    };
-
-    checkIfSaved();
-  }, [place.id, user]);
 
   const handleDetailsClick = () => {
     window.open(`/#/places/${place.type}/${place.slug}`, "_blank");
   };
 
   return (
-    <>
-      <Card className="w-[300px]">
-        <CardContent className="p-0">
-          {/* Image */}
-          <div className="relative aspect-video">
-            <img
-              src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
-              alt={place.name}
-              className="w-full h-full object-cover"
-            />
-            {place.type && (
-              <Badge
-                variant="outline"
-                className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
-              >
-                {place.type}
-              </Badge>
-            )}
-          </div>
+    <Card className="w-[300px]">
+      <CardContent className="p-0">
+        {/* Image */}
+        <div className="relative aspect-video">
+          <img
+            src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
+            alt={place.name}
+            className="w-full h-full object-cover"
+          />
+          {place.type && (
+            <Badge
+              variant="outline"
+              className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
+            >
+              {place.type}
+            </Badge>
+          )}
+        </div>
 
-          {/* Content */}
-          <div className="p-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">{place.name}</h2>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={isSaved ? "secondary" : "outline"}
-                  size="sm"
-                  onClick={() => setIsCollectionsDialogOpen(true)}
-                  className={cn(
-                    "transition-all duration-200",
-                    isSaved && "bg-green-50 text-green-600 hover:bg-green-100"
-                  )}
-                >
-                  {isSaved ? (
-                    <>
-                      <Check className="w-4 h-4 mr-2" />
-                      Saved
-                    </>
-                  ) : (
-                    <>
-                      <FolderPlus className="w-4 h-4 mr-2" />
-                      Save
-                    </>
-                  )}
-                </Button>
-                <Button size="sm" onClick={handleDetailsClick}>
-                  View Details
-                </Button>
-              </div>
-            </div>
-
-            {/* Social Stats */}
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <span>📸</span>
-                <span>24 photos</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>⭐️</span>
-                <span>4.8 (126 reviews)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>👥</span>
-                <span>89 visitors</span>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="flex gap-2">
+        {/* Content */}
+        <div className="p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">{place.name}</h2>
+            <div className="flex items-center gap-2">
               <Button
-                variant="outline"
+                variant={isSaved ? "secondary" : "outline"}
                 size="sm"
-                className="flex-1"
-                onClick={() => setIsPhotoDialogOpen(true)}
+                onClick={onOpenCollectionsDialog}
+                className={cn(
+                  "transition-all duration-200",
+                  isSaved && "bg-green-50 text-green-600 hover:bg-green-100"
+                )}
               >
-                📸 Add Photo
+                {isSaved ? (
+                  <>
+                    <Check className="w-4 h-4 mr-2" />
+                    Saved
+                  </>
+                ) : (
+                  <>
+                    <FolderPlus className="w-4 h-4 mr-2" />
+                    Save
+                  </>
+                )}
               </Button>
-              <Button variant="outline" size="sm" className="flex-1">
-                ✍️ Write Review
+              <Button size="sm" onClick={handleDetailsClick}>
+                View Details
               </Button>
             </div>
+          </div>
 
-            {/* Recent Activity */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Recent Activity</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary" />
-                  <span className="text-muted-foreground">
-                    Sarah added a photo • 2h ago
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary" />
-                  <span className="text-muted-foreground">
-                    Mike wrote a review • 5h ago
-                  </span>
-                </div>
+          {/* Social Stats */}
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <span>📸</span>
+              <span>24 photos</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>⭐️</span>
+              <span>4.8 (126 reviews)</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>👥</span>
+              <span>89 visitors</span>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={onOpenPhotoDialog}
+            >
+              📸 Add Photo
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1">
+              ✍️ Write Review
+            </Button>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Recent Activity</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-primary" />
+                <span className="text-muted-foreground">
+                  Sarah added a photo • 2h ago
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-primary" />
+                <span className="text-muted-foreground">
+                  Mike wrote a review • 5h ago
+                </span>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {isCollectionsDialogOpen && (
-        <SaveCollectionsDialog
-          isOpen={isCollectionsDialogOpen}
-          onClose={() => {
-            setIsCollectionsDialogOpen(false);
-            // Refresh saved status after dialog closes
-            if (user) {
-              pb.collection("list_places")
-                .getList(1, 1, {
-                  filter: `place = "${place.id}"`,
-                  $autoCancel: false,
-                })
-                .then((result) => setIsSaved(result.totalItems > 0));
-            }
-          }}
-          placeId={place.id}
-        />
-      )}
-
-      <PhotoUploadDialog
-        isOpen={isPhotoDialogOpen}
-        onClose={() => setIsPhotoDialogOpen(false)}
-        placeId={place.id}
-        placeName={place.name}
-      />
-    </>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -301,34 +260,112 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({ place }) => {
  * Renders an individual map marker with a popup. Uses SelectionContext for
  * marker selection state and PlacePopupCard for popup content.
  */
-export const MapMarker: React.FC<MapMarkerProps> = ({ place }) => {
+export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
+  const { user } = useAuth();
+  const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
+  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
-  const markerStyle = getMarkerStyle(place.type, place.averageRating);
-  const markerHtml = createMarkerHtml(markerStyle, place);
-  const icon = L.divIcon({
-    className: "custom-marker",
-    html: markerHtml,
-    iconSize: [markerStyle.size, markerStyle.size],
-    iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
-  });
+  useEffect(() => {
+    const checkIfSaved = async () => {
+      if (!user) return;
+
+      try {
+        // First get all lists that contain this place
+        const listPlaces = await pb.collection("list_places").getList(1, 1, {
+          filter: `place = "${place.id}" && list.user = "${user.id}"`,
+          expand: "list",
+          $autoCancel: false,
+        });
+
+        setIsSaved(listPlaces.totalItems > 0);
+      } catch (error) {
+        console.error("Error checking if place is saved:", error);
+      }
+    };
+
+    checkIfSaved();
+  }, [place.id, user]);
+
+  const markerStyle = useMemo(
+    () => getMarkerStyle(place.type, place.averageRating),
+    [place.type, place.averageRating]
+  );
+
+  const markerHtml = useMemo(
+    () => createMarkerHtml(markerStyle, place),
+    [markerStyle, place]
+  );
+
+  const icon = useMemo(
+    () =>
+      L.divIcon({
+        className: "custom-marker",
+        html: markerHtml,
+        iconSize: [markerStyle.size, markerStyle.size],
+        iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
+      }),
+    [markerHtml, markerStyle.size]
+  );
 
   return (
-    <Marker
-      position={[place.latitude, place.longitude]}
-      icon={icon}
-      eventHandlers={{
-        click: (e) => {
-          e.originalEvent.stopPropagation();
-          setSelectedPlace(place, true);
-        },
-      }}
-    >
-      <Popup closeButton={false} className="place-popup" offset={[0, -20]}>
-        <PlacePopupCard place={place} />
-      </Popup>
-    </Marker>
+    <>
+      <Marker
+        position={[place.latitude, place.longitude]}
+        icon={icon}
+        eventHandlers={{
+          click: (e) => {
+            e.originalEvent.stopPropagation();
+            setSelectedPlace(place, true);
+          },
+        }}
+      >
+        <Popup closeButton={false} className="place-popup" offset={[0, -20]}>
+          <PlacePopupCard
+            place={place}
+            onOpenCollectionsDialog={() => setIsCollectionsDialogOpen(true)}
+            onOpenPhotoDialog={() => setIsPhotoDialogOpen(true)}
+            isSaved={isSaved}
+          />
+        </Popup>
+      </Marker>
+
+      {isCollectionsDialogOpen &&
+        createPortal(
+          <SaveCollectionsDialog
+            isOpen={isCollectionsDialogOpen}
+            onClose={() => {
+              setIsCollectionsDialogOpen(false);
+              if (user) {
+                pb.collection("list_places")
+                  .getList(1, 1, {
+                    filter: `place = "${place.id}" && list.user = "${user.id}"`,
+                    expand: "list",
+                    $autoCancel: false,
+                  })
+                  .then((result) => {
+                    setIsSaved(result.totalItems > 0);
+                  });
+              }
+            }}
+            placeId={place.id}
+          />,
+          document.body
+        )}
+
+      {isPhotoDialogOpen &&
+        createPortal(
+          <PhotoUploadDialog
+            isOpen={isPhotoDialogOpen}
+            onClose={() => setIsPhotoDialogOpen(false)}
+            placeId={place.id}
+            placeName={place.name}
+          />,
+          document.body
+        )}
+    </>
   );
-};
+});
 
 export default MapMarker;

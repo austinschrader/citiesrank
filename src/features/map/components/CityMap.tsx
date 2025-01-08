@@ -17,6 +17,7 @@ import {
   TileLayer,
   useMap as useLeafletMap,
 } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import { useMap } from "../context/MapContext";
 import { MapControls } from "./MapControls";
 import { MapLegend } from "./MapLegend";
@@ -67,9 +68,9 @@ export const CityMap = ({ className }: CityMapProps) => {
   } = useMap();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(pageSizeOptions[0]);
+  const [itemsPerPage] = useState(pageSizeOptions[0]);
 
-  // Get filtered cities from FiltersContext
+  // Memoize filtered cities computation
   const filteredCities = useMemo(() => {
     return getFilteredCities(cities, (city) => ({
       matchScore: 1,
@@ -82,19 +83,35 @@ export const CityMap = ({ className }: CityMapProps) => {
         accessibility: 1,
       },
     }));
-  }, [cities, getFilteredCities, filters]);
+  }, [cities, getFilteredCities, filters.budget, filters.season]);
 
-  // Update visible places when filtered cities change
+  // Memoize hasActiveFilters check
+  const hasActiveFilters = useMemo(
+    () =>
+      filters.search ||
+      filters.averageRating ||
+      filters.populationCategory ||
+      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length,
+    [
+      filters.search,
+      filters.averageRating,
+      filters.populationCategory,
+      filters.activeTypes,
+    ]
+  );
+
+  // Update visible places with cleanup
   useEffect(() => {
-    setVisiblePlaces(filteredCities);
-  }, [filteredCities, setVisiblePlaces]);
+    let isMounted = true;
 
-  // Check if any filters are active
-  const hasActiveFilters =
-    filters.search ||
-    filters.averageRating ||
-    filters.populationCategory ||
-    filters.activeTypes.length !== Object.values(CitiesTypeOptions).length;
+    if (isMounted) {
+      setVisiblePlaces(filteredCities);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [filteredCities, setVisiblePlaces]);
 
   const hasMore = useCallback(() => {
     return numPrioritizedToShow < visiblePlacesInView.length;
@@ -104,97 +121,106 @@ export const CityMap = ({ className }: CityMapProps) => {
     if (!hasMore() || isLoadingMore) return;
 
     setIsLoadingMore(true);
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setNumPrioritizedToShow((prev) => prev + itemsPerPage);
       setIsLoadingMore(false);
     }, 500);
+
+    return () => clearTimeout(timeoutId);
   }, [hasMore, isLoadingMore, setNumPrioritizedToShow, itemsPerPage]);
 
+  // Memoize prioritized places for MarkerClusterGroup
+  const memoizedPrioritizedPlaces = useMemo(
+    () => prioritizedPlaces,
+    [prioritizedPlaces]
+  );
+
   return (
-    <div className={className}>
-      <div className="relative h-full w-full">
-        <MapContainer
-          center={center}
-          zoom={zoom}
-          scrollWheelZoom={true}
-          zoomControl={false}
-          className="h-full w-full rounded-xl relative z-0"
-          maxBounds={[
-            [-90, -180],
-            [90, 180],
-          ]}
-          maxBoundsViscosity={1.0}
-        >
-          <BoundsTracker />
-          <MapControls onZoomChange={setZoom} />
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-          />
-          {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
-          {prioritizedPlaces.map((place) => (
+    <div className={cn("relative h-full w-full", className)}>
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        scrollWheelZoom={true}
+        zoomControl={false}
+        className="h-full w-full rounded-xl relative z-0"
+        maxBounds={[
+          [-90, -180],
+          [90, 180],
+        ]}
+        maxBoundsViscosity={1.0}
+      >
+        <BoundsTracker />
+        <MapControls onZoomChange={setZoom} />
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+        />
+        <BoundsTracker />
+        <MarkerClusterGroup chunkedLoading maxClusterRadius={50}>
+          {memoizedPrioritizedPlaces.map((place) => (
             <MapMarker key={place.id} place={place} />
           ))}
-        </MapContainer>
+        </MarkerClusterGroup>
+        {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
+      </MapContainer>
 
-        {/* Status Indicator */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
-          <div className="flex flex-col items-center gap-2">
-            {isLoadingMore ? (
+      {/* Status Indicator */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
+        <div className="flex flex-col items-center gap-2">
+          {isLoadingMore ? (
+            <div
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-full",
+                "bg-background/95 backdrop-blur-sm shadow-lg border",
+                "text-foreground animate-in fade-in slide-in-from-top-2"
+              )}
+            >
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Loading more places...</span>
+            </div>
+          ) : hasMore() ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadMore}
+              className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              <span>Load more places</span>
+            </Button>
+          ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
+            <div className="flex flex-col sm:flex-row items-center gap-2">
               <div
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-full",
                   "bg-background/95 backdrop-blur-sm shadow-lg border",
-                  "text-foreground animate-in fade-in slide-in-from-top-2"
+                  "text-muted-foreground text-sm sm:text-base"
                 )}
               >
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Loading more places...</span>
+                <span className="whitespace-nowrap">
+                  All {visiblePlacesInView.length} places loaded
+                </span>
               </div>
-            ) : hasMore() ? (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={loadMore}
-                className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
+                onClick={resetFilters}
+                className={cn(
+                  "rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent",
+                  "text-sm sm:text-base px-3 sm:px-4"
+                )}
               >
-                <Plus className="w-4 h-4 mr-2" />
-                <span>Load more places</span>
+                <Filter className="w-4 h-4 mr-1.5 sm:mr-2" />
+                <span className="whitespace-nowrap">Clear filters</span>
               </Button>
-            ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
-              <div className="flex flex-col sm:flex-row items-center gap-2">
-                <div
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-full",
-                    "bg-background/95 backdrop-blur-sm shadow-lg border",
-                    "text-muted-foreground text-sm sm:text-base"
-                  )}
-                >
-                  <span className="whitespace-nowrap">
-                    All {visiblePlacesInView.length} places loaded
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetFilters}
-                  className={cn(
-                    "rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent",
-                    "text-sm sm:text-base px-3 sm:px-4"
-                  )}
-                >
-                  <Filter className="w-4 h-4 mr-1.5 sm:mr-2" />
-                  <span className="whitespace-nowrap">Clear filters</span>
-                </Button>
-              </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
+      </div>
 
-        {/* Map Legend */}
-        <div className="absolute top-4 left-4 z-[10]">
-          <MapLegend />
-        </div>
+      {/* Map Legend */}
+      <div className="absolute top-4 left-4 z-[10]">
+        <MapLegend />
       </div>
     </div>
   );
