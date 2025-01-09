@@ -64,7 +64,6 @@ export const CityMap = ({ className }: CityMapProps) => {
     setNumPrioritizedToShow,
     viewMode,
     setVisiblePlaces,
-    prioritizedPlaces,
   } = useMap();
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -129,10 +128,10 @@ export const CityMap = ({ className }: CityMapProps) => {
     return () => clearTimeout(timeoutId);
   }, [hasMore, isLoadingMore, setNumPrioritizedToShow, itemsPerPage]);
 
-  // Memoize prioritized places for MarkerClusterGroup
-  const memoizedPrioritizedPlaces = useMemo(
-    () => prioritizedPlaces,
-    [prioritizedPlaces]
+  // Memoize visible places for MarkerClusterGroup
+  const memoizedVisiblePlaces = useMemo(
+    () => visiblePlacesInView,
+    [visiblePlacesInView]
   );
 
   return (
@@ -155,9 +154,13 @@ export const CityMap = ({ className }: CityMapProps) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
         />
-        <BoundsTracker />
-        <MarkerClusterGroup chunkedLoading maxClusterRadius={50}>
-          {memoizedPrioritizedPlaces.map((place) => (
+        <MarkerClusterGroup
+          chunkedLoading
+          maxClusterRadius={50}
+          spiderfyOnMaxZoom={true}
+          removeOutsideVisibleBounds={true}
+        >
+          {memoizedVisiblePlaces.map((place) => (
             <MapMarker key={place.id} place={place} />
           ))}
         </MarkerClusterGroup>
