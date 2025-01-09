@@ -3,7 +3,8 @@
  * Main place card component that displays city information.
  * Uses modular components for specific functionality.
  */
-import { Card } from "@/components/ui/card";
+import { ImageGallery } from "@/components/gallery/ImageGallery";
+import { Card, CardContent } from "@/components/ui/card";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PlaceModal } from "@/features/map/components/PlaceModal";
@@ -12,7 +13,6 @@ import { FavoriteButton } from "@/features/places/components/cards/FavoriteButto
 import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
 import { PlaceCardProps } from "@/features/places/types";
-import { getPlaceImageBySlug } from "@/lib/bunny";
 import { useState } from "react";
 import { createSlug } from "../../utils/placeUtils";
 
@@ -44,28 +44,32 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         id={`city-${createSlug(city.name)}`}
         data-id={createSlug(city.name)}
         className="group relative overflow-hidden border-none rounded-xl shadow-sm hover:shadow-xl 
-                 transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1"
+                 transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1 h-fit"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
         onClick={handleCardClick}
       >
-        <div className="relative aspect-[4/3]">
-          <img
-            src={getPlaceImageBySlug(city.imageUrl, 1, "thumbnail")}
-            alt={city.name}
-            className="w-full h-full object-cover"
-          />
+        <CardContent className="p-0">
+          {/* Image */}
+          <div className="relative aspect-[4/3]">
+            <ImageGallery
+              imageUrl={city.imageUrl}
+              cityName={city.name}
+              country={city.country}
+              showControls={false}
+              variant="default"
+            />
+            <FavoriteButton
+              placeId={city.id}
+              onAuthRequired={() => setShowSignUpDialog(true)}
+            />
 
-          <FavoriteButton
-            placeId={city.id}
-            onAuthRequired={() => setShowSignUpDialog(true)}
-          />
+            <PlaceTypeIndicator type={city.type} />
 
-          <PlaceTypeIndicator type={city.type} />
-
-          {/* Place basic info overlay */}
-          <PlaceInfoOverlay city={city} variant={variant} />
-        </div>
+            {/* Place basic info overlay */}
+            <PlaceInfoOverlay city={city} variant={variant} />
+          </div>
+        </CardContent>
       </Card>
 
       <SignUpDialog

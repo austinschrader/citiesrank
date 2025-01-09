@@ -115,7 +115,7 @@ export const ImageGallery = ({
   }, []);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full min-h-[200px]">
       {/* Loading skeleton */}
       {isLoading && (
         <div className="absolute inset-0">
@@ -155,10 +155,7 @@ export const ImageGallery = ({
               : images[currentIndex].sources.tablet
           }
           alt={images[currentIndex].title}
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-300",
-            onImageClick && "cursor-pointer"
-          )}
+          className="w-full h-full object-cover"
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           onLoad={handleImageLoad}
