@@ -8,11 +8,10 @@ import { pb } from "@/lib/pocketbase";
 import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { Check, FolderPlus } from "lucide-react";
+import { Check, FolderPlus, MapPin } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { Marker, Popup } from "react-leaflet";
-import { useNavigate } from "react-router-dom";
+import { Marker, Popup, useMap as useLeafletMap } from "react-leaflet";
 import { useSelection } from "../context/SelectionContext";
 import { MapMarkerProps, MapPlace } from "../types";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
@@ -142,7 +141,14 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
   isSaved = false,
 }) => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const map = useLeafletMap();
+
+  const handleLocate = () => {
+    map.setView([place.latitude, place.longitude], 10, {
+      animate: true,
+      duration: 1,
+    });
+  };
 
   const handleDetailsClick = () => {
     window.open(`/#/places/${place.type}/${place.slug}`, "_blank");
@@ -193,6 +199,10 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
                     Save
                   </>
                 )}
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleLocate}>
+                <MapPin className="w-4 h-4 mr-2" />
+                Locate
               </Button>
               <Button size="sm" onClick={handleDetailsClick}>
                 View Details
