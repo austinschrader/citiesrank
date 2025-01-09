@@ -3,18 +3,18 @@
  * Main place card component that displays city information.
  * Uses modular components for specific functionality.
  */
-import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Card } from "@/components/ui/card";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { PlaceModal } from "@/features/map/components/PlaceModal";
 import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlaceCard";
 import { FavoriteButton } from "@/features/places/components/cards/FavoriteButton";
 import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
 import { PlaceCardProps } from "@/features/places/types";
+import { getPlaceImageBySlug } from "@/lib/bunny";
 import { useState } from "react";
 import { createSlug } from "../../utils/placeUtils";
-import { PlaceModal } from "@/features/map/components/PlaceModal";
 
 export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
   const { user } = useAuth();
@@ -42,6 +42,7 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
     <>
       <Card
         id={`city-${createSlug(city.name)}`}
+        data-id={createSlug(city.name)}
         className="group relative overflow-hidden border-none rounded-xl shadow-sm hover:shadow-xl 
                  transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1"
         onMouseEnter={() => setShowControls(true)}
@@ -49,11 +50,10 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         onClick={handleCardClick}
       >
         <div className="relative aspect-[4/3]">
-          <ImageGallery
-            imageUrl={city.imageUrl}
-            cityName={city.name}
-            country={city.country}
-            showControls={showControls}
+          <img
+            src={getPlaceImageBySlug(city.imageUrl, 1, "thumbnail")}
+            alt={city.name}
+            className="w-full h-full object-cover"
           />
 
           <FavoriteButton
