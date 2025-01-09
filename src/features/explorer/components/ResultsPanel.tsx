@@ -113,22 +113,20 @@ export const ResultsPanel = ({
                       isResultsPanelCollapsed ? "opacity-0" : "opacity-100"
                     )}
                   />
-                  <div
-                    ref={observerTarget}
-                    className="h-4"
-                    style={{
-                      visibility:
-                        displayPlaces.length < cities.length
-                          ? "visible"
-                          : "hidden",
-                    }}
-                  />
-                  {isLoadingMore && (
-                    <div className="flex items-center justify-center py-4">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                    </div>
-                  )}
                 </>
+              )}
+              <div
+                ref={observerTarget}
+                className="h-4"
+                style={{
+                  visibility:
+                    displayPlaces.length < cities.length ? "visible" : "hidden",
+                }}
+              />
+              {isLoadingMore && (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                </div>
               )}
             </div>
           </div>
