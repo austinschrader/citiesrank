@@ -4,6 +4,7 @@
  * Uses modular components for specific functionality.
  */
 import { ImageGallery } from "@/components/gallery/ImageGallery";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -12,7 +13,9 @@ import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlac
 import { FavoriteButton } from "@/features/places/components/cards/FavoriteButton";
 import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
+import { PlaceStatsDialog } from "@/features/places/components/dialogs/PlaceStatsDialog";
 import { PlaceCardProps } from "@/features/places/types";
+import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { createSlug } from "../../utils/placeUtils";
 
@@ -21,6 +24,7 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
   const [showControls, setShowControls] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button")) return;
@@ -63,6 +67,17 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
               placeId={city.id}
               onAuthRequired={() => setShowSignUpDialog(true)}
             />
+            <Button
+              size="icon"
+              variant="secondary"
+              className="absolute top-3 left-3 z-30 h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowStats(true);
+              }}
+            >
+              <BarChart3 className="h-4 w-4 text-white/80" />
+            </Button>
 
             <PlaceTypeIndicator type={city.type} />
 
@@ -85,6 +100,11 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         place={city}
         isOpen={showModal}
         onClose={() => setShowModal(false)}
+      />
+      <PlaceStatsDialog
+        place={city}
+        isOpen={showStats}
+        onClose={() => setShowStats(false)}
       />
     </>
   );
