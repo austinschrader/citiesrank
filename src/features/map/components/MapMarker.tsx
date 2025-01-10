@@ -43,10 +43,28 @@ const getMarkerStyle = (
       ? markerColors[type as keyof typeof markerColors]
       : markerColors.default;
 
+  // Size hierarchy based on place type
+  const getMarkerSize = (type?: string) => {
+    switch (type) {
+      case "country":
+        return 52;
+      case "region":
+        return 46;
+      case "city":
+        return 40;
+      case "neighborhood":
+        return 34;
+      case "sight":
+        return 28;
+      default:
+        return 40;
+    }
+  };
+
   return {
     color: isSelected ? "#e11d48" : typeColor, // Use rose-600 for selected markers
     ratingColor: getRatingColor(rating),
-    size: 40,
+    size: getMarkerSize(type),
   };
 };
 
@@ -160,7 +178,8 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
     <Card className="w-[300px]">
       <CardContent className="p-0">
         {/* Image */}
-        <div className="relative"
+        <div
+          className="relative"
           onMouseEnter={() => setShowControls(true)}
           onMouseLeave={() => setShowControls(false)}
         >

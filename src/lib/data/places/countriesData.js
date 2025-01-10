@@ -33,6 +33,7 @@ export const countriesData = [
     languages: ["French"],
     currency: "Euro",
     timezone: "UTC+1",
+    type: "country",
   },
   {
     name: "Japan",
@@ -69,6 +70,7 @@ export const countriesData = [
     languages: ["Japanese"],
     currency: "Japanese Yen",
     timezone: "UTC+9",
+    type: "country",
   },
   {
     name: "Italy",
@@ -104,6 +106,7 @@ export const countriesData = [
     languages: ["Italian"],
     currency: "Euro",
     timezone: "UTC+1",
+    type: "country",
   },
   {
     name: "Spain",
@@ -140,6 +143,7 @@ export const countriesData = [
     languages: ["Spanish", "Catalan", "Basque", "Galician"],
     currency: "Euro",
     timezone: "UTC+1",
+    type: "country",
   },
   {
     name: "United Kingdom",
@@ -176,6 +180,7 @@ export const countriesData = [
     languages: ["English"],
     currency: "Pound Sterling",
     timezone: "UTC+0",
+    type: "country",
   },
   {
     name: "Germany",
@@ -212,6 +217,7 @@ export const countriesData = [
     languages: ["German"],
     currency: "Euro",
     timezone: "UTC+1",
+    type: "country",
   },
   {
     name: "Greece",
@@ -247,6 +253,7 @@ export const countriesData = [
     languages: ["Greek"],
     currency: "Euro",
     timezone: "UTC+2",
+    type: "country",
   },
   {
     name: "Portugal",
@@ -282,5 +289,6 @@ export const countriesData = [
     languages: ["Portuguese"],
     currency: "Euro",
     timezone: "UTC+0",
+    type: "country",
   },
 ];
