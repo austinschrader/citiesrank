@@ -15,6 +15,7 @@ import { Marker, Popup, useMap as useLeafletMap } from "react-leaflet";
 import { useSelection } from "../context/SelectionContext";
 import { MapMarkerProps, MapPlace } from "../types";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
+import { PlaceModal } from "./PlaceModal";
 
 interface PlacePopupCardProps {
   place: MapPlace;
@@ -160,6 +161,7 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
 }) => {
   const { user } = useAuth();
   const map = useLeafletMap();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLocate = () => {
     map.setView([place.latitude, place.longitude], 10, {
@@ -175,119 +177,127 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
   const [showControls, setShowControls] = useState(false);
 
   return (
-    <Card className="w-[300px]">
-      <CardContent className="p-0">
-        {/* Image */}
-        <div
-          className="relative"
-          onMouseEnter={() => setShowControls(true)}
-          onMouseLeave={() => setShowControls(false)}
-        >
-          <ImageGallery
-            imageUrl={place.imageUrl}
-            cityName={place.name}
-            country={place.country}
-            showControls={showControls}
-            variant="default"
-          />
-          {place.type && (
-            <Badge
-              variant="outline"
-              className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
-            >
-              {place.type}
-            </Badge>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">{place.name}</h2>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={isSaved ? "secondary" : "outline"}
-                size="sm"
-                onClick={onOpenCollectionsDialog}
-                className={cn(
-                  "transition-all duration-200",
-                  isSaved && "bg-green-50 text-green-600 hover:bg-green-100"
-                )}
+    <>
+      <Card className="w-[300px]">
+        <CardContent className="p-0">
+          {/* Image */}
+          <div
+            className="relative"
+            onMouseEnter={() => setShowControls(true)}
+            onMouseLeave={() => setShowControls(false)}
+          >
+            <ImageGallery
+              imageUrl={place.imageUrl}
+              cityName={place.name}
+              country={place.country}
+              showControls={showControls}
+              variant="default"
+              onImageClick={() => setIsModalOpen(true)}
+            />
+            {place.type && (
+              <Badge
+                variant="outline"
+                className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
               >
-                {isSaved ? (
-                  <>
-                    <Check className="w-4 h-4 mr-2" />
-                    Saved
-                  </>
-                ) : (
-                  <>
-                    <FolderPlus className="w-4 h-4 mr-2" />
-                    Save
-                  </>
-                )}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLocate}>
-                <MapPin className="w-4 h-4 mr-2" />
-                Locate
-              </Button>
-              <Button size="sm" onClick={handleDetailsClick}>
-                View Details
-              </Button>
-            </div>
+                {place.type}
+              </Badge>
+            )}
           </div>
 
-          {/* Social Stats */}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <span>📸</span>
-              <span>24 photos</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>⭐️</span>
-              <span>4.8 (126 reviews)</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>👥</span>
-              <span>89 visitors</span>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1"
-              onClick={onOpenPhotoDialog}
-            >
-              📸 Add Photo
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1">
-              ✍️ Write Review
-            </Button>
-          </div>
-
-          {/* Recent Activity */}
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Recent Activity</h3>
-            <div className="space-y-2 text-sm">
+          {/* Content */}
+          <div className="p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">{place.name}</h2>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-primary" />
-                <span className="text-muted-foreground">
-                  Sarah added a photo • 2h ago
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-primary" />
-                <span className="text-muted-foreground">
-                  Mike wrote a review • 5h ago
-                </span>
+                <Button
+                  variant={isSaved ? "secondary" : "outline"}
+                  size="sm"
+                  onClick={onOpenCollectionsDialog}
+                  className={cn(
+                    "transition-all duration-200",
+                    isSaved && "bg-green-50 text-green-600 hover:bg-green-100"
+                  )}
+                >
+                  {isSaved ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      Saved
+                    </>
+                  ) : (
+                    <>
+                      <FolderPlus className="w-4 h-4 mr-2" />
+                      Save
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleLocate}>
+                  <MapPin className="w-4 h-4 mr-2" />
+                  Locate
+                </Button>
+                <Button size="sm" onClick={handleDetailsClick}>
+                  View Details
+                </Button>
               </div>
             </div>
+
+            {/* Social Stats */}
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <span>📸</span>
+                <span>24 photos</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span>⭐️</span>
+                <span>4.8 (126 reviews)</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span>👥</span>
+                <span>89 visitors</span>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1"
+                onClick={onOpenPhotoDialog}
+              >
+                📸 Add Photo
+              </Button>
+              <Button variant="outline" size="sm" className="flex-1">
+                ✍️ Write Review
+              </Button>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium">Recent Activity</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">
+                    Sarah added a photo • 2h ago
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">
+                    Mike wrote a review • 5h ago
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <PlaceModal
+        place={place}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
   );
 };
 

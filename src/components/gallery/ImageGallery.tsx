@@ -2,6 +2,7 @@ import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { normalizeString } from "@/features/admin/utils/placeValidation";
 
 interface ImageSource {
   mobile: string;
@@ -47,26 +48,26 @@ export const ImageGallery = ({
       title: `${cityName}, ${country} - Image ${i + 1}`,
       sources: {
         mobile: getPlaceImageByCityAndCountry(
-          cityName,
-          country,
+          normalizeString(cityName),
+          normalizeString(country),
           i + 1,
           "mobile"
         ),
         tablet: getPlaceImageByCityAndCountry(
-          cityName,
-          country,
+          normalizeString(cityName),
+          normalizeString(country),
           i + 1,
           "tablet"
         ),
         desktop: getPlaceImageByCityAndCountry(
-          cityName,
-          country,
+          normalizeString(cityName),
+          normalizeString(country),
           i + 1,
           "wide"
         ),
         fullscreen: getPlaceImageByCityAndCountry(
-          cityName,
-          country,
+          normalizeString(cityName),
+          normalizeString(country),
           i + 1,
           "fullscreen"
         ),
@@ -195,7 +196,10 @@ export const ImageGallery = ({
               : images[currentValidIndex].sources.tablet
           }
           alt={images[currentValidIndex].title}
-          className="w-full h-full object-cover"
+          className={cn(
+            "w-full h-full object-cover",
+            onImageClick && "cursor-pointer"
+          )}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           onLoad={handleImageLoad}
