@@ -70,8 +70,8 @@ const getRandomCenter = () => {
 };
 
 const randomCountry = getRandomCenter();
-const DEFAULT_CENTER: LatLngTuple = [37.7749, -122.4194]; // NYC
-const DEFAULT_ZOOM = 10;
+const DEFAULT_CENTER: LatLngTuple = [46.2276, 2.2137]; // Paris
+const DEFAULT_ZOOM = 6;
 
 interface MapState {
   zoom: number;
