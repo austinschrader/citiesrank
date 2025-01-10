@@ -341,7 +341,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
-        <DialogContent className="max-w-4xl h-[85vh] p-0 border-none bg-transparent">
+        <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-black">
           <div
             ref={contentRef}
             className="relative w-full h-full overflow-hidden rounded-lg bg-black"

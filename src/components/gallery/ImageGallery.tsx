@@ -164,14 +164,6 @@ export const ImageGallery = ({
         </div>
       )}
 
-      {/* Hero overlay gradients */}
-      {variant === "hero" && (
-        <>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60 pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
-        </>
-      )}
-
       <picture className="w-full h-full" onClick={onImageClick}>
         <source
           media="(max-width: 640px)"
