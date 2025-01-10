@@ -28,6 +28,7 @@ import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./features/header/context/HeaderContext";
 import { LocationProvider } from "./features/location/context/LocationContext";
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   const [isNewUser, setIsNewUser] = useState(true);
@@ -96,6 +97,7 @@ function App() {
                                   />
                                 </Routes>
                               </RootLayout>
+                              <Toaster />
                             </FavoritesProvider>
                           </FeedProvider>
                         </HeaderProvider>

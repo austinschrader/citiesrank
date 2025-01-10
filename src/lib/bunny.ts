@@ -56,5 +56,6 @@ export const getPlaceImageBySlug = (
   index: number = 1,
   size: ImageSize = "standard"
 ): string => {
-  return getImageUrl(`${placeSlug}`, size);
+  if (!placeSlug) return "";
+  return getImageUrl(`${placeSlug}-${index}`, size);
 };

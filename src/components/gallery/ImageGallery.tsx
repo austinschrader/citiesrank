@@ -1,7 +1,19 @@
 import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+interface ImageSource {
+  mobile: string;
+  tablet: string;
+  desktop: string;
+  fullscreen: string;
+}
+
+interface ImageData {
+  title: string;
+  sources: ImageSource;
+}
 
 interface ImageGalleryProps {
   imageUrl: string;
@@ -24,99 +36,127 @@ export const ImageGallery = ({
 }: ImageGalleryProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const loadedImages = useRef(new Set<string>());
-  const preloadedImages = useRef<HTMLImageElement[]>([]);
+  const [validImages, setValidImages] = useState<number[]>([]);
+
+  type ImageArray = ImageData[];
+  type ImageProxy = ImageArray & { [key: number]: ImageData };
 
   // Generate image URLs only once
-  const images = useMemo(() => {
-    return Array.from({ length: 4 }, (_, i) => {
-      return {
-        title: `${cityName}, ${country} - Image ${i + 1}`,
-        sources: {
-          mobile: getPlaceImageByCityAndCountry(
-            cityName,
-            country,
-            i + 1,
-            "mobile"
-          ),
-          tablet: getPlaceImageByCityAndCountry(
-            cityName,
-            country,
-            i + 1,
-            "tablet"
-          ),
-          desktop: getPlaceImageByCityAndCountry(
-            cityName,
-            country,
-            i + 1,
-            "wide"
-          ),
-          fullscreen: getPlaceImageByCityAndCountry(
-            cityName,
-            country,
-            i + 1,
-            "fullscreen"
-          ),
-        },
-      };
+  const images = useMemo<ImageProxy>(() => {
+    const generateImage = (i: number): ImageData => ({
+      title: `${cityName}, ${country} - Image ${i + 1}`,
+      sources: {
+        mobile: getPlaceImageByCityAndCountry(
+          cityName,
+          country,
+          i + 1,
+          "mobile"
+        ),
+        tablet: getPlaceImageByCityAndCountry(
+          cityName,
+          country,
+          i + 1,
+          "tablet"
+        ),
+        desktop: getPlaceImageByCityAndCountry(
+          cityName,
+          country,
+          i + 1,
+          "wide"
+        ),
+        fullscreen: getPlaceImageByCityAndCountry(
+          cityName,
+          country,
+          i + 1,
+          "fullscreen"
+        ),
+      },
     });
+
+    return new Proxy([] as ImageArray, {
+      get(target: ImageArray, prop: string | symbol): ImageData | any {
+        const index = parseInt(prop as string);
+        if (!isNaN(index)) {
+          while (target.length <= index) {
+            target.push(generateImage(target.length));
+          }
+        }
+        return target[prop as keyof typeof target];
+      },
+    }) as ImageProxy;
   }, [cityName, country]);
 
-  const countrySlug = useMemo(() => country, [country]);
-
-  // Preload adjacent images
-  const preloadAdjacentImages = useCallback(
-    (index: number) => {
-      const indicesToLoad = [
-        index,
-        (index + 1) % images.length,
-        (index - 1 + images.length) % images.length,
-      ];
-
-      indicesToLoad.forEach((idx) => {
-        if (!loadedImages.current.has(images[idx].sources.tablet)) {
-          const img = new Image();
-          img.src = images[idx].sources.tablet;
-          img.srcset = `${images[idx].sources.mobile} 640w, 
-                      ${images[idx].sources.tablet} 1024w, 
-                      ${images[idx].sources.desktop} 1920w`;
-          preloadedImages.current.push(img);
-          loadedImages.current.add(images[idx].sources.tablet);
-        }
-      });
-    },
-    [images]
-  );
-
+  // Check which images exist
   useEffect(() => {
-    if (priority) {
+    const checkImage = async (index: number) => {
       const img = new Image();
-      img.src =
-        variant === "hero"
-          ? images[0].sources.desktop
-          : images[0].sources.tablet;
-      img.onload = () => setIsLoading(false);
-    }
-    preloadAdjacentImages(currentIndex);
-  }, [priority, images, currentIndex, preloadAdjacentImages, variant]);
+      img.src = images[index].sources.tablet;
+
+      try {
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+        return index;
+      } catch {
+        return null;
+      }
+    };
+
+    // Check images in batches of 3, up to 9 images max
+    const findValidImages = async () => {
+      const validIndices: number[] = [];
+      let consecutiveMisses = 0;
+
+      for (let batch = 0; batch < 3 && consecutiveMisses < 2; batch++) {
+        const batchIndices = [batch * 3, batch * 3 + 1, batch * 3 + 2];
+        const results = await Promise.all(batchIndices.map(checkImage));
+
+        const validBatchIndices = results.filter(
+          (i): i is number => i !== null
+        );
+        if (validBatchIndices.length === 0) {
+          consecutiveMisses++;
+        } else {
+          consecutiveMisses = 0;
+          validIndices.push(...validBatchIndices);
+        }
+      }
+
+      setValidImages(validIndices);
+      setIsLoading(false);
+    };
+
+    findValidImages();
+  }, [images]);
 
   const navigate = useCallback(
     (direction: number) => {
       const newIndex =
-        (currentIndex + direction + images.length) % images.length;
+        (currentIndex + direction + validImages.length) % validImages.length;
       setCurrentIndex(newIndex);
-      preloadAdjacentImages(newIndex);
     },
-    [currentIndex, images.length, preloadAdjacentImages]
+    [currentIndex, validImages.length]
   );
 
   const handleImageLoad = useCallback(() => {
     setIsLoading(false);
   }, []);
 
+  // Only show controls if we have more than one valid image
+  const shouldShowControls = showControls && validImages.length > 1;
+  const currentValidIndex = validImages[currentIndex % validImages.length] || 0;
+
+  if (validImages.length === 0 && !isLoading) {
+    return (
+      <div className="relative w-full h-full min-h-[200px] bg-muted flex items-center justify-center">
+        <ImagePlus className="w-8 h-8 text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
-    <div className="relative w-full h-full">
-      {/* Loading skeleton */}
+    <div className="relative w-full h-full min-h-[200px]">
       {isLoading && (
         <div className="absolute inset-0">
           <div className="w-full h-full bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-shimmer bg-[length:200%_100%]" />
@@ -134,31 +174,28 @@ export const ImageGallery = ({
       <picture className="w-full h-full" onClick={onImageClick}>
         <source
           media="(max-width: 640px)"
-          srcSet={images[currentIndex].sources.mobile}
+          srcSet={images[currentValidIndex].sources.mobile}
         />
         <source
           media="(max-width: 1024px)"
-          srcSet={images[currentIndex].sources.tablet}
+          srcSet={images[currentValidIndex].sources.tablet}
         />
         <source
           media="(min-width: 1025px)"
           srcSet={
             variant === "hero"
-              ? images[currentIndex].sources.desktop
-              : images[currentIndex].sources.tablet
+              ? images[currentValidIndex].sources.desktop
+              : images[currentValidIndex].sources.tablet
           }
         />
         <img
           src={
             variant === "hero"
-              ? images[currentIndex].sources.desktop
-              : images[currentIndex].sources.tablet
+              ? images[currentValidIndex].sources.desktop
+              : images[currentValidIndex].sources.tablet
           }
-          alt={images[currentIndex].title}
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-300",
-            onImageClick && "cursor-pointer"
-          )}
+          alt={images[currentValidIndex].title}
+          className="w-full h-full object-cover"
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           onLoad={handleImageLoad}

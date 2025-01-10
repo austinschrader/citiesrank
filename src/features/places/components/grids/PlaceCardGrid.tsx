@@ -155,7 +155,6 @@ export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
                 setCenter([place.latitude, place.longitude]);
               }}
             />
-            {hoveredPlace?.id === place.id && <StatsOverlay place={place} />}
           </div>
         ))}
       </div>

@@ -3,16 +3,19 @@
  * Main place card component that displays city information.
  * Uses modular components for specific functionality.
  */
-import { Card } from "@/components/ui/card";
+import { ImageGallery } from "@/components/gallery/ImageGallery";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PlaceModal } from "@/features/map/components/PlaceModal";
 import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlaceCard";
-import { FavoriteButton } from "@/features/places/components/cards/FavoriteButton";
+import { SaveButton } from "@/features/places/components/cards/SaveButton";
 import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
+import { PlaceStatsDialog } from "@/features/places/components/dialogs/PlaceStatsDialog";
 import { PlaceCardProps } from "@/features/places/types";
-import { getPlaceImageBySlug } from "@/lib/bunny";
+import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { createSlug } from "../../utils/placeUtils";
 
@@ -21,6 +24,7 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
   const [showControls, setShowControls] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showStats, setShowStats] = useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest("button")) return;
@@ -44,28 +48,43 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         id={`city-${createSlug(city.name)}`}
         data-id={createSlug(city.name)}
         className="group relative overflow-hidden border-none rounded-xl shadow-sm hover:shadow-xl 
-                 transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1"
+                 transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1 h-fit"
         onMouseEnter={() => setShowControls(true)}
         onMouseLeave={() => setShowControls(false)}
         onClick={handleCardClick}
       >
-        <div className="relative aspect-[4/3]">
-          <img
-            src={getPlaceImageBySlug(city.imageUrl, 1, "thumbnail")}
-            alt={city.name}
-            className="w-full h-full object-cover"
-          />
+        <CardContent className="p-0">
+          {/* Image */}
+          <div className="relative aspect-[4/3]">
+            <ImageGallery
+              imageUrl={city.imageUrl}
+              cityName={city.name}
+              country={city.country}
+              showControls={false}
+              variant="default"
+            />
+            <SaveButton
+              placeId={city.id}
+              onAuthRequired={() => setShowSignUpDialog(true)}
+            />
+            <Button
+              size="icon"
+              variant="secondary"
+              className="absolute top-3 left-3 z-30 h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowStats(true);
+              }}
+            >
+              <BarChart3 className="h-4 w-4 text-white/80" />
+            </Button>
 
-          <FavoriteButton
-            placeId={city.id}
-            onAuthRequired={() => setShowSignUpDialog(true)}
-          />
+            <PlaceTypeIndicator type={city.type} />
 
-          <PlaceTypeIndicator type={city.type} />
-
-          {/* Place basic info overlay */}
-          <PlaceInfoOverlay city={city} variant={variant} />
-        </div>
+            {/* Place basic info overlay */}
+            <PlaceInfoOverlay city={city} variant={variant} />
+          </div>
+        </CardContent>
       </Card>
 
       <SignUpDialog
@@ -81,6 +100,11 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         place={city}
         isOpen={showModal}
         onClose={() => setShowModal(false)}
+      />
+      <PlaceStatsDialog
+        place={city}
+        isOpen={showStats}
+        onClose={() => setShowStats(false)}
       />
     </>
   );

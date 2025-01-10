@@ -1,9 +1,9 @@
+import { ImageGallery } from "@/components/gallery/ImageGallery";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
-import { getPlaceImageBySlug } from "@/lib/bunny";
 import { pb } from "@/lib/pocketbase";
 import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
@@ -154,15 +154,22 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
     window.open(`/#/places/${place.type}/${place.slug}`, "_blank");
   };
 
+  const [showControls, setShowControls] = useState(false);
+
   return (
     <Card className="w-[300px]">
       <CardContent className="p-0">
         {/* Image */}
-        <div className="relative aspect-video">
-          <img
-            src={getPlaceImageBySlug(place.imageUrl, 1, "thumbnail")}
-            alt={place.name}
-            className="w-full h-full object-cover"
+        <div className="relative"
+          onMouseEnter={() => setShowControls(true)}
+          onMouseLeave={() => setShowControls(false)}
+        >
+          <ImageGallery
+            imageUrl={place.imageUrl}
+            cityName={place.name}
+            country={place.country}
+            showControls={showControls}
+            variant="default"
           />
           {place.type && (
             <Badge

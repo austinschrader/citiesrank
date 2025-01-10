@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { PageSizeSelect } from "./PageSizeSelect";
 
 const baseButtonStyles =
-  "inline-flex items-center justify-center gap-2 h-9 px-4 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
+  "inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
 const activeButtonStyles = cn(
   baseButtonStyles,
   "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
@@ -58,39 +58,38 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
       <div
         className={cn(
           "transition-all duration-300 ease-in-out",
-          isFiltersCollapsed ? "h-0 overflow-hidden" : "h-[52px]"
+          isFiltersCollapsed ? "h-0 overflow-hidden" : "h-[44px]"
         )}
       >
-        <div className="h-full py-2.5 px-4 flex items-center justify-between gap-8">
+        <div className="h-full px-3 flex items-center gap-3">
           {/* Left Section */}
-          <div className="flex items-center gap-6">
-            <div className="relative w-[280px]">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="relative w-[220px]">
               <Input
                 type="text"
                 placeholder="Find your next adventure..."
-                className="w-full pl-9 h-9 bg-white shadow-sm border hover:border-indigo-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200/50 rounded-lg transition-all duration-200 text-md placeholder:text-indigo-400"
+                className="w-full pl-8 h-8 bg-white shadow-sm border hover:border-indigo-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200/50 rounded-lg transition-all duration-200 text-sm placeholder:text-indigo-400"
                 value={filters.search || ""}
                 onChange={(e) =>
                   setFilters({ ...filters, search: e.target.value })
                 }
               />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-indigo-400" />
             </div>
 
             {/* View Toggle */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <Toggle
                 pressed={viewMode === "lists"}
                 onPressedChange={() => setViewMode("lists")}
                 className={cn(
                   viewMode === "lists"
                     ? activeButtonStyles
-                    : inactiveButtonStyles,
-                  "h-9 text-md font-medium"
+                    : inactiveButtonStyles
                 )}
               >
-                <Scroll className="w-4 h-4" />
-                <span>Collections</span>
+                <Scroll className="w-3.5 h-3.5" />
+                Collections
               </Toggle>
               <Toggle
                 pressed={viewMode === "places"}
@@ -98,72 +97,53 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
                 className={cn(
                   viewMode === "places"
                     ? activeButtonStyles
-                    : inactiveButtonStyles,
-                  "h-9 text-md font-medium"
+                    : inactiveButtonStyles
                 )}
               >
-                <Landmark className="w-4 h-4" />
-                <span>Places</span>
+                <Landmark className="w-3.5 h-3.5" />
+                Places
               </Toggle>
             </div>
 
             <div className="flex items-center gap-2 text-sm">
-              {viewMode === "places" ? (
-                <>
-                  <span className="text-muted-foreground">
-                    {displayPlaces.length} loaded
-                  </span>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="font-medium">{placesInView}</span>
-                  <span className="text-muted-foreground">places in view</span>
-                </>
-              ) : (
-                <>
-                  <span className="text-muted-foreground">
-                    {visibleLists.length} loaded
-                  </span>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="font-medium">{visibleLists.length}</span>
-                  <span className="text-muted-foreground">lists in view</span>
-                </>
-              )}
+              <span className="text-muted-foreground text-xs">
+                {viewMode === "places" ? displayPlaces.length : visibleLists.length} loaded
+              </span>
+              <span className="text-muted-foreground text-xs">•</span>
+              <span className="font-medium text-xs">
+                {viewMode === "places" ? placesInView : visibleLists.length}
+              </span>
+              <span className="text-muted-foreground text-xs">
+                {viewMode === "places" ? "places in view" : "lists in view"}
+              </span>
             </div>
 
-            <div className="h-8 w-px bg-indigo-200/60" />
+            <div className="h-6 w-px bg-indigo-200/60" />
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 h-9 text-md font-medium"
+              className={cn(baseButtonStyles, "border border-input hover:bg-accent hover:text-accent-foreground")}
               asChild
             >
               <Link
                 to={viewMode === "places" ? "/my-places" : "/lists/create"}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1.5"
               >
-                {viewMode === "places" ? (
-                  <>
-                    <PlusCircle className="h-4 w-4" />
-                    <span>New Place</span>
-                  </>
-                ) : (
-                  <>
-                    <PlusCircle className="h-4 w-4" />
-                    <span>New List</span>
-                  </>
-                )}
+                <PlusCircle className="w-3.5 h-3.5" />
+                New {viewMode === "places" ? "Place" : "List"}
               </Link>
             </Button>
 
-            <div className="flex items-center gap-4 px-4 py-1.5 rounded-lg">
+            <div className="flex items-center gap-3">
               <PageSizeSelect />
               <FiltersSheet sort={sort} onSortChange={setSort} />
             </div>
 
-            <div className="flex items-center gap-4 px-4 py-1 rounded-lg">
+            <div className="flex items-center gap-3">
               <TimeWindow
                 energyMode={energyMode}
                 timeRange={timeRange}
