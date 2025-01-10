@@ -15,7 +15,7 @@ import {
   Camera,
   ChevronLeft,
   ChevronRight,
-  Heart,
+  FolderPlus,
   LucideIcon,
   MapPin,
   Shuffle,
@@ -473,14 +473,14 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         className={cn(
                           "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md",
                           isFavorited
-                            ? "bg-white/20 text-rose-500 hover:bg-white/30"
+                            ? "bg-white/20 hover:bg-white/30"
                             : "bg-transparent hover:bg-black/50"
                         )}
                       >
-                        <Heart
+                        <FolderPlus
                           className={cn(
-                            "h-5 w-5",
-                            isFavorited ? "fill-rose-500" : "text-rose-500"
+                            "h-5 w-5 text-white",
+                            isFavorited && "text-white/80"
                           )}
                         />
                       </Button>

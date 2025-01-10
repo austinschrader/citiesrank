@@ -10,7 +10,7 @@ import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PlaceModal } from "@/features/map/components/PlaceModal";
 import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlaceCard";
-import { FavoriteButton } from "@/features/places/components/cards/FavoriteButton";
+import { SaveButton } from "@/features/places/components/cards/SaveButton";
 import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
 import { PlaceStatsDialog } from "@/features/places/components/dialogs/PlaceStatsDialog";
@@ -63,7 +63,7 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
               showControls={false}
               variant="default"
             />
-            <FavoriteButton
+            <SaveButton
               placeId={city.id}
               onAuthRequired={() => setShowSignUpDialog(true)}
             />
