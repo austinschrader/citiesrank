@@ -98,5 +98,11 @@ export default {
       },
     },
   },
-  plugins: [tailwindAnimate],
+  plugins: [
+    tailwindAnimate,
+    function ({ addVariant }) {
+      // Add a custom variant for the type badge hover
+      addVariant("type-badge-hover", ":merge(.type-badge):hover &");
+    },
+  ],
 };
