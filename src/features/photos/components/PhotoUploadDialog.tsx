@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { Camera, ImagePlus, Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { Camera, ImagePlus, Loader2 } from "lucide-react";
+import React, { useState } from "react";
 
 interface PhotoUploadDialogProps {
   isOpen: boolean;
@@ -21,8 +21,8 @@ export const PhotoUploadDialog: React.FC<PhotoUploadDialogProps> = ({
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [caption, setCaption] = useState('');
-  const [tags, setTags] = useState('');
+  const [caption, setCaption] = useState("");
+  const [tags, setTags] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
@@ -41,45 +41,81 @@ export const PhotoUploadDialog: React.FC<PhotoUploadDialogProps> = ({
   const handleUpload = async () => {
     if (!selectedFile) return;
 
-    setIsUploading(true);
-    // Simulate upload delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      setIsUploading(true);
 
-    toast({
-      title: "Photo uploaded!",
-      description: "You earned 50 points for your contribution.",
-    });
+      const apiKey = import.meta.env.VITE_BUNNY_CDN_API_KEY;
 
-    // Show points animation
-    const pointsPopup = document.createElement('div');
-    pointsPopup.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold text-primary animate-bounce';
-    pointsPopup.textContent = '+50 points!';
-    document.body.appendChild(pointsPopup);
-    setTimeout(() => pointsPopup.remove(), 2000);
+      // Construct proper storage URL with zone name
+      const storageZone = "mapspace"; // Your storage zone name
+      const filePath = `${selectedFile.name}`;
+      const uploadUrl = `https://la.storage.bunnycdn.com/${storageZone}/${filePath}`;
 
-    setIsUploading(false);
-    onClose();
+      console.log("Uploading to:", uploadUrl);
+
+      const response = await fetch(uploadUrl, {
+        method: "PUT",
+        body: await selectedFile.arrayBuffer(),
+        headers: {
+          AccessKey: apiKey,
+          "Content-Type": "application/octet-stream",
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Upload failed:", errorText);
+        throw new Error("Failed to upload photo");
+      }
+
+      // Get the CDN URL for the uploaded image
+      const cdnUrl = `https://mapspace.b-cdn.net/${filePath}`;
+
+      toast({
+        title: "Photo uploaded!",
+        description: "You earned 50 points for your contribution.",
+      });
+
+      // Show points animation
+      const pointsPopup = document.createElement("div");
+      pointsPopup.className =
+        "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold text-primary animate-bounce";
+      pointsPopup.textContent = "+50 points!";
+      document.body.appendChild(pointsPopup);
+      setTimeout(() => pointsPopup.remove(), 2000);
+
+      setIsUploading(false);
+      onClose();
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      setIsUploading(false);
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogTitle>Add Photo for {placeName}</DialogTitle>
-        
+
         <div className="space-y-4">
           {/* Photo Upload Area */}
-          <div 
+          <div
             className={`
               relative aspect-square rounded-lg border-2 border-dashed
-              ${preview ? 'border-primary' : 'border-muted-foreground/25'}
+              ${preview ? "border-primary" : "border-muted-foreground/25"}
               hover:border-primary/50 transition-colors
               flex items-center justify-center
             `}
           >
             {preview ? (
-              <img 
-                src={preview} 
-                alt="Preview" 
+              <img
+                src={preview}
+                alt="Preview"
                 className="w-full h-full object-cover rounded-lg"
               />
             ) : (
@@ -120,20 +156,24 @@ export const PhotoUploadDialog: React.FC<PhotoUploadDialogProps> = ({
 
           {/* Quick Tags */}
           <div className="flex flex-wrap gap-2">
-            {['#view', '#architecture', '#food', '#nature', '#street'].map(tag => (
-              <Button
-                key={tag}
-                variant="outline"
-                size="sm"
-                onClick={() => setTags(prev => prev ? `${prev}, ${tag}` : tag)}
-              >
-                {tag}
-              </Button>
-            ))}
+            {["#view", "#architecture", "#food", "#nature", "#street"].map(
+              (tag) => (
+                <Button
+                  key={tag}
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setTags((prev) => (prev ? `${prev}, ${tag}` : tag))
+                  }
+                >
+                  {tag}
+                </Button>
+              )
+            )}
           </div>
 
           {/* Upload Button */}
-          <Button 
+          <Button
             className="w-full"
             disabled={!selectedFile || isUploading}
             onClick={handleUpload}
