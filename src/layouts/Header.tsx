@@ -47,7 +47,7 @@ export const Header = () => {
     },
     {
       label: "All Collections",
-      mobileLabel: "All Collections",
+      mobileLabel: "Lists",
       icon: Scroll,
       to: "/lists",
       description: "Create and organize lists of your favorite places",
@@ -55,7 +55,7 @@ export const Header = () => {
     },
     {
       label: "Happening Now",
-      mobileLabel: "Happening Now",
+      mobileLabel: "Now",
       icon: Sparkles,
       to: "/feed",
       description: "See the most recent updates and activity",
@@ -63,7 +63,7 @@ export const Header = () => {
     },
     {
       label: "Achievements",
-      mobileLabel: "Achievements",
+      mobileLabel: "Achieve",
       icon: Sparkles,
       to: "/discover",
       description: "Discover hidden gems and share your finds",
@@ -243,7 +243,9 @@ export const Header = () => {
                     className={`h-5 w-5 ${item.iconClass}`}
                     strokeWidth={2.5}
                   />
-                  <span className="text-[10px] font-medium">{item.label}</span>
+                  <span className="text-[10px] font-medium">
+                    {item.mobileLabel}
+                  </span>
                 </div>
               </Link>
             ))}
