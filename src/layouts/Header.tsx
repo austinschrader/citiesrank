@@ -17,7 +17,6 @@ import {
   Bookmark,
   LogOut,
   MapPin,
-  Plus,
   Scroll,
   Sparkles,
   Upload,
@@ -142,18 +141,6 @@ export const Header = () => {
                   </Button>
                 </Link>
               ))}
-              {/* Add Place Button (Mobile) */}
-              {user && (
-                <Link to="/my-places">
-                  <Button
-                    size="sm"
-                    className="flex flex-col items-center gap-1 h-auto py-1.5 px-3 bg-gradient-to-r from-indigo-500 to-purple-500"
-                  >
-                    <Plus className="h-5 w-5 text-white" strokeWidth={2.5} />
-                    <span className="text-xs text-white">Add</span>
-                  </Button>
-                </Link>
-              )}
             </nav>
 
             {/* User menu section */}
