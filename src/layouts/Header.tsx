@@ -198,6 +198,17 @@ export const Header = () => {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuGroup>
+                    {user.isAdmin && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/import" className="cursor-pointer">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import Data
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
                     <DropdownMenuItem
                       onClick={handleSignOut}
                       className="text-red-600 focus:text-red-600 cursor-pointer"
