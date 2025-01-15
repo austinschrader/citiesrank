@@ -61,10 +61,10 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
           isFiltersCollapsed ? "h-0 overflow-hidden" : "h-[44px]"
         )}
       >
-        <div className="h-full px-3 flex items-center gap-3">
+        <div className="h-full px-3 flex items-center gap-2 md:gap-3 overflow-x-auto md:overflow-visible">
           {/* Left Section */}
-          <div className="flex items-center gap-3 flex-1">
-            <div className="relative w-[220px]">
+          <div className="flex items-center gap-2 md:gap-3 flex-1">
+            <div className="relative w-[180px] md:w-[220px]">
               <Input
                 type="text"
                 placeholder="Find your next adventure..."
