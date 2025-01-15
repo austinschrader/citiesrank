@@ -17,7 +17,6 @@ import {
   Bookmark,
   LogOut,
   MapPin,
-  Plus,
   Scroll,
   Sparkles,
   Upload,
@@ -47,7 +46,7 @@ export const Header = () => {
     },
     {
       label: "All Collections",
-      mobileLabel: "All Collections",
+      mobileLabel: "Lists",
       icon: Scroll,
       to: "/lists",
       description: "Create and organize lists of your favorite places",
@@ -55,7 +54,7 @@ export const Header = () => {
     },
     {
       label: "Happening Now",
-      mobileLabel: "Happening Now",
+      mobileLabel: "Now",
       icon: Sparkles,
       to: "/feed",
       description: "See the most recent updates and activity",
@@ -63,25 +62,12 @@ export const Header = () => {
     },
     {
       label: "Achievements",
-      mobileLabel: "Achievements",
+      mobileLabel: "Achieve",
       icon: Sparkles,
       to: "/discover",
       description: "Discover hidden gems and share your finds",
       iconClass: "text-purple-500",
     },
-    // Only show admin links to admin users
-    ...(user?.isAdmin
-      ? [
-          {
-            label: "Import Data",
-            mobileLabel: "Import",
-            icon: Upload,
-            to: "/admin/import",
-            description: "Import places and feed items",
-            iconClass: "text-emerald-500",
-          },
-        ]
-      : []),
   ];
 
   return (
@@ -142,18 +128,6 @@ export const Header = () => {
                   </Button>
                 </Link>
               ))}
-              {/* Add Place Button (Mobile) */}
-              {user && (
-                <Link to="/my-places">
-                  <Button
-                    size="sm"
-                    className="flex flex-col items-center gap-1 h-auto py-1.5 px-3 bg-gradient-to-r from-indigo-500 to-purple-500"
-                  >
-                    <Plus className="h-5 w-5 text-white" strokeWidth={2.5} />
-                    <span className="text-xs text-white">Add</span>
-                  </Button>
-                </Link>
-              )}
             </nav>
 
             {/* User menu section */}
@@ -211,6 +185,17 @@ export const Header = () => {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuGroup>
+                    {user.isAdmin && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/import" className="cursor-pointer">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import Data
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
                     <DropdownMenuItem
                       onClick={handleSignOut}
                       className="text-red-600 focus:text-red-600 cursor-pointer"
@@ -227,64 +212,6 @@ export const Header = () => {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background md:hidden z-50">
-        <nav className="container h-full">
-          <div className="grid h-full grid-cols-4 items-stretch">
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="flex items-center justify-center"
-              >
-                <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                  <item.icon
-                    className={`h-5 w-5 ${item.iconClass}`}
-                    strokeWidth={2.5}
-                  />
-                  <span className="text-[10px] font-medium">{item.label}</span>
-                </div>
-              </Link>
-            ))}
-            {user ? (
-              <>
-                <Link
-                  to="/favorites"
-                  className={`flex items-center justify-center ${
-                    location.pathname === "/favorites" ? "bg-gray-50" : ""
-                  }`}
-                >
-                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <Bookmark
-                      className="h-5 w-5 text-pink-500"
-                      strokeWidth={2.5}
-                    />
-                    <span className="text-[10px] font-medium">Saved</span>
-                  </div>
-                </Link>
-                <Link
-                  to="/profile"
-                  className={`flex items-center justify-center ${
-                    location.pathname === "/profile" ? "bg-gray-50" : ""
-                  }`}
-                >
-                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <UserCircle
-                      className="h-5 w-5 text-purple-500"
-                      strokeWidth={2.5}
-                    />
-                    <span className="text-[10px] font-medium">Profile</span>
-                  </div>
-                </Link>
-              </>
-            ) : (
-              <div className="flex items-center justify-center col-span-2">
-                <SignInButton />
-              </div>
-            )}
-          </div>
-        </nav>
       </div>
     </header>
   );
