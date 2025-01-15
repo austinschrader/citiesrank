@@ -68,19 +68,6 @@ export const Header = () => {
       description: "Discover hidden gems and share your finds",
       iconClass: "text-purple-500",
     },
-    // Only show admin links to admin users
-    ...(user?.isAdmin
-      ? [
-          {
-            label: "Import Data",
-            mobileLabel: "Import",
-            icon: Upload,
-            to: "/admin/import",
-            description: "Import places and feed items",
-            iconClass: "text-emerald-500",
-          },
-        ]
-      : []),
   ];
 
   return (
