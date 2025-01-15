@@ -228,66 +228,6 @@ export const Header = () => {
           </div>
         </div>
       </div>
-
-      <div className="fixed bottom-0 left-0 right-0 h-16 border-t bg-background md:hidden z-50">
-        <nav className="container h-full">
-          <div className="grid h-full grid-cols-4 items-stretch">
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="flex items-center justify-center"
-              >
-                <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                  <item.icon
-                    className={`h-5 w-5 ${item.iconClass}`}
-                    strokeWidth={2.5}
-                  />
-                  <span className="text-[10px] font-medium">
-                    {item.mobileLabel}
-                  </span>
-                </div>
-              </Link>
-            ))}
-            {user ? (
-              <>
-                <Link
-                  to="/favorites"
-                  className={`flex items-center justify-center ${
-                    location.pathname === "/favorites" ? "bg-gray-50" : ""
-                  }`}
-                >
-                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <Bookmark
-                      className="h-5 w-5 text-pink-500"
-                      strokeWidth={2.5}
-                    />
-                    <span className="text-[10px] font-medium">Saved</span>
-                  </div>
-                </Link>
-                <Link
-                  to="/profile"
-                  className={`flex items-center justify-center ${
-                    location.pathname === "/profile" ? "bg-gray-50" : ""
-                  }`}
-                >
-                  <div className="flex flex-col items-center justify-center gap-1 px-2 py-1">
-                    <UserCircle
-                      className="h-5 w-5 text-purple-500"
-                      strokeWidth={2.5}
-                    />
-                    <span className="text-[10px] font-medium">Profile</span>
-                  </div>
-                </Link>
-              </>
-            ) : (
-              <div className="flex items-center justify-center col-span-2">
-                <SignInButton />
-              </div>
-            )}
-          </div>
-        </nav>
-      </div>
     </header>
   );
 };
