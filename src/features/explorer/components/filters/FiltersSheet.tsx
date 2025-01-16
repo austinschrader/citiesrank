@@ -62,7 +62,9 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
   const { cities } = useCities();
 
   const activeFiltersCount =
-    (filters.activeTypes?.length || 0) +
+    (filters.activeTypes?.length < Object.keys(placeTypeIcons).length
+      ? filters.activeTypes?.length
+      : 0) +
     (filters.populationCategory ? 1 : 0) +
     (filters.averageRating ? 1 : 0);
 
@@ -78,12 +80,42 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
               "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
           )}
         >
-          <SlidersHorizontal className="h-4 w-4" />
-          <span className="relative z-10 text-md font-medium">All Filters</span>
+          <SlidersHorizontal
+            className={cn(
+              "h-4 w-4",
+              activeFiltersCount > 0 ? "text-white" : "text-indigo-500"
+            )}
+          />
+          <span
+            className={cn(
+              "relative z-10 text-md font-medium",
+              activeFiltersCount > 0
+                ? "text-white"
+                : "bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent"
+            )}
+          >
+            All Filters
+          </span>
           {activeFiltersCount > 0 && (
             <div className="flex items-center gap-1">
-              <div className="h-1 w-1 rounded-full bg-white/70" />
-              <span className="text-xs font-medium">{activeFiltersCount}</span>
+              <div
+                className={cn(
+                  "h-1 w-1 rounded-full",
+                  activeFiltersCount > 0
+                    ? "bg-white"
+                    : "bg-gradient-to-r from-indigo-500 to-purple-600"
+                )}
+              />
+              <span
+                className={cn(
+                  "text-xs font-medium",
+                  activeFiltersCount > 0
+                    ? "text-white"
+                    : "bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent"
+                )}
+              >
+                {activeFiltersCount}
+              </span>
             </div>
           )}
         </Button>
