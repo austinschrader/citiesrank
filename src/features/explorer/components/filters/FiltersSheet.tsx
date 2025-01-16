@@ -270,24 +270,22 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
               <span className="text-muted-foreground">
                 {cities.length} spaces
               </span>
-              {activeFiltersCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    handleTypeClick(CitiesTypeOptions.country);
-                    handleTypeClick(CitiesTypeOptions.region);
-                    handleTypeClick(CitiesTypeOptions.city);
-                    handleTypeClick(CitiesTypeOptions.neighborhood);
-                    handleTypeClick(CitiesTypeOptions.sight);
-                    handlePopulationSelect(null);
-                    handleRatingChange(null);
-                  }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Reset all
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  handleTypeClick(CitiesTypeOptions.country);
+                  handleTypeClick(CitiesTypeOptions.region);
+                  handleTypeClick(CitiesTypeOptions.city);
+                  handleTypeClick(CitiesTypeOptions.neighborhood);
+                  handleTypeClick(CitiesTypeOptions.sight);
+                  handlePopulationSelect(null);
+                  handleRatingChange(null);
+                }}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Reset all
+              </Button>
             </div>
             <SheetClose asChild>
               <Button
