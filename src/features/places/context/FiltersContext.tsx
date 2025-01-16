@@ -265,15 +265,19 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         .filter((city) => {
           // Apply search filter first
           if (filters.search) {
-            const searchTerm = filters.search.toLowerCase();
+            const searchTerm = filters.search.toLowerCase().trim();
             const cityName = city.name.toLowerCase();
+            const normalizedName = city.normalizedName?.toLowerCase() || "";
             const cityCountry = city.country?.toLowerCase() || "";
+            const normalizedCountry = cityCountry.replace(/\s+/g, "-");
             const cityDescription = city.description?.toLowerCase() || "";
 
             // Check if search term matches any of the city's text fields
             if (
               !cityName.includes(searchTerm) &&
+              !normalizedName.includes(searchTerm) &&
               !cityCountry.includes(searchTerm) &&
+              !normalizedCountry.includes(searchTerm) &&
               !cityDescription.includes(searchTerm)
             ) {
               return false;
