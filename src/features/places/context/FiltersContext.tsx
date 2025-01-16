@@ -288,15 +288,18 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             return false;
           }
 
-          if (filters.populationCategory) {
+          // Only apply population filter to cities
+          if (filters.populationCategory && city.type === CitiesTypeOptions.city) {
             const population = city.population;
             if (!isInPopulationRange(population, filters.populationCategory)) {
               return false;
             }
           }
 
+          // Don't apply rating filter to countries
           if (
             filters.averageRating &&
+            city.type !== CitiesTypeOptions.country &&
             (!city.averageRating || city.averageRating < filters.averageRating)
           ) {
             return false;

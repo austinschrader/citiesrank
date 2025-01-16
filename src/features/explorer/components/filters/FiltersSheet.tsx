@@ -51,38 +51,20 @@ interface FiltersSheetProps {
 }
 
 export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
-  const { filters, setFilters } = useFilters();
+  const {
+    filters,
+    handleTypeClick,
+    handlePopulationSelect,
+    handleRatingChange,
+    resetTypeFilters,
+    resetPopulationFilter,
+  } = useFilters();
   const { cities } = useCities();
 
   const activeFiltersCount =
     (filters.activeTypes?.length || 0) +
     (filters.populationCategory ? 1 : 0) +
     (filters.averageRating ? 1 : 0);
-
-  const handleTypeClick = (type: CitiesTypeOptions) => {
-    const newTypes = filters.activeTypes.includes(type)
-      ? filters.activeTypes.filter((t) => t !== type)
-      : [...filters.activeTypes, type];
-    setFilters({ ...filters, activeTypes: newTypes });
-  };
-
-  const resetTypeFilters = () => {
-    setFilters({ ...filters, activeTypes: [] });
-  };
-
-  const resetPopulationFilter = () => {
-    setFilters({ ...filters, populationCategory: null });
-  };
-
-  const handleRatingChange = (rating: number | null) => {
-    setFilters({ ...filters, averageRating: rating });
-  };
-
-  const handlePopulationSelect = (
-    size: "megacity" | "city" | "town" | "village" | null
-  ) => {
-    setFilters({ ...filters, populationCategory: size });
-  };
 
   return (
     <Sheet>
@@ -261,15 +243,13 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setFilters({
-                      ...filters,
-                      activeTypes: Object.keys(
-                        placeTypeIcons
-                      ) as CitiesTypeOptions[],
-                      populationCategory: null,
-                      averageRating: null,
-                      search: "",
-                    });
+                    handleTypeClick(CitiesTypeOptions.country);
+                    handleTypeClick(CitiesTypeOptions.region);
+                    handleTypeClick(CitiesTypeOptions.city);
+                    handleTypeClick(CitiesTypeOptions.neighborhood);
+                    handleTypeClick(CitiesTypeOptions.sight);
+                    handlePopulationSelect(null);
+                    handleRatingChange(null);
                   }}
                   className="text-muted-foreground hover:text-foreground"
                 >
