@@ -300,10 +300,9 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             }
           }
 
-          // Don't apply rating filter to countries
+          // Apply rating filter to all places
           if (
             filters.averageRating &&
-            city.type !== CitiesTypeOptions.country &&
             (!city.averageRating || city.averageRating < filters.averageRating)
           ) {
             return false;
