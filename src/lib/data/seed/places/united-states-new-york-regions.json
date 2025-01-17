@@ -1,0 +1,34 @@
+[
+  {
+    "name": "The Hamptons",
+    "country": "USA",
+    "type": "region",
+    "cost": 95,
+    "interesting": 80,
+    "transit": 45,
+    "description": "Collection of exclusive beach towns serving as NYC's summer playground",
+    "population": 20000,
+    "highlights": [
+      "Southampton Main Street",
+      "East Hampton Beaches",
+      "Montauk Lighthouse",
+      "Parrish Art Museum",
+      "Wölffer Estate Vineyard",
+      "LongHouse Reserve",
+      "Sag Harbor"
+    ],
+    "averageRating": 4.5,
+    "totalReviews": 25000,
+    "tags": ["luxury", "beach", "celebrity", "shopping", "upscale"],
+    "crowdLevel": 90,
+    "recommendedStay": 60,
+    "bestSeason": 65,
+    "accessibility": 55,
+    "costIndex": 10,
+    "safetyScore": 9.0,
+    "walkScore": 4.0,
+    "transitScore": 4.5,
+    "latitude": 40.88,
+    "longitude": -72.39
+  }
+]

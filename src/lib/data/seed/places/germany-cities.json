@@ -28,7 +28,8 @@
       "urban",
       "food",
       "music",
-      "startup"
+      "startup",
+      "lgbtq"
     ],
     "crowdLevel": 70,
     "recommendedStay": 90,
@@ -38,7 +39,7 @@
     "safetyScore": 8.0,
     "walkScore": 8.5,
     "transitScore": 9.0,
-    "latitude": 52.5200,
-    "longitude": 13.4050
+    "latitude": 52.52,
+    "longitude": 13.405
   }
 ]

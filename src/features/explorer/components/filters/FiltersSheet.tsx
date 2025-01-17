@@ -19,6 +19,7 @@ import {
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, Star } from "lucide-react";
 
@@ -51,37 +52,33 @@ interface FiltersSheetProps {
 }
 
 export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
-  const { filters, setFilters } = useFilters();
+  const {
+    filters,
+    handleTypeClick,
+    handlePopulationSelect,
+    handleRatingChange,
+    resetTypeFilters,
+    resetPopulationFilter,
+    setFilters,
+  } = useFilters();
   const { cities } = useCities();
 
   const activeFiltersCount =
-    (filters.activeTypes?.length || 0) +
+    (filters.activeTypes?.length < Object.keys(placeTypeIcons).length
+      ? filters.activeTypes?.length
+      : 0) +
     (filters.populationCategory ? 1 : 0) +
-    (filters.averageRating ? 1 : 0);
+    (filters.averageRating ? 1 : 0) +
+    (filters.tags.length > 0 ? 1 : 0);
 
-  const handleTypeClick = (type: CitiesTypeOptions) => {
-    const newTypes = filters.activeTypes.includes(type)
-      ? filters.activeTypes.filter((t) => t !== type)
-      : [...filters.activeTypes, type];
-    setFilters({ ...filters, activeTypes: newTypes });
-  };
-
-  const resetTypeFilters = () => {
-    setFilters({ ...filters, activeTypes: [] });
-  };
-
-  const resetPopulationFilter = () => {
-    setFilters({ ...filters, populationCategory: null });
-  };
-
-  const handleRatingChange = (rating: number | null) => {
-    setFilters({ ...filters, averageRating: rating });
-  };
-
-  const handlePopulationSelect = (
-    size: "megacity" | "city" | "town" | "village" | null
-  ) => {
-    setFilters({ ...filters, populationCategory: size });
+  const getUniqueTags = (cities: CitiesResponse[]) => {
+    const tagsSet = new Set<string>();
+    cities.forEach((city) => {
+      if (Array.isArray(city.tags)) {
+        city.tags.forEach((tag) => tagsSet.add(tag));
+      }
+    });
+    return Array.from(tagsSet).sort();
   };
 
   return (
@@ -96,12 +93,42 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
               "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
           )}
         >
-          <SlidersHorizontal className="h-4 w-4" />
-          <span className="relative z-10 text-md font-medium">All Filters</span>
+          <SlidersHorizontal
+            className={cn(
+              "h-4 w-4",
+              activeFiltersCount > 0 ? "text-white" : "text-indigo-500"
+            )}
+          />
+          <span
+            className={cn(
+              "relative z-10 text-md font-medium",
+              activeFiltersCount > 0
+                ? "text-white"
+                : "bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent"
+            )}
+          >
+            All Filters
+          </span>
           {activeFiltersCount > 0 && (
             <div className="flex items-center gap-1">
-              <div className="h-1 w-1 rounded-full bg-white/70" />
-              <span className="text-xs font-medium">{activeFiltersCount}</span>
+              <div
+                className={cn(
+                  "h-1 w-1 rounded-full",
+                  activeFiltersCount > 0
+                    ? "bg-white"
+                    : "bg-gradient-to-r from-indigo-500 to-purple-600"
+                )}
+              />
+              <span
+                className={cn(
+                  "text-xs font-medium",
+                  activeFiltersCount > 0
+                    ? "text-white"
+                    : "bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent"
+                )}
+              >
+                {activeFiltersCount}
+              </span>
             </div>
           )}
         </Button>
@@ -199,10 +226,9 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                       onClick={() => handlePopulationSelect(size as any)}
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                        "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
                         filters.populationCategory === size
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                          : "bg-white/5 text-muted-foreground hover:text-foreground"
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                          : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
                       )}
                     >
                       <span className="text-lg">{emoji}</span>
@@ -212,6 +238,48 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                 )}
               </div>
             </div>
+
+            <Separator />
+
+            {/* Tags */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Tags</h3>
+                {filters.tags.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFilters({ ...filters, tags: [] })}
+                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {getUniqueTags(cities).map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => {
+                      const newTags = filters.tags.includes(tag)
+                        ? filters.tags.filter((t) => t !== tag)
+                        : [...filters.tags, tag];
+                      setFilters({ ...filters, tags: newTags });
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                      filters.tags.includes(tag)
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                        : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
+                    )}
+                  >
+                    <span className="capitalize">{tag}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Separator />
 
             {/* Rating */}
             <div className="space-y-4">
@@ -234,11 +302,10 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                     key={rating}
                     onClick={() => handleRatingChange(rating)}
                     className={cn(
-                      "flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                      "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
                       filters.averageRating === rating
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                        : "bg-white/5 text-muted-foreground hover:text-foreground"
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                        : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
                     )}
                   >
                     <Star className="h-4 w-4" />
@@ -256,26 +323,23 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
               <span className="text-muted-foreground">
                 {cities.length} spaces
               </span>
-              {activeFiltersCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setFilters({
-                      ...filters,
-                      activeTypes: Object.keys(
-                        placeTypeIcons
-                      ) as CitiesTypeOptions[],
-                      populationCategory: null,
-                      averageRating: null,
-                      search: "",
-                    });
-                  }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Reset all
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  handleTypeClick(CitiesTypeOptions.country);
+                  handleTypeClick(CitiesTypeOptions.region);
+                  handleTypeClick(CitiesTypeOptions.city);
+                  handleTypeClick(CitiesTypeOptions.neighborhood);
+                  handleTypeClick(CitiesTypeOptions.sight);
+                  handlePopulationSelect(null);
+                  handleRatingChange(null);
+                  setFilters({ ...filters, tags: [] });
+                }}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Reset all
+              </Button>
             </div>
             <SheetClose asChild>
               <Button

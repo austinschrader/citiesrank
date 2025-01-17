@@ -1,0 +1,34 @@
+[
+  {
+    "name": "New Hope",
+    "country": "USA",
+    "type": "city",
+    "cost": 75,
+    "interesting": 80,
+    "transit": 45,
+    "description": "Historic riverside arts town known for LGBTQ+ culture and eclectic shopping",
+    "population": 2528,
+    "highlights": [
+      "Bucks County Playhouse",
+      "New Hope & Ivyland Railroad",
+      "Delaware River",
+      "Parry Mansion",
+      "Main Street Shopping",
+      "Bowman's Hill Tower",
+      "Delaware Canal Towpath"
+    ],
+    "averageRating": 4.5,
+    "totalReviews": 5000,
+    "tags": ["arts", "lgbtq", "historic", "shopping", "dining"],
+    "crowdLevel": 85,
+    "recommendedStay": 45,
+    "bestSeason": 75,
+    "accessibility": 70,
+    "costIndex": 7.5,
+    "safetyScore": 8.5,
+    "walkScore": 8.0,
+    "transitScore": 4.5,
+    "latitude": 40.3649,
+    "longitude": -74.9538
+  }
+]

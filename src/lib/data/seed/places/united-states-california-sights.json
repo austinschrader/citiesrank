@@ -2,7 +2,7 @@
   {
     "name": "Yosemite",
     "country": "United States",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 70,
     "interesting": 95,
     "transit": 55,
@@ -30,5 +30,37 @@
     "transitScore": 5.5,
     "latitude": 37.8651,
     "longitude": -119.5383
+  },
+  {
+    "name": "East Jesus",
+    "country": "United States",
+    "type": "sight",
+    "cost": 40,
+    "interesting": 75,
+    "transit": 15,
+    "description": "Off-grid art community in Slab City near Salton Sea",
+    "population": 0,
+    "highlights": [
+      "Outdoor Art Museum",
+      "Sculpture Garden",
+      "Community Center",
+      "Artist Residencies",
+      "Slab City proximity",
+      "Salvation Mountain nearby",
+      "Desert Art"
+    ],
+    "averageRating": 4.1,
+    "totalReviews": 1200,
+    "tags": ["artsy", "alternative", "remote", "desert", "quirky"],
+    "crowdLevel": 25,
+    "recommendedStay": 25,
+    "bestSeason": 55,
+    "accessibility": 25,
+    "costIndex": 4,
+    "safetyScore": 6.5,
+    "walkScore": 2.0,
+    "transitScore": 1.5,
+    "latitude": 33.25,
+    "longitude": -115.46
   }
 ]

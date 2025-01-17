@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Big Sur",
+    "country": "United States",
+    "type": "region",
+    "cost": 75,
+    "interesting": 95,
+    "transit": 20,
+    "description": "Dramatic coastal region with iconic views and hiking",
+    "population": 1,
+    "highlights": [
+      "Bixby Bridge",
+      "McWay Falls",
+      "Pfeiffer Beach",
+      "Nepenthe Restaurant",
+      "Julia Pfeiffer Burns SP",
+      "Point Sur Lighthouse",
+      "Henry Miller Library"
+    ],
+    "averageRating": 4.8,
+    "totalReviews": 18000,
+    "tags": ["scenic", "nature", "hiking", "coastal", "remote"],
+    "crowdLevel": 70,
+    "recommendedStay": 45,
+    "bestSeason": 70,
+    "accessibility": 40,
+    "costIndex": 8,
+    "safetyScore": 7.5,
+    "walkScore": 2.0,
+    "transitScore": 2.0,
+    "latitude": 36.27,
+    "longitude": -121.8
+  }
+]

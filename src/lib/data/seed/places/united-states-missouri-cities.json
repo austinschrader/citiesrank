@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Branson",
+    "country": "USA",
+    "type": "city",
+    "cost": 60,
+    "interesting": 75,
+    "transit": 35,
+    "description": "Family-oriented entertainment destination in the Ozarks",
+    "population": 12638,
+    "highlights": [
+      "Live Shows",
+      "Silver Dollar City",
+      "Branson Landing",
+      "Table Rock Lake",
+      "Showboat Branson Belle",
+      "Titanic Museum",
+      "Highway 76 Strip"
+    ],
+    "averageRating": 4.2,
+    "totalReviews": 45000,
+    "tags": ["entertainment", "family", "shows", "theme parks", "shopping"],
+    "crowdLevel": 85,
+    "recommendedStay": 65,
+    "bestSeason": 75,
+    "accessibility": 55,
+    "costIndex": 6,
+    "safetyScore": 7.5,
+    "walkScore": 4.0,
+    "transitScore": 3.5,
+    "latitude": 36.64,
+    "longitude": -93.21
+  }
+]

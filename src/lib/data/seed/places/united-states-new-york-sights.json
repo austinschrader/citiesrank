@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Mohonk Mountain House",
+    "country": "USA",
+    "type": "sight",
+    "cost": 95,
+    "interesting": 85,
+    "transit": 25,
+    "description": "Victorian castle resort in the Shawangunk Mountains",
+    "population": 0,
+    "highlights": [
+      "Historic Hotel",
+      "Sky Lake",
+      "Garden Maze",
+      "Hiking Trails",
+      "Ice Skating Pavilion",
+      "Spa",
+      "Rock Scrambles"
+    ],
+    "averageRating": 4.7,
+    "totalReviews": 5000,
+    "tags": ["historic", "luxury", "resort", "nature", "scenic"],
+    "crowdLevel": 65,
+    "recommendedStay": 45,
+    "bestSeason": 75,
+    "accessibility": 45,
+    "costIndex": 9,
+    "safetyScore": 9.0,
+    "walkScore": 4.0,
+    "transitScore": 2.5,
+    "latitude": 41.77,
+    "longitude": -74.16
+  }
+]
