@@ -142,7 +142,7 @@
       "Tapas cuisine",
       "Flamenco dancing"
     ],
-    "tags": ["culture", "food", "beach"],
+    "tags": ["culture", "food", "beach", "lgbtq"],
     "languages": ["Spanish", "Catalan", "Basque", "Galician"],
     "currency": "Euro",
     "timezone": "UTC+1"
@@ -623,7 +623,7 @@
       "Quebec's cultural heritage",
       "National Parks"
     ],
-    "tags": ["nature", "outdoors", "culture"],
+    "tags": ["nature", "outdoors", "culture", "lgbtq"],
     "languages": ["English", "French"],
     "currency": "Canadian Dollar",
     "timezone": "UTC-3.5 to UTC-8"
@@ -697,7 +697,7 @@
       "Dutch countryside",
       "Rotterdam architecture"
     ],
-    "tags": ["culture", "cycling", "art"],
+    "tags": ["culture", "cycling", "art", "lgbtq"],
     "languages": ["Dutch"],
     "currency": "Euro",
     "timezone": "UTC+1"
@@ -1585,7 +1585,7 @@
       "Craft beer culture",
       "Waterloo battlefield"
     ],
-    "tags": ["culture", "food", "history"],
+    "tags": ["culture", "food", "history", "lgbtq"],
     "languages": ["Dutch", "French", "German"],
     "currency": "Euro",
     "timezone": "UTC+1"
@@ -1659,7 +1659,7 @@
       "Historic castles",
       "Cycling culture"
     ],
-    "tags": ["design", "culture", "cycling"],
+    "tags": ["design", "culture", "cycling", "lgbtq"],
     "languages": ["Danish"],
     "currency": "Danish Krone",
     "timezone": "UTC+1"
@@ -1918,7 +1918,7 @@
       "Archipelago islands",
       "ABBA Museum"
     ],
-    "tags": ["nature", "design", "culture"],
+    "tags": ["nature", "design", "culture", "lgbtq"],
     "languages": ["Swedish"],
     "currency": "Swedish Krona",
     "timezone": "UTC+1"
@@ -2177,7 +2177,7 @@
       "Trolltunga hike",
       "Arctic adventures"
     ],
-    "tags": ["nature", "outdoors", "scenery"],
+    "tags": ["nature", "outdoors", "scenery", "lgbtq"],
     "languages": ["Norwegian"],
     "currency": "Norwegian Krone",
     "timezone": "UTC+1"
@@ -3176,7 +3176,7 @@
       "Fishing villages",
       "Azure Window site"
     ],
-    "tags": ["history", "beaches", "culture"],
+    "tags": ["history", "beaches", "culture", "lgbtq"],
     "languages": ["Maltese", "English"],
     "currency": "Euro",
     "timezone": "UTC+1"

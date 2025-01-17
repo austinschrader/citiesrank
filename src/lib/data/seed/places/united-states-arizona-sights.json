@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Supai Village",
+    "country": "United States",
+    "type": "sight",
+    "cost": 90,
+    "interesting": 95,
+    "transit": 15,
+    "description": "Remote Havasupai reservation village, access point to stunning waterfalls",
+    "population": 208,
+    "highlights": [
+      "Havasu Falls",
+      "Mooney Falls",
+      "Beaver Falls",
+      "Supai Village",
+      "Havasupai Trail"
+    ],
+    "averageRating": 4.8,
+    "totalReviews": 3500,
+    "tags": ["waterfalls", "hiking", "remote", "native", "natural"],
+    "crowdLevel": 40,
+    "recommendedStay": 65,
+    "bestSeason": 70,
+    "accessibility": 20,
+    "costIndex": 8,
+    "safetyScore": 7.0,
+    "walkScore": 3.0,
+    "transitScore": 1.5,
+    "latitude": 36.23,
+    "longitude": -112.69
+  }
+]

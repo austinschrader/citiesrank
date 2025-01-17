@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Eureka Springs",
+    "country": "United States",
+    "type": "city",
+    "cost": 55,
+    "interesting": 75,
+    "transit": 25,
+    "description": "Victorian mountain town known for LGBTQ+ inclusivity, spiritual retreats, and historic architecture",
+    "population": 2166,
+    "highlights": [
+      "Christ of the Ozarks",
+      "Thorncrown Chapel",
+      "Historic Downtown",
+      "Basin Spring Park",
+      "Great Passion Play",
+      "1886 Crescent Hotel",
+      "Turpentine Creek Wildlife Refuge"
+    ],
+    "averageRating": 4.2,
+    "totalReviews": 6800,
+    "tags": ["LGBTQ+", "spiritual", "historic", "artsy", "haunted"],
+    "crowdLevel": 65,
+    "recommendedStay": 45,
+    "bestSeason": 70,
+    "accessibility": 45,
+    "costIndex": 5,
+    "safetyScore": 7.5,
+    "walkScore": 6.0,
+    "transitScore": 2.5,
+    "latitude": 36.4,
+    "longitude": -93.74
+  }
+]

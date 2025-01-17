@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Christiansted",
+    "country": "US Virgin Islands",
+    "type": "city",
+    "cost": 75,
+    "interesting": 85,
+    "transit": 35,
+    "description": "Historic Caribbean town with preserved Danish colonial architecture and culture",
+    "population": 2626,
+    "highlights": [
+      "Fort Christiansvaern",
+      "Scale House",
+      "Christiansted Boardwalk",
+      "Government House",
+      "St. Croix Heritage Trail",
+      "Protestant Cay",
+      "Customs House"
+    ],
+    "averageRating": 4.4,
+    "totalReviews": 3500,
+    "tags": ["historic", "colonial", "caribbean", "cultural", "tropical"],
+    "crowdLevel": 70,
+    "recommendedStay": 60,
+    "bestSeason": 80,
+    "accessibility": 55,
+    "costIndex": 7.5,
+    "safetyScore": 7.0,
+    "walkScore": 7.0,
+    "transitScore": 3.5,
+    "latitude": 17.7466,
+    "longitude": -64.7051
+  }
+]

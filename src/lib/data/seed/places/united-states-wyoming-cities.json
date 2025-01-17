@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Jackson Hole",
+    "country": "USA",
+    "type": "city",
+    "cost": 95,
+    "interesting": 95,
+    "transit": 45,
+    "description": "Elite mountain resort town with world-class skiing and Grand Teton views",
+    "population": 10429,
+    "highlights": [
+      "Jackson Hole Mountain Resort",
+      "Grand Teton National Park",
+      "Town Square",
+      "National Elk Refuge",
+      "Snake River",
+      "Teton Village",
+      "Million Dollar Cowboy Bar"
+    ],
+    "averageRating": 4.8,
+    "totalReviews": 12000,
+    "tags": ["skiing", "luxury", "mountains", "wildlife", "outdoors"],
+    "crowdLevel": 85,
+    "recommendedStay": 75,
+    "bestSeason": 90,
+    "accessibility": 65,
+    "costIndex": 9.5,
+    "safetyScore": 9.0,
+    "walkScore": 6.5,
+    "transitScore": 4.5,
+    "latitude": 43.4799,
+    "longitude": -110.7624
+  }
+]
