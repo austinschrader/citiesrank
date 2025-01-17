@@ -102,7 +102,13 @@ interface FiltersContextValue {
 
 const defaultFilters: Filters = {
   search: "",
-  activeTypes: [],
+  activeTypes: [
+    CitiesTypeOptions.country,
+    CitiesTypeOptions.region,
+    CitiesTypeOptions.city,
+    CitiesTypeOptions.neighborhood,
+    CitiesTypeOptions.sight,
+  ],
   sort: "alphabetical-asc",
   averageRating: null,
   populationCategory: null,
@@ -168,7 +174,13 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const resetFilters = useCallback(() => {
     setFiltersState({
       search: "",
-      activeTypes: Object.values(CitiesTypeOptions),
+      activeTypes: [
+        CitiesTypeOptions.country,
+        CitiesTypeOptions.region,
+        CitiesTypeOptions.city,
+        CitiesTypeOptions.neighborhood,
+        CitiesTypeOptions.sight,
+      ],
       sort: "alphabetical-asc",
       averageRating: 4.0,
       populationCategory: null,
@@ -182,7 +194,13 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
   const resetTypeFilters = useCallback(() => {
     setFiltersState((prev) => ({
       ...prev,
-      activeTypes: Object.values(CitiesTypeOptions),
+      activeTypes: [
+        CitiesTypeOptions.country,
+        CitiesTypeOptions.region,
+        CitiesTypeOptions.city,
+        CitiesTypeOptions.neighborhood,
+        CitiesTypeOptions.sight,
+      ],
     }));
   }, []);
 
