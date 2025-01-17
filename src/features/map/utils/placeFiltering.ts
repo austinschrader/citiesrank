@@ -1,6 +1,6 @@
 /**
  * Place filtering utilities for map visibility.
- * 
+ *
  * Provides three main filtering functions:
  * - filterPlacesByZoom: Shows/hides places based on zoom level and importance
  * - filterPlacesByBounds: Filters places to those within the current map view
@@ -30,7 +30,7 @@ export const ZOOM_LEVELS = {
 /**
  * Generates a consistent random number (0-1) for a place based on its properties.
  * Used to randomly but consistently show/hide places based on importance.
- * 
+ *
  * @param place - The place to generate a random number for
  * @returns A number between 0 and 1
  */
@@ -56,20 +56,20 @@ function hashString(str: string): number {
  * Helper function to get population in actual numbers
  */
 const getPopulation = (place: MapPlace): number => {
-  return typeof place.population === 'number' ? place.population : 0;
+  return typeof place.population === "number" ? place.population : 0;
 };
 
 /**
  * Filters places based on the current map zoom level and place characteristics.
  * Uses a deterministic approach to show/hide places:
- * 
+ *
  * 1. Countries: Always visible at low zoom, reduced visibility at high zoom
  * 2. Regions: Increased visibility above REGION zoom level
  * 3. Cities: Visibility based on population and zoom level
  *    - Major cities (1M+) always visible
  *    - Large cities (500k+) have increased visibility
  * 4. Neighborhoods/Sights: High visibility when zoomed in, low when zoomed out
- * 
+ *
  * @param places - Array of places to filter
  * @param zoom - Current map zoom level
  * @param populationCategory - If not null, only shows cities within the specified population category
@@ -80,44 +80,70 @@ export function filterPlacesByZoom(
   zoom: number,
   populationCategory: PopulationCategory | null = null
 ): MapPlace[] {
-  // Remove population category filtering
+  // Show everything when zoomed in far enough
   if (zoom > 12) {
     return places;
   }
 
   if (zoom > 8) {
-    return places.filter(place => {
+    return places.filter((place) => {
       // Always show cities, neighborhoods, and sights when zoomed in this far
       if (
-        place.type === CitiesTypeOptions.city || 
+        place.type === CitiesTypeOptions.city ||
         place.type === CitiesTypeOptions.sight ||
         place.type === CitiesTypeOptions.neighborhood
       ) {
         return true;
       }
-      // For other types, use importance if available
-      const importance = (place.averageRating || 0) * (place.totalReviews || 0);
-      return importance > 1000;
+
+      // For countries and regions, use a weighted importance that doesn't penalize low ratings as much
+      if (
+        place.type === CitiesTypeOptions.country ||
+        place.type === CitiesTypeOptions.region
+      ) {
+        const rating = place.averageRating || 0;
+        const reviews = place.totalReviews || 0;
+        // Base importance on review count with a small rating multiplier
+        const importance = reviews * (1 + rating / 5);
+        return importance > 50; // Much lower threshold
+      }
+
+      return true; // Show other types by default at this zoom level
     });
   }
 
-  return places.filter(place => {
-    // At lower zoom levels, show all cities but be selective with other types
-    if (place.type === CitiesTypeOptions.city) {
+  return places.filter((place) => {
+    // At lower zoom levels, always show countries and major cities
+    if (
+      place.type === CitiesTypeOptions.country ||
+      place.type === CitiesTypeOptions.city
+    ) {
       return true;
     }
+
     // Don't show sights or neighborhoods at low zoom levels
-    if (place.type === CitiesTypeOptions.sight || place.type === CitiesTypeOptions.neighborhood) {
+    if (
+      place.type === CitiesTypeOptions.sight ||
+      place.type === CitiesTypeOptions.neighborhood
+    ) {
       return false;
     }
-    const importance = (place.averageRating || 0) * (place.totalReviews || 0);
-    return importance > 5000;
+
+    // For regions, use the same weighted importance calculation
+    if (place.type === CitiesTypeOptions.region) {
+      const rating = place.averageRating || 0;
+      const reviews = place.totalReviews || 0;
+      const importance = reviews * (1 + rating / 5);
+      return importance > 100; // Slightly higher threshold at lower zoom
+    }
+
+    return false; // Hide other types at low zoom levels
   });
 }
 
 /**
  * Filters places based on whether they fall within the current map bounds.
- * 
+ *
  * @param places - Array of places to filter
  * @param mapBounds - Current map bounds
  * @returns Places that fall within the bounds
@@ -134,7 +160,7 @@ export function filterPlacesByBounds(
     north: mapBounds.getNorth(),
     south: mapBounds.getSouth(),
     east: mapBounds.getEast(),
-    west: mapBounds.getWest()
+    west: mapBounds.getWest(),
   };
 
   return places.filter((place) => {
@@ -144,7 +170,7 @@ export function filterPlacesByBounds(
 
     const lat = Number(place.latitude);
     const lng = Number(place.longitude);
-    
+
     if (isNaN(lat) || isNaN(lng)) {
       return false;
     }
@@ -154,13 +180,17 @@ export function filterPlacesByBounds(
       isBelowNorth: lat <= bounds.north,
     };
 
-    const lngCheck = {
-      isEastOfWest: lng >= bounds.west,
-      isWestOfEast: lng <= bounds.east
-    };
+    // Handle longitude wrapping around 180/-180 meridian
+    let isInLngRange;
+    if (bounds.west > bounds.east) {
+      // Map view crosses the 180/-180 meridian
+      isInLngRange = lng >= bounds.west || lng <= bounds.east;
+    } else {
+      // Normal case
+      isInLngRange = lng >= bounds.west && lng <= bounds.east;
+    }
 
     const isInLatRange = latCheck.isAboveSouth && latCheck.isBelowNorth;
-    const isInLngRange = lngCheck.isEastOfWest && lngCheck.isWestOfEast;
     const isInBounds = isInLatRange && isInLngRange;
 
     return isInBounds;
@@ -169,7 +199,7 @@ export function filterPlacesByBounds(
 
 /**
  * Filters places based on their type.
- * 
+ *
  * @param places - Array of places to filter
  * @param activeTypes - Array of currently active place types
  * @returns Places that match the active types
