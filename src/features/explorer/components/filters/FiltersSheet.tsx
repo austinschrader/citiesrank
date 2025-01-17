@@ -19,6 +19,7 @@ import {
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, Star } from "lucide-react";
 
@@ -58,6 +59,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
     handleRatingChange,
     resetTypeFilters,
     resetPopulationFilter,
+    setFilters,
   } = useFilters();
   const { cities } = useCities();
 
@@ -66,7 +68,18 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
       ? filters.activeTypes?.length
       : 0) +
     (filters.populationCategory ? 1 : 0) +
-    (filters.averageRating ? 1 : 0);
+    (filters.averageRating ? 1 : 0) +
+    (filters.tags.length > 0 ? 1 : 0);
+
+  const getUniqueTags = (cities: CitiesResponse[]) => {
+    const tagsSet = new Set<string>();
+    cities.forEach((city) => {
+      if (Array.isArray(city.tags)) {
+        city.tags.forEach((tag) => tagsSet.add(tag));
+      }
+    });
+    return Array.from(tagsSet).sort();
+  };
 
   return (
     <Sheet>
@@ -226,6 +239,48 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
               </div>
             </div>
 
+            <Separator />
+
+            {/* Tags */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Tags</h3>
+                {filters.tags.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFilters({ ...filters, tags: [] })}
+                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {getUniqueTags(cities).map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => {
+                      const newTags = filters.tags.includes(tag)
+                        ? filters.tags.filter((t) => t !== tag)
+                        : [...filters.tags, tag];
+                      setFilters({ ...filters, tags: newTags });
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                      filters.tags.includes(tag)
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                        : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
+                    )}
+                  >
+                    <span className="capitalize">{tag}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <Separator />
+
             {/* Rating */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -279,6 +334,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                   handleTypeClick(CitiesTypeOptions.sight);
                   handlePopulationSelect(null);
                   handleRatingChange(null);
+                  setFilters({ ...filters, tags: [] });
                 }}
                 className="text-muted-foreground hover:text-foreground"
               >

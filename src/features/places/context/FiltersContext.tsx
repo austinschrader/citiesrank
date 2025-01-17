@@ -72,8 +72,6 @@ export interface Filters {
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
   travelStyle: string | null;
-
-  // Display-only filters
   tags: string[];
   season: string | null;
   budget: string | null;
@@ -99,13 +97,14 @@ interface FiltersContextValue {
   getTypeCounts: (
     places: CitiesResponse[]
   ) => Record<CitiesTypeOptions, number>;
+  getUniqueTags: (cities: CitiesResponse[]) => string[];
 }
 
 const defaultFilters: Filters = {
   search: "",
-  activeTypes: Object.values(CitiesTypeOptions),
+  activeTypes: [],
   sort: "alphabetical-asc",
-  averageRating: 4.0,
+  averageRating: null,
   populationCategory: null,
   travelStyle: null,
   tags: [],
@@ -140,6 +139,16 @@ export const isInPopulationRange = (
     default:
       return true;
   }
+};
+
+export const getUniqueTags = (cities: CitiesResponse[]): string[] => {
+  const tagsSet = new Set<string>();
+  cities.forEach((city) => {
+    if (city.tags && Array.isArray(city.tags)) {
+      city.tags.forEach((tag) => tagsSet.add(tag));
+    }
+  });
+  return Array.from(tagsSet).sort();
 };
 
 export function FiltersProvider({ children }: { children: React.ReactNode }) {
@@ -311,18 +320,19 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             return false;
           }
 
-          // Filter by tags
-          if (filters.tags && filters.tags.length > 0) {
-            const cityTags = (city.tags as string[]) || [];
-            if (!cityTags.some((tag) => filters.tags.includes(tag))) {
-              return false;
-            }
+          // Apply tag filters
+          if (filters.tags.length > 0) {
+            const cityTags = (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
+            const hasMatchingTag = filters.tags.some((tag) =>
+              cityTags.includes(tag.toLowerCase())
+            );
+            if (!hasMatchingTag) return false;
           }
 
           // Apply travel style filtering
           if (filters.travelStyle) {
-            const cityTags = (city.tags as string[]) || [];
-            if (!cityTags.includes(filters.travelStyle)) {
+            const cityTags = (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
+            if (!cityTags.includes(filters.travelStyle.toLowerCase())) {
               return false;
             }
           }
@@ -394,6 +404,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       getFilteredCities,
       getActiveFilterCount,
       getTypeCounts,
+      getUniqueTags,
     }),
     [
       filters,
@@ -410,6 +421,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       getFilteredCities,
       getActiveFilterCount,
       getTypeCounts,
+      getUniqueTags,
     ]
   );
 
