@@ -179,7 +179,13 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
   return (
     <>
       <Card className="w-[300px]">
-        <CardContent className="p-0">
+        <CardContent
+          className="p-0 cursor-pointer"
+          onClick={(e) => {
+            if ((e.target as HTMLElement).closest("button")) return;
+            setIsModalOpen(true);
+          }}
+        >
           {/* Image */}
           <div
             className="relative"
