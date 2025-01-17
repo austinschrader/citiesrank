@@ -105,7 +105,7 @@ const defaultFilters: Filters = {
   search: "",
   activeTypes: Object.values(CitiesTypeOptions),
   sort: "alphabetical-asc",
-  averageRating: null,
+  averageRating: 4.0,
   populationCategory: null,
   travelStyle: null,
   tags: [],
@@ -124,7 +124,7 @@ export const isInPopulationRange = (
   category: PopulationCategory | null
 ): boolean => {
   if (!category) return true;
-  
+
   // Special case: places with 0 population (like parks, landmarks) should always be shown
   if (population === 0) return true;
 
@@ -161,7 +161,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       search: "",
       activeTypes: Object.values(CitiesTypeOptions),
       sort: "alphabetical-asc",
-      averageRating: null,
+      averageRating: 4.0,
       populationCategory: null,
       travelStyle: null,
       tags: [],
@@ -293,7 +293,10 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           }
 
           // Only apply population filter to cities
-          if (filters.populationCategory && city.type === CitiesTypeOptions.city) {
+          if (
+            filters.populationCategory &&
+            city.type === CitiesTypeOptions.city
+          ) {
             const population = city.population;
             if (!isInPopulationRange(population, filters.populationCategory)) {
               return false;
