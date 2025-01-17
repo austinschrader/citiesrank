@@ -1,12 +1,4 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -20,7 +12,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useState } from "react";
 
 interface FileSelectorProps {
@@ -29,7 +22,11 @@ interface FileSelectorProps {
   onFileSelect: (values: string[]) => void;
 }
 
-export function FileSelector({ files, selectedFiles, onFileSelect }: FileSelectorProps) {
+export function FileSelector({
+  files,
+  selectedFiles,
+  onFileSelect,
+}: FileSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
@@ -48,15 +45,19 @@ export function FileSelector({ files, selectedFiles, onFileSelect }: FileSelecto
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Select Data Files</h2>
+        <h2 className="text-xl font-semibold">Select Data Files</h2>
         <Button
           variant="outline"
           onClick={() => {
             const allFiles = Object.keys(files);
-            onFileSelect(selectedFiles.length === allFiles.length ? [] : allFiles);
+            onFileSelect(
+              selectedFiles.length === allFiles.length ? [] : allFiles
+            );
           }}
         >
-          {selectedFiles.length === Object.keys(files).length ? "Deselect All" : "Select All"}
+          {selectedFiles.length === Object.keys(files).length
+            ? "Deselect All"
+            : "Select All"}
         </Button>
       </div>
       <Popover open={open} onOpenChange={setOpen}>
@@ -68,15 +69,13 @@ export function FileSelector({ files, selectedFiles, onFileSelect }: FileSelecto
             className="w-full justify-between"
           >
             {selectedFiles.length === 0 ? (
-              <span className="text-muted-foreground">Choose data files to import...</span>
+              <span className="text-muted-foreground">
+                Choose data files to import...
+              </span>
             ) : (
               <div className="flex flex-wrap gap-1">
                 {selectedFiles.map((file) => (
-                  <Badge
-                    key={file}
-                    variant="secondary"
-                    className="mr-1"
-                  >
+                  <Badge key={file} variant="secondary" className="mr-1">
                     {file.split("/").pop()?.replace(".json", "")}
                   </Badge>
                 ))}
@@ -85,7 +84,7 @@ export function FileSelector({ files, selectedFiles, onFileSelect }: FileSelecto
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
+        <PopoverContent className="w-full p-0 max-h-[300px] overflow-y-auto">
           <Command>
             <CommandInput
               placeholder="Search files..."
