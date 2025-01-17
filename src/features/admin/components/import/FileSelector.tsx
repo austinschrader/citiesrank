@@ -47,7 +47,18 @@ export function FileSelector({ files, selectedFiles, onFileSelect }: FileSelecto
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-between items-center">
       <h2 className="text-xl font-semibold">Select Data Files</h2>
+        <Button
+          variant="outline"
+          onClick={() => {
+            const allFiles = Object.keys(files);
+            onFileSelect(selectedFiles.length === allFiles.length ? [] : allFiles);
+          }}
+        >
+          {selectedFiles.length === Object.keys(files).length ? "Deselect All" : "Select All"}
+        </Button>
+      </div>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
