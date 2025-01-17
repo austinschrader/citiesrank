@@ -110,7 +110,7 @@ const defaultFilters: Filters = {
     CitiesTypeOptions.sight,
   ],
   sort: "alphabetical-asc",
-  averageRating: null,
+  averageRating: 4.0,
   populationCategory: null,
   travelStyle: null,
   tags: [],
