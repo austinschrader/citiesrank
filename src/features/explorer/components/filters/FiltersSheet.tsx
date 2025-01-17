@@ -213,10 +213,9 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                       onClick={() => handlePopulationSelect(size as any)}
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                        "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
                         filters.populationCategory === size
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                          : "bg-white/5 text-muted-foreground hover:text-foreground"
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                          : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
                       )}
                     >
                       <span className="text-lg">{emoji}</span>
@@ -248,11 +247,10 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
                     key={rating}
                     onClick={() => handleRatingChange(rating)}
                     className={cn(
-                      "flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                      "hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10",
+                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
                       filters.averageRating === rating
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-                        : "bg-white/5 text-muted-foreground hover:text-foreground"
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                        : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
                     )}
                   >
                     <Star className="h-4 w-4" />
