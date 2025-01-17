@@ -1,7 +1,7 @@
 [
   {
     "name": "Marfa",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 85,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Port Aransas",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 65,
     "interesting": 70,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Fredericksburg",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 80,
@@ -97,7 +97,7 @@
   },
   {
     "name": "South Padre Island",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 75,

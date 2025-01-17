@@ -1,7 +1,7 @@
 [
   {
     "name": "Lake Geneva",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 75,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Wisconsin Dells",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 80,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Little Norway",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 55,
     "interesting": 70,

@@ -1,7 +1,7 @@
 [
   {
     "name": "Big Sky",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 90,
     "interesting": 85,
@@ -33,7 +33,7 @@
   },
   {
     "name": "West Yellowstone",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 75,

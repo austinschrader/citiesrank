@@ -1,7 +1,7 @@
 [
   {
     "name": "Stowe",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 85,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Manchester",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 75,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Killington",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 80,
@@ -97,7 +97,7 @@
   },
   {
     "name": "Woodstock",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 80,
@@ -129,7 +129,7 @@
   },
   {
     "name": "Jay Peak",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 75,

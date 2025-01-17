@@ -1,7 +1,7 @@
 [
   {
     "name": "Asheville",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 85,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Blowing Rock",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 70,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Highlands",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 75,
@@ -97,7 +97,7 @@
   },
   {
     "name": "Wrightsville Beach",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 70,
@@ -129,7 +129,7 @@
   },
   {
     "name": "Bald Head Island",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 90,
     "interesting": 80,

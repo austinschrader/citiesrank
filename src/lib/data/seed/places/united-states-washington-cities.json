@@ -263,7 +263,7 @@
   },
   {
     "name": "Winthrop",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 65,
     "interesting": 75,
@@ -295,7 +295,7 @@
   },
   {
     "name": "Ocean Shores",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 60,
     "interesting": 65,

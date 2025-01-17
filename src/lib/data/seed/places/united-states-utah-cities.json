@@ -1,7 +1,7 @@
 [
   {
     "name": "Park City",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 90,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Moab",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 95,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Springdale",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 85,
@@ -97,7 +97,7 @@
   },
   {
     "name": "Alta",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 75,
@@ -129,7 +129,7 @@
   },
   {
     "name": "Deer Valley",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 95,
     "interesting": 80,
@@ -161,7 +161,7 @@
   },
   {
     "name": "Brian Head",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 65,
     "interesting": 70,

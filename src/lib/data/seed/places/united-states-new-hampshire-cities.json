@@ -1,7 +1,7 @@
 [
   {
     "name": "North Conway",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 65,
     "interesting": 75,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Lake Winnipesaukee",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 75,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Hampton Beach",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 65,
     "interesting": 65,

@@ -1,7 +1,7 @@
 [
   {
     "name": "Cape May",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 85,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Avalon",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 90,
     "interesting": 75,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Stone Harbor",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 90,
     "interesting": 75,

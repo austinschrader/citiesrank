@@ -1,7 +1,7 @@
 [
   {
     "name": "Hudson",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 80,
@@ -33,7 +33,7 @@
   },
   {
     "name": "Fire Island",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 80,
@@ -65,7 +65,7 @@
   },
   {
     "name": "Lake Placid",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 85,
@@ -97,7 +97,7 @@
   },
   {
     "name": "Saratoga Springs",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 80,
@@ -129,7 +129,7 @@
   },
   {
     "name": "Woodstock",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 75,
@@ -161,7 +161,7 @@
   },
   {
     "name": "Lake George",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 65,
     "interesting": 75,
@@ -193,7 +193,7 @@
   },
   {
     "name": "Cooperstown",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 70,
     "interesting": 80,
@@ -225,7 +225,7 @@
   },
   {
     "name": "Lily Dale",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 60,
     "interesting": 75,
@@ -257,7 +257,7 @@
   },
   {
     "name": "Southampton Village",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 95,
     "interesting": 75,
@@ -289,7 +289,7 @@
   },
   {
     "name": "Water Mill",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 90,
     "interesting": 55,
@@ -321,7 +321,7 @@
   },
   {
     "name": "Bridgehampton",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 70,
@@ -353,7 +353,7 @@
   },
   {
     "name": "Sagaponack",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 98,
     "interesting": 60,
@@ -385,7 +385,7 @@
   },
   {
     "name": "Westhampton Beach",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 65,
@@ -417,7 +417,7 @@
   },
   {
     "name": "Quogue",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 55,
@@ -449,7 +449,7 @@
   },
   {
     "name": "East Hampton Village",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 95,
     "interesting": 80,
@@ -481,7 +481,7 @@
   },
   {
     "name": "Amagansett",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 70,
@@ -513,7 +513,7 @@
   },
   {
     "name": "Montauk",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 80,
     "interesting": 85,
@@ -545,7 +545,7 @@
   },
   {
     "name": "Sag Harbor",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 85,
     "interesting": 85,
@@ -577,7 +577,7 @@
   },
   {
     "name": "Springs",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 75,
     "interesting": 60,
@@ -609,7 +609,7 @@
   },
   {
     "name": "Wainscott",
-    "country": "USA",
+    "country": "United States",
     "type": "city",
     "cost": 90,
     "interesting": 55,
