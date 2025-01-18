@@ -17,8 +17,7 @@ const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
 export function ImportPlaces() {
   const { pb } = useAuth();
   const { toast } = useToast();
-  const [tagsMapping, setTagsMapping] = useState<Record<string, string>>({});
-  const { validatePlaces } = useValidatePlaces(tagsMapping);
+  const { validatePlaces } = useValidatePlaces();
 
   const { 
     isImporting, 
@@ -39,28 +38,6 @@ export function ImportPlaces() {
       }
     }
   });
-
-  // Load tags mapping on component mount
-  useEffect(() => {
-    const loadTags = async () => {
-      try {
-        const records = await pb.collection("tags").getFullList();
-        const mapping: Record<string, string> = {};
-        records.forEach((record) => {
-          mapping[record.name] = record.id;
-        });
-        setTagsMapping(mapping);
-      } catch (error) {
-        console.error("Error loading tags:", error);
-        toast({
-          title: "Error",
-          description:
-            "Failed to load tags. Some features may not work correctly.",
-        });
-      }
-    };
-    loadTags();
-  }, []);
 
   const handleFileSelect = (values: string[]) => {
     baseHandleFileSelect(values, seedFiles);

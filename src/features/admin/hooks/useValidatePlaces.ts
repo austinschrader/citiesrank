@@ -3,7 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { validatePlace, createSlug } from '../utils/placeValidation';
 import type { ValidationResult, Place } from '../types/places';
 
-export function useValidatePlaces(tagsMapping: Record<string, string>) {
+export function useValidatePlaces() {
   const { toast } = useToast();
   const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
 
@@ -12,14 +12,10 @@ export function useValidatePlaces(tagsMapping: Record<string, string>) {
       const result = validatePlace(place);
       if (result.isValid) {
         const slug = createSlug(place.name, place.country);
-        const tagIds = (place.tags || [])
-          .map((tag) => tagsMapping[tag])
-          .filter((id) => id);
-
         result.data = {
           ...result.data,
           imageUrl: `${slug}-1`,
-          tags: tagIds,
+          tags: place.tags || [], // Keep tags as is, just ensure it's an array
         };
       }
       return result;
