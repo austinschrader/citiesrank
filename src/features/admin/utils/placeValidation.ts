@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import type { ValidationResult } from '../types/places';
+import type { ValidationResult } from "../types/places";
 
 export const normalizeString = (str: string): string => {
   return str
@@ -30,7 +30,12 @@ export const normalizeScore = (score: number | null | undefined): number => {
 export const validatePlace = (data: any): ValidationResult => {
   const errors: string[] = [];
 
-  const validateText = (value: any, field: string, min?: number, max?: number) => {
+  const validateText = (
+    value: any,
+    field: string,
+    min?: number,
+    max?: number
+  ) => {
     if (!value || typeof value !== "string") {
       errors.push(`${field} is required and must be a string`);
       return;
@@ -99,7 +104,8 @@ export const validatePlace = (data: any): ValidationResult => {
     ...data,
     normalizedName,
     slug,
-    type: Array.isArray(data.type) ? data.type : [data.type || "city"],
+    type: data.type,
+    tags: Array.isArray(data.tags) ? data.tags : data.tags ? [data.tags] : [],
     population: typeof data.population === "number" ? data.population : 0,
     highlights: JSON.stringify(
       data.highlights || [
