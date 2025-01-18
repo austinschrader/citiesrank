@@ -185,7 +185,6 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
             setIsModalOpen(true);
           }}
         >
-          {/* Image */}
           <div
             className="relative"
             onMouseEnter={() => setShowControls(true)}
@@ -262,9 +261,7 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
             </div>
 
             {/* Description */}
-            <p className="text-xs text-muted-foreground">
-              {place.description}
-            </p>
+            <p className="text-xs text-muted-foreground">{place.description}</p>
 
             {/* Activity + View */}
             <div className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30 rounded p-1.5">
@@ -281,8 +278,8 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
                   2 new updates • Latest photo 2h ago
                 </p>
               </div>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 onClick={handleDetailsClick}
                 className="h-5 px-2 text-xs bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white border-0"
               >
@@ -312,6 +309,8 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
   const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const map = useLeafletMap();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const checkIfSaved = async () => {
@@ -355,16 +354,40 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
     [markerHtml, markerStyle.size]
   );
 
+  const click = (e: L.LeafletMouseEvent) => {
+    e.originalEvent.stopPropagation();
+    setSelectedPlace(place, true);
+
+    // Get current map center and zoom
+    const currentZoom = map.getZoom();
+
+    // Calculate offset based on viewport height
+    const viewportHeight = map.getSize().y;
+    const verticalOffset = viewportHeight * 0.25; // 25% of viewport height
+
+    // Calculate target point with offset
+    const markerPoint = map.project(
+      [place.latitude, place.longitude],
+      currentZoom
+    );
+    const targetPoint = markerPoint.subtract([0, verticalOffset]);
+    const targetLatLng = map.unproject(targetPoint, currentZoom);
+
+    // Use flyTo for smoother animation
+    map.flyTo(targetLatLng, currentZoom, {
+      duration: 0.85, // slightly faster for more responsiveness
+      easeLinearity: 0.25, // more pronounced easing
+      noMoveStart: true, // prevents initial jerk
+    });
+  };
+
   return (
     <>
       <Marker
         position={[place.latitude, place.longitude]}
         icon={icon}
         eventHandlers={{
-          click: (e) => {
-            e.originalEvent.stopPropagation();
-            setSelectedPlace(place, true);
-          },
+          click,
         }}
       >
         <Popup closeButton={false} className="place-popup" offset={[0, -20]}>
