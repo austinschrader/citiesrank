@@ -2,6 +2,7 @@
   {
     "name": "Kalmar",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 40,
     "interesting": 85,
     "transit": 75,
@@ -33,6 +34,7 @@
   {
     "name": "Ljubljana",
     "country": "Slovenia",
+    "type": ["city"],
     "cost": 45,
     "interesting": 80,
     "transit": 85,
@@ -64,6 +66,7 @@
   {
     "name": "Bologna",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 90,
     "transit": 80,
@@ -95,6 +98,7 @@
   {
     "name": "Valencia",
     "country": "Spain",
+    "type": ["city"],
     "cost": 50,
     "interesting": 88,
     "transit": 85,
@@ -126,6 +130,7 @@
   {
     "name": "Ghent",
     "country": "Belgium",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 90,
@@ -157,6 +162,7 @@
   {
     "name": "Heidelberg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 80,
@@ -188,6 +194,7 @@
   {
     "name": "Bruges",
     "country": "Belgium",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 80,
@@ -218,6 +225,7 @@
   {
     "name": "Cesky Krumlov",
     "country": "Czech Republic",
+    "type": ["city"],
     "cost": 35,
     "interesting": 85,
     "transit": 70,
@@ -246,6 +254,7 @@
   {
     "name": "Tallinn",
     "country": "Estonia",
+    "type": ["city"],
     "cost": 50,
     "interesting": 85,
     "transit": 75,
@@ -276,6 +285,7 @@
   {
     "name": "Innsbruck",
     "country": "Austria",
+    "type": ["city"],
     "cost": 60,
     "interesting": 83,
     "transit": 90,
@@ -306,6 +316,7 @@
   {
     "name": "Bergen",
     "country": "Norway",
+    "type": ["city"],
     "cost": 75,
     "interesting": 88,
     "transit": 80,
@@ -336,6 +347,7 @@
   {
     "name": "Colmar",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 90,
     "transit": 70,
@@ -365,6 +377,7 @@
   {
     "name": "Sorrento",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 85,
@@ -394,6 +407,7 @@
   {
     "name": "Annecy",
     "country": "France",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 75,
@@ -423,6 +437,7 @@
   {
     "name": "Sintra",
     "country": "Portugal",
+    "type": ["city"],
     "cost": 40,
     "interesting": 90,
     "transit": 75,
@@ -453,6 +468,7 @@
   {
     "name": "Kotor",
     "country": "Montenegro",
+    "type": ["city"],
     "cost": 35,
     "interesting": 85,
     "transit": 65,
@@ -483,6 +499,7 @@
   {
     "name": "Zermatt",
     "country": "Switzerland",
+    "type": ["city"],
     "cost": 85,
     "interesting": 90,
     "transit": 85,
@@ -513,6 +530,7 @@
   {
     "name": "Hallstatt",
     "country": "Austria",
+    "type": ["city"],
     "cost": 55,
     "interesting": 89,
     "transit": 70,
@@ -543,6 +561,7 @@
   {
     "name": "Ronda",
     "country": "Spain",
+    "type": ["city"],
     "cost": 50,
     "interesting": 85,
     "transit": 70,
@@ -573,6 +592,7 @@
   {
     "name": "Reine",
     "country": "Norway",
+    "type": ["city"],
     "cost": 80,
     "interesting": 86,
     "transit": 60,
@@ -603,6 +623,7 @@
   {
     "name": "Alberobello",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 90,
     "transit": 60,
@@ -632,6 +653,7 @@
   {
     "name": "Carcassonne",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 70,
@@ -661,6 +683,7 @@
   {
     "name": "Piran",
     "country": "Slovenia",
+    "type": ["city"],
     "cost": 40,
     "interesting": 82,
     "transit": 65,
@@ -691,6 +714,7 @@
   {
     "name": "Gjirokaster",
     "country": "Albania",
+    "type": ["city"],
     "cost": 30,
     "interesting": 80,
     "transit": 60,
@@ -721,6 +745,7 @@
   {
     "name": "Chamonix",
     "country": "France",
+    "type": ["city"],
     "cost": 90,
     "interesting": 95,
     "transit": 85,
@@ -750,6 +775,7 @@
   {
     "name": "Bled",
     "country": "Slovenia",
+    "type": ["city"],
     "cost": 50,
     "interesting": 87,
     "transit": 75,
@@ -780,6 +806,7 @@
   {
     "name": "Mostar",
     "country": "Bosnia and Herzegovina",
+    "type": ["city"],
     "cost": 40,
     "interesting": 85,
     "transit": 70,
@@ -810,6 +837,7 @@
   {
     "name": "Sighisoara",
     "country": "Romania",
+    "type": ["city"],
     "cost": 35,
     "interesting": 82,
     "transit": 65,
@@ -840,6 +868,7 @@
   {
     "name": "Nafplio",
     "country": "Greece",
+    "type": ["city"],
     "cost": 50,
     "interesting": 85,
     "transit": 70,
@@ -870,6 +899,7 @@
   {
     "name": "Paris",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 95,
     "transit": 95,
@@ -901,6 +931,7 @@
   {
     "name": "Rome",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 98,
     "transit": 85,
@@ -932,6 +963,7 @@
   {
     "name": "London",
     "country": "United Kingdom",
+    "type": ["city"],
     "cost": 75,
     "interesting": 92,
     "transit": 90,
@@ -963,6 +995,7 @@
   {
     "name": "Barcelona",
     "country": "Spain",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 85,
@@ -994,6 +1027,7 @@
   {
     "name": "Amsterdam",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 75,
     "interesting": 95,
     "transit": 90,
@@ -1023,6 +1057,7 @@
   {
     "name": "Venice",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 89,
     "transit": 80,
@@ -1054,6 +1089,7 @@
   {
     "name": "Prague",
     "country": "Czech Republic",
+    "type": ["city"],
     "cost": 50,
     "interesting": 93,
     "transit": 90,
@@ -1085,6 +1121,7 @@
   {
     "name": "Florence",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 91,
     "transit": 75,
@@ -1116,6 +1153,7 @@
   {
     "name": "Athens",
     "country": "Greece",
+    "type": ["city"],
     "cost": 55,
     "interesting": 88,
     "transit": 80,
@@ -1147,6 +1185,7 @@
   {
     "name": "Dubrovnik",
     "country": "Croatia",
+    "type": ["city"],
     "cost": 60,
     "interesting": 87,
     "transit": 75,
@@ -1178,6 +1217,7 @@
   {
     "name": "Berlin",
     "country": "Germany",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 90,
@@ -1209,6 +1249,7 @@
   {
     "name": "Munich",
     "country": "Germany",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 85,
@@ -1240,6 +1281,7 @@
   {
     "name": "Hamburg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 85,
@@ -1271,6 +1313,7 @@
   {
     "name": "Cologne",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 80,
@@ -1302,6 +1345,7 @@
   {
     "name": "Frankfurt",
     "country": "Germany",
+    "type": ["city"],
     "cost": 75,
     "interesting": 75,
     "transit": 90,
@@ -1333,6 +1377,7 @@
   {
     "name": "Nuremberg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 75,
@@ -1364,6 +1409,7 @@
   {
     "name": "Rothenburg ob der Tauber",
     "country": "Germany",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 65,
@@ -1393,6 +1439,7 @@
   {
     "name": "Dresden",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 80,
@@ -1424,6 +1471,7 @@
   {
     "name": "Leipzig",
     "country": "Germany",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 75,
@@ -1455,6 +1503,7 @@
   {
     "name": "Bamberg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 70,
@@ -1486,6 +1535,7 @@
   {
     "name": "Garmisch-Partenkirchen",
     "country": "Germany",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -1514,6 +1564,7 @@
   {
     "name": "Regensburg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 60,
     "interesting": 88,
     "transit": 85,
@@ -1544,6 +1595,7 @@
   {
     "name": "Lübeck",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -1574,6 +1626,7 @@
   {
     "name": "Freiburg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 90,
@@ -1604,6 +1657,7 @@
   {
     "name": "Potsdam",
     "country": "Germany",
+    "type": ["city"],
     "cost": 75,
     "interesting": 90,
     "transit": 80,
@@ -1634,6 +1688,7 @@
   {
     "name": "Würzburg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 80,
@@ -1664,6 +1719,7 @@
   {
     "name": "Tübingen",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 82,
     "transit": 85,
@@ -1694,6 +1750,7 @@
   {
     "name": "Fussen",
     "country": "Germany",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 70,
@@ -1724,6 +1781,7 @@
   {
     "name": "Dusseldorf",
     "country": "Germany",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 85,
@@ -1755,6 +1813,7 @@
   {
     "name": "Trier",
     "country": "Germany",
+    "type": ["city"],
     "cost": 60,
     "interesting": 95,
     "transit": 80,
@@ -1786,6 +1845,7 @@
   {
     "name": "Cochem",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -1816,6 +1876,7 @@
   {
     "name": "Bacharach",
     "country": "Germany",
+    "type": ["city"],
     "cost": 55,
     "interesting": 75,
     "transit": 65,
@@ -1846,6 +1907,7 @@
   {
     "name": "Weimar",
     "country": "Germany",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 80,
@@ -1876,6 +1938,7 @@
   {
     "name": "Quedlinburg",
     "country": "Germany",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 60,
@@ -1906,6 +1969,7 @@
   {
     "name": "Versailles",
     "country": "France",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 85,
@@ -1935,6 +1999,7 @@
   {
     "name": "Fontainebleau",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -1963,6 +2028,7 @@
   {
     "name": "Nice",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -1993,6 +2059,7 @@
   {
     "name": "Marseille",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 80,
@@ -2023,6 +2090,7 @@
   {
     "name": "Cannes",
     "country": "France",
+    "type": ["city"],
     "cost": 85,
     "interesting": 85,
     "transit": 75,
@@ -2053,6 +2121,7 @@
   {
     "name": "Aix-en-Provence",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -2081,6 +2150,7 @@
   {
     "name": "Saint-Tropez",
     "country": "France",
+    "type": ["city"],
     "cost": 90,
     "interesting": 80,
     "transit": 70,
@@ -2109,6 +2179,7 @@
   {
     "name": "Avignon",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 90,
     "transit": 80,
@@ -2139,6 +2210,7 @@
   {
     "name": "Arles",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 75,
@@ -2169,6 +2241,7 @@
   {
     "name": "Grasse",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 70,
@@ -2198,6 +2271,7 @@
   {
     "name": "Menton",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 80,
@@ -2228,6 +2302,7 @@
   {
     "name": "Toulouse",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 85,
@@ -2258,6 +2333,7 @@
   {
     "name": "Montpellier",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -2287,6 +2363,7 @@
   {
     "name": "Albi",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 75,
@@ -2316,6 +2393,7 @@
   {
     "name": "Nîmes",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -2345,6 +2423,7 @@
   {
     "name": "Collioure",
     "country": "France",
+    "type": ["city"],
     "cost": 85,
     "interesting": 90,
     "transit": 60,
@@ -2374,6 +2453,7 @@
   {
     "name": "Lourdes",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 70,
     "transit": 75,
@@ -2403,6 +2483,7 @@
   {
     "name": "Bordeaux",
     "country": "France",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 85,
@@ -2432,6 +2513,7 @@
   {
     "name": "Saint-Émilion",
     "country": "France",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 60,
@@ -2459,6 +2541,7 @@
   {
     "name": "Biarritz",
     "country": "France",
+    "type": ["city"],
     "cost": 85,
     "interesting": 90,
     "transit": 80,
@@ -2488,6 +2571,7 @@
   {
     "name": "Arcachon",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 70,
@@ -2517,6 +2601,7 @@
   {
     "name": "La Rochelle",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -2544,6 +2629,7 @@
   {
     "name": "Angoulême",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 75,
     "transit": 70,
@@ -2573,6 +2659,7 @@
   {
     "name": "Rennes",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 80,
@@ -2602,6 +2689,7 @@
   {
     "name": "Saint-Malo",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 75,
@@ -2629,6 +2717,7 @@
   {
     "name": "Quimper",
     "country": "France",
+    "type": ["city"],
     "cost": 50,
     "interesting": 75,
     "transit": 60,
@@ -2658,6 +2747,7 @@
   {
     "name": "Dinan",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 65,
@@ -2687,6 +2777,7 @@
   {
     "name": "Vannes",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 75,
@@ -2716,6 +2807,7 @@
   {
     "name": "Concarneau",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 70,
@@ -2745,6 +2837,7 @@
   {
     "name": "Rouen",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 85,
@@ -2774,6 +2867,7 @@
   {
     "name": "Caen",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 75,
@@ -2803,6 +2897,7 @@
   {
     "name": "Honfleur",
     "country": "France",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -2832,6 +2927,7 @@
   {
     "name": "Bayeux",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 70,
@@ -2861,6 +2957,7 @@
   {
     "name": "Etretat",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 80,
@@ -2890,6 +2987,7 @@
   {
     "name": "Mont Saint-Michel",
     "country": "France",
+    "type": ["city"],
     "cost": 85,
     "interesting": 95,
     "transit": 60,
@@ -2917,6 +3015,7 @@
   {
     "name": "Strasbourg",
     "country": "France",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 85,
@@ -2946,6 +3045,7 @@
   {
     "name": "Metz",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 85,
@@ -2975,6 +3075,7 @@
   {
     "name": "Reims",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 75,
@@ -3004,6 +3105,7 @@
   {
     "name": "Mulhouse",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 75,
     "transit": 80,
@@ -3033,6 +3135,7 @@
   {
     "name": "Dijon",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 80,
@@ -3062,6 +3165,7 @@
   {
     "name": "Beaune",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 70,
@@ -3091,6 +3195,7 @@
   {
     "name": "Besançon",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 70,
     "transit": 75,
@@ -3120,6 +3225,7 @@
   {
     "name": "Auxerre",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 70,
     "transit": 60,
@@ -3149,6 +3255,7 @@
   {
     "name": "Lyon",
     "country": "France",
+    "type": ["city"],
     "cost": 75,
     "interesting": 90,
     "transit": 85,
@@ -3179,6 +3286,7 @@
   {
     "name": "Grenoble",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 80,
@@ -3208,6 +3316,7 @@
   {
     "name": "Clermont-Ferrand",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 70,
@@ -3235,6 +3344,7 @@
   {
     "name": "Vienne",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 70,
     "transit": 65,
@@ -3264,6 +3374,7 @@
   {
     "name": "Aix-les-Bains",
     "country": "France",
+    "type": ["city"],
     "cost": 75,
     "interesting": 80,
     "transit": 80,
@@ -3291,6 +3402,7 @@
   {
     "name": "Nantes",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 85,
@@ -3320,6 +3432,7 @@
   {
     "name": "Angers",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 75,
@@ -3349,6 +3462,7 @@
   {
     "name": "Le Mans",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 70,
@@ -3376,6 +3490,7 @@
   {
     "name": "La Roche-sur-Yon",
     "country": "France",
+    "type": ["city"],
     "cost": 55,
     "interesting": 65,
     "transit": 70,
@@ -3403,6 +3518,7 @@
   {
     "name": "Tours",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 80,
@@ -3432,6 +3548,7 @@
   {
     "name": "Bourges",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 70,
@@ -3461,6 +3578,7 @@
   {
     "name": "Orléans",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -3490,6 +3608,7 @@
   {
     "name": "Blois",
     "country": "France",
+    "type": ["city"],
     "cost": 60,
     "interesting": 70,
     "transit": 75,
@@ -3519,6 +3638,7 @@
   {
     "name": "Amboise",
     "country": "France",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -3548,6 +3668,7 @@
   {
     "name": "Ajaccio",
     "country": "France",
+    "type": ["city"],
     "cost": 75,
     "interesting": 80,
     "transit": 75,
@@ -3577,6 +3698,7 @@
   {
     "name": "Bonifacio",
     "country": "France",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 60,
@@ -3606,6 +3728,7 @@
   {
     "name": "Calvi",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 70,
@@ -3635,6 +3758,7 @@
   {
     "name": "Bastia",
     "country": "France",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 70,
@@ -3664,6 +3788,7 @@
   {
     "name": "Pescara",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 75,
     "transit": 75,
@@ -3693,6 +3818,7 @@
   {
     "name": "Matera",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 60,
@@ -3722,6 +3848,7 @@
   {
     "name": "Tropea",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 75,
@@ -3751,6 +3878,7 @@
   {
     "name": "Scilla",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 75,
     "transit": 70,
@@ -3780,6 +3908,7 @@
   {
     "name": "Reggio Calabria",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 75,
@@ -3807,6 +3936,7 @@
   {
     "name": "Positano",
     "country": "Italy",
+    "type": ["city"],
     "cost": 90,
     "interesting": 95,
     "transit": 70,
@@ -3836,6 +3966,7 @@
   {
     "name": "Pompeii",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 100,
     "transit": 80,
@@ -3865,6 +3996,7 @@
   {
     "name": "Ravenna",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 70,
@@ -3894,6 +4026,7 @@
   {
     "name": "Parma",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 75,
@@ -3923,6 +4056,7 @@
   {
     "name": "Modena",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 70,
@@ -3952,6 +4086,7 @@
   {
     "name": "Ferrara",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 75,
@@ -3981,6 +4116,7 @@
   {
     "name": "Trieste",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 80,
@@ -4010,6 +4146,7 @@
   {
     "name": "Udine",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 75,
     "transit": 70,
@@ -4039,6 +4176,7 @@
   {
     "name": "Grado",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 75,
@@ -4068,6 +4206,7 @@
   {
     "name": "Tivoli",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 75,
@@ -4097,6 +4236,7 @@
   {
     "name": "Viterbo",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 78,
     "transit": 70,
@@ -4126,6 +4266,7 @@
   {
     "name": "Genoa",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 85,
@@ -4155,6 +4296,7 @@
   {
     "name": "Monterosso al Mare",
     "country": "Italy",
+    "type": ["city"],
     "cost": 85,
     "interesting": 92,
     "transit": 75,
@@ -4182,6 +4324,7 @@
   {
     "name": "Vernazza",
     "country": "Italy",
+    "type": ["city"],
     "cost": 90,
     "interesting": 95,
     "transit": 70,
@@ -4211,6 +4354,7 @@
   {
     "name": "Corniglia",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 60,
@@ -4240,6 +4384,7 @@
   {
     "name": "Manarola",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 70,
@@ -4269,6 +4414,7 @@
   {
     "name": "Riomaggiore",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 88,
     "transit": 70,
@@ -4298,6 +4444,7 @@
   {
     "name": "Bergamo",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 75,
@@ -4328,6 +4475,7 @@
   {
     "name": "Como",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 90,
     "transit": 80,
@@ -4358,6 +4506,7 @@
   {
     "name": "Lecco",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -4388,6 +4537,7 @@
   {
     "name": "Pavia",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 70,
     "transit": 70,
@@ -4418,6 +4568,7 @@
   {
     "name": "Ancona",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 65,
@@ -4448,6 +4599,7 @@
   {
     "name": "Urbino",
     "country": "Italy",
+    "type": ["city"],
     "cost": 50,
     "interesting": 85,
     "transit": 60,
@@ -4478,6 +4630,7 @@
   {
     "name": "Termoli",
     "country": "Italy",
+    "type": ["city"],
     "cost": 50,
     "interesting": 70,
     "transit": 55,
@@ -4508,6 +4661,7 @@
   {
     "name": "Asti",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 70,
     "transit": 65,
@@ -4537,6 +4691,7 @@
   {
     "name": "Bari",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -4566,6 +4721,7 @@
   {
     "name": "Lecce",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -4595,6 +4751,7 @@
   {
     "name": "Polignano a Mare",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 70,
@@ -4622,6 +4779,7 @@
   {
     "name": "Ostuni",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 75,
     "transit": 65,
@@ -4651,6 +4809,7 @@
   {
     "name": "Cagliari",
     "country": "Italy",
+    "type": ["city"],
     "cost": 85,
     "interesting": 80,
     "transit": 75,
@@ -4680,6 +4839,7 @@
   {
     "name": "Alghero",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 75,
     "transit": 65,
@@ -4709,6 +4869,7 @@
   {
     "name": "Olbia",
     "country": "Italy",
+    "type": ["city"],
     "cost": 85,
     "interesting": 70,
     "transit": 80,
@@ -4738,6 +4899,7 @@
   {
     "name": "Bosa",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 70,
     "transit": 60,
@@ -4767,6 +4929,7 @@
   {
     "name": "Catania",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 90,
     "transit": 85,
@@ -4797,6 +4960,7 @@
   {
     "name": "Taormina",
     "country": "Italy",
+    "type": ["city"],
     "cost": 80,
     "interesting": 95,
     "transit": 75,
@@ -4826,6 +4990,7 @@
   {
     "name": "Siracusa",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 80,
@@ -4855,6 +5020,7 @@
   {
     "name": "Agrigento",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 85,
     "transit": 70,
@@ -4884,6 +5050,7 @@
   {
     "name": "Noto",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 70,
@@ -4913,6 +5080,7 @@
   {
     "name": "Cefalù",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -4942,6 +5110,7 @@
   {
     "name": "Lucca",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 80,
@@ -4971,6 +5140,7 @@
   {
     "name": "Arezzo",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 70,
@@ -5000,6 +5170,7 @@
   {
     "name": "Volterra",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 90,
     "transit": 70,
@@ -5029,6 +5200,7 @@
   {
     "name": "Bolzano",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 80,
     "transit": 85,
@@ -5058,6 +5230,7 @@
   {
     "name": "Trento",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 75,
@@ -5087,6 +5260,7 @@
   {
     "name": "Merano",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 70,
@@ -5116,6 +5290,7 @@
   {
     "name": "Bressanone",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -5145,6 +5320,7 @@
   {
     "name": "Perugia",
     "country": "Italy",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 75,
@@ -5174,6 +5350,7 @@
   {
     "name": "Assisi",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 95,
     "transit": 70,
@@ -5203,6 +5380,7 @@
   {
     "name": "Todi",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 65,
@@ -5232,6 +5410,7 @@
   {
     "name": "Norcia",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 60,
@@ -5261,6 +5440,7 @@
   {
     "name": "Spoleto",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 75,
@@ -5290,6 +5470,7 @@
   {
     "name": "Ravello",
     "country": "Italy",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -5319,6 +5500,7 @@
   {
     "name": "Portofino",
     "country": "Italy",
+    "type": ["city"],
     "cost": 90,
     "interesting": 80,
     "transit": 70,
@@ -5348,6 +5530,7 @@
   {
     "name": "San Gimignano",
     "country": "Italy",
+    "type": ["city"],
     "cost": 65,
     "interesting": 90,
     "transit": 60,
@@ -5375,6 +5558,7 @@
   {
     "name": "Orvieto",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 85,
     "transit": 80,
@@ -5404,6 +5588,7 @@
   {
     "name": "Padua",
     "country": "Italy",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 85,
@@ -5433,6 +5618,7 @@
   {
     "name": "Vicenza",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 80,
@@ -5462,6 +5648,7 @@
   {
     "name": "Treviso",
     "country": "Italy",
+    "type": ["city"],
     "cost": 55,
     "interesting": 75,
     "transit": 85,
@@ -5491,6 +5678,7 @@
   {
     "name": "Tokyo",
     "country": "Japan",
+    "type": ["city"],
     "cost": 80,
     "interesting": 95,
     "transit": 95,
@@ -5520,6 +5708,7 @@
   {
     "name": "Kyoto",
     "country": "Japan",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 85,
@@ -5550,6 +5739,7 @@
   {
     "name": "Osaka",
     "country": "Japan",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 90,
@@ -5580,6 +5770,7 @@
   {
     "name": "Sapporo",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -5610,6 +5801,7 @@
   {
     "name": "Otaru",
     "country": "Japan",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 60,
@@ -5640,6 +5832,7 @@
   {
     "name": "Furano",
     "country": "Japan",
+    "type": ["city"],
     "cost": 55,
     "interesting": 70,
     "transit": 50,
@@ -5670,6 +5863,7 @@
   {
     "name": "Nara",
     "country": "Japan",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 75,
@@ -5700,6 +5894,7 @@
   {
     "name": "Hakone",
     "country": "Japan",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 70,
@@ -5730,6 +5925,7 @@
   {
     "name": "Kanazawa",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -5760,6 +5956,7 @@
   {
     "name": "Nikko",
     "country": "Japan",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 85,
@@ -5789,6 +5986,7 @@
   {
     "name": "Takayama",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 80,
@@ -5818,6 +6016,7 @@
   {
     "name": "Kamakura",
     "country": "Japan",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 90,
@@ -5847,6 +6046,7 @@
   {
     "name": "Fukuoka",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -5876,6 +6076,7 @@
   {
     "name": "Hiroshima",
     "country": "Japan",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 85,
@@ -5905,6 +6106,7 @@
   {
     "name": "Miyajima",
     "country": "Japan",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 70,
@@ -5934,6 +6136,7 @@
   {
     "name": "Kobe",
     "country": "Japan",
+    "type": ["city"],
     "cost": 75,
     "interesting": 80,
     "transit": 85,
@@ -5963,6 +6166,7 @@
   {
     "name": "Nagoya",
     "country": "Japan",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 90,
@@ -5992,6 +6196,7 @@
   {
     "name": "Yokohama",
     "country": "Japan",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 90,
@@ -6021,6 +6226,7 @@
   {
     "name": "Nagasaki",
     "country": "Japan",
+    "type": ["city"],
     "cost": 75,
     "interesting": 90,
     "transit": 80,
@@ -6051,6 +6257,7 @@
   {
     "name": "Ise",
     "country": "Japan",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 75,
@@ -6080,6 +6287,7 @@
   {
     "name": "Karuizawa",
     "country": "Japan",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 85,
@@ -6109,6 +6317,7 @@
   {
     "name": "Kusatsu",
     "country": "Japan",
+    "type": ["city"],
     "cost": 85,
     "interesting": 80,
     "transit": 70,
@@ -6138,6 +6347,7 @@
   {
     "name": "Beppu",
     "country": "Japan",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -6167,6 +6377,7 @@
   {
     "name": "Kawagoe",
     "country": "Japan",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 85,
@@ -6196,6 +6407,7 @@
   {
     "name": "Arashiyama",
     "country": "Japan",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 80,
@@ -6225,6 +6437,7 @@
   {
     "name": "Shirakawa-go",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 95,
     "transit": 60,
@@ -6252,6 +6465,7 @@
   {
     "name": "Kawaguchi",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 70,
     "transit": 85,
@@ -6281,6 +6495,7 @@
   {
     "name": "Matsumoto",
     "country": "Japan",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 90,
@@ -6310,6 +6525,7 @@
   {
     "name": "Gifu",
     "country": "Japan",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 85,
@@ -6339,6 +6555,7 @@
   {
     "name": "Uji",
     "country": "Japan",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 75,
@@ -6368,6 +6585,7 @@
   {
     "name": "Asuka",
     "country": "Japan",
+    "type": ["city"],
     "cost": 50,
     "interesting": 75,
     "transit": 60,
@@ -6397,6 +6615,7 @@
   {
     "name": "Hakodate",
     "country": "Japan",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -6426,6 +6645,7 @@
   {
     "name": "Katoomba",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -6455,6 +6675,7 @@
   {
     "name": "Wollongong",
     "country": "Australia",
+    "type": ["city"],
     "cost": 65,
     "interesting": 75,
     "transit": 80,
@@ -6484,6 +6705,7 @@
   {
     "name": "Bowral",
     "country": "Australia",
+    "type": ["city"],
     "cost": 60,
     "interesting": 70,
     "transit": 75,
@@ -6513,6 +6735,7 @@
   {
     "name": "Apollo Bay",
     "country": "Australia",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -6540,6 +6763,7 @@
   {
     "name": "Lorne",
     "country": "Australia",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 65,
@@ -6569,6 +6793,7 @@
   {
     "name": "Daylesford",
     "country": "Australia",
+    "type": ["city"],
     "cost": 55,
     "interesting": 70,
     "transit": 60,
@@ -6598,6 +6823,7 @@
   {
     "name": "Phillip Island",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 75,
@@ -6625,6 +6851,7 @@
   {
     "name": "Ballarat",
     "country": "Australia",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 70,
@@ -6654,6 +6881,7 @@
   {
     "name": "Mornington Peninsula",
     "country": "Australia",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 70,
@@ -6681,6 +6909,7 @@
   {
     "name": "Noosa",
     "country": "Australia",
+    "type": ["city"],
     "cost": 80,
     "interesting": 85,
     "transit": 80,
@@ -6710,6 +6939,7 @@
   {
     "name": "Airlie Beach",
     "country": "Australia",
+    "type": ["city"],
     "cost": 75,
     "interesting": 90,
     "transit": 70,
@@ -6737,6 +6967,7 @@
   {
     "name": "Townsville",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 75,
@@ -6766,6 +6997,7 @@
   {
     "name": "Hervey Bay",
     "country": "Australia",
+    "type": ["city"],
     "cost": 65,
     "interesting": 75,
     "transit": 70,
@@ -6793,6 +7025,7 @@
   {
     "name": "Victor Harbor",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 65,
@@ -6820,6 +7053,7 @@
   {
     "name": "Clare Valley",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 75,
     "transit": 60,
@@ -6847,6 +7081,7 @@
   {
     "name": "Perth",
     "country": "Australia",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 80,
@@ -6876,6 +7111,7 @@
   {
     "name": "Margaret River",
     "country": "Australia",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 70,
@@ -6903,6 +7139,7 @@
   {
     "name": "Broome",
     "country": "Australia",
+    "type": ["city"],
     "cost": 75,
     "interesting": 90,
     "transit": 65,
@@ -6933,6 +7170,7 @@
   {
     "name": "Albany",
     "country": "Australia",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
@@ -6963,6 +7201,7 @@
   {
     "name": "Launceston",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 75,
     "transit": 80,
@@ -6993,6 +7232,7 @@
   {
     "name": "Cradle Mountain",
     "country": "Australia",
+    "type": ["city"],
     "cost": 85,
     "interesting": 95,
     "transit": 60,
@@ -7021,6 +7261,7 @@
   {
     "name": "Port Arthur",
     "country": "Australia",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 75,
@@ -7049,6 +7290,7 @@
   {
     "name": "St Helens",
     "country": "Australia",
+    "type": ["city"],
     "cost": 65,
     "interesting": 70,
     "transit": 70,
@@ -7077,6 +7319,7 @@
   {
     "name": "Darwin",
     "country": "Australia",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 80,
@@ -7107,6 +7350,7 @@
   {
     "name": "Uluru",
     "country": "Australia",
+    "type": ["city"],
     "cost": 90,
     "interesting": 95,
     "transit": 60,
@@ -7137,6 +7381,7 @@
   {
     "name": "Rotterdam",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 85,
@@ -7166,6 +7411,7 @@
   {
     "name": "Utrecht",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -7195,6 +7441,7 @@
   {
     "name": "Haarlem",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 80,
@@ -7224,6 +7471,7 @@
   {
     "name": "The Hague",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 85,
@@ -7251,6 +7499,7 @@
   {
     "name": "Giethoorn",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 50,
@@ -7279,6 +7528,7 @@
   {
     "name": "Leiden",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -7308,6 +7558,7 @@
   {
     "name": "Maastricht",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 65,
     "interesting": 90,
     "transit": 80,
@@ -7337,6 +7588,7 @@
   {
     "name": "Delft",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 85,
     "transit": 85,
@@ -7366,6 +7618,7 @@
   {
     "name": "Edam",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 70,
@@ -7395,6 +7648,7 @@
   {
     "name": "Zaanse Schans",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 50,
     "interesting": 95,
     "transit": 90,
@@ -7422,6 +7676,7 @@
   {
     "name": "Alkmaar",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 80,
     "transit": 80,
@@ -7451,6 +7706,7 @@
   {
     "name": "Arnhem",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 65,
     "interesting": 85,
     "transit": 85,
@@ -7480,6 +7736,7 @@
   {
     "name": "Zwolle",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 80,
@@ -7509,6 +7766,7 @@
   {
     "name": "Gouda",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 55,
     "interesting": 80,
     "transit": 75,
@@ -7538,6 +7796,7 @@
   {
     "name": "Enkhuizen",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 75,
     "transit": 80,
@@ -7567,6 +7826,7 @@
   {
     "name": "Hoorn",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -7596,6 +7856,7 @@
   {
     "name": "Den Bosch",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 70,
     "interesting": 90,
     "transit": 85,
@@ -7623,6 +7884,7 @@
   {
     "name": "Middelburg",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 60,
     "interesting": 70,
     "transit": 80,
@@ -7652,6 +7914,7 @@
   {
     "name": "Volendam",
     "country": "Netherlands",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 75,
@@ -7681,6 +7944,7 @@
   {
     "name": "Stockholm",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 80,
     "interesting": 95,
     "transit": 90,
@@ -7710,6 +7974,7 @@
   {
     "name": "Gothenburg",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 85,
@@ -7739,6 +8004,7 @@
   {
     "name": "Målmo",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 70,
     "interesting": 80,
     "transit": 85,
@@ -7768,6 +8034,7 @@
   {
     "name": "Kiruna",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 60,
     "interesting": 90,
     "transit": 60,
@@ -7797,6 +8064,7 @@
   {
     "name": "Visby",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 75,
     "interesting": 85,
     "transit": 70,
@@ -7826,6 +8094,7 @@
   {
     "name": "Uppsala",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 85,
@@ -7855,6 +8124,7 @@
   {
     "name": "Lund",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 70,
     "interesting": 85,
     "transit": 85,
@@ -7884,6 +8154,7 @@
   {
     "name": "Helsingborg",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 70,
     "interesting": 75,
     "transit": 80,
@@ -7913,6 +8184,7 @@
   {
     "name": "Åre",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 80,
     "interesting": 90,
     "transit": 65,
@@ -7942,6 +8214,7 @@
   {
     "name": "Östersund",
     "country": "Sweden",
+    "type": ["city"],
     "cost": 65,
     "interesting": 80,
     "transit": 70,
