@@ -5,17 +5,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
 import { pb } from "@/lib/pocketbase";
-import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { Check, FolderPlus, MapPin } from "lucide-react";
+import { FolderPlus, MapPin, Star } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Marker, Popup, useMap as useLeafletMap } from "react-leaflet";
 import { useSelection } from "../context/SelectionContext";
 import { MapMarkerProps, MapPlace } from "../types";
-import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 import { PlaceModal } from "./PlaceModal";
+import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 
 interface PlacePopupCardProps {
   place: MapPlace;
@@ -202,98 +201,93 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
             />
             {place.type && (
               <Badge
-                variant="outline"
-                className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm"
+                variant="secondary"
+                className="absolute top-2 left-2 text-xs bg-black/50 text-white border-0"
               >
                 {place.type}
               </Badge>
             )}
+            {/* Tags overlay */}
+            <div className="absolute top-2 right-2 flex flex-wrap gap-1 justify-end max-w-[70%]">
+              {Array.isArray(place.tags) &&
+                place.tags.slice(0, 2).map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0 bg-black/50 text-white border-0"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+            </div>
           </div>
 
           {/* Content */}
-          <div className="p-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">{place.name}</h2>
-              <div className="flex items-center gap-2">
+          <div className="p-2 space-y-1.5">
+            {/* Header Row */}
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <h3 className="font-semibold text-base leading-tight line-clamp-2">
+                  {place.name}
+                </h3>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="line-clamp-1">{place.country}</span>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-yellow-500" />
+                    <span>{place.averageRating?.toFixed(1) || "New"}</span>
+                  </div>
+                  <span>•</span>
+                  <span>${place.cost}/day</span>
+                </div>
+              </div>
+              <div className="flex gap-1 flex-shrink-0">
                 <Button
-                  variant={isSaved ? "secondary" : "outline"}
                   size="sm"
-                  onClick={onOpenCollectionsDialog}
-                  className={cn(
-                    "transition-all duration-200",
-                    isSaved && "bg-green-50 text-green-600 hover:bg-green-100"
-                  )}
+                  variant="ghost"
+                  onClick={handleLocate}
+                  className="h-6 w-6 p-0"
                 >
-                  {isSaved ? (
-                    <>
-                      <Check className="w-4 h-4 mr-2" />
-                      Saved
-                    </>
-                  ) : (
-                    <>
-                      <FolderPlus className="w-4 h-4 mr-2" />
-                      Save
-                    </>
-                  )}
+                  <MapPin className="w-3.5 h-3.5" />
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleLocate}>
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Locate
-                </Button>
-                <Button size="sm" onClick={handleDetailsClick}>
-                  View Details
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={onOpenCollectionsDialog}
+                  className="h-6 w-6 p-0"
+                >
+                  <FolderPlus className="w-3.5 h-3.5" />
                 </Button>
               </div>
             </div>
 
-            {/* Social Stats */}
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <span>📸</span>
-                <span>24 photos</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>⭐️</span>
-                <span>4.8 (126 reviews)</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span>👥</span>
-                <span>89 visitors</span>
-              </div>
-            </div>
+            {/* Description */}
+            <p className="text-xs text-muted-foreground">
+              {place.description}
+            </p>
 
-            {/* Quick Actions */}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1"
-                onClick={onOpenPhotoDialog}
+            {/* Activity + View */}
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30 rounded p-1.5">
+              <div className="flex -space-x-2 flex-shrink-0">
+                <div className="w-4 h-4 rounded-full bg-indigo-400 flex items-center justify-center ring-1 ring-white">
+                  <span className="text-[8px]">📸</span>
+                </div>
+                <div className="w-4 h-4 rounded-full bg-purple-400 flex items-center justify-center ring-1 ring-white">
+                  <span className="text-[8px]">⭐️</span>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-medium bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent truncate">
+                  2 new updates • Latest photo 2h ago
+                </p>
+              </div>
+              <Button 
+                size="sm" 
+                onClick={handleDetailsClick}
+                className="h-5 px-2 text-xs bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white border-0"
               >
-                📸 Add Photo
+                View
               </Button>
-              <Button variant="outline" size="sm" className="flex-1">
-                ✍️ Write Review
-              </Button>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium">Recent Activity</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary" />
-                  <span className="text-muted-foreground">
-                    Sarah added a photo • 2h ago
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary" />
-                  <span className="text-muted-foreground">
-                    Mike wrote a review • 5h ago
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         </CardContent>
