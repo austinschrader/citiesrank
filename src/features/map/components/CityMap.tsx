@@ -71,17 +71,7 @@ export const CityMap = ({ className }: CityMapProps) => {
 
   // Memoize filtered cities computation
   const filteredCities = useMemo(() => {
-    return getFilteredCities(cities, (city) => ({
-      matchScore: 1,
-      attributeMatches: {
-        budget: filters.budget ? 1 : 0,
-        crowds: 1,
-        tripLength: 1,
-        season: filters.season ? 1 : 0,
-        transit: 1,
-        accessibility: 1,
-      },
-    }));
+    return getFilteredCities(cities);
   }, [cities, getFilteredCities, filters.budget, filters.season]);
 
   // Memoize hasActiveFilters check

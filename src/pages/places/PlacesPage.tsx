@@ -37,7 +37,7 @@ export const PlacesPage = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Get filtered cities with match scores
-  const filteredCities = getFilteredCities(cities, calculateMatchForCity);
+  const filteredCities = getFilteredCities(cities);
 
   const {
     getPaginatedData,
