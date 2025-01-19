@@ -4,14 +4,14 @@ import { Toggle } from "@/components/ui/toggle";
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersSheet } from "@/features/explore/components/filters/FiltersSheet";
 import { ViewModeToggle } from "@/features/explore/components/filters/ViewModeToggle";
-import { TimeWindow } from "@/features/explore/components/TimeWindow";
+import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { Landmark, PlusCircle, Scroll, Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { PageSizeSelect } from "./PageSizeSelect";
+import { PageSizeSelect } from "./ui/PageSizeSelect";
 
 const baseButtonStyles =
   "inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
