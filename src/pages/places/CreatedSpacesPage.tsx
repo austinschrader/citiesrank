@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useHeader } from "@/contexts/HeaderContext";
+import { useHeader } from "@/context/HeaderContext";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";

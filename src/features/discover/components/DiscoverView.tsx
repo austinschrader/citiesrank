@@ -8,8 +8,8 @@ import {
   MOCK_USER,
 } from "../data/mockData";
 
-export const DiscoveryView: React.FC = () => {
-  console.log("DiscoveryView mounted");
+export const DiscoverView: React.FC = () => {
+  console.log("DiscoverView mounted");
   console.log("Mock data:", { MOCK_DISCOVERIES, ACTIVE_CHALLENGES, MOCK_USER });
 
   return (
@@ -101,11 +101,11 @@ export const DiscoveryView: React.FC = () => {
             </div>
           </div>
 
-          {/* Discovery Feed */}
+          {/* Discover Feed */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MOCK_DISCOVERIES.map((discovery) => (
+            {MOCK_DISCOVERIES.map((discover) => (
               <div
-                key={discovery.id}
+                key={discover.id}
                 className={cn(
                   "bg-card rounded-lg overflow-hidden shadow-lg",
                   "transform transition-all duration-300",
@@ -115,8 +115,8 @@ export const DiscoveryView: React.FC = () => {
               >
                 <div className="relative aspect-square">
                   <img
-                    src={discovery.imageUrl}
-                    alt={discovery.title}
+                    src={discover.imageUrl}
+                    alt={discover.title}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
@@ -129,23 +129,23 @@ export const DiscoveryView: React.FC = () => {
                           "animate-pulse"
                         )}
                       >
-                        {discovery.user?.level || ""}
+                        {discover.user?.level || ""}
                       </div>
                       <div>
                         <h3 className="text-white font-medium">
-                          {discovery.title}
+                          {discover.title}
                         </h3>
                         <p className="text-white/80 text-sm">
-                          by {discovery.user?.name || "Unknown"}
+                          by {discover.user?.name || "Unknown"}
                         </p>
                       </div>
                     </div>
-                    {discovery.type === "challenge" && discovery.progress && (
+                    {discover.type === "challenge" && discover.progress && (
                       <div className="mt-2">
                         <Progress
                           value={
-                            (discovery.progress.current /
-                              discovery.progress.total) *
+                            (discover.progress.current /
+                              discover.progress.total) *
                             100
                           }
                           className="h-1.5"
@@ -157,7 +157,7 @@ export const DiscoveryView: React.FC = () => {
 
                 <div className="p-4">
                   <p className="text-sm text-muted-foreground mb-3">
-                    {discovery.description}
+                    {discover.description}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -168,7 +168,7 @@ export const DiscoveryView: React.FC = () => {
                           "hover:animate-heartbeat"
                         )}
                       >
-                        ❤️ {discovery.stats?.likes || 0}
+                        ❤️ {discover.stats?.likes || 0}
                       </button>
                       <button
                         className={cn(
@@ -177,21 +177,21 @@ export const DiscoveryView: React.FC = () => {
                           "hover:animate-bounce"
                         )}
                       >
-                        💬 {discovery.stats?.comments || 0}
+                        💬 {discover.stats?.comments || 0}
                       </button>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">
                         2h ago
                       </span>
-                      {discovery.points && (
+                      {discover.points && (
                         <span
                           className={cn(
                             "text-sm font-medium text-primary",
                             "animate-pulse"
                           )}
                         >
-                          +{discovery.points}pts
+                          +{discover.points}pts
                         </span>
                       )}
                     </div>

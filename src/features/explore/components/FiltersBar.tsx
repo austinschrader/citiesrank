@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
-import { useHeader } from "@/contexts/HeaderContext";
+import { useHeader } from "@/context/HeaderContext";
 import { FiltersSheet } from "@/features/explore/components/filters/FiltersSheet";
 import { ViewModeToggle } from "@/features/explore/components/filters/ViewModeToggle";
 import { TimeWindow } from "@/features/explore/components/TimeWindow";

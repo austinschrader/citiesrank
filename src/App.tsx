@@ -1,6 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
+import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { FeedView } from "@/features/feed/components/FeedView";
 import { FollowingManagement } from "@/features/feed/components/FollowingManagement";
 import { FeedProvider } from "@/features/feed/context/FeedContext";
@@ -20,10 +20,10 @@ import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { Route, Routes } from "react-router-dom";
-import { HeaderProvider } from "./contexts/HeaderContext";
-import { LocationProvider } from "./contexts/LocationContext";
+import { HeaderProvider } from "./context/HeaderContext";
+import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
-import { DiscoveryPage } from "./pages/DiscoveryPage";
+import { DiscoverPage } from "./pages/DiscoverPage";
 import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
                               <Route path="/" element={<ExplorePage />} />
                               <Route
                                 path="/discover"
-                                element={<DiscoveryPage />}
+                                element={<DiscoverPage />}
                               />
                               <Route
                                 path="/favorites"
