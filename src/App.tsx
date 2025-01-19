@@ -23,7 +23,7 @@ import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./context/HeaderContext";
 import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
-import { DiscoverPage } from "./pages/DiscoverPage";
+import { DiscoverPage } from "./pages/discover/DiscoverPage";
 import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 
 function App() {
