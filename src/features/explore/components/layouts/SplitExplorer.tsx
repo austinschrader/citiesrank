@@ -10,6 +10,7 @@ import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Split from "react-split";
+import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -27,7 +28,6 @@ export const SplitExplorer = () => {
   const { contentType, itemsPerPage, setItemsPerPage } = useHeader();
   const [numFilteredToShow, setNumFilteredToShow] = useState(itemsPerPage);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const observerTarget = useRef<HTMLDivElement>(null);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
 
   // Get filtered places using FiltersContext
@@ -119,34 +119,7 @@ export const SplitExplorer = () => {
     numPrioritizedToShow,
   ]);
 
-  // Intersection Observer for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore() && !isLoadingMore) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1, rootMargin: "100px" }
-    );
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
-    }
-
-    return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
-      }
-    };
-  }, [
-    hasMore,
-    isLoadingMore,
-    loadMore,
-    numPrioritizedToShow,
-    filteredPlaces.length,
-    splitMode,
-  ]);
+  const observerTarget = useInfiniteScroll(loadMore, hasMore, isLoadingMore);
 
   return (
     <div className="h-full flex flex-col">

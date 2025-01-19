@@ -27,11 +27,18 @@ export const ResultsGrid: React.FC<ResultsGridProps> = ({
         })}
       </div>
 
-      <div ref={observerRef} className="h-10 flex items-center justify-center">
-        {isLoadingMore && (
+      <div 
+        ref={observerRef} 
+        className="h-4"
+        style={{
+          visibility: isLoadingMore ? "hidden" : "visible"
+        }}
+      />
+      {isLoadingMore && (
+        <div className="flex items-center justify-center py-4">
           <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 };
