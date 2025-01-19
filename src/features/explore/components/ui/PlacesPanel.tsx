@@ -8,8 +8,9 @@ import { useMap } from "@/features/map/context/MapContext";
 import { useSelection } from "@/features/map/context/SelectionContext";
 import { PlaceCardGrid } from "@/features/places/components/ui/grids/PlaceCardGrid";
 import { useCities } from "@/features/places/context/CitiesContext";
+import { useScrollToSelected } from "@/features/places/hooks/useScrollToSelected";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject } from "react";
 
 interface PlacesPanelProps {
   isLoadingMore: boolean;
@@ -27,18 +28,7 @@ export const PlacesPanel = ({
   const { cities } = useCities();
   const { prioritizedPlaces, visiblePlacesInView, splitMode } = useMap();
   const { selectedPlace, fromMap } = useSelection();
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (selectedPlace && gridRef.current && fromMap) {
-      const selectedElement = gridRef.current.querySelector(
-        `[data-id="${selectedPlace.id}"]`
-      );
-      if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-  }, [selectedPlace, fromMap]);
+  const gridRef = useScrollToSelected(selectedPlace, fromMap);
 
   const displayPlaces =
     splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
