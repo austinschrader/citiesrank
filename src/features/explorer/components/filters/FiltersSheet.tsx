@@ -19,7 +19,6 @@ import {
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, Star } from "lucide-react";
 
@@ -60,6 +59,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
     resetTypeFilters,
     resetPopulationFilter,
     setFilters,
+    getUniqueTags,
   } = useFilters();
   const { cities } = useCities();
 
@@ -70,16 +70,6 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
     (filters.populationCategory ? 1 : 0) +
     (filters.averageRating ? 1 : 0) +
     (filters.tags.length > 0 ? 1 : 0);
-
-  const getUniqueTags = (cities: CitiesResponse[]) => {
-    const tagsSet = new Set<string>();
-    cities.forEach((city) => {
-      if (Array.isArray(city.tags)) {
-        city.tags.forEach((tag) => tagsSet.add(tag));
-      }
-    });
-    return Array.from(tagsSet).sort();
-  };
 
   return (
     <Sheet>

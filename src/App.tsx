@@ -18,9 +18,7 @@ import "@/lib/styles/App.css";
 import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
-import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
-import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./contexts/HeaderContext";
 import { LocationProvider } from "./contexts/LocationContext";
@@ -29,8 +27,6 @@ import { DiscoveryPage } from "./pages/DiscoveryPage";
 import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
 
 function App() {
-  const [isNewUser, setIsNewUser] = useState(true);
-
   return (
     <CitiesProvider>
       <AuthProvider>
@@ -46,7 +42,6 @@ function App() {
                           <Routes>
                             <Route element={<RootLayout />}>
                               <Route path="/" element={<ExplorerPage />} />
-                              <Route path="/explore" element={<PlacesPage />} />
                               <Route
                                 path="/discover"
                                 element={<DiscoveryPage />}
