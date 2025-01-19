@@ -27,8 +27,6 @@ interface HeaderContextValue {
   setExploringCount: (count: number | null) => void;
   contentType: ContentType;
   setContentType: (type: ContentType) => void;
-  itemsPerPage: number;
-  setItemsPerPage: (size: number) => void;
   isFiltersCollapsed: boolean;
   setIsFiltersCollapsed: (collapsed: boolean) => void;
 }
@@ -43,7 +41,6 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
   const [contentType, setContentType] = useState<ContentType>("places");
-  const [itemsPerPage, setItemsPerPage] = useState(25);
   const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const location = useLocation();
 
@@ -77,8 +74,6 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
     setExploringCount,
     contentType,
     setContentType,
-    itemsPerPage,
-    setItemsPerPage,
     isFiltersCollapsed,
     setIsFiltersCollapsed,
   };

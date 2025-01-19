@@ -12,8 +12,6 @@ import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Split from "react-split";
 
-const pageSizeOptions = [15, 25, 50, 100];
-
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const { filters, getFilteredCities } = useFilters();
@@ -25,8 +23,9 @@ export const SplitExplorer = () => {
     splitMode,
     visibleLists,
   } = useMap();
-  const { contentType, itemsPerPage, setItemsPerPage } = useHeader();
-  const [numFilteredToShow, setNumFilteredToShow] = useState(itemsPerPage);
+  const { contentType } = useHeader();
+  const BATCH_SIZE = 25; // Fixed size for infinite scroll
+  const [numFilteredToShow, setNumFilteredToShow] = useState(BATCH_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
 
@@ -70,14 +69,9 @@ export const SplitExplorer = () => {
 
   // Reset pagination when view changes
   useEffect(() => {
-    setNumPrioritizedToShow(pageSizeOptions[0]);
-    setNumFilteredToShow(pageSizeOptions[0]);
-  }, [splitMode, setNumPrioritizedToShow]);
-
-  // Effect to sync numFilteredToShow with itemsPerPage
-  useEffect(() => {
-    setNumFilteredToShow(itemsPerPage);
-  }, [itemsPerPage]);
+    setNumPrioritizedToShow(BATCH_SIZE);
+    setNumFilteredToShow(BATCH_SIZE);
+  }, [splitMode]);
 
   // Memoize the maximum number of items
   const maxItems = useMemo(() => 
@@ -94,17 +88,16 @@ export const SplitExplorer = () => {
 
     try {
       setIsLoadingMore(true);
-      const increment = itemsPerPage;
       
       if (splitMode === "list") {
-        setNumFilteredToShow(prev => prev + increment);
+        setNumFilteredToShow(prev => prev + BATCH_SIZE);
       } else {
-        setNumPrioritizedToShow(prev => prev + increment);
+        setNumPrioritizedToShow(prev => prev + BATCH_SIZE);
       }
     } finally {
       setIsLoadingMore(false);
     }
-  }, [hasMore, isLoadingMore, itemsPerPage, splitMode]);
+  }, [hasMore, isLoadingMore, splitMode]);
 
   const observerTarget = useInfiniteScroll(loadMore, hasMore, isLoadingMore);
 

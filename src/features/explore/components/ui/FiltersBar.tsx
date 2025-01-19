@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersSheet } from "@/features/explore/components/ui/filters/FiltersSheet";
-import { PageSizeSelect } from "@/features/explore/components/ui/PageSizeSelect";
 import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
@@ -141,7 +140,6 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
             </Button>
 
             <div className="flex items-center gap-3">
-              <PageSizeSelect />
               <FiltersSheet sort={sort} onSortChange={setSort} />
             </div>
 
