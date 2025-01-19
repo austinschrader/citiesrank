@@ -10,7 +10,7 @@ import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Split from "react-split";
-import { ResultsPanel } from "../ui/ResultsPanel";
+import { ResultsPanel } from "../ui/PlacesPanel";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
