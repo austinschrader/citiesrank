@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
-import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
 import { useState } from "react";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 export const MapLegend = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +46,7 @@ export const MapLegend = () => {
           <DialogHeader>
             <DialogTitle>Map Legend</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-6 py-4">
             {/* Place Types */}
             <div className="space-y-2">
@@ -52,7 +56,10 @@ export const MapLegend = () => {
                   <div key={type} className="flex items-center gap-2">
                     <div
                       className="w-4 h-4 rounded-full"
-                      style={{ backgroundColor: markerColors[type as CitiesTypeOptions] }}
+                      style={{
+                        backgroundColor:
+                          markerColors[type as CitiesTypeOptions],
+                      }}
                     />
                     <span className="text-sm">{label}</span>
                   </div>

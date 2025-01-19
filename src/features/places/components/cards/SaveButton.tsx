@@ -3,20 +3,17 @@
  * Button to save places to collections
  */
 import { Button } from "@/components/ui/button";
+import { SaveCollectionsDialog } from "@/features/map/components/SaveCollectionsDialog";
 import { useToast } from "@/hooks/use-toast";
 import { FolderPlus } from "lucide-react";
 import { useState } from "react";
-import { SaveCollectionsDialog } from "@/features/map/components/SaveCollectionsDialog";
 
 interface SaveButtonProps {
   placeId: string;
   onAuthRequired: () => void;
 }
 
-export const SaveButton = ({
-  placeId,
-  onAuthRequired,
-}: SaveButtonProps) => {
+export const SaveButton = ({ placeId, onAuthRequired }: SaveButtonProps) => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const { toast } = useToast();
 

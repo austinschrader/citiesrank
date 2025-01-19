@@ -4,7 +4,6 @@
  * Provides methods to follow/unfollow content and refresh the feed, used by FeedView for display.
  */
 
-import { ClientResponseError } from "pocketbase";
 import { getApiUrl } from "@/config/appConfig";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
@@ -74,26 +73,29 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
       console.debug("Loading user preferences for:", user.id);
       const result = await pb.collection("user_preferences").getList(1, 1, {
         filter: `user="${user.id}"`,
-        $autoCancel: false
+        $autoCancel: false,
       });
 
       if (result.items.length > 0) {
         const record = result.items[0];
         console.debug("User preferences loaded:", {
           followedTags: record.followed_tags,
-          followedPlaces: record.followed_places
+          followedPlaces: record.followed_places,
         });
         setFollowedTags(record.followed_tags || []);
         setFollowedPlaces(record.followed_places || []);
       } else {
         console.debug("No preferences found, creating default");
-        await pb.collection("user_preferences").create({
-          user: user.id,
-          followed_tags: [],
-          followed_places: [],
-        }, {
-          $autoCancel: false
-        });
+        await pb.collection("user_preferences").create(
+          {
+            user: user.id,
+            followed_tags: [],
+            followed_places: [],
+          },
+          {
+            $autoCancel: false,
+          }
+        );
         setFollowedTags([]);
         setFollowedPlaces([]);
       }
@@ -105,34 +107,44 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const updateUserPreferences = async (newTags?: string[], newPlaces?: string[]) => {
+  const updateUserPreferences = async (
+    newTags?: string[],
+    newPlaces?: string[]
+  ) => {
     if (!user) return;
-    
+
     const tagsToUpdate = newTags ?? followedTags;
     const placesToUpdate = newPlaces ?? followedPlaces;
-    
+
     try {
       const result = await pb.collection("user_preferences").getList(1, 1, {
         filter: `user="${user.id}"`,
-        $autoCancel: false
+        $autoCancel: false,
       });
 
       if (result.items.length > 0) {
         const record = result.items[0];
-        await pb.collection("user_preferences").update(record.id, {
-          followed_tags: tagsToUpdate,
-          followed_places: placesToUpdate,
-        }, {
-          $autoCancel: false
-        });
+        await pb.collection("user_preferences").update(
+          record.id,
+          {
+            followed_tags: tagsToUpdate,
+            followed_places: placesToUpdate,
+          },
+          {
+            $autoCancel: false,
+          }
+        );
       } else {
-        await pb.collection("user_preferences").create({
-          user: user.id,
-          followed_tags: tagsToUpdate,
-          followed_places: placesToUpdate,
-        }, {
-          $autoCancel: false
-        });
+        await pb.collection("user_preferences").create(
+          {
+            user: user.id,
+            followed_tags: tagsToUpdate,
+            followed_places: placesToUpdate,
+          },
+          {
+            $autoCancel: false,
+          }
+        );
       }
     } catch (error) {
       console.error("Error updating user preferences:", error);

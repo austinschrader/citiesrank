@@ -65,18 +65,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         lists_count: 0,
         location: "",
         bio: "",
-        places_visited: [], 
+        places_visited: [],
       },
     });
 
     // Create user preferences if they don't exist
     try {
-      const existingPrefs = await pb.collection('user_preferences').getFirstListItem(
-        `user="${authData.record.id}"`
-      );
+      const existingPrefs = await pb
+        .collection("user_preferences")
+        .getFirstListItem(`user="${authData.record.id}"`);
     } catch (error) {
       // If preferences don't exist, create them
-      await pb.collection('user_preferences').create({
+      await pb.collection("user_preferences").create({
         user: authData.record.id,
         followed_tags: [],
         followed_places: [],

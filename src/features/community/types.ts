@@ -18,17 +18,17 @@ export interface Discussion {
     replies: number;
     likes: number;
   };
-  status: 'active' | 'resolved' | 'featured';
+  status: "active" | "resolved" | "featured";
 }
 
-export type DiscussionCategory = 
-  | 'local_tips'       // Insider knowledge
-  | 'photo_spots'      // Best photography locations
-  | 'events'           // Local events and happenings
-  | 'questions'        // Q&A about the place
-  | 'meetups'          // Community meetups
-  | 'reviews'          // Detailed reviews & experiences
-  | 'recommendations'; // Specific recommendations
+export type DiscussionCategory =
+  | "local_tips" // Insider knowledge
+  | "photo_spots" // Best photography locations
+  | "events" // Local events and happenings
+  | "questions" // Q&A about the place
+  | "meetups" // Community meetups
+  | "reviews" // Detailed reviews & experiences
+  | "recommendations"; // Specific recommendations
 
 export interface Reply {
   id: string;
@@ -42,5 +42,5 @@ export interface Reply {
   created: Date;
   updated: Date;
   likes: number;
-  endorsed: boolean;   // Endorsed by original poster
+  endorsed: boolean; // Endorsed by original poster
 }

@@ -1,11 +1,13 @@
-import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { validatePlace, createSlug } from '../utils/placeValidation';
-import type { ValidationResult, Place } from '../types/places';
+import { useState } from "react";
+import type { Place, ValidationResult } from "../types/places";
+import { createSlug, validatePlace } from "../utils/placeValidation";
 
 export function useValidatePlaces() {
   const { toast } = useToast();
-  const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
+  const [validationResults, setValidationResults] = useState<
+    ValidationResult[]
+  >([]);
 
   const validatePlaces = (fileData: Place[]) => {
     const results = fileData.map((place) => {
@@ -26,7 +28,9 @@ export function useValidatePlaces() {
     const validCount = results.filter((r) => r.isValid).length;
     toast({
       title: "File Validated",
-      description: `Found ${results.length} places (${validCount} valid, ${results.length - validCount} invalid)`,
+      description: `Found ${results.length} places (${validCount} valid, ${
+        results.length - validCount
+      } invalid)`,
     });
 
     return results;

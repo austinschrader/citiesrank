@@ -1,8 +1,8 @@
 // file location: src/features/auth/components/SignInButton.tsx
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useState } from "react";
 import { LogIn } from "lucide-react";
+import { useState } from "react";
 
 export function SignInButton() {
   const { signInWithGoogle } = useAuth();

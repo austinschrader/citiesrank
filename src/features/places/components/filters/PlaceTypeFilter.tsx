@@ -58,7 +58,10 @@ export const PlaceTypeFilter = ({
     const newTypes = filters.activeTypes.includes(type)
       ? filters.activeTypes.filter((t) => t !== type)
       : [...filters.activeTypes, type];
-    setFilter("activeTypes", newTypes.length ? newTypes : Object.values(CitiesTypeOptions));
+    setFilter(
+      "activeTypes",
+      newTypes.length ? newTypes : Object.values(CitiesTypeOptions)
+    );
   };
 
   return (
@@ -92,7 +95,9 @@ export const PlaceTypeFilter = ({
             <Button
               key={filter.type}
               variant={
-                filters.activeTypes.includes(filter.type) ? "default" : "outline"
+                filters.activeTypes.includes(filter.type)
+                  ? "default"
+                  : "outline"
               }
               className="w-full justify-start gap-2"
               onClick={() => handleFilterToggle(filter.type)}

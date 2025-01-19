@@ -1,14 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { Check, FolderPlus, Loader2, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useEffect, useState, useMemo } from "react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useLists } from "@/features/lists/context/ListsContext";
 import { ExpandedList } from "@/features/lists/types";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import { pb } from "@/lib/pocketbase";
+import { cn } from "@/lib/utils";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  FolderPlus,
+  Loader2,
+  Plus,
+  Search,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 
 interface SaveCollectionsDialogProps {
   isOpen: boolean;
@@ -23,7 +37,13 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
   onClose,
   placeId,
 }) => {
-  const { lists, getUserLists, createList, addPlaceToList, isLoading: listsLoading } = useLists();
+  const {
+    lists,
+    getUserLists,
+    createList,
+    addPlaceToList,
+    isLoading: listsLoading,
+  } = useLists();
   const { user } = useAuth();
   const { toast } = useToast();
   const [userLists, setUserLists] = useState<ExpandedList[]>([]);
@@ -44,16 +64,18 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
           setUserLists(lists);
 
           // Find which lists contain this place
-          const containingLists = await pb.collection('list_places').getList(1, 50, {
-            filter: `place = "${placeId}"`,
-            $autoCancel: false
-          });
+          const containingLists = await pb
+            .collection("list_places")
+            .getList(1, 50, {
+              filter: `place = "${placeId}"`,
+              $autoCancel: false,
+            });
 
-          const listIds = containingLists.items.map(item => item.list);
+          const listIds = containingLists.items.map((item) => item.list);
           setSelectedCollections(listIds);
           setInitialLoadDone(true);
         } catch (error) {
-          console.error('Error loading lists:', error);
+          console.error("Error loading lists:", error);
         }
       };
 
@@ -82,7 +104,7 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
 
   // Filter and paginate lists
   const filteredLists = useMemo(() => {
-    return userLists.filter(list =>
+    return userLists.filter((list) =>
       list.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [userLists, searchQuery]);
@@ -96,42 +118,42 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
   const handleNextPage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
   const handlePrevPage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleCreateNewList = async (e: React.MouseEvent | React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!newCollectionName.trim()) return;
-    
+
     try {
       setIsSaving(true);
       const newList = await createList({
         title: newCollectionName.trim(),
         places: [placeId],
       });
-      
+
       // Add new list to userLists and select it
-      setUserLists(prev => [...prev, newList]);
-      setSelectedCollections(prev => [...prev, newList.id]);
-      
+      setUserLists((prev) => [...prev, newList]);
+      setSelectedCollections((prev) => [...prev, newList.id]);
+
       toast({
         title: "Collection created",
         description: `Created "${newCollectionName}" and added place.`,
       });
-      
+
       // Reset new collection state
       setIsCreatingNew(false);
       setNewCollectionName("");
     } catch (error) {
-      console.error('Error creating list:', error);
+      console.error("Error creating list:", error);
       toast({
         title: "Error",
         description: "Failed to create collection. Please try again.",
@@ -159,27 +181,30 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
       setIsSaving(true);
 
       // Get current list_places records
-      const currentRecords = await pb.collection('list_places').getFullList({
+      const currentRecords = await pb.collection("list_places").getFullList({
         filter: `place = "${placeId}"`,
-        $autoCancel: false
+        $autoCancel: false,
       });
 
       // Delete records that are no longer selected
       const deletePromises = currentRecords
-        .filter(record => !selectedCollections.includes(record.list))
-        .map(record => pb.collection('list_places').delete(record.id));
+        .filter((record) => !selectedCollections.includes(record.list))
+        .map((record) => pb.collection("list_places").delete(record.id));
 
       // Add to newly selected collections
-      const currentListIds = currentRecords.map(record => record.list);
+      const currentListIds = currentRecords.map((record) => record.list);
       const addPromises = selectedCollections
-        .filter(listId => !currentListIds.includes(listId))
-        .map(listId => addPlaceToList(listId, { id: placeId } as any));
+        .filter((listId) => !currentListIds.includes(listId))
+        .map((listId) => addPlaceToList(listId, { id: placeId } as any));
 
       await Promise.all([...deletePromises, ...addPromises]);
 
-      const message = selectedCollections.length === 0
-        ? "Removed from all collections"
-        : `Added to ${selectedCollections.length} collection${selectedCollections.length === 1 ? "" : "s"}`;
+      const message =
+        selectedCollections.length === 0
+          ? "Removed from all collections"
+          : `Added to ${selectedCollections.length} collection${
+              selectedCollections.length === 1 ? "" : "s"
+            }`;
 
       toast({
         title: "Changes saved",
@@ -187,7 +212,7 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
       });
       onClose();
     } catch (error) {
-      console.error('Error saving place:', error);
+      console.error("Error saving place:", error);
       toast({
         title: "Error",
         description: "Failed to save changes. Please try again.",
@@ -201,16 +226,19 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
   const toggleCollection = (e: React.MouseEvent, listId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    setSelectedCollections(prev =>
+    setSelectedCollections((prev) =>
       prev.includes(listId)
-        ? prev.filter(id => id !== listId)
+        ? prev.filter((id) => id !== listId)
         : [...prev, listId]
     );
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md p-0 gap-0 bg-background/95 backdrop-blur-sm" onClick={e => e.stopPropagation()}>
+      <DialogContent
+        className="max-w-md p-0 gap-0 bg-background/95 backdrop-blur-sm"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-6 space-y-6">
           <DialogHeader>
             <DialogTitle>Save to Collection</DialogTitle>
@@ -229,20 +257,23 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
                 setSearchQuery(e.target.value);
                 setCurrentPage(1); // Reset to first page on search
               }}
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
               className="pl-9"
             />
           </div>
 
           {/* New Collection Input */}
           {isCreatingNew ? (
-            <form onSubmit={handleCreateNewList} className="flex items-center gap-2">
+            <form
+              onSubmit={handleCreateNewList}
+              className="flex items-center gap-2"
+            >
               <Input
                 autoFocus
                 placeholder="Collection name"
                 value={newCollectionName}
                 onChange={(e) => setNewCollectionName(e.target.value)}
-                onClick={e => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
               />
               <Button
                 type="submit"
@@ -302,7 +333,8 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
                     <div
                       className={cn(
                         "w-5 h-5 rounded-md border border-border flex items-center justify-center transition-colors",
-                        selectedCollections.includes(list.id) && "bg-primary border-primary"
+                        selectedCollections.includes(list.id) &&
+                          "bg-primary border-primary"
                       )}
                     >
                       {selectedCollections.includes(list.id) && (

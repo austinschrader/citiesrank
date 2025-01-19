@@ -2,7 +2,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import type { ValidationDisplayProps } from "./types";
 
-export function ValidationResults({ validationResults, importResults }: ValidationDisplayProps) {
+export function ValidationResults({
+  validationResults,
+  importResults,
+}: ValidationDisplayProps) {
   if (!validationResults || validationResults.length === 0) return null;
 
   const validCount = validationResults.filter((r) => r.isValid).length;
@@ -31,14 +34,21 @@ export function ValidationResults({ validationResults, importResults }: Validati
               </div>
               {importResults.has(result.name) && (
                 <span
-                  className={importResults.get(result.name) ? "text-green-500" : "text-destructive"}
+                  className={
+                    importResults.get(result.name)
+                      ? "text-green-500"
+                      : "text-destructive"
+                  }
                 >
                   {importResults.get(result.name) ? "Imported ✓" : "Failed ✗"}
                 </span>
               )}
             </div>
             {!result.isValid && result.errors.length > 0 && (
-              <Alert variant="destructive" className="bg-destructive/5 border-none">
+              <Alert
+                variant="destructive"
+                className="bg-destructive/5 border-none"
+              >
                 <AlertDescription>
                   <ul className="list-disc list-inside space-y-1">
                     {result.errors.map((error, i) => (

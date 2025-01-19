@@ -2,9 +2,9 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
 import { usePagination } from "@/features/places/hooks/usePagination";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { useEffect, useState } from "react";
 import { PlaceCard } from "../cards/PlaceCard";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 
 export const FeaturedPlaces = () => {
   const { cities } = useCities();
@@ -142,7 +142,9 @@ export const FeaturedPlaces = () => {
           return true;
       }
     })
-    .filter((city) => filters.activeTypes.includes(city.type as CitiesTypeOptions));
+    .filter((city) =>
+      filters.activeTypes.includes(city.type as CitiesTypeOptions)
+    );
 
   const {
     getPaginatedData,

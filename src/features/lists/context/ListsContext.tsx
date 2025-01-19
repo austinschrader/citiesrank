@@ -1,6 +1,5 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { ExpandedList, ListWithPlaces } from "@/features/lists/types";
-import { updateListLocation } from "@/features/lists/utils/listLocation";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { ClientResponseError } from "pocketbase";
 import {
@@ -85,13 +84,16 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         // Add places to the list and wait for them to complete
         await Promise.all(
           places.map((place, index) =>
-            pb.collection("list_places").create({
-              list: list.id,
-              place: place,
-              rank: index + 1,
-            }, {
-              $autoCancel: false
-            })
+            pb.collection("list_places").create(
+              {
+                list: list.id,
+                place: place,
+                rank: index + 1,
+              },
+              {
+                $autoCancel: false,
+              }
+            )
           )
         );
 
@@ -468,8 +470,8 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         }
 
         // Calculate center
-        const lats = places.map(p => p.latitude);
-        const lngs = places.map(p => p.longitude);
+        const lats = places.map((p) => p.latitude);
+        const lngs = places.map((p) => p.longitude);
         const center_lat = lats.reduce((a, b) => a + b, 0) / lats.length;
         const center_lng = lngs.reduce((a, b) => a + b, 0) / lngs.length;
 

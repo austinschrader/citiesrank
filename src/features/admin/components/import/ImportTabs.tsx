@@ -1,11 +1,14 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ImportTabsProps {
   children: React.ReactNode;
   defaultValue?: string;
 }
 
-export function ImportTabs({ children, defaultValue = "places" }: ImportTabsProps) {
+export function ImportTabs({
+  children,
+  defaultValue = "places",
+}: ImportTabsProps) {
   return (
     <Tabs defaultValue={defaultValue} className="w-full">
       <div className="flex justify-between items-center mb-8">

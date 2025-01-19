@@ -1,32 +1,32 @@
 /**
  * CitiesContext is the source of truth for all city data in the application.
- * 
+ *
  * Data Flow:
  * 1. CitiesContext loads and caches raw city data from the backend
  * 2. Components access this data via useCities()
  * 3. Data flows to FiltersContext for user-defined filtering
  * 4. Filtered data flows to MapContext for map-specific filtering
- * 
+ *
  * Responsibilities:
  * 1. Data Source
  *    - Fetch and cache ALL city data from backend
  *    - Provide access to raw, unfiltered city data
  *    - Track loading states and errors
- * 
+ *
  * 2. Data Organization
  *    - Maintain sorted city lists
  *    - Organize cities by type (country, region, city, etc.)
  *    - Track total city counts
- * 
+ *
  * 3. Data Updates
  *    - Handle city data updates (e.g., when a city is edited)
  *    - Refresh city data when needed
- * 
+ *
  * Does NOT handle:
  * - Filtering cities (handled by FiltersContext)
  * - Map-specific city display (handled by MapContext)
  * - UI state or interactions
- * 
+ *
  * Usage Example:
  * ```tsx
  * const { cities, sortedCities, typeSpecificLists } = useCities();
@@ -43,10 +43,10 @@ import PocketBase from "pocketbase";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
-  useCallback,
 } from "react";
 
 const apiUrl = getApiUrl();
@@ -167,8 +167,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     queryParams: QueryParams = {}
   ) => {
     try {
-      console.log('🌍 fetchCitiesPaginated called with:', { page, perPage, queryParams });
-      
+      console.log("🌍 fetchCitiesPaginated called with:", {
+        page,
+        perPage,
+        queryParams,
+      });
+
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: true, error: null },
@@ -177,8 +181,8 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
       const filter = queryParams.searchTerm
         ? `name ~ "${queryParams.searchTerm}"`
         : "";
-      
-      console.log('📍 Fetching cities with filter:', filter);
+
+      console.log("📍 Fetching cities with filter:", filter);
 
       // Use getFullList instead of getList to ensure we have all cities
       const citiesData = await pb
@@ -188,8 +192,9 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
           sort: "-created",
         });
 
-      console.log('📊 Fetched cities count:', citiesData.length);
-      console.log('🏙️ Cities by type:', 
+      console.log("📊 Fetched cities count:", citiesData.length);
+      console.log(
+        "🏙️ Cities by type:",
         Object.fromEntries(
           Object.entries(
             citiesData.reduce((acc, city) => {
@@ -222,16 +227,16 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         totalPages: Math.ceil(citiesData.length / perPage),
       };
 
-      console.log('📑 Returning paginated result:', {
+      console.log("📑 Returning paginated result:", {
         returnedItems: paginatedResult.items.length,
         totalItems: paginatedResult.totalItems,
         page: paginatedResult.page,
-        totalPages: paginatedResult.totalPages
+        totalPages: paginatedResult.totalPages,
       });
 
       return paginatedResult;
     } catch (error) {
-      console.error('❌ Error in fetchCitiesPaginated:', error);
+      console.error("❌ Error in fetchCitiesPaginated:", error);
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: false, error: String(error) },
@@ -240,18 +245,23 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     }
   };
 
-  const getCityById = useCallback(async (id: string): Promise<CitiesResponse | null> => {
-    try {
-      // Use $autoCancel: false to prevent auto-cancellation on component unmount
-      const record = await pb.collection("cities").getOne<CitiesResponse>(id, {
-        $autoCancel: false,
-      });
-      return record;
-    } catch (error) {
-      console.error("Error fetching city by ID:", error);
-      return null;
-    }
-  }, []);
+  const getCityById = useCallback(
+    async (id: string): Promise<CitiesResponse | null> => {
+      try {
+        // Use $autoCancel: false to prevent auto-cancellation on component unmount
+        const record = await pb
+          .collection("cities")
+          .getOne<CitiesResponse>(id, {
+            $autoCancel: false,
+          });
+        return record;
+      } catch (error) {
+        console.error("Error fetching city by ID:", error);
+        return null;
+      }
+    },
+    []
+  );
 
   const getCityByName = async (cityName: string) => {
     const decodedCity = decodeURIComponent(cityName)
@@ -271,15 +281,15 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   };
 
   const getAllCities = async () => {
-    console.log('🌎 getAllCities called');
+    console.log("🌎 getAllCities called");
     const records = await pb.collection("cities").getFullList<CitiesResponse>();
-    console.log('🌎 getAllCities returned:', records.length, 'cities');
+    console.log("🌎 getAllCities returned:", records.length, "cities");
     return records;
   };
 
   const refreshCities = async () => {
     try {
-      console.log('🔄 refreshCities called');
+      console.log("🔄 refreshCities called");
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: true, error: null },
@@ -288,11 +298,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
       const citiesData = await pb
         .collection("cities")
         .getFullList<CitiesResponse>({
-          $autoCancel: false
+          $autoCancel: false,
         });
-      
-      console.log('🔄 refreshCities fetched:', citiesData.length, 'cities');
-      console.log('🏙️ Cities by type:', 
+
+      console.log("🔄 refreshCities fetched:", citiesData.length, "cities");
+      console.log(
+        "🏙️ Cities by type:",
         Object.fromEntries(
           Object.entries(
             citiesData.reduce((acc, city) => {
@@ -314,7 +325,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         cityStatus: { loading: false, error: null },
       }));
     } catch (error) {
-      console.error('❌ Error in refreshCities:', error);
+      console.error("❌ Error in refreshCities:", error);
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: false, error: String(error) },

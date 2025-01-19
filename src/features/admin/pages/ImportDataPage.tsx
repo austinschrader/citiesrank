@@ -1,9 +1,9 @@
+import { TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { ImportTabs } from "../components/import/ImportTabs";
-import { TabsContent } from "@/components/ui/tabs";
-import { ImportPlaces } from "../components/import/ImportPlaces";
 import { ImportFeedItems } from "../components/import/ImportFeedItems";
+import { ImportPlaces } from "../components/import/ImportPlaces";
+import { ImportTabs } from "../components/import/ImportTabs";
 
 export function ImportDataPage() {
   const { user } = useAuth();

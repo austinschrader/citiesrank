@@ -16,19 +16,19 @@ interface LocationContextValue {
   // Current location name (e.g., "San Francisco")
   currentLocation: string | null;
   setCurrentLocation: (location: string | null) => void;
-  
+
   // Precise coordinates
   coordinates: Coordinates | null;
   setCoordinates: (coords: Coordinates | null) => void;
-  
+
   // Viewport bounds
   bounds: LocationBounds | null;
   setBounds: (bounds: LocationBounds | null) => void;
-  
+
   // Location history for quick navigation
   recentLocations: string[];
   addRecentLocation: (location: string) => void;
-  
+
   // Utility functions
   isWithinBounds: (coords: Coordinates) => boolean;
   getDistance: (coords: Coordinates) => number | null;
@@ -62,7 +62,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
 
   const getDistance = (coords: Coordinates): number | null => {
     if (!coordinates) return null;
-    
+
     // Haversine formula for distance calculation
     const R = 6371; // Earth's radius in km
     const dLat = toRad(coords.lat - coordinates.lat);

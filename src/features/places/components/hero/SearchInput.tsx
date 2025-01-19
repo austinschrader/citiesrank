@@ -6,7 +6,10 @@
  */
 
 import { useCities } from "@/features/places/context/CitiesContext";
-import { CitiesResponse, CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
 import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -33,12 +36,13 @@ export const SearchInput = ({
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Get filtered suggestions based on search query
-  const filteredSuggestions = typeSpecificLists[currentType]?.filter(
-    (city) =>
-      !searchQuery ||
-      city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      city.country.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  const filteredSuggestions =
+    typeSpecificLists[currentType]?.filter(
+      (city) =>
+        !searchQuery ||
+        city.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        city.country.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
   // Get paginated suggestions
   const suggestions = filteredSuggestions.slice(0, numItemsToShow);
@@ -49,7 +53,9 @@ export const SearchInput = ({
 
     const { scrollTop, scrollHeight, clientHeight } = suggestionsRef.current;
     if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-      setNumItemsToShow((prev) => Math.min(prev + ITEMS_PER_PAGE, filteredSuggestions.length));
+      setNumItemsToShow((prev) =>
+        Math.min(prev + ITEMS_PER_PAGE, filteredSuggestions.length)
+      );
     }
   };
 
@@ -97,7 +103,7 @@ export const SearchInput = ({
 
       {/* Suggestions */}
       {showSuggestions && (
-        <div 
+        <div
           ref={suggestionsRef}
           className="absolute left-0 right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 max-h-[400px] overflow-y-auto"
           onScroll={handleScroll}
@@ -113,7 +119,10 @@ export const SearchInput = ({
                       className="w-full px-4 py-2 text-left hover:bg-gray-50 flex flex-col"
                       onClick={(e) => {
                         e.preventDefault();
-                        const selectedValue = currentType === CitiesTypeOptions.country ? city.country : city.name;
+                        const selectedValue =
+                          currentType === CitiesTypeOptions.country
+                            ? city.country
+                            : city.name;
                         setSearchQuery(selectedValue);
                         handleSearch(e, city);
                         setShowSuggestions(false);
@@ -123,7 +132,9 @@ export const SearchInput = ({
                       }}
                     >
                       <div className="font-medium">
-                        {currentType === CitiesTypeOptions.country ? city.country : city.name}
+                        {currentType === CitiesTypeOptions.country
+                          ? city.country
+                          : city.name}
                       </div>
                       {currentType !== CitiesTypeOptions.country && (
                         <div className="text-sm text-gray-500">

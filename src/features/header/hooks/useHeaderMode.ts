@@ -1,6 +1,6 @@
-import { useHeader } from "../context/HeaderContext";
 import { useEffect } from "react";
 import { useLocation as useRouteLocation } from "react-router-dom";
+import { useHeader } from "../context/HeaderContext";
 
 export function useHeaderMode() {
   const { setMode } = useHeader();

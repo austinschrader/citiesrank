@@ -7,13 +7,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft } from "lucide-react";
-import { getPlaceImageBySlug } from "@/lib/bunny";
-import { Loader2, MapPin, Tag } from "lucide-react";
-import { useMemo } from "react";
-import { useFeed } from "../context/FeedContext";
 import { useCities } from "@/features/places/context/CitiesContext";
+import { getPlaceImageBySlug } from "@/lib/bunny";
+import { ChevronLeft, Loader2, MapPin, Tag } from "lucide-react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFeed } from "../context/FeedContext";
 
 export const FollowingManagement = () => {
   const { followedPlaces, followedTags, unfollowPlace, unfollowTag } =

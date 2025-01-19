@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useAuth } from './useAuth';
+import { useState } from "react";
+import { useAuth } from "./useAuth";
 
 export function useAuthenticatedAction() {
   const { user } = useAuth();
@@ -17,6 +17,6 @@ export function useAuthenticatedAction() {
     handleAuthenticatedAction,
     showSignUpDialog,
     setShowSignUpDialog,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
 }

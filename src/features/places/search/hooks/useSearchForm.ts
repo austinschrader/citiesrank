@@ -5,23 +5,28 @@
  * Dependencies: FiltersContext, AuthContext
  */
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { CitiesResponse, CitiesTypeOptions } from '@/lib/types/pocketbase-types';
-import { createSlug } from '../../utils/placeUtils';
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import {
+  CitiesResponse,
+  CitiesTypeOptions,
+} from "@/lib/types/pocketbase-types";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createSlug } from "../../utils/placeUtils";
 
 export const useSearchForm = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<CitiesTypeOptions>(CitiesTypeOptions.country);
+  const [activeTab, setActiveTab] = useState<CitiesTypeOptions>(
+    CitiesTypeOptions.country
+  );
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showSignUpDialog, setShowSignUpDialog] = useState(false);
 
   const handleSearch = (e: React.FormEvent, selectedCity?: CitiesResponse) => {
     e.preventDefault();
-    
+
     if (!searchQuery.trim()) return;
 
     if (!user) {
@@ -31,14 +36,17 @@ export const useSearchForm = () => {
 
     const searchData = selectedCity || {
       name: searchQuery,
-      type: activeTab
+      type: activeTab,
     };
 
-    navigate(`/places/${activeTab}/${createSlug(selectedCity?.name || searchQuery)}`, {
-      state: { 
-        placeData: searchData
+    navigate(
+      `/places/${activeTab}/${createSlug(selectedCity?.name || searchQuery)}`,
+      {
+        state: {
+          placeData: searchData,
+        },
       }
-    });
+    );
   };
 
   return {
@@ -50,6 +58,6 @@ export const useSearchForm = () => {
     setIsSearchFocused,
     showSignUpDialog,
     setShowSignUpDialog,
-    handleSearch
+    handleSearch,
   };
 };

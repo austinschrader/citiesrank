@@ -1,6 +1,9 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { FeedItemsSourceTypeOptions, FeedItemsTypeOptions } from "@/lib/types/pocketbase-types";
+import {
+  FeedItemsSourceTypeOptions,
+  FeedItemsTypeOptions,
+} from "@/lib/types/pocketbase-types";
 import { useState } from "react";
 import { z } from "zod";
 import type { ValidationResult } from "../types/validation";
@@ -15,8 +18,8 @@ const baseFeedItemSchema = z.object({
     title: z.string(),
     description: z.string(),
     image_url: z.string().optional(),
-    highlights: z.array(z.string()).optional()
-  })
+    highlights: z.array(z.string()).optional(),
+  }),
 });
 
 // Schema for trending places
@@ -26,8 +29,8 @@ const trendingPlaceSchema = baseFeedItemSchema.extend({
   stats: z.object({
     views_last_week: z.number(),
     view_increase: z.number(),
-    saves_last_week: z.number()
-  })
+    saves_last_week: z.number(),
+  }),
 });
 
 // Schema for place collections
@@ -43,7 +46,7 @@ const tagSpotlightSchema = baseFeedItemSchema.extend({
   stats: z.object({
     places_count: z.number(),
     average_rating: z.number().optional(),
-  })
+  }),
 });
 
 // Schema for place updates
@@ -53,14 +56,16 @@ const placeUpdateSchema = baseFeedItemSchema.extend({
   content: z.object({
     title: z.string(),
     description: z.string(),
-    changes: z.array(z.object({
-      field: z.string(),
-      old_value: z.any().optional(),
-      new_value: z.any().optional(),
-      reason: z.string().optional(),
-      update: z.string().optional()
-    }))
-  })
+    changes: z.array(
+      z.object({
+        field: z.string(),
+        old_value: z.any().optional(),
+        new_value: z.any().optional(),
+        reason: z.string().optional(),
+        update: z.string().optional(),
+      })
+    ),
+  }),
 });
 
 // Schema for similar places
@@ -71,39 +76,45 @@ const similarPlacesSchema = baseFeedItemSchema.extend({
   stats: z.object({
     average_cost: z.number(),
     average_transit_score: z.number(),
-    average_walk_score: z.number()
-  })
+    average_walk_score: z.number(),
+  }),
 });
 
 export function useValidateFeedItems() {
   const { toast } = useToast();
   const { pb } = useAuth();
-  const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
+  const [validationResults, setValidationResults] = useState<
+    ValidationResult[]
+  >([]);
 
-  const resolvePlaceIds = async (slugs: string[]): Promise<{ [key: string]: string }> => {
+  const resolvePlaceIds = async (
+    slugs: string[]
+  ): Promise<{ [key: string]: string }> => {
     const placeIds: { [key: string]: string } = {};
     const errors: string[] = [];
 
-    console.log('Resolving slugs:', slugs);
+    console.log("Resolving slugs:", slugs);
 
     for (const slug of slugs) {
       try {
         // First verify the slug format
-        console.log('Looking up city with slug:', slug);
-        const record = await pb.collection('cities').getFirstListItem(`slug="${slug}"`);
-        console.log('Found city record:', record);
+        console.log("Looking up city with slug:", slug);
+        const record = await pb
+          .collection("cities")
+          .getFirstListItem(`slug="${slug}"`);
+        console.log("Found city record:", record);
         placeIds[slug] = record.id;
 
         // Verify the ID exists
-        const verifyRecord = await pb.collection('cities').getOne(record.id);
-        console.log('Verified city record exists:', verifyRecord.id);
+        const verifyRecord = await pb.collection("cities").getOne(record.id);
+        console.log("Verified city record exists:", verifyRecord.id);
       } catch (error) {
         console.error(`Error resolving place ${slug}:`, error);
         errors.push(`Place not found: ${slug}`);
       }
     }
 
-    console.log('Resolved place IDs:', placeIds);
+    console.log("Resolved place IDs:", placeIds);
     return placeIds;
   };
 
@@ -112,7 +123,7 @@ export function useValidateFeedItems() {
       name: `${(item as any).type} - ${(item as any).source_name}`,
       data: item,
       isValid: false,
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     // Determine schema based on type
@@ -136,7 +147,7 @@ export function useValidateFeedItems() {
       default:
         return {
           ...baseResult,
-          errors: [`Unknown feed item type: ${(item as any).type}`]
+          errors: [`Unknown feed item type: ${(item as any).type}`],
         };
     }
 
@@ -145,7 +156,9 @@ export function useValidateFeedItems() {
     if (!result.success) {
       return {
         ...baseResult,
-        errors: result.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+        errors: result.error.issues.map(
+          (issue) => `${issue.path.join(".")}: ${issue.message}`
+        ),
       };
     }
 
@@ -154,39 +167,39 @@ export function useValidateFeedItems() {
     let validatedData = { ...data };
 
     // Type guard for objects with 'place' property
-    if ('place' in data && typeof data.place === 'string') {
+    if ("place" in data && typeof data.place === "string") {
       const placeIds = await resolvePlaceIds([data.place]);
       if (!placeIds[data.place]) {
         return {
           ...baseResult,
-          errors: [`Place not found: ${data.place}`]
+          errors: [`Place not found: ${data.place}`],
         };
       }
       (validatedData as any).place = placeIds[data.place];
     }
 
     // Type guard for objects with 'places' property
-    if ('places' in data && Array.isArray(data.places)) {
+    if ("places" in data && Array.isArray(data.places)) {
       const placeIds = await resolvePlaceIds(data.places);
-      const missingPlaces = data.places.filter(slug => !placeIds[slug]);
-      
+      const missingPlaces = data.places.filter((slug) => !placeIds[slug]);
+
       if (missingPlaces.length > 0) {
         return {
           ...baseResult,
-          errors: [`Places not found: ${missingPlaces.join(', ')}`]
+          errors: [`Places not found: ${missingPlaces.join(", ")}`],
         };
       }
 
       // Convert to array of IDs for PocketBase
-      const placeIdArray = data.places.map(slug => placeIds[slug]);
-      console.log('Place ID array:', placeIdArray);
+      const placeIdArray = data.places.map((slug) => placeIds[slug]);
+      console.log("Place ID array:", placeIdArray);
       (validatedData as any).places = placeIdArray;
     }
 
     return {
       ...baseResult,
       isValid: true,
-      data: validatedData
+      data: validatedData,
     };
   };
 
@@ -197,7 +210,9 @@ export function useValidateFeedItems() {
     const validCount = results.filter((r) => r.isValid).length;
     toast({
       title: "File Validated",
-      description: `Found ${results.length} feed items (${validCount} valid, ${results.length - validCount} invalid)`,
+      description: `Found ${results.length} feed items (${validCount} valid, ${
+        results.length - validCount
+      } invalid)`,
     });
 
     return results;
@@ -205,6 +220,6 @@ export function useValidateFeedItems() {
 
   return {
     validationResults,
-    validateFeedItems
+    validateFeedItems,
   };
 }

@@ -10,7 +10,6 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";

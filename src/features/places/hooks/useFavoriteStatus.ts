@@ -1,5 +1,5 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useEffect, useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useFavoriteStatus = (cityId: string) => {
   const [isFavorited, setIsFavorited] = useState(false);

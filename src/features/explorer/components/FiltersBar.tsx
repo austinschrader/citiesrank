@@ -107,7 +107,10 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
 
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground text-xs">
-                {viewMode === "places" ? displayPlaces.length : visibleLists.length} loaded
+                {viewMode === "places"
+                  ? displayPlaces.length
+                  : visibleLists.length}{" "}
+                loaded
               </span>
               <span className="text-muted-foreground text-xs">•</span>
               <span className="font-medium text-xs">
@@ -126,7 +129,10 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
             <Button
               variant="outline"
               size="sm"
-              className={cn(baseButtonStyles, "border border-input hover:bg-accent hover:text-accent-foreground")}
+              className={cn(
+                baseButtonStyles,
+                "border border-input hover:bg-accent hover:text-accent-foreground"
+              )}
               asChild
             >
               <Link

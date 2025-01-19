@@ -31,7 +31,8 @@ export const CategoryFilter = ({
 }: CategoryFilterProps) => {
   const filteredItems = filters.filter(
     (filter) =>
-      !searchQuery || filter.label.toLowerCase().includes(searchQuery.toLowerCase())
+      !searchQuery ||
+      filter.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (searchQuery && filteredItems.length === 0) {
@@ -71,7 +72,9 @@ export const CategoryFilter = ({
             >
               <span className="text-lg">{filter.emoji}</span>
               <span>{filter.label}</span>
-              <span className="ml-auto text-xs text-muted-foreground">Soon</span>
+              <span className="ml-auto text-xs text-muted-foreground">
+                Soon
+              </span>
             </Button>
           ))}
         </div>

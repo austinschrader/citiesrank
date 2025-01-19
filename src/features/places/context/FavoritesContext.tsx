@@ -9,7 +9,11 @@ interface FavoritesContextType {
 
 const FavoritesContext = createContext<FavoritesContextType | null>(null);
 
-export const FavoritesProvider = ({ children }: { children: React.ReactNode }) => {
+export const FavoritesProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const { user, pb } = useAuth();
 
@@ -64,7 +68,9 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
   const isFavorited = (cityId: string) => favorites.has(cityId);
 
   return (
-    <FavoritesContext.Provider value={{ favorites, toggleFavorite, isFavorited }}>
+    <FavoritesContext.Provider
+      value={{ favorites, toggleFavorite, isFavorited }}
+    >
       {children}
     </FavoritesContext.Provider>
   );

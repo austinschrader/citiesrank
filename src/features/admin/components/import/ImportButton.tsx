@@ -7,7 +7,11 @@ interface ImportButtonProps {
   disabled?: boolean;
 }
 
-export function ImportButton({ isImporting, onImport, disabled }: ImportButtonProps) {
+export function ImportButton({
+  isImporting,
+  onImport,
+  disabled,
+}: ImportButtonProps) {
   return (
     <Button
       onClick={onImport}
