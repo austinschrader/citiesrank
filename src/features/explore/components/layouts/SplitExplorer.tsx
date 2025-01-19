@@ -12,7 +12,7 @@ import { PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Split from "react-split";
-import { ResultsPanel } from "./ResultsPanel";
+import { ResultsPanel } from "../ResultsPanel";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
