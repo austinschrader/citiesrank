@@ -1,7 +1,7 @@
 /**
  * Panel displaying search results in grid layout
  * Uses: PlaceCardGrid for layout, CitiesContext for data
- * Location: src/features/explorer/components
+ * Location: src/features/explore/components
  */
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";

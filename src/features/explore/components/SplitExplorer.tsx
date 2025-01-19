@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useHeader } from "@/contexts/HeaderContext";
-import { FiltersBar } from "@/features/explorer/components/FiltersBar";
+import { FiltersBar } from "@/features/explore/components/FiltersBar";
 import { ListPreview } from "@/features/lists/components/ListPreview";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";

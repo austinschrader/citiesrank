@@ -15,7 +15,7 @@ import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
+import { ExplorePage } from "@/pages/explore/ExplorePage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
@@ -41,7 +41,7 @@ function App() {
                         <FavoritesProvider>
                           <Routes>
                             <Route element={<RootLayout />}>
-                              <Route path="/" element={<ExplorerPage />} />
+                              <Route path="/" element={<ExplorePage />} />
                               <Route
                                 path="/discover"
                                 element={<DiscoveryPage />}
