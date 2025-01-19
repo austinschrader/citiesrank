@@ -79,19 +79,15 @@ export const SplitExplorer = () => {
     setNumFilteredToShow(itemsPerPage);
   }, [itemsPerPage]);
 
+  // Memoize the maximum number of items
+  const maxItems = useMemo(() => 
+    splitMode === "list" ? filteredPlaces.length : visiblePlacesInView.length
+  , [splitMode, filteredPlaces.length, visiblePlacesInView.length]);
+
   const hasMore = useCallback(() => {
-    if (splitMode === "list") {
-      return numFilteredToShow < filteredPlaces.length;
-    }
-    // For gallery view, check against visible places
-    return numPrioritizedToShow < visiblePlacesInView.length;
-  }, [
-    numPrioritizedToShow,
-    filteredPlaces.length,
-    numFilteredToShow,
-    splitMode,
-    visiblePlacesInView.length,
-  ]);
+    const currentCount = splitMode === "list" ? numFilteredToShow : numPrioritizedToShow;
+    return currentCount < maxItems;
+  }, [splitMode, numFilteredToShow, numPrioritizedToShow, maxItems]);
 
   const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
