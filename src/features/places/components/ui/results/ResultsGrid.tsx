@@ -1,4 +1,4 @@
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { PlaceCard } from "@/features/places/components/ui/cards/PlaceCard";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import React from "react";
 

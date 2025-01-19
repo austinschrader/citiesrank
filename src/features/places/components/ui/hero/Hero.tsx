@@ -6,8 +6,8 @@
  */
 
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
+import { useSearchForm } from "@/features/places/search/hooks/useSearchForm";
 import { getImageUrl } from "@/lib/bunny";
-import { useSearchForm } from "../../search/hooks/useSearchForm";
 import { PLACE_TYPES } from "./constants";
 import { SearchInput } from "./SearchInput";
 import { SearchTabs } from "./SearchTabs";

@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useLists } from "@/features/lists/context/ListsContext";
-import { PlaceSearch } from "@/features/places/components/filters/PlaceSearch";
+import { PlaceSearch } from "@/features/places/components/ui/filters/PlaceSearch";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { useToast } from "@/hooks/use-toast";

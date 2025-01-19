@@ -2,9 +2,9 @@
 // Population category filter buttons with visual indicators for different city sizes
 
 import { Button } from "@/components/ui/button";
+import type { PopulationCategory } from "@/features/places/context/FiltersContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
-import type { PopulationCategory } from "../../context/FiltersContext";
-import { useFilters } from "../../context/FiltersContext";
 
 const populationCategories: {
   value: PopulationCategory;

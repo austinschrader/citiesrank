@@ -3,10 +3,10 @@
  * Info overlay shown on place cards displaying basic information.
  * Uses dual gradients for optimal text contrast while preserving image brightness.
  */
+import { PlaceCardProps } from "@/features/places/types/types";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { getCountryCode } from "@/lib/utils/countryUtils";
 import * as Flags from "country-flag-icons/react/3x2";
-import { PlaceCardProps } from "../../types/types";
 
 interface PlaceInfoOverlayProps {
   city: CitiesResponse;

@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFeed } from "@/features/feed/context/FeedContext";
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
-import { useSearch } from "@/features/places/components/search/hooks/useSearch";
+import { PlaceCard } from "@/features/places/components/ui/cards/PlaceCard";
+import { useSearch } from "@/features/places/components/ui/search/hooks/useSearch";
 import { useCities } from "@/features/places/context/CitiesContext";
 import {
   SortOrder,

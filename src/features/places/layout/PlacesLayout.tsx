@@ -1,5 +1,5 @@
 // src/layouts/PlacesLayout.tsx
-import { PlaceFilters } from "@/features/places/components/filters/PlaceFilters";
+import { PlaceFilters } from "@/features/places/components/ui/filters/PlaceFilters";
 
 interface PlacesLayoutProps {
   children: React.ReactNode;

@@ -9,15 +9,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { SignUpDialog } from "@/features/auth/components/SignUpDialog";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { PlaceModal } from "@/features/map/components/PlaceModal";
-import { CompactPlaceCard } from "@/features/places/components/cards/CompactPlaceCard";
-import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOverlay";
-import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
-import { SaveButton } from "@/features/places/components/cards/SaveButton";
-import { PlaceStatsDialog } from "@/features/places/components/dialogs/PlaceStatsDialog";
+import { CompactPlaceCard } from "@/features/places/components/ui/cards/CompactPlaceCard";
+import { PlaceInfoOverlay } from "@/features/places/components/ui/cards/PlaceInfoOverlay";
+import { PlaceTypeIndicator } from "@/features/places/components/ui/cards/PlaceTypeIndicator";
+import { SaveButton } from "@/features/places/components/ui/cards/SaveButton";
+import { PlaceStatsDialog } from "@/features/places/components/ui/dialogs/PlaceStatsDialog";
 import { PlaceCardProps } from "@/features/places/types/types";
+import { createSlug } from "@/features/places/utils/placeUtils";
 import { BarChart3 } from "lucide-react";
 import { useState } from "react";
-import { createSlug } from "../../utils/placeUtils";
 
 export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
   const { user } = useAuth();

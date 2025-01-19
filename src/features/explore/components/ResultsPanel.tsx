@@ -6,7 +6,7 @@
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { useSelection } from "@/features/map/context/SelectionContext";
-import { PlaceCardGrid } from "@/features/places/components/grids/PlaceCardGrid";
+import { PlaceCardGrid } from "@/features/places/components/ui/grids/PlaceCardGrid";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";

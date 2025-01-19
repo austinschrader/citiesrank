@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { PlaceCard } from "@/features/places/components/cards/PlaceCard";
+import { PlaceCard } from "@/features/places/components/ui/cards/PlaceCard";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFavorites } from "@/features/places/context/FavoritesContext";
 import { Search } from "lucide-react";
