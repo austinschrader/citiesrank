@@ -62,13 +62,6 @@ export const SplitExplorer = () => {
     }
   }, [cities, filteredPlaces, setVisiblePlaces]);
 
-  // Set initial visible places
-  useEffect(() => {
-    if (cities.length > 0 && splitMode === "map") {
-      setVisiblePlaces(filteredPlaces);
-    }
-  }, [cities.length, splitMode]);
-
   useEffect(() => {
     setIsResultsPanelCollapsed(splitMode === "map");
   }, [splitMode]);
