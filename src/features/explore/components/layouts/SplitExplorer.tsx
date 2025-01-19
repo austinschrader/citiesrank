@@ -89,26 +89,22 @@ export const SplitExplorer = () => {
     return currentCount < maxItems;
   }, [splitMode, numFilteredToShow, numPrioritizedToShow, maxItems]);
 
-  const loadMore = useCallback(() => {
+  const loadMore = useCallback(async () => {
     if (!hasMore() || isLoadingMore) return;
 
-    setIsLoadingMore(true);
-    setTimeout(() => {
+    try {
+      setIsLoadingMore(true);
+      const increment = itemsPerPage;
+      
       if (splitMode === "list") {
-        setNumFilteredToShow((prev) => prev + itemsPerPage);
+        setNumFilteredToShow(prev => prev + increment);
       } else {
-        setNumPrioritizedToShow((prev) => prev + itemsPerPage);
+        setNumPrioritizedToShow(prev => prev + increment);
       }
+    } finally {
       setIsLoadingMore(false);
-    }, 500);
-  }, [
-    hasMore,
-    isLoadingMore,
-    setNumPrioritizedToShow,
-    splitMode,
-    itemsPerPage,
-    numPrioritizedToShow,
-  ]);
+    }
+  }, [hasMore, isLoadingMore, itemsPerPage, splitMode]);
 
   const observerTarget = useInfiniteScroll(loadMore, hasMore, isLoadingMore);
 
