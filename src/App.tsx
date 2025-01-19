@@ -1,9 +1,10 @@
 import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
-import { FeedView } from "@/features/feed/components/FeedView";
+import { ExplorePage } from "@/features/explore/pages/ExplorePage";
 import { FollowingManagement } from "@/features/feed/components/FollowingManagement";
 import { FeedProvider } from "@/features/feed/context/FeedContext";
+import { FeedPage } from "@/features/feed/pages/FeedPage";
 import { ListsExplorer } from "@/features/lists/components/ListsExplorer";
 import { ListsProvider } from "@/features/lists/context/ListsContext";
 import { SavedListsProvider } from "@/features/lists/context/SavedListsContext";
@@ -13,24 +14,19 @@ import { MapProvider } from "@/features/map/context/MapContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
+import { FavoritesPage } from "@/features/places/pages/FavoritesPage";
+import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
-import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
-import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
-import { PlacesPage } from "@/pages/places/PlacesPage";
-import { ProfilePage } from "@/pages/profile/ProfilePage";
-import { useState } from "react";
+import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
 import { Route, Routes } from "react-router-dom";
-import { HeaderProvider } from "./features/header/context/HeaderContext";
-import { LocationProvider } from "./features/location/context/LocationContext";
+import { HeaderProvider } from "./context/HeaderContext";
+import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
+import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
-import { DiscoveryPage } from "./pages/DiscoveryPage";
-import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
+import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
 
 function App() {
-  const [isNewUser, setIsNewUser] = useState(true);
-
   return (
     <CitiesProvider>
       <AuthProvider>
@@ -43,13 +39,12 @@ function App() {
                     <HeaderProvider>
                       <FeedProvider>
                         <FavoritesProvider>
-                          <RootLayout>
-                            <Routes>
-                              <Route path="/" element={<ExplorerPage />} />
-                              <Route path="/explore" element={<PlacesPage />} />
+                          <Routes>
+                            <Route element={<RootLayout />}>
+                              <Route path="/" element={<ExplorePage />} />
                               <Route
                                 path="/discover"
-                                element={<DiscoveryPage />}
+                                element={<DiscoverPage />}
                               />
                               <Route
                                 path="/favorites"
@@ -63,7 +58,7 @@ function App() {
                                 path="/my-places"
                                 element={<CreatedSpacesPage />}
                               />
-                              <Route path="/feed" element={<FeedView />} />
+                              <Route path="/feed" element={<FeedPage />} />
                               <Route
                                 path="/following"
                                 element={<FollowingManagement />}
@@ -88,8 +83,8 @@ function App() {
                                 path="/admin/*"
                                 element={<AdminRoutes />}
                               />
-                            </Routes>
-                          </RootLayout>
+                            </Route>
+                          </Routes>
                           <Toaster />
                         </FavoritesProvider>
                       </FeedProvider>

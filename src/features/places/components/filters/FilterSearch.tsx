@@ -13,7 +13,10 @@ interface FilterSearchProps {
   onSearchChange: (value: string) => void;
 }
 
-export const FilterSearch = ({ searchQuery, onSearchChange }: FilterSearchProps) => {
+export const FilterSearch = ({
+  searchQuery,
+  onSearchChange,
+}: FilterSearchProps) => {
   return (
     <div className="relative">
       <Input

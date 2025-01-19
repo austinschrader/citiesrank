@@ -14,7 +14,11 @@ interface SimpleFilterSectionProps {
   children: React.ReactNode;
 }
 
-const SimpleFilterSection = ({ title, defaultExpanded = true, children }: SimpleFilterSectionProps) => {
+const SimpleFilterSection = ({
+  title,
+  defaultExpanded = true,
+  children,
+}: SimpleFilterSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (

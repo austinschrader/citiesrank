@@ -1,12 +1,11 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useImport } from "../../hooks/useImport";
 import { useValidatePlaces } from "../../hooks/useValidatePlaces";
 import type { SeedFile } from "../../types/places";
 import { FileSelector } from "./FileSelector";
 import { ImportButton } from "./ImportButton";
 import { ValidationResults } from "./ValidationResults";
-import { useImport } from "../../hooks/useImport";
-import { useToast } from "@/hooks/use-toast";
 
 // Import all seed files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
@@ -19,13 +18,13 @@ export function ImportPlaces() {
   const { toast } = useToast();
   const { validatePlaces } = useValidatePlaces();
 
-  const { 
-    isImporting, 
-    selectedFiles, 
+  const {
+    isImporting,
+    selectedFiles,
     importResults,
     validationResults,
     handleFileSelect: baseHandleFileSelect,
-    importData 
+    importData,
   } = useImport({
     collection: "cities",
     validateData: validatePlaces,
@@ -36,7 +35,7 @@ export function ImportPlaces() {
       } catch (error) {
         return false;
       }
-    }
+    },
   });
 
   const handleFileSelect = (values: string[]) => {
@@ -49,7 +48,10 @@ export function ImportPlaces() {
         <ImportButton
           isImporting={isImporting}
           onImport={importData}
-          disabled={selectedFiles.length === 0 || validationResults.filter((r) => r.isValid).length === 0}
+          disabled={
+            selectedFiles.length === 0 ||
+            validationResults.filter((r) => r.isValid).length === 0
+          }
         />
       </div>
 

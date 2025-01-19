@@ -1,12 +1,16 @@
 // src/features/places/components/filters/PopulationFilter.tsx
 // Population category filter buttons with visual indicators for different city sizes
 
-import { useFilters } from "../../context/FiltersContext";
-import type { PopulationCategory } from "../../context/FiltersContext";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { Button } from "@/components/ui/button";
+import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
+import type { PopulationCategory } from "../../context/FiltersContext";
+import { useFilters } from "../../context/FiltersContext";
 
-const populationCategories: { value: PopulationCategory; label: string; icon: string }[] = [
+const populationCategories: {
+  value: PopulationCategory;
+  label: string;
+  icon: string;
+}[] = [
   { value: "village", label: "Village", icon: "🏘️" },
   { value: "town", label: "Town", icon: "🏰" },
   { value: "city", label: "City", icon: "🌆" },
@@ -19,7 +23,7 @@ export function PopulationFilter() {
   const handleSelect = (category: PopulationCategory | null) => {
     setFilters({
       populationCategory: category,
-      activeTypes: category 
+      activeTypes: category
         ? [CitiesTypeOptions.city]
         : Object.values(CitiesTypeOptions),
     });

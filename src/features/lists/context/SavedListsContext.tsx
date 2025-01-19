@@ -1,8 +1,14 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { ListsResponse } from "@/lib/types/pocketbase-types";
 import { client } from "@/lib/pocketbase/client";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { ListsResponse } from "@/lib/types/pocketbase-types";
 import { ClientResponseError } from "pocketbase";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface SavedListsContextValue {
   savedLists: ListsResponse[];
@@ -15,7 +21,11 @@ interface SavedListsContextValue {
 
 const SavedListsContext = createContext<SavedListsContextValue | null>(null);
 
-export const SavedListsProvider = ({ children }: { children: React.ReactNode }) => {
+export const SavedListsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { user } = useAuth();
   const [savedLists, setSavedLists] = useState<ListsResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,77 +48,102 @@ export const SavedListsProvider = ({ children }: { children: React.ReactNode }) 
       });
 
       // Extract the expanded list records
-      const lists = records.map((record) => record.expand?.list as ListsResponse).filter(Boolean);
+      const lists = records
+        .map((record) => record.expand?.list as ListsResponse)
+        .filter(Boolean);
       setSavedLists(lists);
     } catch (err) {
       console.error("Failed to load saved lists:", err);
-      setError(err instanceof Error ? err : new Error("Failed to load saved lists"));
+      setError(
+        err instanceof Error ? err : new Error("Failed to load saved lists")
+      );
     } finally {
       setIsLoading(false);
     }
   }, [user]);
 
-  const saveList = useCallback(async (listId: string) => {
-    if (!user) {
-      throw new Error("Must be logged in to save lists");
-    }
+  const saveList = useCallback(
+    async (listId: string) => {
+      if (!user) {
+        throw new Error("Must be logged in to save lists");
+      }
 
-    try {
-      setError(null);
-      await client.collection("saved_lists").create({
-        user: user.id,
-        list: listId,
-      });
+      try {
+        setError(null);
+        await client.collection("saved_lists").create({
+          user: user.id,
+          list: listId,
+        });
 
-      // Get the list details
-      const list = await client.collection("lists").getOne<ListsResponse>(listId);
-      setSavedLists((prev) => [...prev, list]);
+        // Get the list details
+        const list = await client
+          .collection("lists")
+          .getOne<ListsResponse>(listId);
+        setSavedLists((prev) => [...prev, list]);
 
-      // Update the saves count on the list
-      await client.collection("lists").update(listId, {
-        saves: (list.saves || 0) + 1,
-      });
-    } catch (err) {
-      console.error("Failed to save list:", err);
-      setError(err instanceof ClientResponseError ? err : new Error("Failed to save list"));
-      throw err;
-    }
-  }, [user]);
+        // Update the saves count on the list
+        await client.collection("lists").update(listId, {
+          saves: (list.saves || 0) + 1,
+        });
+      } catch (err) {
+        console.error("Failed to save list:", err);
+        setError(
+          err instanceof ClientResponseError
+            ? err
+            : new Error("Failed to save list")
+        );
+        throw err;
+      }
+    },
+    [user]
+  );
 
-  const unsaveList = useCallback(async (listId: string) => {
-    if (!user) {
-      throw new Error("Must be logged in to unsave lists");
-    }
+  const unsaveList = useCallback(
+    async (listId: string) => {
+      if (!user) {
+        throw new Error("Must be logged in to unsave lists");
+      }
 
-    try {
-      setError(null);
+      try {
+        setError(null);
 
-      // Find the saved_lists record
-      const record = await client
-        .collection("saved_lists")
-        .getFirstListItem(`user = "${user.id}" && list = "${listId}"`);
+        // Find the saved_lists record
+        const record = await client
+          .collection("saved_lists")
+          .getFirstListItem(`user = "${user.id}" && list = "${listId}"`);
 
-      // Delete the record
-      await client.collection("saved_lists").delete(record.id);
+        // Delete the record
+        await client.collection("saved_lists").delete(record.id);
 
-      // Update local state
-      setSavedLists((prev) => prev.filter((list) => list.id !== listId));
+        // Update local state
+        setSavedLists((prev) => prev.filter((list) => list.id !== listId));
 
-      // Update the saves count on the list
-      const list = await client.collection("lists").getOne<ListsResponse>(listId);
-      await client.collection("lists").update(listId, {
-        saves: Math.max(0, (list.saves || 1) - 1),
-      });
-    } catch (err) {
-      console.error("Failed to unsave list:", err);
-      setError(err instanceof ClientResponseError ? err : new Error("Failed to unsave list"));
-      throw err;
-    }
-  }, [user]);
+        // Update the saves count on the list
+        const list = await client
+          .collection("lists")
+          .getOne<ListsResponse>(listId);
+        await client.collection("lists").update(listId, {
+          saves: Math.max(0, (list.saves || 1) - 1),
+        });
+      } catch (err) {
+        console.error("Failed to unsave list:", err);
+        setError(
+          err instanceof ClientResponseError
+            ? err
+            : new Error("Failed to unsave list")
+        );
+        throw err;
+      }
+    },
+    [user]
+  );
 
-  const isSaved = useCallback((listId: string) => {
-    return savedLists.some((list) => list.id === listId);
-  }, [savedLists]);
+  const isSaved = useCallback(
+    (listId: string) => {
+      return savedLists.some((list) => list.id === listId);
+    },
+    [savedLists]
+  );
 
   useEffect(() => {
     loadSavedLists();

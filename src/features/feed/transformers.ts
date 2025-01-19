@@ -4,8 +4,8 @@
  * Used by: FeedContext
  */
 
-import { ClientResponseError } from "pocketbase";
 import { CitiesResponse as City } from "@/lib/types/pocketbase-types";
+import { ClientResponseError } from "pocketbase";
 import {
   FeedItem,
   FeedItemType,
@@ -33,7 +33,7 @@ function getPlaceIds(places: string | string[] | undefined | null): string[] {
   console.debug("Getting place IDs from:", {
     places,
     type: typeof places,
-    isArray: Array.isArray(places)
+    isArray: Array.isArray(places),
   });
 
   if (!places) {
@@ -47,10 +47,13 @@ function getPlaceIds(places: string | string[] | undefined | null): string[] {
   }
 
   if (typeof places === "string") {
-    const ids = places.split(",").map(id => id.trim()).filter(Boolean);
+    const ids = places
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
     console.debug("Converted string to place IDs:", {
       original: places,
-      parsed: ids
+      parsed: ids,
     });
     return ids;
   }
@@ -75,14 +78,14 @@ async function safeGetCityById(
     console.debug("City fetch result:", {
       id,
       found: !!city,
-      city
+      city,
     });
     return city;
   } catch (error) {
     if (!(error instanceof ClientResponseError)) {
       console.error("Error fetching city:", {
         id,
-        error
+        error,
       });
     }
     return null;
@@ -112,7 +115,7 @@ export async function transformFeedItem(
       case "place_collection": {
         console.debug("Processing place_collection:", {
           id: record.id,
-          rawPlaces: record.places
+          rawPlaces: record.places,
         });
 
         const placeIds = getPlaceIds(record.places);
@@ -124,7 +127,7 @@ export async function transformFeedItem(
         console.debug("Fetched places:", {
           total: places.length,
           valid: places.filter(Boolean).length,
-          places
+          places,
         });
 
         const validPlaces = places.filter(Boolean);

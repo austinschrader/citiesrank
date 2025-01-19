@@ -1,11 +1,4 @@
-import { CitiesResponse, ListPlacesResponse, ListsResponse } from "@/lib/types/pocketbase-types";
-
-// Define a type for expanded list places
-export type ExpandedListPlace = ListPlacesResponse & {
-  expand?: {
-    place?: CitiesResponse;
-  };
-};
+import { CitiesResponse, ListsResponse } from "@/lib/types/pocketbase-types";
 
 // Define a type for lists with expanded user and places
 export type ExpandedList = ListsResponse & {

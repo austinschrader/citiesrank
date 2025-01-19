@@ -1,9 +1,9 @@
+import { useImport } from "../../hooks/useImport";
+import { useValidateFeedItems } from "../../hooks/useValidateFeedItems";
 import type { SeedFile } from "../../types/places";
 import { FileSelector } from "./FileSelector";
 import { ImportButton } from "./ImportButton";
 import { ValidationResults } from "./ValidationResults";
-import { useImport } from "../../hooks/useImport";
-import { useValidateFeedItems } from "../../hooks/useValidateFeedItems";
 
 // Import all feed item files
 const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
@@ -13,17 +13,17 @@ const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
 
 export function ImportFeedItems() {
   const { validateFeedItems } = useValidateFeedItems();
-  
-  const { 
-    isImporting, 
-    selectedFiles, 
+
+  const {
+    isImporting,
+    selectedFiles,
     importResults,
     validationResults,
     handleFileSelect: baseHandleFileSelect,
-    importData 
+    importData,
   } = useImport({
     collection: "feed_items",
-    validateData: validateFeedItems
+    validateData: validateFeedItems,
   });
 
   const handleFileSelect = (values: string[]) => {
@@ -36,7 +36,10 @@ export function ImportFeedItems() {
         <ImportButton
           isImporting={isImporting}
           onImport={importData}
-          disabled={selectedFiles.length === 0 || validationResults.filter((r) => r.isValid).length === 0}
+          disabled={
+            selectedFiles.length === 0 ||
+            validationResults.filter((r) => r.isValid).length === 0
+          }
         />
       </div>
 
@@ -58,17 +61,31 @@ export function ImportFeedItems() {
           <p>To add new feed item files:</p>
           <ol>
             <li>
-              Create a JSON file in the <code>/src/lib/data/seed/feed_items/</code>{" "}
-              directory
+              Create a JSON file in the{" "}
+              <code>/src/lib/data/seed/feed_items/</code> directory
             </li>
             <li>Follow one of these feed item formats:</li>
           </ol>
           <ul>
-            <li><strong>Trending Place</strong>: Views and saves statistics for popular places</li>
-            <li><strong>Place Collection</strong>: Curated groups of related places</li>
-            <li><strong>Tag Spotlight</strong>: Featured tags with place statistics</li>
-            <li><strong>Place Update</strong>: Changes in place attributes</li>
-            <li><strong>Similar Places</strong>: Places with similar characteristics</li>
+            <li>
+              <strong>Trending Place</strong>: Views and saves statistics for
+              popular places
+            </li>
+            <li>
+              <strong>Place Collection</strong>: Curated groups of related
+              places
+            </li>
+            <li>
+              <strong>Tag Spotlight</strong>: Featured tags with place
+              statistics
+            </li>
+            <li>
+              <strong>Place Update</strong>: Changes in place attributes
+            </li>
+            <li>
+              <strong>Similar Places</strong>: Places with similar
+              characteristics
+            </li>
           </ul>
         </div>
       </div>

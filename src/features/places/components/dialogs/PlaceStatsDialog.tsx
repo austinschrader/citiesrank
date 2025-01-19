@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { BarChart3, Globe2, MapPin, Users, X, LucideIcon } from "lucide-react";
+import { BarChart3, Globe2, LucideIcon, MapPin, Users, X } from "lucide-react";
 
 interface PlaceStatsDialogProps {
   place: CitiesResponse;
@@ -88,7 +88,7 @@ export const PlaceStatsDialog = ({
                 : stat.format(place[stat.key]);
 
             const Icon = stat.icon;
-            
+
             return (
               <div
                 key={stat.key}

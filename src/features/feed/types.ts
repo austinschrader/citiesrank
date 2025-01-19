@@ -1,28 +1,27 @@
 /**
  * Defines the type system for the feed feature, including different types of feed items (trending places, updates, spotlights).
  * Each feed item type extends the base FeedItem interface and includes specific fields for that content type.
- * Used by FeedContext and FeedView to ensure type safety and consistent data structure across the feed feature.
+ * Used by FeedContext and FeedPage to ensure type safety and consistent data structure across the feed feature.
  */
 
 import { CitiesResponse as City } from "@/lib/types/pocketbase-types";
-import { PlaceTag } from "@/features/places/types/tags";
 
 export type FeedItemType =
-  | 'trending_place'
-  | 'place_collection'
-  | 'similar_places'
-  | 'place_update'
-  | 'tag_spotlight'
-  | 'photo_challenge'
-  | 'friend_activity'
-  | 'time_machine';
+  | "trending_place"
+  | "place_collection"
+  | "similar_places"
+  | "place_update"
+  | "tag_spotlight"
+  | "photo_challenge"
+  | "friend_activity"
+  | "time_machine";
 
 export interface FeedItem {
   id: string;
   type: FeedItemType;
   timestamp: string;
   source: {
-    type: 'tag' | 'place' | 'system' | 'user';
+    type: "tag" | "place" | "system" | "user";
     name: string;
   };
 }
@@ -58,7 +57,7 @@ export interface PocketBaseRecord {
 }
 
 export interface TrendingPlaceItem extends FeedItem {
-  type: 'trending_place';
+  type: "trending_place";
   place: City;
   stats: {
     recentReviews: number;
@@ -69,7 +68,7 @@ export interface TrendingPlaceItem extends FeedItem {
 }
 
 export interface PlaceCollectionItem extends FeedItem {
-  type: 'place_collection';
+  type: "place_collection";
   title: string;
   description: string;
   places: City[];
@@ -84,16 +83,16 @@ export interface PlaceCollectionItem extends FeedItem {
 }
 
 export interface SimilarPlacesItem extends FeedItem {
-  type: 'similar_places';
+  type: "similar_places";
   basedOn: City;
   similarPlaces: City[];
   matchingTags: string[];
 }
 
 export interface PlaceUpdateItem extends FeedItem {
-  type: 'place_update';
+  type: "place_update";
   place: City;
-  updateType: 'new_photos' | 'new_reviews' | 'seasonal_update';
+  updateType: "new_photos" | "new_reviews" | "seasonal_update";
   content: {
     title: string;
     description: string;
@@ -102,7 +101,7 @@ export interface PlaceUpdateItem extends FeedItem {
 }
 
 export interface TagSpotlightItem extends FeedItem {
-  type: 'tag_spotlight';
+  type: "tag_spotlight";
   tag: string;
   description: string;
   featuredPlaces: City[];
@@ -113,7 +112,7 @@ export interface TagSpotlightItem extends FeedItem {
 }
 
 export interface PhotoChallengeItem extends FeedItem {
-  type: 'photo_challenge';
+  type: "photo_challenge";
   title: string;
   description: string;
   participants: number;
@@ -123,7 +122,7 @@ export interface PhotoChallengeItem extends FeedItem {
 }
 
 export interface FriendActivityItem extends FeedItem {
-  type: 'friend_activity';
+  type: "friend_activity";
   users: Array<{
     id: string;
     name: string;
@@ -135,11 +134,11 @@ export interface FriendActivityItem extends FeedItem {
     image: string;
     location: string;
   };
-  activityType: 'visited' | 'photographed' | 'reviewed';
+  activityType: "visited" | "photographed" | "reviewed";
 }
 
 export interface TimeMachineItem extends FeedItem {
-  type: 'time_machine';
+  type: "time_machine";
   title: string;
   memory: {
     title: string;

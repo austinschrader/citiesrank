@@ -1,8 +1,8 @@
+import { normalizeString } from "@/features/admin/utils/placeValidation";
 import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ImagePlus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { normalizeString } from "@/features/admin/utils/placeValidation";
 
 interface ImageSource {
   mobile: string;
