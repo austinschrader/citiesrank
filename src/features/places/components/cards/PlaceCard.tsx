@@ -14,7 +14,7 @@ import { PlaceInfoOverlay } from "@/features/places/components/cards/PlaceInfoOv
 import { PlaceTypeIndicator } from "@/features/places/components/cards/PlaceTypeIndicator";
 import { SaveButton } from "@/features/places/components/cards/SaveButton";
 import { PlaceStatsDialog } from "@/features/places/components/dialogs/PlaceStatsDialog";
-import { PlaceCardProps } from "@/features/places/types";
+import { PlaceCardProps } from "@/features/places/types/types";
 import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { createSlug } from "../../utils/placeUtils";
