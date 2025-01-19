@@ -9,7 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useHeader } from "../../../contexts/HeaderContext";
+import { useHeader } from "../contexts/HeaderContext";
 
 interface PageHeaderProps {
   className?: string;

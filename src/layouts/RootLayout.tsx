@@ -1,10 +1,10 @@
 // src/layouts/RootLayout.tsx
 import { SignUpBanner } from "@/features/auth/components/SignUpBanner";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { PageHeader } from "@/features/header/components/PageHeader";
 import { Header } from "@/layouts/Header";
-import { Outlet } from "react-router-dom";
+import { PageHeader } from "@/layouts/PageHeader";
 import "leaflet/dist/leaflet.css";
+import { Outlet } from "react-router-dom";
 
 export const RootLayout = () => {
   const { user } = useAuth();
