@@ -436,5 +436,3 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
     </>
   );
 });
-
-export default MapMarker;
