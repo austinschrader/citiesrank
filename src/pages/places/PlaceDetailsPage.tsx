@@ -20,7 +20,6 @@ import {
 import { HeroSection } from "@/features/places/detail/shared/HeroSection";
 import { LocationMap } from "@/features/places/detail/shared/LocationMap";
 import { getTagLabel, PlaceTag } from "@/features/places/types/tags";
-import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import {
   CitiesResponse,
   CitiesTypeOptions,
@@ -50,7 +49,6 @@ const formatUrlName = (name: string) => {
 
 export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   const { placeType, id } = useParams();
-  const { preferences, calculateMatchForCity } = usePreferences();
   const { cities, cityStatus } = useCities();
   const { searchQuery } = useSearch();
   const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
@@ -89,7 +87,7 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
     // Apply filters and sorting using context
     const filtered = getFilteredCities(childCities);
     return filtered;
-  }, [cities, placeData, filters, getFilteredCities, calculateMatchForCity]);
+  }, [cities, placeData, filters, getFilteredCities]);
 
   if (cityStatus.loading) return <LoadingState />;
   if (cityStatus.error) return <ErrorState error={cityStatus.error} />;

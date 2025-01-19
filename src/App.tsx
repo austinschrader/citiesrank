@@ -13,7 +13,6 @@ import { MapProvider } from "@/features/map/context/MapContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
-import { PreferencesProvider } from "@/features/preferences/context/PreferencesContext";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
 import { ExplorerPage } from "@/pages/explorer/ExplorerPage";
@@ -35,77 +34,72 @@ function App() {
   return (
     <CitiesProvider>
       <AuthProvider>
-        <PreferencesProvider>
-          <FiltersProvider>
-            <ListsProvider>
-              <SavedListsProvider>
-                <MapProvider>
-                  <SelectionProvider>
-                    <LocationProvider>
-                      <HeaderProvider>
-                        <FeedProvider>
-                          <FavoritesProvider>
-                            <RootLayout>
-                              <Routes>
-                                <Route path="/" element={<ExplorerPage />} />
-                                <Route
-                                  path="/explore"
-                                  element={<PlacesPage />}
-                                />
-                                <Route
-                                  path="/discover"
-                                  element={<DiscoveryPage />}
-                                />
-                                <Route
-                                  path="/favorites"
-                                  element={<FavoritesPage />}
-                                />
-                                <Route
-                                  path="/profile"
-                                  element={<ProfilePage />}
-                                />
-                                <Route
-                                  path="/my-places"
-                                  element={<CreatedSpacesPage />}
-                                />
-                                <Route path="/feed" element={<FeedView />} />
-                                <Route
-                                  path="/following"
-                                  element={<FollowingManagement />}
-                                />
-                                <Route
-                                  path="/lists"
-                                  element={<ListsExplorer />}
-                                />
-                                <Route
-                                  path="/lists/create"
-                                  element={<CreateListPage />}
-                                />
-                                <Route
-                                  path="/lists/:id"
-                                  element={<ListDetailsPage />}
-                                />
-                                <Route
-                                  path="/places/:placeType/:id"
-                                  element={<PlaceDetailsPage />}
-                                />
-                                <Route
-                                  path="/admin/*"
-                                  element={<AdminRoutes />}
-                                />
-                              </Routes>
-                            </RootLayout>
-                            <Toaster />
-                          </FavoritesProvider>
-                        </FeedProvider>
-                      </HeaderProvider>
-                    </LocationProvider>
-                  </SelectionProvider>
-                </MapProvider>
-              </SavedListsProvider>
-            </ListsProvider>
-          </FiltersProvider>
-        </PreferencesProvider>
+        <FiltersProvider>
+          <ListsProvider>
+            <SavedListsProvider>
+              <MapProvider>
+                <SelectionProvider>
+                  <LocationProvider>
+                    <HeaderProvider>
+                      <FeedProvider>
+                        <FavoritesProvider>
+                          <RootLayout>
+                            <Routes>
+                              <Route path="/" element={<ExplorerPage />} />
+                              <Route path="/explore" element={<PlacesPage />} />
+                              <Route
+                                path="/discover"
+                                element={<DiscoveryPage />}
+                              />
+                              <Route
+                                path="/favorites"
+                                element={<FavoritesPage />}
+                              />
+                              <Route
+                                path="/profile"
+                                element={<ProfilePage />}
+                              />
+                              <Route
+                                path="/my-places"
+                                element={<CreatedSpacesPage />}
+                              />
+                              <Route path="/feed" element={<FeedView />} />
+                              <Route
+                                path="/following"
+                                element={<FollowingManagement />}
+                              />
+                              <Route
+                                path="/lists"
+                                element={<ListsExplorer />}
+                              />
+                              <Route
+                                path="/lists/create"
+                                element={<CreateListPage />}
+                              />
+                              <Route
+                                path="/lists/:id"
+                                element={<ListDetailsPage />}
+                              />
+                              <Route
+                                path="/places/:placeType/:id"
+                                element={<PlaceDetailsPage />}
+                              />
+                              <Route
+                                path="/admin/*"
+                                element={<AdminRoutes />}
+                              />
+                            </Routes>
+                          </RootLayout>
+                          <Toaster />
+                        </FavoritesProvider>
+                      </FeedProvider>
+                    </HeaderProvider>
+                  </LocationProvider>
+                </SelectionProvider>
+              </MapProvider>
+            </SavedListsProvider>
+          </ListsProvider>
+        </FiltersProvider>
       </AuthProvider>
     </CitiesProvider>
   );

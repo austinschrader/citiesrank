@@ -44,15 +44,6 @@ export const CompactPlaceCard = ({ city, onClick }: CompactPlaceCardProps) => {
       <p className="text-sm text-muted-foreground line-clamp-2">
         {city.description}
       </p>
-
-      {/* {"matchScore" in city && typeof city.matchScore === "number" && (
-        <Badge
-          variant="secondary"
-          className={cn("text-xs", getMatchColor(city.matchScore))}
-        >
-          {city.matchScore.toFixed(0)}% Match
-        </Badge>
-      )} */}
     </div>
   );
 };
