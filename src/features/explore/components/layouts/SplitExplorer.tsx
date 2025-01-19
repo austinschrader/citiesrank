@@ -31,6 +31,7 @@ export const SplitExplorer = () => {
     setVisiblePlaces,
     splitMode,
     visibleLists,
+    maxItems,
   } = useMap();
   const { contentType } = useHeader();
   const BATCH_SIZE = 25; // Fixed size for infinite scroll
@@ -76,11 +77,6 @@ export const SplitExplorer = () => {
     setNumPrioritizedToShow(BATCH_SIZE);
     setNumFilteredToShow(BATCH_SIZE);
   }, [splitMode]);
-
-  // Memoize the maximum number of items
-  const maxItems = useMemo(() => 
-    splitMode === "list" ? filteredPlaces.length : visiblePlacesInView.length
-  , [splitMode, filteredPlaces.length, visiblePlacesInView.length]);
 
   const hasMore = useCallback(() => {
     const currentCount = splitMode === "list" ? numFilteredToShow : numPrioritizedToShow;

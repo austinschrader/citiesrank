@@ -91,6 +91,7 @@ interface MapContextValue extends MapState {
   numPrioritizedToShow: number;
   setNumPrioritizedToShow: React.Dispatch<React.SetStateAction<number>>;
   prioritizedPlaces: MapPlace[];
+  maxItems: number;
   getVisiblePlacesForCurrentView: (allPlaces: MapPlace[]) => MapPlace[];
   getVisiblePlaceTypes: (zoom: number) => CitiesTypeOptions[];
   filterPlacesByZoom: (places: MapPlace[], zoom: number) => MapPlace[];
@@ -299,8 +300,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       numPrioritizedToShow,
       setNumPrioritizedToShow,
       prioritizedPlaces,
-      hasMorePlaces,
-      loadMorePlaces,
+      maxItems: splitMode === "list" ? visiblePlaces.length : visiblePlacesInView.length,
       getVisiblePlacesForCurrentView,
       getVisiblePlaceTypes,
       filterPlacesByZoom: filterPlacesByZoomCallback,
@@ -309,6 +309,8 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       getGeographicLevel,
       splitMode,
       setSplitMode,
+      hasMorePlaces,
+      loadMorePlaces,
       visibleLists,
     }),
     [
