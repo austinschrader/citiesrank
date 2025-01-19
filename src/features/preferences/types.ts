@@ -1,5 +1,4 @@
 // file location: src/features/preferences/types.ts
-import { LucideIcon } from "lucide-react";
 
 // Core preference types
 export interface UserPreferences {
@@ -38,20 +37,4 @@ export interface MatchScoreInput {
   bestSeason: number;
   transit: number;
   accessibility: number;
-}
-
-// Component types
-export interface PreferencesCardProps {
-  preferences: UserPreferences;
-  onPreferencesChange: (preferences: UserPreferences) => void;
-}
-
-export interface PreferenceSliderProps {
-  icon: LucideIcon;
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  labels: string[];
-  getCurrentLabel: (value: number) => string;
-  hint: string;
 }
