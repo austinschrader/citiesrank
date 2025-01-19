@@ -46,28 +46,26 @@ export const PlacesPanel = ({
         buttonLink: "/places/create",
       }}
     >
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        <div className="p-4 space-y-6">
-          <PlaceCardGrid ref={gridRef} places={displayPlaces} />
-          <div
-            ref={observerTarget}
-            className="h-4"
-            style={{
-              visibility:
-                displayPlaces.length <
-                (splitMode === "list"
-                  ? paginatedFilteredPlaces.length
-                  : prioritizedPlaces.length)
-                  ? "visible"
-                  : "hidden",
-            }}
-          />
-          {isLoadingMore && (
-            <div className="flex items-center justify-center py-4">
-              <div className="h-8 w-8 border-b-2 border-primary rounded-full animate-spin" />
-            </div>
-          )}
-        </div>
+      <div className="flex-1 min-h-0 overflow-y-auto p-4">
+        <PlaceCardGrid ref={gridRef} places={displayPlaces} />
+        <div
+          ref={observerTarget}
+          className="h-4"
+          style={{
+            visibility:
+              displayPlaces.length <
+              (splitMode === "list"
+                ? paginatedFilteredPlaces.length
+                : prioritizedPlaces.length)
+                ? "visible"
+                : "hidden",
+          }}
+        />
+        {isLoadingMore && (
+          <div className="flex items-center justify-center py-4">
+            <div className="h-8 w-8 border-b-2 border-primary rounded-full animate-spin" />
+          </div>
+        )}
       </div>
     </BasePanel>
   );

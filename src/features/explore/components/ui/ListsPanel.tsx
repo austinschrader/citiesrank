@@ -20,12 +20,10 @@ export const ListsPanel = ({ isCollapsed }: ListsPanelProps) => {
         buttonLink: "/lists/create"
       }}
     >
-      <div className="flex-1 overflow-auto">
-        <div className="p-4 space-y-6">
-            {visibleLists.map((list) => (
-              <ListPreview key={list.id} list={list} />
-            ))}
-        </div>
+      <div className="flex-1 overflow-auto p-4">
+        {visibleLists.map((list) => (
+          <ListPreview key={list.id} list={list} />
+        ))}
       </div>
     </BasePanel>
   );
