@@ -1,6 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
-import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { FeedView } from "@/features/feed/components/FeedView";
 import { FollowingManagement } from "@/features/feed/components/FollowingManagement";
 import { FeedProvider } from "@/features/feed/context/FeedContext";
@@ -22,8 +22,8 @@ import { PlacesPage } from "@/pages/places/PlacesPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { HeaderProvider } from "./features/header/context/HeaderContext";
-import { LocationProvider } from "./features/location/context/LocationContext";
+import { HeaderProvider } from "./contexts/HeaderContext";
+import { LocationProvider } from "./contexts/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { DiscoveryPage } from "./pages/DiscoveryPage";
 import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
@@ -43,8 +43,8 @@ function App() {
                     <HeaderProvider>
                       <FeedProvider>
                         <FavoritesProvider>
-                          <RootLayout>
-                            <Routes>
+                          <Routes>
+                            <Route element={<RootLayout />}>
                               <Route path="/" element={<ExplorerPage />} />
                               <Route path="/explore" element={<PlacesPage />} />
                               <Route
@@ -88,8 +88,8 @@ function App() {
                                 path="/admin/*"
                                 element={<AdminRoutes />}
                               />
-                            </Routes>
-                          </RootLayout>
+                            </Route>
+                          </Routes>
                           <Toaster />
                         </FavoritesProvider>
                       </FeedProvider>

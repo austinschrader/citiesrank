@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useLocation } from "@/features/location/context/LocationContext";
+import { useLocation } from "@/contexts/LocationContext";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -9,7 +9,7 @@ import {
   Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useHeader } from "../context/HeaderContext";
+import { useHeader } from "../../../contexts/HeaderContext";
 
 interface PageHeaderProps {
   className?: string;

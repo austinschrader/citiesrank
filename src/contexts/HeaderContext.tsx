@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export type HeaderMode =
   | "discover"
@@ -42,34 +43,48 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("places");
-  const [itemsPerPage, setItemsPerPage] = useState<number>(25);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
   const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
+  const location = useLocation();
+
+  // Update header mode based on current route
+  useEffect(() => {
+    if (location.pathname === "/" || location.pathname === "/explore") {
+      setMode("discover");
+    } else if (location.pathname.startsWith("/lists")) {
+      setMode("lists");
+    } else if (location.pathname === "/feed") {
+      setMode("latest");
+    } else if (location.pathname === "/profile") {
+      setMode("profile");
+    } else if (location.pathname === "/favorites") {
+      setMode("favorites");
+    }
+  }, [location.pathname]);
+
+  const value = {
+    mode,
+    setMode,
+    energyMode,
+    setEnergyMode,
+    timeRange,
+    setTimeRange,
+    subtitle,
+    setSubtitle,
+    showControls,
+    setShowControls,
+    exploringCount,
+    setExploringCount,
+    viewMode,
+    setViewMode,
+    itemsPerPage,
+    setItemsPerPage,
+    isFiltersCollapsed,
+    setIsFiltersCollapsed,
+  };
 
   return (
-    <HeaderContext.Provider
-      value={{
-        mode,
-        setMode,
-        energyMode,
-        setEnergyMode,
-        timeRange,
-        setTimeRange,
-        subtitle,
-        setSubtitle,
-        showControls,
-        setShowControls,
-        exploringCount,
-        setExploringCount,
-        viewMode,
-        setViewMode,
-        itemsPerPage,
-        setItemsPerPage,
-        isFiltersCollapsed,
-        setIsFiltersCollapsed,
-      }}
-    >
-      {children}
-    </HeaderContext.Provider>
+    <HeaderContext.Provider value={value}>{children}</HeaderContext.Provider>
   );
 }
 

@@ -5,7 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useHeader } from "@/features/header/context/HeaderContext";
+import { useHeader } from "@/contexts/HeaderContext";
 
 const pageSizeOptions = [15, 25, 50, 100, 500] as const;
 

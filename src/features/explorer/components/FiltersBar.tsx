@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
+import { useHeader } from "@/contexts/HeaderContext";
 import { FiltersSheet } from "@/features/explorer/components/filters/FiltersSheet";
 import { ViewModeToggle } from "@/features/explorer/components/filters/ViewModeToggle";
 import { TimeWindow } from "@/features/explorer/components/TimeWindow";
-import { useHeader } from "@/features/header/context/HeaderContext";
 import { useMap } from "@/features/map/context/MapContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";

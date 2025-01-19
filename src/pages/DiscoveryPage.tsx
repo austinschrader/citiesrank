@@ -1,5 +1,5 @@
+import { useHeader } from "@/contexts/HeaderContext";
 import { DiscoveryView } from "@/features/discovery/components/DiscoveryView";
-import { useHeader } from "@/features/header/context/HeaderContext";
 import React, { useEffect } from "react";
 
 export const DiscoveryPage: React.FC = () => {
