@@ -3,15 +3,12 @@
  * Uses: PlaceCardGrid for layout, CitiesContext for data
  * Location: src/features/explore/components
  */
-import { Button } from "@/components/ui/button";
 import { useMap } from "@/features/map/context/MapContext";
 import { useSelection } from "@/features/map/context/SelectionContext";
 import { PlaceCardGrid } from "@/features/places/components/ui/grids/PlaceCardGrid";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { cn } from "@/lib/utils";
-import { PlusCircle } from "lucide-react";
 import { RefObject, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import { EmptyState } from "./EmptyState";
 
 interface ResultsPanelProps {
@@ -50,14 +47,6 @@ export const ResultsPanel = ({
   // Use different data source based on view mode
   const displayPlaces =
     viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
-
-  // Get the correct total count based on view mode
-  const totalPlaces =
-    viewMode === "list"
-      ? paginatedFilteredPlaces.length
-      : visiblePlacesInView.length;
-  const placesInView =
-    viewMode === "list" ? totalPlaces : visiblePlacesInView.length;
 
   return (
     <div className="h-full flex">
