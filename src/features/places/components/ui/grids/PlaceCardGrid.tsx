@@ -109,7 +109,7 @@ const StatsOverlay = ({ place }: { place: CitiesResponse }) => {
 
 export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
   ({ places, className }, ref) => {
-    const { setCenter, viewMode } = useMap();
+    const { setCenter, splitMode } = useMap();
     const { selectedPlace, setSelectedPlace } = useSelection();
     const [hoveredPlace, setHoveredPlace] = useState<CitiesResponse | null>(
       null
@@ -120,7 +120,7 @@ export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
         ref={ref}
         className={cn(
           "grid gap-4 auto-rows-[minmax(min-content,max-content)]",
-          viewMode === "list"
+          splitMode === "list"
             ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
             : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
           className
@@ -132,19 +132,19 @@ export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
             data-id={place.id}
             className={cn(
               "group relative rounded-xl overflow-hidden hover:shadow-xl transition-all duration-200",
-              selectedPlace?.id === place.id && viewMode != "map"
+              selectedPlace?.id === place.id && splitMode != "map"
                 ? "ring-[3px] ring-rose-500 shadow-lg scale-[1.02] shadow-rose-500/20"
                 : ""
             )}
             onMouseEnter={() => {
               setHoveredPlace(place);
-              if (viewMode != "map") {
+              if (splitMode != "map") {
                 setSelectedPlace(place);
               }
             }}
             onMouseLeave={() => {
               setHoveredPlace(null);
-              if (viewMode != "map") {
+              if (splitMode != "map") {
                 setSelectedPlace(null);
               }
             }}

@@ -35,7 +35,7 @@ import {
   filterPlacesByZoom,
 } from "../utils/placeFiltering";
 
-export type ViewMode = "list" | "split" | "map";
+export type SplitMode = "list" | "split" | "map";
 
 const DEFAULT_MOBILE_PLACES = 15;
 const DEFAULT_DESKTOP_PLACES = 15;
@@ -103,8 +103,8 @@ interface MapContextValue extends MapState {
     zoom: number;
   };
   getGeographicLevel: (zoom: number) => CitiesTypeOptions;
-  viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
+  splitMode: SplitMode;
+  setSplitMode: (mode: SplitMode) => void;
   hasMorePlaces: boolean;
   loadMorePlaces: () => void;
   visibleLists: any[];
@@ -132,9 +132,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
   const [hasMorePlaces, setHasMorePlaces] = useState(true);
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    window.innerWidth <= 640 ? "map" : "split"
-  );
+  const [splitMode, setSplitMode] = useState<SplitMode>("split");
   const [visibleLists, setVisibleLists] = useState<any[]>([]);
 
   const setZoom = (zoom: number) => {
@@ -280,7 +278,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 640) {
-        setViewMode("map");
+        setSplitMode("map");
       }
     };
 
@@ -312,8 +310,8 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       getPlaceGeoJson,
       calculateMapBounds,
       getGeographicLevel,
-      viewMode,
-      setViewMode,
+      splitMode,
+      setSplitMode,
       visibleLists,
     }),
     [
@@ -326,7 +324,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       hasMorePlaces,
       getVisiblePlacesForCurrentView,
       loadMorePlaces,
-      viewMode,
+      splitMode,
       visibleLists,
     ]
   );

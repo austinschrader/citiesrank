@@ -27,7 +27,7 @@ export const PlacesPanel = ({
   paginatedFilteredPlaces,
 }: PlacesPanelProps) => {
   const { cities } = useCities();
-  const { prioritizedPlaces, visiblePlacesInView, viewMode } = useMap();
+  const { prioritizedPlaces, visiblePlacesInView, splitMode } = useMap();
   const { selectedPlace, fromMap } = useSelection();
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -43,9 +43,9 @@ export const PlacesPanel = ({
     }
   }, [selectedPlace, fromMap]);
 
-  // Use different data source based on view mode
+  // Use different data source based on layout mode
   const displayPlaces =
-    viewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+    splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
 
   return (
     <BasePanel isCollapsed={isResultsPanelCollapsed}>

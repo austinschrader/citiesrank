@@ -10,7 +10,7 @@ export type HeaderMode =
   | "places";
 export type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
 export type TimeRange = "now" | "today" | "week" | "month";
-export type ViewMode = "places" | "lists";
+export type ContentType = "places" | "lists";
 
 interface HeaderContextValue {
   mode: HeaderMode;
@@ -25,8 +25,8 @@ interface HeaderContextValue {
   setShowControls: (show: boolean) => void;
   exploringCount: number | null;
   setExploringCount: (count: number | null) => void;
-  viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
+  contentType: ContentType;
+  setContentType: (type: ContentType) => void;
   itemsPerPage: number;
   setItemsPerPage: (size: number) => void;
   isFiltersCollapsed: boolean;
@@ -42,7 +42,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("places");
+  const [contentType, setContentType] = useState<ContentType>("places");
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const location = useLocation();
@@ -75,8 +75,8 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
     setShowControls,
     exploringCount,
     setExploringCount,
-    viewMode,
-    setViewMode,
+    contentType,
+    setContentType,
     itemsPerPage,
     setItemsPerPage,
     isFiltersCollapsed,

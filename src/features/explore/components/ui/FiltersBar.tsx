@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersSheet } from "@/features/explore/components/ui/filters/FiltersSheet";
-import { ViewModeToggle } from "@/features/explore/components/ui/filters/ViewModeToggle";
 import { PageSizeSelect } from "@/features/explore/components/ui/PageSizeSelect";
 import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
@@ -12,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Landmark, PlusCircle, Scroll, Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { SplitModeToggle } from "./filters/SplitModeToggle";
 
 const baseButtonStyles =
   "inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
@@ -35,23 +35,19 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
     timeRange,
     setEnergyMode,
     setTimeRange,
-    viewMode,
-    setViewMode,
+    contentType,
+    setContentType,
     isFiltersCollapsed,
   } = useHeader();
-  const {
-    prioritizedPlaces,
-    visiblePlacesInView,
-    viewMode: mapViewMode,
-    visibleLists,
-  } = useMap();
+  const { prioritizedPlaces, visiblePlacesInView, splitMode, visibleLists } =
+    useMap();
   const [sort, setSort] = useState("popular");
 
   // Calculate display counts based on view mode
   const displayPlaces =
-    mapViewMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+    splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
   const placesInView =
-    mapViewMode === "list" ? displayPlaces.length : visiblePlacesInView.length;
+    splitMode === "list" ? displayPlaces.length : visiblePlacesInView.length;
 
   return (
     <div className="border-b bg-white/90 backdrop-blur-sm">
@@ -80,10 +76,10 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
             {/* View Toggle */}
             <div className="flex items-center gap-1">
               <Toggle
-                pressed={viewMode === "lists"}
-                onPressedChange={() => setViewMode("lists")}
+                pressed={contentType === "lists"}
+                onPressedChange={() => setContentType("lists")}
                 className={cn(
-                  viewMode === "lists"
+                  contentType === "lists"
                     ? activeButtonStyles
                     : inactiveButtonStyles
                 )}
@@ -92,10 +88,10 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
                 Collections
               </Toggle>
               <Toggle
-                pressed={viewMode === "places"}
-                onPressedChange={() => setViewMode("places")}
+                pressed={contentType === "places"}
+                onPressedChange={() => setContentType("places")}
                 className={cn(
-                  viewMode === "places"
+                  contentType === "places"
                     ? activeButtonStyles
                     : inactiveButtonStyles
                 )}
@@ -107,17 +103,17 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
 
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground text-xs">
-                {viewMode === "places"
+                {contentType === "places"
                   ? displayPlaces.length
                   : visibleLists.length}{" "}
                 loaded
               </span>
               <span className="text-muted-foreground text-xs">•</span>
               <span className="font-medium text-xs">
-                {viewMode === "places" ? placesInView : visibleLists.length}
+                {contentType === "places" ? placesInView : visibleLists.length}
               </span>
               <span className="text-muted-foreground text-xs">
-                {viewMode === "places" ? "places in view" : "lists in view"}
+                {contentType === "places" ? "places in view" : "lists in view"}
               </span>
             </div>
 
@@ -136,11 +132,11 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
               asChild
             >
               <Link
-                to={viewMode === "places" ? "/my-places" : "/lists/create"}
+                to={contentType === "places" ? "/my-places" : "/lists/create"}
                 className="flex items-center gap-1.5"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
-                New {viewMode === "places" ? "Place" : "List"}
+                New {contentType === "places" ? "Place" : "List"}
               </Link>
             </Button>
 
@@ -156,7 +152,7 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
                 onEnergyChange={setEnergyMode}
                 onTimeChange={setTimeRange}
               />
-              <ViewModeToggle />
+              <SplitModeToggle />
             </div>
           </div>
         </div>

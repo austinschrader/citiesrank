@@ -21,10 +21,10 @@ export const SplitExplorer = () => {
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     setVisiblePlaces,
-    viewMode: mapViewMode,
+    splitMode,
     visibleLists,
   } = useMap();
-  const { viewMode, itemsPerPage, setItemsPerPage } = useHeader();
+  const { contentType, itemsPerPage, setItemsPerPage } = useHeader();
   const [numFilteredToShow, setNumFilteredToShow] = useState(itemsPerPage);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -64,20 +64,20 @@ export const SplitExplorer = () => {
 
   // Set initial visible places
   useEffect(() => {
-    if (cities.length > 0 && mapViewMode === "map") {
+    if (cities.length > 0 && splitMode === "map") {
       setVisiblePlaces(filteredPlaces);
     }
-  }, [cities.length, mapViewMode]);
+  }, [cities.length, splitMode]);
 
   useEffect(() => {
-    setIsResultsPanelCollapsed(mapViewMode === "map");
-  }, [mapViewMode]);
+    setIsResultsPanelCollapsed(splitMode === "map");
+  }, [splitMode]);
 
   // Reset pagination when view changes
   useEffect(() => {
     setNumPrioritizedToShow(pageSizeOptions[0]);
     setNumFilteredToShow(pageSizeOptions[0]);
-  }, [mapViewMode, setNumPrioritizedToShow]);
+  }, [splitMode, setNumPrioritizedToShow]);
 
   // Effect to sync numFilteredToShow with itemsPerPage
   useEffect(() => {
@@ -86,7 +86,7 @@ export const SplitExplorer = () => {
   }, [itemsPerPage, setNumPrioritizedToShow]);
 
   const hasMore = useCallback(() => {
-    if (mapViewMode === "list") {
+    if (splitMode === "list") {
       return numFilteredToShow < filteredPlaces.length;
     }
     // For gallery view, check against filtered places instead of visible places
@@ -95,7 +95,7 @@ export const SplitExplorer = () => {
     numPrioritizedToShow,
     filteredPlaces.length,
     numFilteredToShow,
-    mapViewMode,
+    splitMode,
   ]);
 
   const loadMore = useCallback(() => {
@@ -103,7 +103,7 @@ export const SplitExplorer = () => {
 
     setIsLoadingMore(true);
     setTimeout(() => {
-      if (mapViewMode === "list") {
+      if (splitMode === "list") {
         setNumFilteredToShow((prev) => prev + itemsPerPage);
       } else {
         setNumPrioritizedToShow((prev) => prev + itemsPerPage);
@@ -114,7 +114,7 @@ export const SplitExplorer = () => {
     hasMore,
     isLoadingMore,
     setNumPrioritizedToShow,
-    mapViewMode,
+    splitMode,
     itemsPerPage,
     numPrioritizedToShow,
   ]);
@@ -145,8 +145,7 @@ export const SplitExplorer = () => {
     loadMore,
     numPrioritizedToShow,
     filteredPlaces.length,
-    viewMode,
-    mapViewMode,
+    splitMode,
   ]);
 
   return (
@@ -156,9 +155,9 @@ export const SplitExplorer = () => {
         <Split
           className="h-full flex"
           sizes={
-            mapViewMode === "list"
+            splitMode === "list"
               ? [100, 0]
-              : mapViewMode === "map"
+              : splitMode === "map"
               ? [0, 100]
               : [50, 50]
           }
@@ -169,15 +168,15 @@ export const SplitExplorer = () => {
           <div
             className={cn(
               "transition-all duration-300 ease-in-out",
-              mapViewMode === "list"
+              splitMode === "list"
                 ? "flex-1"
-                : mapViewMode === "map"
+                : splitMode === "map"
                 ? "w-0"
                 : "flex-1",
-              mapViewMode === "map" && "hidden"
+              splitMode === "map" && "hidden"
             )}
           >
-            {viewMode === "places" ? (
+            {contentType === "places" ? (
               <PlacesPanel
                 isLoadingMore={isLoadingMore}
                 observerTarget={observerTarget}
@@ -190,15 +189,15 @@ export const SplitExplorer = () => {
           </div>
 
           <div
-            key={`map-${mapViewMode}`}
+            key={`map-${splitMode}`}
             className={cn(
               "relative transition-all duration-300 ease-in-out",
-              mapViewMode === "list"
+              splitMode === "list"
                 ? "w-0"
-                : mapViewMode === "map"
+                : splitMode === "map"
                 ? "flex-1"
                 : "flex-1",
-              mapViewMode === "list" && "hidden"
+              splitMode === "list" && "hidden"
             )}
           >
             <div className="absolute inset-0">
