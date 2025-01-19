@@ -1,3 +1,8 @@
+/**
+ * Display component for lists.
+ * Pure UI - receives pre-filtered/paginated data.
+ * Mirrors PlacesPanel display pattern.
+ */
 import { BasePanel } from "@/features/explore/components/ui/BasePanel";
 import { ListPreview } from "@/features/lists/components/ListPreview";
 import { useMap } from "@/features/map/context/MapContext";

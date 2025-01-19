@@ -1,3 +1,12 @@
+/**
+ * Layout component that:
+ * - Manages pagination state
+ * - Handles infinite scroll
+ * - Renders appropriate panel based on content type
+ * 
+ * Data flow: MapContext -> SplitExplorer -> Panel components
+ * Pure layout - no filtering/visibility logic
+ */
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersBar } from "@/features/explore/components/ui/FiltersBar";
 import { ListsPanel } from "@/features/explore/components/ui/ListsPanel";

@@ -1,7 +1,7 @@
 /**
- * Panel displaying search results in grid layout
- * Uses: PlaceCardGrid for layout, CitiesContext for data
- * Location: src/features/explore/components
+ * Display component for places grid/list.
+ * Pure UI - receives pre-filtered/paginated data.
+ * Paired with ListsPanel for consistent display patterns.
  */
 import { BasePanel } from "@/features/explore/components/ui/BasePanel";
 import { useMap } from "@/features/map/context/MapContext";

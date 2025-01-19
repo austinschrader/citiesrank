@@ -1,5 +1,9 @@
 /**
- * FiltersContext manages all user-defined filtering and sorting logic for places.
+ * Manages user-defined filters and sorting.
+ * Single source of truth for filtering logic.
+ * 
+ * Flow: CitiesContext -> FiltersContext -> MapContext
+ * MapContext applies additional map-specific filters.
  *
  * Data Flow:
  * 1. FiltersContext receives raw city data from CitiesContext

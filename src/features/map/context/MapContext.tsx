@@ -1,14 +1,11 @@
 /**
- * Map context for managing map state and place visibility.
+ * Manages map state and content visibility:
+ * - Determines what's visible based on mode (list/map/split)
+ * - Handles map-specific filtering (zoom, bounds)
+ * - Unifies display logic for places/lists
  *
- * Handles:
- * - Map state (zoom, center, bounds)
- * - Place visibility filtering
- * - Place prioritization for display
- * - View mode (map/list/split)
- *
- * Uses FiltersContext for user-defined filters and
- * placeFiltering utilities for visibility rules.
+ * Dependencies: Requires HeaderProvider, FiltersContext
+ * Consumers: SplitExplorer, Map components
  */
 
 import { useLists } from "@/features/lists/context/ListsContext";
