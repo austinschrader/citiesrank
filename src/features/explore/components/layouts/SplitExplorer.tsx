@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useHeader } from "@/context/HeaderContext";
-import { FiltersBar } from "@/features/explore/components/FiltersBar";
+import { FiltersBar } from "@/features/explore/components/ui/FiltersBar";
 import { ListPreview } from "@/features/lists/components/ListPreview";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
@@ -12,7 +12,7 @@ import { PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Split from "react-split";
-import { ResultsPanel } from "./ResultsPanel";
+import { ResultsPanel } from "../ui/ResultsPanel";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
