@@ -1,8 +1,10 @@
 import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
+import { ExplorePage } from "@/features/explore/pages/ExplorePage";
 import { FollowingManagement } from "@/features/feed/components/FollowingManagement";
 import { FeedProvider } from "@/features/feed/context/FeedContext";
+import { FeedPage } from "@/features/feed/pages/FeedPage";
 import { ListsExplorer } from "@/features/lists/components/ListsExplorer";
 import { ListsProvider } from "@/features/lists/context/ListsContext";
 import { SavedListsProvider } from "@/features/lists/context/SavedListsContext";
@@ -12,19 +14,17 @@ import { MapProvider } from "@/features/map/context/MapContext";
 import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
+import { FavoritesPage } from "@/features/places/pages/FavoritesPage";
+import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { ExplorePage } from "@/pages/explore/ExplorePage";
-import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
-import { FeedPage } from "@/pages/feed/FeedPage";
-import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
-import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
 import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./context/HeaderContext";
+import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
 import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
-import { DiscoverPage } from "./pages/discover/DiscoverPage";
-import { CreatedSpacesPage } from "./pages/places/CreatedSpacesPage";
+import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
 
 function App() {
   return (
