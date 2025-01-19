@@ -30,10 +30,9 @@ export const SplitExplorer = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
 
-  // Get filtered places using FiltersContext
-  const filteredPlaces = useMemo(() => {
-    // Only apply filters if there are active filters
-    const hasActiveFilters =
+  // Memoize the active filters check
+  const hasActiveFilters = useMemo(
+    () =>
       filters.search ||
       filters.averageRating ||
       filters.populationCategory ||
@@ -41,14 +40,17 @@ export const SplitExplorer = () => {
       filters.tags.length > 0 ||
       filters.season ||
       filters.budget ||
-      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length;
+      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length,
+    [filters]
+  );
 
+  // Get filtered places using FiltersContext
+  const filteredPlaces = useMemo(() => {
     if (!hasActiveFilters) {
       return cities;
     }
-
     return getFilteredCities(cities);
-  }, [cities, getFilteredCities, filters]);
+  }, [cities, getFilteredCities, filters, hasActiveFilters]);
 
   // Get paginated filtered places
   const paginatedFilteredPlaces = useMemo(() => {
