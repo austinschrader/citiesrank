@@ -7,7 +7,6 @@ import { BasePanel } from "@/features/explore/components/ui/BasePanel";
 import { useMap } from "@/features/map/context/MapContext";
 import { useSelection } from "@/features/map/context/SelectionContext";
 import { PlaceCardGrid } from "@/features/places/components/ui/grids/PlaceCardGrid";
-import { useCities } from "@/features/places/context/CitiesContext";
 import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
 import { useScrollToSelected } from "@/features/places/hooks/useScrollToSelected";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
@@ -27,8 +26,7 @@ export const PlacesPanel = ({
   onLoadMore,
   hasMore,
 }: PlacesPanelProps) => {
-  const { cities } = useCities();
-  const { prioritizedPlaces, visiblePlacesInView, splitMode } = useMap();
+  const { prioritizedPlaces, splitMode } = useMap();
   const { selectedPlace, fromMap } = useSelection();
   const gridRef = useScrollToSelected(selectedPlace, fromMap);
 
@@ -56,7 +54,12 @@ export const PlacesPanel = ({
             className="h-4"
             style={{
               visibility:
-                displayPlaces.length < (splitMode === "list" ? paginatedFilteredPlaces.length : prioritizedPlaces.length) ? "visible" : "hidden",
+                displayPlaces.length <
+                (splitMode === "list"
+                  ? paginatedFilteredPlaces.length
+                  : prioritizedPlaces.length)
+                  ? "visible"
+                  : "hidden",
             }}
           />
           {isLoadingMore && (
