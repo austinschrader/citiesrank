@@ -75,8 +75,7 @@ export const SplitExplorer = () => {
   // Effect to sync numFilteredToShow with itemsPerPage
   useEffect(() => {
     setNumFilteredToShow(itemsPerPage);
-    setNumPrioritizedToShow(itemsPerPage);
-  }, [itemsPerPage, setNumPrioritizedToShow]);
+  }, [itemsPerPage]);
 
   const hasMore = useCallback(() => {
     if (splitMode === "list") {
