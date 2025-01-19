@@ -18,14 +18,12 @@ import {
   useFilters,
 } from "@/features/places/context/FiltersContext";
 import { usePagination } from "@/features/places/hooks/usePagination";
-import { usePreferences } from "@/features/preferences/hooks/usePreferences";
 import { PlacesLayout } from "@/layouts/PlacesLayout";
 import "leaflet/dist/leaflet.css";
 import { List, MapPin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export const PlacesPage = () => {
-  const { calculateMatchForCity } = usePreferences();
   const { filters, setFilter, getFilteredCities } = useFilters();
   const {
     cities,
@@ -37,7 +35,7 @@ export const PlacesPage = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Get filtered cities with match scores
-  const filteredCities = getFilteredCities(cities, calculateMatchForCity);
+  const filteredCities = getFilteredCities(cities);
 
   const {
     getPaginatedData,
@@ -191,7 +189,6 @@ export const PlacesPage = () => {
           ) : (
             <ResultsGrid
               cities={getPaginatedData()}
-              calculateMatchForCity={calculateMatchForCity}
               isLoadingMore={isLoadingMore}
               observerRef={observerTarget}
             />

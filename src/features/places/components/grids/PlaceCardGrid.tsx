@@ -161,5 +161,3 @@ export const PlaceCardGrid = forwardRef<HTMLDivElement, PlaceCardGridProps>(
     );
   }
 );
-
-export default PlaceCardGrid;

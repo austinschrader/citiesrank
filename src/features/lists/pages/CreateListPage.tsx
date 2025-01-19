@@ -34,17 +34,7 @@ export const CreateListPage = () => {
   const [selectedPlaces, setSelectedPlaces] = useState<CitiesResponse[]>([]);
 
   // Get filtered and paginated cities
-  const allFilteredPlaces = getFilteredCities(cities, () => ({
-    matchScore: 1,
-    attributeMatches: {
-      budget: 1,
-      crowds: 1,
-      tripLength: 1,
-      season: 1,
-      transit: 1,
-      accessibility: 1,
-    },
-  }));
+  const allFilteredPlaces = getFilteredCities(cities);
   const paginatedFilteredPlaces = allFilteredPlaces.slice(
     0,
     page * itemsPerPage

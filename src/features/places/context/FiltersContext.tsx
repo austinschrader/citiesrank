@@ -32,11 +32,10 @@
  * Usage Example:
  * ```tsx
  * const { filters, getFilteredCities } = useFilters();
- * const filteredCities = getFilteredCities(cities, calculateMatchScore);
+ * const filteredCities = getFilteredCities(cities);
  * ```
  */
 
-import { MatchScore } from "@/features/preferences/types";
 import {
   CitiesResponse,
   CitiesTypeOptions,
@@ -51,7 +50,6 @@ import {
 } from "react";
 
 export type SortOrder =
-  | "match"
   | "popular"
   | "cost-low"
   | "cost-high"
@@ -89,10 +87,7 @@ interface FiltersContextValue {
   handlePopulationSelect: (category: PopulationCategory | null) => void;
   handleTravelStyleSelect: (style: string | null) => Promise<void>;
   handleRatingChange: (rating: number | null) => void;
-  getFilteredCities: (
-    cities: CitiesResponse[],
-    calculateMatchForCity: (city: CitiesResponse) => MatchScore
-  ) => (CitiesResponse & MatchScore)[];
+  getFilteredCities: (cities: CitiesResponse[]) => CitiesResponse[];
   getActiveFilterCount: () => number;
   getTypeCounts: (
     places: CitiesResponse[]
@@ -283,108 +278,95 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     };
   }, [resetFilters]);
 
-  const getFilteredCities = useCallback(
-    (
-      cities: CitiesResponse[],
-      calculateMatchForCity: (city: CitiesResponse) => MatchScore
-    ) => {
-      return cities
-        .filter((city) => {
-          // Apply search filter first
-          if (filters.search) {
-            const searchTerm = filters.search.toLowerCase().trim();
-            const cityName = city.name.toLowerCase();
-            const normalizedName = city.normalizedName?.toLowerCase() || "";
-            const cityCountry = city.country?.toLowerCase() || "";
-            const normalizedCountry = cityCountry.replace(/\s+/g, "-");
-            const cityDescription = city.description?.toLowerCase() || "";
+  const getFilteredCities = useCallback((cities: CitiesResponse[]) => {
+    return cities
+      .filter((city) => {
+        // Apply search filter first
+        if (filters.search) {
+          const searchTerm = filters.search.toLowerCase().trim();
+          const cityName = city.name.toLowerCase();
+          const normalizedName = city.normalizedName?.toLowerCase() || "";
+          const cityCountry = city.country?.toLowerCase() || "";
+          const normalizedCountry = cityCountry.replace(/\s+/g, "-");
+          const cityDescription = city.description?.toLowerCase() || "";
 
-            // Check if search term matches any of the city's text fields
-            if (
-              !cityName.includes(searchTerm) &&
-              !normalizedName.includes(searchTerm) &&
-              !cityCountry.includes(searchTerm) &&
-              !normalizedCountry.includes(searchTerm) &&
-              !cityDescription.includes(searchTerm)
-            ) {
-              return false;
-            }
-          }
-
-          // Apply existing filters
+          // Check if search term matches any of the city's text fields
           if (
-            filters.activeTypes.length > 0 &&
-            !filters.activeTypes.includes(city.type)
+            !cityName.includes(searchTerm) &&
+            !normalizedName.includes(searchTerm) &&
+            !cityCountry.includes(searchTerm) &&
+            !normalizedCountry.includes(searchTerm) &&
+            !cityDescription.includes(searchTerm)
           ) {
             return false;
           }
+        }
 
-          // Only apply population filter to cities
-          if (
-            filters.populationCategory &&
-            city.type === CitiesTypeOptions.city
-          ) {
-            const population = city.population;
-            if (!isInPopulationRange(population, filters.populationCategory)) {
-              return false;
-            }
-          }
+        // Apply existing filters
+        if (
+          filters.activeTypes.length > 0 &&
+          !filters.activeTypes.includes(city.type)
+        ) {
+          return false;
+        }
 
-          // Apply rating filter to all places
-          if (
-            filters.averageRating &&
-            (!city.averageRating || city.averageRating < filters.averageRating)
-          ) {
+        // Only apply population filter to cities
+        if (
+          filters.populationCategory &&
+          city.type === CitiesTypeOptions.city
+        ) {
+          const population = city.population;
+          if (!isInPopulationRange(population, filters.populationCategory)) {
             return false;
           }
+        }
 
-          // Apply tag filters
-          if (filters.tags.length > 0) {
-            const cityTags = (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
-            const hasMatchingTag = filters.tags.some((tag) =>
-              cityTags.includes(tag.toLowerCase())
-            );
-            if (!hasMatchingTag) return false;
-          }
+        // Apply rating filter to all places
+        if (
+          filters.averageRating &&
+          (!city.averageRating || city.averageRating < filters.averageRating)
+        ) {
+          return false;
+        }
 
-          // Apply travel style filtering
-          if (filters.travelStyle) {
-            const cityTags = (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
-            if (!cityTags.includes(filters.travelStyle.toLowerCase())) {
-              return false;
-            }
-          }
+        // Apply tag filters
+        if (filters.tags.length > 0) {
+          const cityTags = (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
+          const hasMatchingTag = filters.tags.some((tag) =>
+            cityTags.includes(tag.toLowerCase())
+          );
+          if (!hasMatchingTag) return false;
+        }
 
-          return true;
-        })
-        .map((city) => {
-          const matchScore = calculateMatchForCity(city);
-          return {
-            ...city,
-            ...matchScore,
-          };
-        })
-        .sort((a, b) => {
-          if (filters.sort === "match") {
-            return b.matchScore - a.matchScore;
+        // Apply travel style filtering
+        if (filters.travelStyle) {
+          const cityTags = (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
+          if (!cityTags.includes(filters.travelStyle.toLowerCase())) {
+            return false;
           }
-          if (filters.sort === "popular") {
-            return (b.averageRating || 0) - (a.averageRating || 0);
-          }
-          if (filters.sort === "cost-low") {
+        }
+
+        return true;
+      })
+      .map((city) => {
+        return city;
+      })
+      .sort((a, b) => {
+        switch (filters.sort) {
+          case "cost-low":
             return (a.costIndex || 0) - (b.costIndex || 0);
-          }
-          if (filters.sort === "cost-high") {
+          case "cost-high":
             return (b.costIndex || 0) - (a.costIndex || 0);
-          }
-          if (filters.sort === "alphabetical-asc") {
+          case "popular":
+            return (b.averageRating || 0) - (a.averageRating || 0);
+          case "alphabetical-desc":
+            return b.name.localeCompare(a.name);
+          case "alphabetical-asc":
+          default:
             return a.name.localeCompare(b.name);
-          }
-          return b.name.localeCompare(a.name);
-        });
-    },
-    [filters]
-  );
+        }
+      });
+  }, [filters]);
 
   const getActiveFilterCount = useCallback(() => {
     let count = 0;
