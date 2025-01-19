@@ -6,11 +6,11 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
+import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Split from "react-split";
-import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -89,13 +89,14 @@ export const SplitExplorer = () => {
     if (splitMode === "list") {
       return numFilteredToShow < filteredPlaces.length;
     }
-    // For gallery view, check against filtered places instead of visible places
-    return numPrioritizedToShow < filteredPlaces.length;
+    // For gallery view, check against visible places
+    return numPrioritizedToShow < visiblePlacesInView.length;
   }, [
     numPrioritizedToShow,
     filteredPlaces.length,
     numFilteredToShow,
     splitMode,
+    visiblePlacesInView.length,
   ]);
 
   const loadMore = useCallback(() => {
@@ -152,9 +153,10 @@ export const SplitExplorer = () => {
             {contentType === "places" ? (
               <PlacesPanel
                 isLoadingMore={isLoadingMore}
-                observerTarget={observerTarget}
                 isResultsPanelCollapsed={false}
                 paginatedFilteredPlaces={paginatedFilteredPlaces}
+                onLoadMore={loadMore}
+                hasMore={hasMore}
               />
             ) : (
               <ListsPanel isCollapsed={false} />
