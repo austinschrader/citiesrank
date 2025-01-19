@@ -1,7 +1,7 @@
 /**
  * Defines the type system for the feed feature, including different types of feed items (trending places, updates, spotlights).
  * Each feed item type extends the base FeedItem interface and includes specific fields for that content type.
- * Used by FeedContext and FeedView to ensure type safety and consistent data structure across the feed feature.
+ * Used by FeedContext and FeedPage to ensure type safety and consistent data structure across the feed feature.
  */
 
 import { CitiesResponse as City } from "@/lib/types/pocketbase-types";

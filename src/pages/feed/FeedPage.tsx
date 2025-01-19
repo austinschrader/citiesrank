@@ -21,7 +21,7 @@ import {
   Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useFeed } from "../context/FeedContext";
+import { useFeed } from "../../features/feed/context/FeedContext";
 import {
   FeedItem,
   FriendActivityItem,
@@ -32,9 +32,9 @@ import {
   TagSpotlightItem,
   TimeMachineItem,
   TrendingPlaceItem,
-} from "../types";
+} from "../../features/feed/types";
 
-export const FeedView = () => {
+export const FeedPage = () => {
   const {
     feedItems,
     isLoading,

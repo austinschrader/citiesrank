@@ -1,7 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
-import { FeedView } from "@/features/feed/components/FeedView";
 import { FollowingManagement } from "@/features/feed/components/FollowingManagement";
 import { FeedProvider } from "@/features/feed/context/FeedContext";
 import { ListsExplorer } from "@/features/lists/components/ListsExplorer";
@@ -17,6 +16,7 @@ import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
 import { ExplorePage } from "@/pages/explore/ExplorePage";
 import { FavoritesPage } from "@/pages/favorites/FavoritesPage";
+import { FeedPage } from "@/pages/feed/FeedPage";
 import { PlaceDetailsPage } from "@/pages/places/PlaceDetailsPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { Route, Routes } from "react-router-dom";
@@ -58,7 +58,7 @@ function App() {
                                 path="/my-places"
                                 element={<CreatedSpacesPage />}
                               />
-                              <Route path="/feed" element={<FeedView />} />
+                              <Route path="/feed" element={<FeedPage />} />
                               <Route
                                 path="/following"
                                 element={<FollowingManagement />}

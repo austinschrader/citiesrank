@@ -1,7 +1,7 @@
 /**
  * Manages the state and logic for the personalized feed system, including followed tags and places.
  * Integrates with AuthContext to handle user authentication and PocketBase operations for feed content.
- * Provides methods to follow/unfollow content and refresh the feed, used by FeedView for display.
+ * Provides methods to follow/unfollow content and refresh the feed, used by FeedPage for display.
  */
 
 import { getApiUrl } from "@/config/appConfig";
