@@ -6,6 +6,7 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
+import { ListsPanel } from "@/features/explore/components/ui/ListsPanel";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -189,26 +190,7 @@ export const SplitExplorer = () => {
                 onPageSizeChange={setItemsPerPage}
               />
             ) : (
-              <div className="h-full flex flex-col">
-                <div className="flex-1 overflow-auto">
-                  <div className="p-4 space-y-6">
-                    {visibleLists.length === 0 ? (
-                      <EmptyState
-                        title="No collections found"
-                        description="Try zooming out or create a list"
-                        buttonText="New List"
-                        buttonLink="/lists/create"
-                      />
-                    ) : (
-                      <div className="space-y-4">
-                        {visibleLists.map((list) => (
-                          <ListPreview key={list.id} list={list} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <ListsPanel isCollapsed={false} />
             )}
           </div>
 
