@@ -19,30 +19,28 @@ export const getPlaceTypeInfo = (types: CitiesTypeOptions[] | undefined) => {
   return {
     [CitiesTypeOptions.country]: {
       icon: Globe2,
-      color: "bg-purple-100 text-purple-700 hover:bg-purple-200",
+      label: "Country",
+      color: "text-blue-500",
     },
     [CitiesTypeOptions.region]: {
       icon: Compass,
-      color: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+      label: "Region",
+      color: "text-green-500",
     },
     [CitiesTypeOptions.city]: {
       icon: Building2,
-      color: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200",
+      label: "City",
+      color: "text-purple-500",
     },
     [CitiesTypeOptions.neighborhood]: {
       icon: Home,
-      color: "bg-amber-100 text-amber-700 hover:bg-amber-200",
+      label: "Neighborhood",
+      color: "text-orange-500",
     },
     [CitiesTypeOptions.sight]: {
       icon: Landmark,
-      color: "bg-rose-100 text-rose-700 hover:bg-rose-200",
+      label: "Sight",
+      color: "text-red-500",
     },
   }[type];
-};
-
-export const getMatchColor = (score: number): string => {
-  if (score >= 90) return "bg-green-50 text-green-700";
-  if (score >= 75) return "bg-blue-50 text-blue-700";
-  if (score >= 60) return "bg-yellow-50 text-yellow-700";
-  return "bg-gray-50 text-gray-700";
 };
