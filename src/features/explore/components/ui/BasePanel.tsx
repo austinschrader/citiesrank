@@ -1,12 +1,25 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import { EmptyState } from "./EmptyState";
 
 export interface BasePanelProps {
   isCollapsed: boolean;
   children: ReactNode;
+  emptyState?: {
+    title: string;
+    description: string;
+    buttonText: string;
+    buttonLink: string;
+  };
+  isEmpty?: boolean;
 }
 
-export const BasePanel = ({ isCollapsed, children }: BasePanelProps) => {
+export const BasePanel = ({ 
+  isCollapsed, 
+  children,
+  emptyState,
+  isEmpty = false
+}: BasePanelProps) => {
   return (
     <div className="h-full flex">
       <div
@@ -15,14 +28,22 @@ export const BasePanel = ({ isCollapsed, children }: BasePanelProps) => {
           isCollapsed ? "w-0" : "w-full"
         )}
       >
-        {/* Panel Content */}
         <div
           className={cn(
             "flex flex-col h-full transition-all duration-300",
             isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100"
           )}
         >
-          {children}
+          {isEmpty && emptyState ? (
+            <EmptyState
+              title={emptyState.title}
+              description={emptyState.description}
+              buttonText={emptyState.buttonText}
+              buttonLink={emptyState.buttonLink}
+            />
+          ) : (
+            children
+          )}
         </div>
       </div>
     </div>
