@@ -20,7 +20,6 @@ export const SplitExplorer = () => {
   const { cities } = useCities();
   const { filters, getFilteredCities } = useFilters();
   const {
-    visiblePlacesInView,
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     setVisiblePlaces,
@@ -183,7 +182,6 @@ export const SplitExplorer = () => {
             {viewMode === "places" ? (
               <ResultsPanel
                 isLoadingMore={isLoadingMore}
-                observerTarget={observerTarget}
                 isResultsPanelCollapsed={false}
                 setIsResultsPanelCollapsed={() => {}}
                 paginatedFilteredPlaces={paginatedFilteredPlaces}
