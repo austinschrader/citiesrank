@@ -1,17 +1,15 @@
 import { useHeader } from "@/context/HeaderContext";
-import { EmptyState } from "@/features/explore/components/ui/EmptyState";
 import { FiltersBar } from "@/features/explore/components/ui/FiltersBar";
-import { ListPreview } from "@/features/lists/components/ListPreview";
+import { ListsPanel } from "@/features/explore/components/ui/ListsPanel";
+import { PlacesPanel } from "@/features/explore/components/ui/PlacesPanel";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { ListsPanel } from "@/features/explore/components/ui/ListsPanel";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Split from "react-split";
-import { ResultsPanel } from "../ui/PlacesPanel";
 
 const pageSizeOptions = [15, 25, 50, 100];
 
@@ -180,14 +178,11 @@ export const SplitExplorer = () => {
             )}
           >
             {viewMode === "places" ? (
-              <ResultsPanel
+              <PlacesPanel
                 isLoadingMore={isLoadingMore}
                 observerTarget={observerTarget}
                 isResultsPanelCollapsed={false}
-                setIsResultsPanelCollapsed={() => {}}
                 paginatedFilteredPlaces={paginatedFilteredPlaces}
-                itemsPerPage={itemsPerPage}
-                onPageSizeChange={setItemsPerPage}
               />
             ) : (
               <ListsPanel isCollapsed={false} />

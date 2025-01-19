@@ -9,28 +9,23 @@ import { useMap } from "@/features/map/context/MapContext";
 import { useSelection } from "@/features/map/context/SelectionContext";
 import { PlaceCardGrid } from "@/features/places/components/ui/grids/PlaceCardGrid";
 import { useCities } from "@/features/places/context/CitiesContext";
+import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { RefObject, useEffect, useRef } from "react";
 
-interface ResultsPanelProps {
+interface PlacesPanelProps {
   isLoadingMore: boolean;
   observerTarget: RefObject<HTMLDivElement>;
   isResultsPanelCollapsed: boolean;
-  setIsResultsPanelCollapsed: (value: boolean) => void;
-  paginatedFilteredPlaces: any[]; // TODO: Add proper type
-  itemsPerPage: number;
-  onPageSizeChange: (size: number) => void;
+  paginatedFilteredPlaces: CitiesResponse[];
 }
 
-export const ResultsPanel = ({
+export const PlacesPanel = ({
   isLoadingMore,
   observerTarget,
   isResultsPanelCollapsed,
-  setIsResultsPanelCollapsed,
   paginatedFilteredPlaces,
-  itemsPerPage,
-  onPageSizeChange,
-}: ResultsPanelProps) => {
+}: PlacesPanelProps) => {
   const { cities } = useCities();
   const { prioritizedPlaces, visiblePlacesInView, viewMode } = useMap();
   const { selectedPlace, fromMap } = useSelection();
