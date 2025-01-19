@@ -26,7 +26,7 @@ export const PlacesPanel = ({
   onLoadMore,
   hasMore,
 }: PlacesPanelProps) => {
-  const { prioritizedPlaces, splitMode } = useMap();
+  const { prioritizedPlaces, splitMode, maxItems } = useMap();
   const { selectedPlace, fromMap } = useSelection();
   const gridRef = useScrollToSelected(selectedPlace, fromMap);
 
@@ -52,13 +52,7 @@ export const PlacesPanel = ({
           ref={observerTarget}
           className="h-4"
           style={{
-            visibility:
-              displayPlaces.length <
-              (splitMode === "list"
-                ? paginatedFilteredPlaces.length
-                : prioritizedPlaces.length)
-                ? "visible"
-                : "hidden",
+            visibility: displayPlaces.length < maxItems ? "visible" : "hidden"
           }}
         />
         {isLoadingMore && (
