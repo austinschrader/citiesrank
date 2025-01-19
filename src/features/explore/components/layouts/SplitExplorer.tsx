@@ -6,6 +6,7 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
+import { EmptyState } from "@/features/explore/components/EmptyState";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
@@ -195,32 +196,12 @@ export const SplitExplorer = () => {
                 <div className="flex-1 overflow-auto">
                   <div className="p-4 space-y-6">
                     {visibleLists.length === 0 ? (
-                      <div className="h-full flex items-center justify-center">
-                        <div className="text-center space-y-4 max-w-sm">
-                          <div className="space-y-2">
-                            <p className="text-gray-500">
-                              No collections found
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Try zooming out or create a list
-                            </p>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="gap-2 h-9 text-md font-medium"
-                            asChild
-                          >
-                            <Link
-                              to="/lists/create"
-                              className="flex items-center gap-2"
-                            >
-                              <PlusCircle className="h-4 w-4" />
-                              <span>New List</span>
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
+                      <EmptyState
+                        title="No collections found"
+                        description="Try zooming out or create a list"
+                        buttonText="New List"
+                        buttonLink="/lists/create"
+                      />
                     ) : (
                       <div className="space-y-4">
                         {visibleLists.map((list) => (

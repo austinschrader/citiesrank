@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
 import { RefObject, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { EmptyState } from "./EmptyState";
 
 interface ResultsPanelProps {
   isLoadingMore: boolean;
@@ -79,30 +80,12 @@ export const ResultsPanel = ({
           <div className="flex-1 min-h-0 overflow-y-auto">
             <div className="p-4 space-y-6">
               {displayPlaces.length === 0 ? (
-                <div className="flex items-center justify-center">
-                  <div className="text-center space-y-4 max-w-sm">
-                    <div className="space-y-2">
-                      <p className="text-gray-500">No places found</p>
-                      <p className="text-sm text-muted-foreground">
-                        Try zooming out or add a new place
-                      </p>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-2 h-9"
-                      asChild
-                    >
-                      <Link
-                        to="/places/create"
-                        className="flex items-center gap-2"
-                      >
-                        <PlusCircle className="h-4 w-4" />
-                        <span>New Place</span>
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
+                <EmptyState
+                  title="No places found"
+                  description="Try zooming out or add a new place"
+                  buttonText="New Place"
+                  buttonLink="/places/create"
+                />
               ) : (
                 <>
                   <PlaceCardGrid
