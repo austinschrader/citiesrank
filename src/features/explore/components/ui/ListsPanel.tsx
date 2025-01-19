@@ -22,11 +22,9 @@ export const ListsPanel = ({ isCollapsed }: ListsPanelProps) => {
     >
       <div className="flex-1 overflow-auto">
         <div className="p-4 space-y-6">
-          <div className="space-y-4">
             {visibleLists.map((list) => (
               <ListPreview key={list.id} list={list} />
             ))}
-          </div>
         </div>
       </div>
     </BasePanel>
