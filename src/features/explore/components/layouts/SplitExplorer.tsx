@@ -36,7 +36,6 @@ export const SplitExplorer = () => {
   const BATCH_SIZE = 25; // Fixed size for infinite scroll
   const [numFilteredToShow, setNumFilteredToShow] = useState(BATCH_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isResultsPanelCollapsed, setIsResultsPanelCollapsed] = useState(false);
 
   // Memoize the active filters check
   const hasActiveFilters = useMemo(
@@ -71,10 +70,6 @@ export const SplitExplorer = () => {
       setVisiblePlaces(filteredPlaces);
     }
   }, [cities, filteredPlaces, setVisiblePlaces]);
-
-  useEffect(() => {
-    setIsResultsPanelCollapsed(splitMode === "map");
-  }, [splitMode]);
 
   // Reset pagination when view changes
   useEffect(() => {
@@ -141,7 +136,7 @@ export const SplitExplorer = () => {
             {contentType === "places" ? (
               <PlacesPanel
                 isLoadingMore={isLoadingMore}
-                isResultsPanelCollapsed={false}
+                isResultsPanelCollapsed={splitMode === "map"}
                 paginatedFilteredPlaces={paginatedFilteredPlaces}
                 onLoadMore={loadMore}
                 hasMore={hasMore}
