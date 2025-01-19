@@ -19,28 +19,23 @@ export const getPlaceTypeInfo = (types: CitiesTypeOptions[] | undefined) => {
   return {
     [CitiesTypeOptions.country]: {
       icon: Globe2,
-      label: "Country",
-      color: "text-blue-500",
+      color: "bg-purple-100 text-purple-700 hover:bg-purple-200",
     },
     [CitiesTypeOptions.region]: {
       icon: Compass,
-      label: "Region",
-      color: "text-green-500",
+      color: "bg-blue-100 text-blue-700 hover:bg-blue-200",
     },
     [CitiesTypeOptions.city]: {
       icon: Building2,
-      label: "City",
-      color: "text-purple-500",
+      color: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200",
     },
     [CitiesTypeOptions.neighborhood]: {
       icon: Home,
-      label: "Neighborhood",
-      color: "text-orange-500",
+      color: "bg-amber-100 text-amber-700 hover:bg-amber-200",
     },
     [CitiesTypeOptions.sight]: {
       icon: Landmark,
-      label: "Sight",
-      color: "text-red-500",
+      color: "bg-rose-100 text-rose-700 hover:bg-rose-200",
     },
   }[type];
 };
