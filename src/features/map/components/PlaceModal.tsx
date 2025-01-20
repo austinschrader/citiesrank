@@ -56,18 +56,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showHints, setShowHints] = useState(true);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const contentRef = useRef<HTMLDivElement>(null);
-
-  // Handle viewport changes
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 640);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // Image preloading
   useEffect(() => {
@@ -100,17 +89,17 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     };
 
     loadImages();
-  }, [currentPlace, isMobile]);
+  }, [currentPlace]);
 
-  // Only auto-hide hints on mobile
+  // Auto-hide hints after delay
   useEffect(() => {
-    if (showHints && isMobile) {
+    if (showHints) {
       const timer = setTimeout(() => {
         setShowHints(false);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [showHints, isMobile]);
+  }, [showHints]);
 
   useEffect(() => {
     setShowHints(true);
