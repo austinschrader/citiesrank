@@ -47,16 +47,16 @@ interface RawListData {
   updated: string;
 }
 
-interface ValidationResult {
-  isValid: boolean;
-  data?: RawListData;
-  error?: string;
-  name?: string;
-}
+type ValidationResult =
+  | { isValid: true; data: RawListData; name: string; error?: never }
+  | { isValid: false; data?: never; name: string; error: string };
 
-interface ProcessedValidationResult extends Omit<ValidationResult, 'data'> {
+interface ProcessedValidationResult {
+  isValid: boolean;
   data?: ListData;
   places?: string[];
+  name: string;
+  error?: string;
 }
 
 export function ImportLists() {
@@ -107,9 +107,9 @@ export function ImportLists() {
       if (result.isValid && result.data && user) {
         console.log("Processing list places:", result.data.places);
         console.log("City mapping:", cityMapping);
-        
+
         const mappedPlaces = (result.data.places || [])
-          .map(slug => {
+          .map((slug) => {
             const id = cityMapping[slug];
             console.log(`Mapping ${slug} -> ${id}`);
             return id;
@@ -138,7 +138,11 @@ export function ImportLists() {
           places: mappedPlaces,
         };
       }
-      return { ...result, data: undefined, places: undefined };
+      return {
+        isValid: false,
+        name: result.name,
+        error: result.error,
+      };
     });
   };
 

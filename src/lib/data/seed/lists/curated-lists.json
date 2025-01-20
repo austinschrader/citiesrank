@@ -1,0 +1,40 @@
+{
+  "default": [
+    {
+      "title": "Budget-Friendly Euro Trip for Students",
+      "description": "Perfect cities for college backpackers: great hostels, vibrant nightlife, and rich culture without breaking the bank.",
+      "slug": "student-euro-trip",
+      "places": [
+        "lisbon-portugal",
+        "amsterdam-netherlands",
+        "copenhagen-denmark",
+        "stockholm-sweden"
+      ],
+      "created": "2025-01-20T13:02:56.000Z",
+      "updated": "2025-01-20T13:02:56.000Z"
+    },
+    {
+      "title": "Scandinavian Design Capitals",
+      "description": "Cities known for their stunning architecture, modern design, and innovative urban planning.",
+      "slug": "scandinavian-design",
+      "places": [
+        "copenhagen-denmark",
+        "stockholm-sweden"
+      ],
+      "created": "2025-01-20T13:03:56.000Z",
+      "updated": "2025-01-20T13:03:56.000Z"
+    },
+    {
+      "title": "Digital Nomad Friendly European Cities",
+      "description": "Cities with great wifi, coworking spaces, and vibrant expat communities.",
+      "slug": "europe-digital-nomads",
+      "places": [
+        "lisbon-portugal",
+        "amsterdam-netherlands",
+        "copenhagen-denmark"
+      ],
+      "created": "2025-01-20T13:04:56.000Z",
+      "updated": "2025-01-20T13:04:56.000Z"
+    }
+  ]
+}

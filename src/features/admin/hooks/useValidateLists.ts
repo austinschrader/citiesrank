@@ -13,12 +13,9 @@ const listSchema = z.object({
 
 type List = z.infer<typeof listSchema>;
 
-type ValidationResult = {
-  isValid: boolean;
-  data?: List;
-  error?: string;
-  name?: string;
-};
+type ValidationResult = 
+  | { isValid: true; data: List; name: string; error?: never }
+  | { isValid: false; data?: never; name: string; error: string };
 
 interface SeedFileData {
   default: List[];
@@ -41,7 +38,7 @@ export function useValidateLists() {
     if (!listsToValidate || !Array.isArray(listsToValidate)) {
       const error = "Invalid file format: expected an array of lists";
       console.error(error);
-      const result = {
+      const result: ValidationResult = {
         isValid: false,
         error,
         name: "Invalid File",
@@ -57,7 +54,7 @@ export function useValidateLists() {
 
     console.log("Lists to validate:", listsToValidate);
 
-    const results = listsToValidate.map((list) => {
+    const results: ValidationResult[] = listsToValidate.map((list) => {
       try {
         console.log("Validating list:", list);
         const listWithFormattedDates = {
