@@ -267,30 +267,42 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         return cities;
       }
 
+      // Prepare search term once, outside the filter loop
+      const searchTerm = filters.search?.toLowerCase().trim() || "";
+
       return cities
         .filter((city) => {
-          // Apply search filter first
-          if (filters.search) {
-            const searchTerm = filters.search.toLowerCase().trim();
-            const cityName = city.name.toLowerCase();
-            const normalizedName = city.normalizedName?.toLowerCase() || "";
-            const cityCountry = city.country?.toLowerCase() || "";
-            const normalizedCountry = cityCountry.replace(/\s+/g, "-");
-            const cityDescription = city.description?.toLowerCase() || "";
+          // Early return if no filters are active for this item
+          if (
+            !searchTerm &&
+            !filters.averageRating &&
+            !filters.populationCategory &&
+            filters.tags.length === 0 &&
+            filters.activeTypes.length === Object.values(CitiesTypeOptions).length
+          ) {
+            return true;
+          }
 
-            // Check if search term matches any of the city's text fields
-            if (
-              !cityName.includes(searchTerm) &&
-              !normalizedName.includes(searchTerm) &&
-              !cityCountry.includes(searchTerm) &&
-              !normalizedCountry.includes(searchTerm) &&
-              !cityDescription.includes(searchTerm)
-            ) {
+          // Apply search filter first for early rejection
+          if (searchTerm) {
+            // Combine all searchable fields into a single string
+            const searchableText = [
+              city.name,
+              city.normalizedName,
+              city.country,
+              city.country?.replace(/\s+/g, "-"),
+              city.description,
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+
+            if (!searchableText.includes(searchTerm)) {
               return false;
             }
           }
 
-          // Apply existing filters
+          // Apply type filter
           if (
             filters.activeTypes.length > 0 &&
             !filters.activeTypes.includes(city.type)
