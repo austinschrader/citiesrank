@@ -9,17 +9,14 @@ import { Home, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { useMap as useLeafletMap } from "react-leaflet";
 
+const DEFAULT_CENTER: [number, number] = [48.5, 10]; // Centered on Germany/Austria
+const DEFAULT_ZOOM = 5;
+
 interface MapControlsProps {
   onZoomChange: (zoom: number) => void;
-  defaultCenter?: [number, number];
-  defaultZoom?: number;
 }
 
-export const MapControls = ({
-  onZoomChange,
-  defaultCenter = [48.5, 10], // Centered on Germany/Austria
-  defaultZoom = 5,
-}: MapControlsProps) => {
+export const MapControls = ({ onZoomChange }: MapControlsProps) => {
   const map = useLeafletMap();
 
   // Create a stable debounced zoom handler
@@ -51,7 +48,7 @@ export const MapControls = ({
   };
 
   const handleReset = () => {
-    map.setView(defaultCenter, defaultZoom);
+    map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
   };
 
   return (
