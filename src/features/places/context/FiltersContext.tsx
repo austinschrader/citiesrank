@@ -373,9 +373,6 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
           return true;
         })
-        .map((city) => {
-          return city;
-        })
         .sort((a, b) => {
           switch (filters.sort) {
             case "cost-low":

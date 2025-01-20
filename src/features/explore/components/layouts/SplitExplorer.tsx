@@ -3,7 +3,7 @@
  * - Manages pagination state
  * - Handles infinite scroll
  * - Renders appropriate panel based on content type
- * 
+ *
  * Data flow: MapContext -> SplitExplorer -> Panel components
  * Pure layout - no filtering/visibility logic
  */
@@ -15,8 +15,6 @@ import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
-import { useInfiniteScroll } from "@/features/places/hooks/useInfiniteScroll";
-import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Split from "react-split";
@@ -25,12 +23,10 @@ export const SplitExplorer = () => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
   const {
-    visiblePlacesInView,
     numPrioritizedToShow,
     setNumPrioritizedToShow,
     setVisiblePlaces,
     splitMode,
-    visibleLists,
     maxItems,
   } = useMap();
   const { contentType } = useHeader();
@@ -43,10 +39,8 @@ export const SplitExplorer = () => {
     return getFilteredCities(cities);
   }, [cities, getFilteredCities]);
 
-  // Get paginated filtered places
-  const paginatedFilteredPlaces = useMemo(() => {
-    return filteredPlaces.slice(0, numFilteredToShow);
-  }, [filteredPlaces, numFilteredToShow]);
+  // Get paginated filtered places (no need to memoize this simple slice)
+  const paginatedFilteredPlaces = filteredPlaces.slice(0, numFilteredToShow);
 
   // Update visible places in map context
   useEffect(() => {
@@ -61,28 +55,27 @@ export const SplitExplorer = () => {
     setNumFilteredToShow(BATCH_SIZE);
   }, [splitMode]);
 
-  const hasMore = useCallback(() => {
-    const currentCount = splitMode === "list" ? numFilteredToShow : numPrioritizedToShow;
+  const hasMore = () => {
+    const currentCount =
+      splitMode === "list" ? numFilteredToShow : numPrioritizedToShow;
     return currentCount < maxItems;
-  }, [splitMode, numFilteredToShow, numPrioritizedToShow, maxItems]);
+  };
 
-  const loadMore = useCallback(async () => {
+  const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
 
     try {
       setIsLoadingMore(true);
-      
+
       if (splitMode === "list") {
-        setNumFilteredToShow(prev => prev + BATCH_SIZE);
+        setNumFilteredToShow((prev) => prev + BATCH_SIZE);
       } else {
-        setNumPrioritizedToShow(prev => prev + BATCH_SIZE);
+        setNumPrioritizedToShow((prev) => prev + BATCH_SIZE);
       }
     } finally {
       setIsLoadingMore(false);
     }
   }, [hasMore, isLoadingMore, splitMode]);
-
-  const observerTarget = useInfiniteScroll(loadMore, hasMore, isLoadingMore);
 
   return (
     <div className="h-full flex flex-col">
