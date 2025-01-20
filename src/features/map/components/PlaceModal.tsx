@@ -147,45 +147,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     setShowHints(true);
   }, [currentPlace?.id]);
 
-  // Touch handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    setTouchStart({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-      timestamp: Date.now(),
-    });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart || e.touches.length !== 1) return;
-
-    const xDiff = touchStart.x - e.touches[0].clientX;
-    const yDiff = touchStart.y - e.touches[0].clientY;
-    const timeDiff = Date.now() - touchStart.timestamp;
-    const velocity = Math.abs(xDiff / timeDiff);
-
-    // Handle horizontal swipes for image navigation
-    if (Math.abs(xDiff) > Math.abs(yDiff)) {
-      if (Math.abs(xDiff) > SWIPE_THRESHOLD || velocity > 0.5) {
-        handleImageNavigation(xDiff > 0 ? "next" : "prev");
-        setTouchStart(null);
-      }
-    }
-    // Handle vertical swipe up for closing
-    else if (
-      yDiff > SWIPE_UP_THRESHOLD &&
-      Math.abs(xDiff) < SWIPE_THRESHOLD / 2
-    ) {
-      onClose();
-      setTouchStart(null);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setTouchStart(null);
-  };
-
   const handleDoubleTap = (e: React.TouchEvent) => {
     const currentTime = Date.now();
     const tapLength = currentTime - lastTap;
@@ -200,6 +161,8 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   };
 
   const handleImageNavigation = (direction: "next" | "prev") => {
+    if (preloadedImages.length <= 1) return;
+    
     const newIndex =
       direction === "next"
         ? (currentImageIndex + 1) % preloadedImages.length
@@ -282,14 +245,10 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
       } else {
         switch (e.key) {
           case "ArrowRight":
-            setCurrentImageIndex((prev) =>
-              prev < preloadedImages.length - 1 ? prev + 1 : 0
-            );
+            handleImageNavigation("next");
             break;
           case "ArrowLeft":
-            setCurrentImageIndex((prev) =>
-              prev > 0 ? prev - 1 : preloadedImages.length - 1
-            );
+            handleImageNavigation("prev");
             break;
         }
       }
@@ -301,7 +260,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     isOpen,
     preloadedImages.length,
     navigateToPlace,
-    setCurrentImageIndex,
+    handleImageNavigation,
     currentPlace.id,
     visiblePlacesInView,
     navigation.isRandomMode,
@@ -363,9 +322,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       className="absolute left-0 top-0 bottom-0 w-1/4 pointer-events-auto"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setCurrentImageIndex((prev) =>
-                          prev > 0 ? prev - 1 : preloadedImages.length - 1
-                        );
+                        handleImageNavigation("prev");
                       }}
                     >
                       <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none">
@@ -378,9 +335,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       className="absolute right-0 top-0 bottom-0 w-1/4 pointer-events-auto"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setCurrentImageIndex((prev) =>
-                          prev < preloadedImages.length - 1 ? prev + 1 : 0
-                        );
+                        handleImageNavigation("next");
                       }}
                     >
                       <div className="absolute inset-y-0 right-8 flex items-center pointer-events-none">
