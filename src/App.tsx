@@ -30,13 +30,27 @@ import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
 import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
 import { Route, Routes } from "react-router-dom";
+import { Suspense, useEffect } from "react";
 import { HeaderProvider } from "./context/HeaderContext";
 import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
 import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
+import { AnimatedLayout } from "@/components/layout/AnimatedLayout";
 
 function App() {
+  // Preload the ExplorePage component
+  useEffect(() => {
+    const preloadExplorePage = () => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'script';
+      link.href = '/src/features/explore/pages/ExplorePage.tsx';
+      document.head.appendChild(link);
+    };
+    preloadExplorePage();
+  }, []);
+
   return (
     <CitiesProvider>
       <AuthProvider>
@@ -50,52 +64,58 @@ function App() {
                       <HeaderProvider>
                         <FeedProvider>
                           <FavoritesProvider>
-                            <Routes>
-                              <Route element={<RootLayout />}>
-                                <Route path="/" element={<ExplorePage />} />
-                                <Route
-                                  path="/discover"
-                                  element={<DiscoverPage />}
-                                />
-                                <Route
-                                  path="/favorites"
-                                  element={<FavoritesPage />}
-                                />
-                                <Route
-                                  path="/profile"
-                                  element={<ProfilePage />}
-                                />
-                                <Route
-                                  path="/my-places"
-                                  element={<CreatedSpacesPage />}
-                                />
-                                <Route path="/feed" element={<FeedPage />} />
-                                <Route
-                                  path="/following"
-                                  element={<FollowingManagement />}
-                                />
-                                <Route
-                                  path="/lists"
-                                  element={<ListsExplorer />}
-                                />
-                                <Route
-                                  path="/lists/create"
-                                  element={<CreateListPage />}
-                                />
-                                <Route
-                                  path="/lists/:id"
-                                  element={<ListDetailsPage />}
-                                />
-                                <Route
-                                  path="/places/:placeType/:id"
-                                  element={<PlaceDetailsPage />}
-                                />
-                                <Route
-                                  path="/admin/*"
-                                  element={<AdminRoutes />}
-                                />
-                              </Route>
-                            </Routes>
+                            <AnimatedLayout>
+                              <Routes>
+                                <Route element={
+                                  <Suspense fallback={null}>
+                                    <RootLayout />
+                                  </Suspense>
+                                }>
+                                  <Route path="/" element={<ExplorePage />} />
+                                  <Route
+                                    path="/discover"
+                                    element={<DiscoverPage />}
+                                  />
+                                  <Route
+                                    path="/favorites"
+                                    element={<FavoritesPage />}
+                                  />
+                                  <Route
+                                    path="/profile"
+                                    element={<ProfilePage />}
+                                  />
+                                  <Route
+                                    path="/my-places"
+                                    element={<CreatedSpacesPage />}
+                                  />
+                                  <Route path="/feed" element={<FeedPage />} />
+                                  <Route
+                                    path="/following"
+                                    element={<FollowingManagement />}
+                                  />
+                                  <Route
+                                    path="/lists"
+                                    element={<ListsExplorer />}
+                                  />
+                                  <Route
+                                    path="/lists/create"
+                                    element={<CreateListPage />}
+                                  />
+                                  <Route
+                                    path="/lists/:id"
+                                    element={<ListDetailsPage />}
+                                  />
+                                  <Route
+                                    path="/places/:placeType/:id"
+                                    element={<PlaceDetailsPage />}
+                                  />
+                                  <Route
+                                    path="/admin/*"
+                                    element={<AdminRoutes />}
+                                  />
+                                </Route>
+                              </Routes>
+                            </AnimatedLayout>
                             <Toaster />
                           </FavoritesProvider>
                         </FeedProvider>
