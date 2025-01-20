@@ -10,7 +10,7 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { Filter, Loader2, Plus } from "lucide-react";
+import { Filter } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
@@ -23,8 +23,6 @@ import { MapControls } from "./MapControls";
 import { MapLegend } from "./MapLegend";
 import { MapMarker } from "./MapMarker";
 import { PlaceGeoJson } from "./PlaceGeoJson";
-
-const pageSizeOptions = [15, 25, 50, 100];
 
 interface CityMapProps {
   className?: string;
@@ -60,14 +58,8 @@ export const CityMap = ({ className }: CityMapProps) => {
   const { filters, getFilteredCities, resetFilters } = useFilters();
   const {
     visiblePlacesInView,
-    numPrioritizedToShow,
-    setNumPrioritizedToShow,
-    splitMode,
     setVisiblePlaces,
   } = useMap();
-
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [itemsPerPage] = useState(pageSizeOptions[0]);
 
   // Memoize filtered cities computation
   const filteredCities = useMemo(() => {
@@ -101,22 +93,6 @@ export const CityMap = ({ className }: CityMapProps) => {
       isMounted = false;
     };
   }, [filteredCities, setVisiblePlaces]);
-
-  const hasMore = useCallback(() => {
-    return numPrioritizedToShow < visiblePlacesInView.length;
-  }, [numPrioritizedToShow, visiblePlacesInView.length]);
-
-  const loadMore = useCallback(() => {
-    if (!hasMore() || isLoadingMore) return;
-
-    setIsLoadingMore(true);
-    const timeoutId = setTimeout(() => {
-      setNumPrioritizedToShow((prev) => prev + itemsPerPage);
-      setIsLoadingMore(false);
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, itemsPerPage]);
 
   // Memoize visible places for MarkerClusterGroup
   const memoizedVisiblePlaces = useMemo(
@@ -158,63 +134,32 @@ export const CityMap = ({ className }: CityMapProps) => {
       </MapContainer>
 
       {/* Status Indicator */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
-        <div className="flex flex-col items-center gap-2">
-          {isLoadingMore ? (
+      {hasActiveFilters && visiblePlacesInView.length > 0 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
+          <div className="flex flex-col sm:flex-row items-center gap-2">
             <div
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-full",
                 "bg-background/95 backdrop-blur-sm shadow-lg border",
-                "text-foreground animate-in fade-in slide-in-from-top-2"
+                "text-muted-foreground text-sm sm:text-base"
               )}
             >
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Loading more places...</span>
+              <span className="whitespace-nowrap">
+                {visiblePlacesInView.length} places found
+              </span>
             </div>
-          ) : hasMore() ? (
             <Button
               variant="outline"
               size="sm"
-              onClick={loadMore}
+              onClick={resetFilters}
               className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              <span>Load more places</span>
+              <Filter className="w-4 h-4 mr-2" />
+              <span>Clear filters</span>
             </Button>
-          ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <div
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full",
-                  "bg-background/95 backdrop-blur-sm shadow-lg border",
-                  "text-muted-foreground text-sm sm:text-base"
-                )}
-              >
-                <span className="whitespace-nowrap">
-                  All {visiblePlacesInView.length} places loaded
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetFilters}
-                className={cn(
-                  "rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent",
-                  "text-sm sm:text-base px-3 sm:px-4"
-                )}
-              >
-                <Filter className="w-4 h-4 mr-1.5 sm:mr-2" />
-                <span className="whitespace-nowrap">Clear filters</span>
-              </Button>
-            </div>
-          ) : null}
+          </div>
         </div>
-      </div>
-
-      {/* Map Legend */}
-      <div className="absolute top-4 left-4 z-[10]">
-        <MapLegend />
-      </div>
+      )}
     </div>
   );
 };
