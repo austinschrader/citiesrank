@@ -57,13 +57,12 @@ export const SplitExplorer = () => {
             {contentType === "places" ? (
               <PlacesPanel
                 isLoadingMore={isLoadingMore}
-                isResultsPanelCollapsed={splitMode === "map"}
                 paginatedFilteredPlaces={paginatedFilteredPlaces}
                 onLoadMore={loadMore}
                 hasMore={hasMore}
               />
             ) : (
-              <ListsPanel isCollapsed={false} />
+              <ListsPanel />
             )}
           </div>
 

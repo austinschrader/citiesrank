@@ -13,7 +13,6 @@ import { CitiesResponse } from "@/lib/types/pocketbase-types";
 
 interface PlacesPanelProps {
   isLoadingMore: boolean;
-  isResultsPanelCollapsed: boolean;
   paginatedFilteredPlaces: CitiesResponse[];
   onLoadMore: () => void;
   hasMore: () => boolean;
@@ -21,12 +20,11 @@ interface PlacesPanelProps {
 
 export const PlacesPanel = ({
   isLoadingMore,
-  isResultsPanelCollapsed,
   paginatedFilteredPlaces,
   onLoadMore,
   hasMore,
 }: PlacesPanelProps) => {
-  const { maxItems, getDisplayPlaces } = useMap();
+  const { maxItems, getDisplayPlaces, splitMode } = useMap();
   const { selectedPlace, fromMap } = useSelection();
   const gridRef = useScrollToSelected(selectedPlace, fromMap);
 
@@ -36,7 +34,6 @@ export const PlacesPanel = ({
 
   return (
     <BasePanel
-      isCollapsed={isResultsPanelCollapsed}
       isEmpty={displayPlaces.length === 0}
       emptyState={{
         title: "No places found",

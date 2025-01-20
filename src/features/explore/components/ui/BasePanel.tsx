@@ -1,9 +1,9 @@
+import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import { EmptyState } from "./EmptyState";
 
 export interface BasePanelProps {
-  isCollapsed: boolean;
   children: ReactNode;
   emptyState?: {
     title: string;
@@ -15,11 +15,13 @@ export interface BasePanelProps {
 }
 
 export const BasePanel = ({ 
-  isCollapsed, 
   children,
   emptyState,
   isEmpty = false
 }: BasePanelProps) => {
+  const { splitMode } = useMap();
+  const isCollapsed = splitMode === "map";
+
   return (
     <div className="h-full flex">
       <div

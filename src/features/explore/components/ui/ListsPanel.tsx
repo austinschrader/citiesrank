@@ -7,16 +7,11 @@ import { BasePanel } from "@/features/explore/components/ui/BasePanel";
 import { ListPreview } from "@/features/lists/components/ListPreview";
 import { useMap } from "@/features/map/context/MapContext";
 
-interface ListsPanelProps {
-  isCollapsed: boolean;
-}
-
-export const ListsPanel = ({ isCollapsed }: ListsPanelProps) => {
+export const ListsPanel = () => {
   const { visibleLists } = useMap();
 
   return (
     <BasePanel 
-      isCollapsed={isCollapsed}
       isEmpty={visibleLists.length === 0}
       emptyState={{
         title: "No collections found",
