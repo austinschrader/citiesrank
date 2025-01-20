@@ -52,10 +52,10 @@ const navItems = [
     gradient: "from-emerald-500 via-green-500 to-teal-500",
   },
   {
-    label: "Discoveries",
-    mobileLabel: "Discover",
+    label: "Quests",
+    mobileLabel: "Quests",
     icon: Star,
-    to: "/discover",
+    to: "/quests",
     description: "Uncover hidden gems and trending spots",
     gradient: "from-amber-500 via-orange-500 to-yellow-500",
   },

@@ -4,9 +4,10 @@
  * 2. ListsProvider (lists data) -> HeaderProvider (UI state)
  * 3. MapProvider (map/visibility) -> Selection/LocationProvider (map state)
  * 4. Feed/FavoritesProvider (user data)
- * 
+ *
  * Key dependencies: HeaderProvider must wrap MapProvider
  */
+import { AnimatedLayout } from "@/components/layout/AnimatedLayout";
 import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
@@ -25,27 +26,26 @@ import { CitiesProvider } from "@/features/places/context/CitiesContext";
 import { FavoritesProvider } from "@/features/places/context/FavoritesContext";
 import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { FavoritesPage } from "@/features/places/pages/FavoritesPage";
+import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
-import { Route, Routes } from "react-router-dom";
 import { Suspense, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./context/HeaderContext";
 import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
 import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
-import { AnimatedLayout } from "@/components/layout/AnimatedLayout";
 
 function App() {
   // Preload the ExplorePage component
   useEffect(() => {
     const preloadExplorePage = () => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'script';
-      link.href = '/src/features/explore/pages/ExplorePage.tsx';
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "script";
+      link.href = "/src/features/explore/pages/ExplorePage.tsx";
       document.head.appendChild(link);
     };
     preloadExplorePage();
@@ -66,14 +66,16 @@ function App() {
                           <FavoritesProvider>
                             <AnimatedLayout>
                               <Routes>
-                                <Route element={
-                                  <Suspense fallback={null}>
-                                    <RootLayout />
-                                  </Suspense>
-                                }>
+                                <Route
+                                  element={
+                                    <Suspense fallback={null}>
+                                      <RootLayout />
+                                    </Suspense>
+                                  }
+                                >
                                   <Route path="/" element={<ExplorePage />} />
                                   <Route
-                                    path="/discover"
+                                    path="/quests"
                                     element={<DiscoverPage />}
                                   />
                                   <Route
