@@ -35,12 +35,6 @@ interface PlaceModalProps {
   onPlaceSelect?: (place: MapPlace) => void;
 }
 
-interface TouchStartState {
-  x: number;
-  y: number;
-  timestamp: number;
-}
-
 interface StatBadgeProps {
   icon: LucideIcon;
   value: string | number;
@@ -48,8 +42,6 @@ interface StatBadgeProps {
   color?: string;
 }
 
-const SWIPE_THRESHOLD = 50;
-const SWIPE_UP_THRESHOLD = 100;
 const DOUBLE_TAP_DELAY = 300;
 
 interface NavigationState {
@@ -70,7 +62,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showHints, setShowHints] = useState(true);
-  const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
   const [lastTap, setLastTap] = useState(0);
   const [navigation, setNavigation] = useState<NavigationState>({
     direction: 0,
@@ -358,7 +349,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         setShowSaveDialog(true);
                       }
                     }}
-                    onTouchStart={handleDoubleTap}
                     className="w-full h-full object-cover transition-all duration-500 cursor-pointer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent pointer-events-none" />
