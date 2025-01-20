@@ -94,14 +94,6 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
     }
   }, [isOpen]);
 
-  // Reset pagination and search when dialog opens/closes
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentPage(1);
-      setSearchQuery("");
-    }
-  }, [isOpen]);
-
   // Filter and paginate lists
   const filteredLists = useMemo(() => {
     return userLists.filter((list) =>
