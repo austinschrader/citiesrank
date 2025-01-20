@@ -1,3 +1,7 @@
+/**
+ * Toggle control for split view modes (list/split/map).
+ * Adapts to mobile/desktop layouts.
+ */
 import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
 import { Camera, Map, SplitSquareVertical } from "lucide-react";

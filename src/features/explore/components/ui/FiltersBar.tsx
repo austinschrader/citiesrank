@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Landmark, PlusCircle, Scroll, Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { SplitModeToggle } from "./filters/SplitModeToggle";
+import { SplitModeToggle } from "../layouts/SplitModeToggle";
 
 const baseButtonStyles =
   "inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
