@@ -1,7 +1,7 @@
 /**
  * Manages user-defined filters and sorting.
  * Single source of truth for filtering logic.
- * 
+ *
  * Flow: CitiesContext -> FiltersContext -> MapContext
  * MapContext applies additional map-specific filters.
  *
@@ -261,6 +261,14 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     );
   }, [filters]);
 
+  const normalizeTag = useCallback((tag: string) => {
+    return tag.toLowerCase().trim();
+  }, []);
+
+  const filterTagsSet = useMemo(() => {
+    return new Set(filters.tags.map(normalizeTag));
+  }, [filters.tags, normalizeTag]);
+
   const getFilteredCities = useCallback(
     (cities: CitiesResponse[]) => {
       if (!hasActiveFilters()) {
@@ -277,8 +285,9 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             !searchTerm &&
             !filters.averageRating &&
             !filters.populationCategory &&
-            filters.tags.length === 0 &&
-            filters.activeTypes.length === Object.values(CitiesTypeOptions).length
+            filterTagsSet.size === 0 &&
+            filters.activeTypes.length ===
+              Object.values(CitiesTypeOptions).length
           ) {
             return true;
           }
@@ -330,12 +339,21 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           }
 
           // Apply tag filters
-          if (filters.tags.length > 0) {
-            const cityTags =
-              (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
-            const hasMatchingTag = filters.tags.some((tag) =>
-              cityTags.includes(tag.toLowerCase())
-            );
+          if (filterTagsSet.size > 0) {
+            const cityTags = (city.tags as string[]) || [];
+
+            // Debug logging to help identify tag format issues
+            if (process.env.NODE_ENV === "dev") {
+              console.debug("City tags:", cityTags);
+              console.debug("Filter tags:", Array.from(filterTagsSet));
+            }
+
+            // Check if any city tag matches any filter tag
+            const hasMatchingTag = cityTags.some((tag) => {
+              const normalizedTag = normalizeTag(tag);
+              return filterTagsSet.has(normalizedTag);
+            });
+
             if (!hasMatchingTag) return false;
           }
 
@@ -357,7 +375,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           }
         });
     },
-    [filters, hasActiveFilters]
+    [filters, hasActiveFilters, filterTagsSet, normalizeTag]
   );
 
   const getActiveFilterCount = useCallback(() => {
@@ -368,22 +386,17 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     if (filters.tags.length > 0) count++;
     if (filters.season !== null) count++;
     if (filters.budget !== null) count++;
-    if (
-      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length
-    )
+    if (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length)
       count++;
     return count;
   }, [filters]);
 
-  const getTypeCounts = useCallback(
-    (places: CitiesResponse[]) => {
-      return places.reduce((acc, place) => {
-        acc[place.type] = (acc[place.type] || 0) + 1;
-        return acc;
-      }, {} as Record<CitiesTypeOptions, number>);
-    },
-    []
-  );
+  const getTypeCounts = useCallback((places: CitiesResponse[]) => {
+    return places.reduce((acc, place) => {
+      acc[place.type] = (acc[place.type] || 0) + 1;
+      return acc;
+    }, {} as Record<CitiesTypeOptions, number>);
+  }, []);
 
   const value = useMemo(
     () => ({
