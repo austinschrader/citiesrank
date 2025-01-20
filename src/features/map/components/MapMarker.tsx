@@ -12,7 +12,6 @@ import {
   createMarkerHtml,
   getMarkerStyle,
 } from "@/features/map/utils/mapUtils";
-import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
 import { cn } from "@/lib/utils";
 import L from "leaflet";
 import { Bookmark, FolderPlus, MapPin, Star } from "lucide-react";
@@ -201,7 +200,6 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
   const { user } = useAuth();
   const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
   const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
-  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
   const map = useLeafletMap();
 
   const markerStyle = useMemo(
@@ -279,17 +277,6 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
               refreshSavedPlaces();
             }}
             placeId={place.id}
-          />,
-          document.body
-        )}
-
-      {isPhotoDialogOpen &&
-        createPortal(
-          <PhotoUploadDialog
-            isOpen={isPhotoDialogOpen}
-            onClose={() => setIsPhotoDialogOpen(false)}
-            placeId={place.id}
-            placeName={place.name}
           />,
           document.body
         )}
