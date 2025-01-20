@@ -16,44 +16,28 @@ import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
 import Split from "react-split";
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
   const {
-    setNumPrioritizedToShow,
     setVisiblePlaces,
     splitMode,
     hasMore,
     loadMore,
     isLoadingMore,
+    filteredPlaces,
+    paginatedFilteredPlaces,
   } = useMap();
   const { contentType } = useHeader();
-  const BATCH_SIZE = 25; // Fixed size for infinite scroll
-  const [numFilteredToShow, setNumFilteredToShow] = useState(BATCH_SIZE);
 
-  // Get filtered places using FiltersContext
-  const filteredPlaces = useMemo(() => {
-    return getFilteredCities(cities);
-  }, [cities, getFilteredCities]);
-
-  // Get paginated filtered places (no need to memoize this simple slice)
-  const paginatedFilteredPlaces = filteredPlaces.slice(0, numFilteredToShow);
-
-  // Update visible places in map context
   useEffect(() => {
     if (cities.length > 0) {
       setVisiblePlaces(filteredPlaces);
     }
   }, [cities, filteredPlaces, setVisiblePlaces]);
-
-  // Reset pagination when view changes
-  useEffect(() => {
-    setNumPrioritizedToShow(BATCH_SIZE);
-    setNumFilteredToShow(BATCH_SIZE);
-  }, [splitMode]);
 
   return (
     <div className="h-full flex flex-col">

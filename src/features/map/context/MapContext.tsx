@@ -9,6 +9,7 @@
  */
 
 import { useLists } from "@/features/lists/context/ListsContext";
+import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { pb } from "@/lib/pocketbase";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
@@ -108,13 +109,17 @@ interface MapContextValue extends MapState {
   visibleLists: any[];
   getDisplayPlaces: (paginatedFilteredPlaces: MapPlace[]) => MapPlace[];
   isLoadingMore: boolean;
+  filteredPlaces: MapPlace[];
+  paginatedFilteredPlaces: MapPlace[];
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
-  const { filters } = useFilters();
+  const { filters, getFilteredCities } = useFilters();
   const { getList } = useLists();
+  const { cities } = useCities();
+
   const [state, setState] = useState<MapState>({
     zoom: DEFAULT_ZOOM,
     center: DEFAULT_CENTER,
@@ -124,7 +129,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
+    []
+  );
   const [prioritizedPlaces, setPrioritizedPlaces] = useState<MapPlace[]>([]);
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
@@ -263,11 +270,15 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const hasMore = useCallback(() => {
     const currentCount = numPrioritizedToShow;
-    const maxItemCount = splitMode === "list" 
-      ? visiblePlaces.length 
-      : visiblePlacesInView.length;
+    const maxItemCount =
+      splitMode === "list" ? visiblePlaces.length : visiblePlacesInView.length;
     return currentCount < maxItemCount;
-  }, [numPrioritizedToShow, splitMode, visiblePlaces.length, visiblePlacesInView.length]);
+  }, [
+    numPrioritizedToShow,
+    splitMode,
+    visiblePlaces.length,
+    visiblePlacesInView.length,
+  ]);
 
   const loadMore = useCallback(() => {
     if (!hasMore() || isLoadingMore) return;
@@ -302,6 +313,23 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     [splitMode, prioritizedPlaces]
   );
 
+  // Get filtered places using FiltersContext
+  const filteredPlaces = useMemo(() => {
+    return getFilteredCities(cities);
+  }, [cities, getFilteredCities]);
+
+  // Get paginated filtered places
+  const paginatedFilteredPlaces = useMemo(() => {
+    return filteredPlaces.slice(0, numPrioritizedToShow);
+  }, [filteredPlaces, numPrioritizedToShow]);
+
+  // Update visible places when filtered places change
+  useEffect(() => {
+    if (cities.length > 0) {
+      setVisiblePlaces(filteredPlaces);
+    }
+  }, [cities, filteredPlaces, setVisiblePlaces]);
+
   const value = useMemo(
     () => ({
       ...state,
@@ -318,7 +346,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       numPrioritizedToShow,
       setNumPrioritizedToShow,
       prioritizedPlaces,
-      maxItems: splitMode === "list" ? visiblePlaces.length : visiblePlacesInView.length,
+      maxItems:
+        splitMode === "list"
+          ? visiblePlaces.length
+          : visiblePlacesInView.length,
       hasMore,
       getVisiblePlacesForCurrentView,
       getVisiblePlaceTypes,
@@ -332,6 +363,8 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       visibleLists,
       getDisplayPlaces,
       isLoadingMore,
+      filteredPlaces,
+      paginatedFilteredPlaces,
     }),
     [
       state,
@@ -347,14 +380,12 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       visibleLists,
       getDisplayPlaces,
       isLoadingMore,
+      filteredPlaces,
+      paginatedFilteredPlaces,
     ]
   );
 
-  return (
-    <MapContext.Provider value={value}>
-      {children}
-    </MapContext.Provider>
-  );
+  return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
 }
 
 export function useMap() {
