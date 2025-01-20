@@ -36,6 +36,7 @@ interface ListData {
   updated: string;
   place_count: number;
   saves: number;
+  visibility: 'public' | 'private';
 }
 
 interface RawListData {
@@ -45,6 +46,7 @@ interface RawListData {
   places?: string[];
   created: string;
   updated: string;
+  visibility?: 'public' | 'private';
 }
 
 type ValidationResult =
@@ -134,6 +136,7 @@ export function ImportLists() {
             updated: result.data.updated,
             place_count: mappedPlaces.length,
             saves: 0,
+            visibility: result.data.visibility || 'public',
           },
           places: mappedPlaces,
         };

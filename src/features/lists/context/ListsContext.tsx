@@ -24,10 +24,12 @@ interface ListsContextType {
     title,
     description,
     places,
+    visibility,
   }: {
     title: string;
     description?: string;
     places: string[];
+    visibility?: "public" | "private";
   }) => Promise<ExpandedList>;
   getList: (id: string) => Promise<ListWithPlaces>;
   getUserLists: () => Promise<ExpandedList[]>;
@@ -37,10 +39,12 @@ interface ListsContextType {
       title,
       description,
       places,
+      visibility,
     }: {
       title?: string;
       description?: string;
       places?: string[];
+      visibility?: "public" | "private";
     }
   ) => Promise<ExpandedList>;
   deleteList: (id: string) => Promise<void>;
@@ -92,10 +96,12 @@ export function ListsProvider({ children }: { children: ReactNode }) {
       title,
       description,
       places,
+      visibility = "private",
     }: {
       title: string;
       description?: string;
       places: string[];
+      visibility?: "public" | "private";
     }) => {
       try {
         setIsLoading(true);
@@ -108,6 +114,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
             description,
             user: user?.id,
             place_count: places.length,
+            visibility,
           },
           {
             expand: "users",
@@ -233,9 +240,9 @@ export function ListsProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       setError(null);
 
-      // First get lists with user expansion
+      // Get user's own lists and public lists from other users
       const lists = (await pb.collection("lists").getFullList({
-        filter: `user = "${user.id}"`,
+        filter: `user = "${user.id}" || visibility = "public"`,
         expand: "user",
         sort: "-created",
         $autoCancel: false,
@@ -287,10 +294,12 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         title,
         description,
         places,
+        visibility,
       }: {
         title?: string;
         description?: string;
         places?: string[];
+        visibility?: "public" | "private";
       }
     ) => {
       try {
@@ -301,6 +310,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         const data: any = {};
         if (title) data.title = title;
         if (description) data.description = description;
+        if (visibility) data.visibility = visibility;
 
         const list = (await pb.collection("lists").update(id, data, {
           expand: "users",

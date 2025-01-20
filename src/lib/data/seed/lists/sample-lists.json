@@ -6,6 +6,7 @@
       "slug": "best-cities-digital-nomads",
       "places": ["chiang-mai-thailand", "lisbon-portugal", "medellin-colombia"],
       "user": "system",
+      "visibility": "public",
       "created": "2025-01-20T12:34:39.000Z",
       "updated": "2025-01-20T12:34:39.000Z"
     }

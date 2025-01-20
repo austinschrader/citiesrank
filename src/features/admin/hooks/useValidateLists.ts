@@ -9,6 +9,7 @@ const listSchema = z.object({
   places: z.array(z.string()).optional(),
   created: z.string(),
   updated: z.string(),
+  visibility: z.enum(['public', 'private']).optional().default('public'),
 });
 
 type List = z.infer<typeof listSchema>;

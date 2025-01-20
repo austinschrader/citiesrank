@@ -7,7 +7,6 @@ import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	Cities = "cities",
-	Countries = "countries",
 	Favorites = "favorites",
 	FeedItems = "feed_items",
 	ListLocations = "list_locations",
@@ -54,7 +53,7 @@ export type CitiesRecord<Thighlights = unknown, Ttags = unknown> = {
 	averageRating?: number
 	bestSeason: number
 	climate?: string
-	cost: number
+	cost?: number
 	costIndex: number
 	country: string
 	crowdLevel: number
@@ -78,13 +77,6 @@ export type CitiesRecord<Thighlights = unknown, Ttags = unknown> = {
 	type?: CitiesTypeOptions
 	userId?: RecordIdString
 	walkScore: number
-}
-
-export type CountriesRecord = {
-	description: string
-	isoCode: string
-	name: string
-	population: number
 }
 
 export type FavoritesRecord = {
@@ -131,12 +123,17 @@ export type ListPlacesRecord = {
 	rank?: number
 }
 
+export enum ListsVisibilityOptions {
+	"public" = "public",
+	"private" = "private",
+}
 export type ListsRecord = {
 	description?: string
 	place_count?: number
 	saves?: number
 	title: string
 	user: RecordIdString
+	visibility?: ListsVisibilityOptions
 }
 
 export type SavedListsRecord = {
@@ -163,7 +160,6 @@ export type UsersRecord = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type CitiesResponse<Thighlights = unknown, Ttags = unknown, Texpand = unknown> = Required<CitiesRecord<Thighlights, Ttags>> & BaseSystemFields<Texpand>
-export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FavoritesResponse<Texpand = unknown> = Required<FavoritesRecord> & BaseSystemFields<Texpand>
 export type FeedItemsResponse<Tcontent = unknown, Tstats = unknown, Texpand = unknown> = Required<FeedItemsRecord<Tcontent, Tstats>> & BaseSystemFields<Texpand>
 export type ListLocationsResponse<Texpand = unknown> = Required<ListLocationsRecord> & BaseSystemFields<Texpand>
@@ -177,7 +173,6 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 
 export type CollectionRecords = {
 	cities: CitiesRecord
-	countries: CountriesRecord
 	favorites: FavoritesRecord
 	feed_items: FeedItemsRecord
 	list_locations: ListLocationsRecord
@@ -190,7 +185,6 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
 	cities: CitiesResponse
-	countries: CountriesResponse
 	favorites: FavoritesResponse
 	feed_items: FeedItemsResponse
 	list_locations: ListLocationsResponse
@@ -206,7 +200,6 @@ export type CollectionResponses = {
 
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'cities'): RecordService<CitiesResponse>
-	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'favorites'): RecordService<FavoritesResponse>
 	collection(idOrName: 'feed_items'): RecordService<FeedItemsResponse>
 	collection(idOrName: 'list_locations'): RecordService<ListLocationsResponse>
