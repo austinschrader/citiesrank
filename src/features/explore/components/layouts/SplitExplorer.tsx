@@ -23,7 +23,7 @@ import Split from "react-split";
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
-  const { filters, getFilteredCities } = useFilters();
+  const { getFilteredCities } = useFilters();
   const {
     visiblePlacesInView,
     numPrioritizedToShow,
@@ -38,27 +38,10 @@ export const SplitExplorer = () => {
   const [numFilteredToShow, setNumFilteredToShow] = useState(BATCH_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Memoize the active filters check
-  const hasActiveFilters = useMemo(
-    () =>
-      filters.search ||
-      filters.averageRating ||
-      filters.populationCategory ||
-      filters.travelStyle ||
-      filters.tags.length > 0 ||
-      filters.season ||
-      filters.budget ||
-      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length,
-    [filters]
-  );
-
   // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
-    if (!hasActiveFilters) {
-      return cities;
-    }
     return getFilteredCities(cities);
-  }, [cities, getFilteredCities, filters, hasActiveFilters]);
+  }, [cities, getFilteredCities]);
 
   // Get paginated filtered places
   const paginatedFilteredPlaces = useMemo(() => {

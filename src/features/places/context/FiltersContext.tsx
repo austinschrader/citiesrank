@@ -97,6 +97,7 @@ interface FiltersContextValue {
     places: CitiesResponse[]
   ) => Record<CitiesTypeOptions, number>;
   getUniqueTags: (cities: CitiesResponse[]) => string[];
+  hasActiveFilters: () => boolean;
 }
 
 const defaultFilters: Filters = {
@@ -282,8 +283,25 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     };
   }, [resetFilters]);
 
+  const hasActiveFilters = useCallback(() => {
+    return !!(
+      filters.search ||
+      filters.averageRating ||
+      filters.populationCategory ||
+      filters.travelStyle ||
+      filters.tags.length > 0 ||
+      filters.season ||
+      filters.budget ||
+      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length
+    );
+  }, [filters]);
+
   const getFilteredCities = useCallback(
     (cities: CitiesResponse[]) => {
+      if (!hasActiveFilters()) {
+        return cities;
+      }
+
       return cities
         .filter((city) => {
           // Apply search filter first
@@ -374,7 +392,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           }
         });
     },
-    [filters]
+    [filters, hasActiveFilters]
   );
 
   const getActiveFilterCount = useCallback(() => {
@@ -414,6 +432,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       getActiveFilterCount,
       getTypeCounts,
       getUniqueTags,
+      hasActiveFilters,
     }),
     [
       filters,
@@ -431,6 +450,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       getActiveFilterCount,
       getTypeCounts,
       getUniqueTags,
+      hasActiveFilters,
     ]
   );
 
