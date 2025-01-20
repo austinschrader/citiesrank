@@ -10,13 +10,15 @@ import { MapPlace } from "@/features/map/types";
 import { cn } from "@/lib/utils";
 import {
   Check,
-  Facebook,
-  Instagram,
   Link2,
   Mail,
-  MessageCircle,
   Share2,
+  Facebook,
   Twitter,
+  Instagram,
+  Copy,
+  MessageSquare,
+  Share as ShareIcon,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -26,7 +28,6 @@ interface SocialShareMenuProps {
 
 export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
   const [copied, setCopied] = useState(false);
-  const [showShareToast, setShowShareToast] = useState(false);
 
   const shareUrl = `https://citiesrank.com/places/${place.id}`;
   const shareText = `Check out ${place.name} ${
@@ -34,9 +35,13 @@ export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
   } 🌎✨`;
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // Silently fail - UI will remain in non-copied state
+    }
   };
 
   const handleShare = async () => {
@@ -49,14 +54,40 @@ export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
         });
       } catch (err) {
         if ((err as Error).name !== "AbortError") {
-          console.error("Error sharing:", err);
+          handleCopyLink(); // Fallback to copying if share fails
         }
       }
     } else {
-      setShowShareToast(true);
-      setTimeout(() => setShowShareToast(false), 2000);
+      handleCopyLink();
     }
   };
+
+  const socialPlatforms = [
+    {
+      name: "Facebook",
+      icon: Facebook,
+      color: "hover:bg-blue-500/10 hover:text-blue-500",
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      name: "Twitter",
+      icon: Twitter,
+      color: "hover:bg-sky-500/10 hover:text-sky-500",
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      name: "Instagram",
+      icon: Instagram,
+      color: "hover:bg-pink-500/10 hover:text-pink-500",
+      url: `https://www.instagram.com/share?url=${encodeURIComponent(shareUrl)}`,
+    },
+    {
+      name: "Message",
+      icon: MessageSquare,
+      color: "hover:bg-green-500/10 hover:text-green-500",
+      url: `sms:?body=${encodeURIComponent(shareText + ' ' + shareUrl)}`,
+    },
+  ];
 
   return (
     <div className="relative">
@@ -65,24 +96,32 @@ export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
           <Button
             size="icon"
             variant="ghost"
-            className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/20"
+            className="h-10 w-10 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 hover:bg-black/40 hover:border-white/30 transition-all duration-200"
           >
-            <Share2 className="w-5 h-5 text-white" />
+            <ShareIcon className="w-5 h-5 text-white" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-60 bg-background/95 backdrop-blur-sm"
+          className="w-72 bg-background/95 backdrop-blur-sm z-[10000] p-3 rounded-xl border border-white/10"
+          style={{ zIndex: 10000 }}
+          forceMount
         >
-          {/* Quick Share Button for Mobile */}
+          {/* Share Title */}
+          <div className="mb-3 px-2">
+            <h3 className="text-sm font-medium text-foreground/80">Share this place</h3>
+            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{shareText}</p>
+          </div>
+
+          {/* Quick Share Button */}
           <DropdownMenuItem
-            className="flex items-center gap-2 p-3"
+            className="flex items-center gap-3 p-3 cursor-pointer hover:bg-primary/5 rounded-lg transition-colors duration-200"
             onClick={handleShare}
           >
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Share2 className="w-4 h-4 text-primary" />
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Share2 className="w-5 h-5 text-primary" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-1">
               <span className="text-sm font-medium">Quick Share</span>
               <span className="text-xs text-muted-foreground">
                 Share to any app
@@ -90,65 +129,49 @@ export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
             </div>
           </DropdownMenuItem>
 
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-3 bg-border/50" />
 
-          {/* Social Share Options */}
-          <div className="p-2 grid grid-cols-4 gap-1">
-            {[
-              {
-                icon: Twitter,
-                label: "Twitter",
-                color: "hover:bg-blue-500/10",
-              },
-              {
-                icon: Facebook,
-                label: "Facebook",
-                color: "hover:bg-blue-600/10",
-              },
-              {
-                icon: Instagram,
-                label: "Instagram",
-                color: "hover:bg-pink-500/10",
-              },
-              {
-                icon: MessageCircle,
-                label: "Message",
-                color: "hover:bg-green-500/10",
-              },
-            ].map(({ icon: Icon, label, color }) => (
-              <button
-                key={label}
+          {/* Social Platforms Grid */}
+          <div className="grid grid-cols-4 gap-2 mb-3">
+            {socialPlatforms.map(({ name, icon: Icon, color, url }) => (
+              <a
+                key={name}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={cn(
-                  "flex flex-col items-center gap-1 p-2 rounded-lg transition-colors",
+                  "flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all duration-200",
+                  "hover:scale-105",
                   color
                 )}
-                onClick={handleShare}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(url, '_blank', 'width=600,height=400');
+                }}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-xs">{label}</span>
-              </button>
+                <span className="text-xs font-medium">{name}</span>
+              </a>
             ))}
           </div>
 
-          <DropdownMenuSeparator />
-
           {/* Copy Link Button */}
           <DropdownMenuItem
-            className="flex items-center gap-2 p-3"
+            className="flex items-center gap-3 p-3 cursor-pointer hover:bg-primary/5 rounded-lg transition-colors duration-200"
             onClick={handleCopyLink}
           >
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
               {copied ? (
-                <Check className="w-4 h-4 text-primary" />
+                <Check className="w-5 h-5 text-primary animate-in fade-in-0 zoom-in-95" />
               ) : (
-                <Link2 className="w-4 h-4 text-primary" />
+                <Copy className="w-5 h-5 text-primary" />
               )}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-1">
               <span className="text-sm font-medium">
                 {copied ? "Copied!" : "Copy Link"}
               </span>
-              <span className="text-xs text-muted-foreground truncate">
+              <span className="text-xs text-muted-foreground truncate max-w-[180px]">
                 {shareUrl}
               </span>
             </div>
@@ -156,17 +179,17 @@ export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
 
           {/* Email Option */}
           <DropdownMenuItem
-            className="flex items-center gap-2 p-3"
+            className="flex items-center gap-3 p-3 cursor-pointer hover:bg-primary/5 rounded-lg transition-colors duration-200 mt-1"
             onClick={() => {
               window.location.href = `mailto:?subject=${encodeURIComponent(
                 `Check out ${place.name}`
               )}&body=${encodeURIComponent(shareText + "\n\n" + shareUrl)}`;
             }}
           >
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-              <Mail className="w-4 h-4 text-primary" />
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Mail className="w-5 h-5 text-primary" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-1">
               <span className="text-sm font-medium">Email</span>
               <span className="text-xs text-muted-foreground">
                 Share via email
@@ -175,20 +198,6 @@ export const SocialShareMenu: React.FC<SocialShareMenuProps> = ({ place }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* Share Toast */}
-      <div
-        className={cn(
-          "absolute top-12 right-0 bg-background/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg border transition-all duration-200",
-          showShareToast
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-2 pointer-events-none"
-        )}
-      >
-        <p className="text-sm whitespace-nowrap">
-          Link copied to clipboard! 🎉
-        </p>
-      </div>
     </div>
   );
 };
