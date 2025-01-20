@@ -8,9 +8,16 @@ import { ImportButton } from "./ImportButton";
 import { ValidationResults } from "./ValidationResults";
 
 // Import all seed files
-const seedFiles: Record<string, SeedFile> = import.meta.glob<SeedFile>(
-  "/src/lib/data/seed/places/*.json",
-  { eager: true }
+const seedFiles: Record<string, SeedFile> = Object.fromEntries(
+  Object.entries(
+    import.meta.glob<SeedFile>("/src/lib/data/seed/places/*.json", { eager: true })
+  ).map(([key, value]) => [
+    key,
+    {
+      ...value,
+      content: value.default,
+    },
+  ])
 );
 
 export function ImportPlaces() {

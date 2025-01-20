@@ -167,12 +167,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     queryParams: QueryParams = {}
   ) => {
     try {
-      console.log("🌍 fetchCitiesPaginated called with:", {
-        page,
-        perPage,
-        queryParams,
-      });
-
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: true, error: null },
@@ -182,8 +176,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         ? `name ~ "${queryParams.searchTerm}"`
         : "";
 
-      console.log("📍 Fetching cities with filter:", filter);
-
       // Use getFullList instead of getList to ensure we have all cities
       const citiesData = await pb
         .collection("cities")
@@ -191,19 +183,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
           filter,
           sort: "-created",
         });
-
-      console.log("📊 Fetched cities count:", citiesData.length);
-      console.log(
-        "🏙️ Cities by type:",
-        Object.fromEntries(
-          Object.entries(
-            citiesData.reduce((acc, city) => {
-              acc[city.type as string] = (acc[city.type as string] || 0) + 1;
-              return acc;
-            }, {} as Record<string, number>)
-          )
-        )
-      );
 
       setState((prev) => ({
         ...prev,
@@ -226,13 +205,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
         perPage,
         totalPages: Math.ceil(citiesData.length / perPage),
       };
-
-      console.log("📑 Returning paginated result:", {
-        returnedItems: paginatedResult.items.length,
-        totalItems: paginatedResult.totalItems,
-        page: paginatedResult.page,
-        totalPages: paginatedResult.totalPages,
-      });
 
       return paginatedResult;
     } catch (error) {
@@ -281,15 +253,12 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   };
 
   const getAllCities = async () => {
-    console.log("🌎 getAllCities called");
     const records = await pb.collection("cities").getFullList<CitiesResponse>();
-    console.log("🌎 getAllCities returned:", records.length, "cities");
     return records;
   };
 
   const refreshCities = async () => {
     try {
-      console.log("🔄 refreshCities called");
       setState((prev) => ({
         ...prev,
         cityStatus: { loading: true, error: null },
@@ -301,18 +270,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
           $autoCancel: false,
         });
 
-      console.log("🔄 refreshCities fetched:", citiesData.length, "cities");
-      console.log(
-        "🏙️ Cities by type:",
-        Object.fromEntries(
-          Object.entries(
-            citiesData.reduce((acc, city) => {
-              acc[city.type as string] = (acc[city.type as string] || 0) + 1;
-              return acc;
-            }, {} as Record<string, number>)
-          )
-        )
-      );
+
 
       setState((prev) => ({
         ...prev,
