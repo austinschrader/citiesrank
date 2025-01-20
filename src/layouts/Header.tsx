@@ -76,12 +76,34 @@ export const Header = () => {
         <div className="h-16 flex items-center">
           <div className="flex-none hidden md:block">
             <Link to="/" className="flex flex-col group">
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text transition-all duration-300 group-hover:from-purple-500 group-hover:to-pink-500">
-                RoamRoster
-              </span>
-              <span className="text-sm text-muted-foreground transition-opacity duration-300 group-hover:opacity-80">
-                Collect places. Share stories.
-              </span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black tracking-tight bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+                  WURLD
+                </span>
+                <span className="text-3xl font-black tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+                  MAP
+                </span>
+                <div className="relative w-3 h-3">
+                  <div
+                    className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-20"
+                    style={{ animationDuration: "2s" }}
+                  ></div>
+                  <div
+                    className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-40"
+                    style={{ animationDuration: "1.5s" }}
+                  ></div>
+                  <div
+                    className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-60"
+                    style={{ animationDuration: "1s" }}
+                  ></div>
+                  <div className="absolute inset-0 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/20"></div>
+                </div>
+              </div>
+              <div className="w-full text-center">
+                <span className="text-sm font-semibold tracking-widest uppercase bg-gradient-to-r from-slate-600 to-slate-500 bg-clip-text text-transparent">
+                  Your World, UR Map
+                </span>
+              </div>
             </Link>
           </div>
 
