@@ -11,9 +11,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useSavedPlaces } from "@/features/lists/context/SavedPlacesContext";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
-import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
 import { getImageUrl } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import {
@@ -21,8 +21,6 @@ import {
   Camera,
   ChevronLeft,
   ChevronRight,
-  FolderPlus,
-  LucideIcon,
   MapPin,
   Shuffle,
   Sparkles,
@@ -31,10 +29,9 @@ import {
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePlaceNavigation } from "../hooks/usePlaceNavigation";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 import { SocialShareMenu } from "./SocialShareMenu";
-import { useSavedPlaces } from "@/features/lists/context/SavedPlacesContext";
-import { usePlaceNavigation } from "../hooks/usePlaceNavigation";
 
 interface PlaceModalProps {
   place: MapPlace;
@@ -42,15 +39,6 @@ interface PlaceModalProps {
   onClose: () => void;
   onPlaceSelect?: (place: MapPlace) => void;
 }
-
-interface StatBadgeProps {
-  icon: LucideIcon;
-  value: string | number;
-  label: string;
-  color?: string;
-}
-
-const DOUBLE_TAP_DELAY = 300;
 
 export const PlaceModal: React.FC<PlaceModalProps> = ({
   place: initialPlace,
@@ -61,14 +49,14 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const navigate = useNavigate();
   const { visiblePlacesInView } = useMap();
   const { user } = useAuth();
-  const { currentPlace, navigation, toggleRandomMode, navigateToPlace } = usePlaceNavigation(initialPlace, visiblePlacesInView);
+  const { currentPlace, navigation, toggleRandomMode, navigateToPlace } =
+    usePlaceNavigation(initialPlace, visiblePlacesInView);
   const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showHints, setShowHints] = useState(true);
-  const [lastTap, setLastTap] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -129,22 +117,9 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     setShowHints(true);
   }, [currentPlace?.id]);
 
-  const handleDoubleTap = (e: React.TouchEvent) => {
-    const currentTime = Date.now();
-    const tapLength = currentTime - lastTap;
-
-    if (tapLength < DOUBLE_TAP_DELAY && tapLength > 0) {
-      if (user) {
-        setShowSaveDialog(true);
-      }
-    }
-
-    setLastTap(currentTime);
-  };
-
   const handleImageNavigation = (direction: "next" | "prev") => {
     if (preloadedImages.length <= 1) return;
-    
+
     const newIndex =
       direction === "next"
         ? (currentImageIndex + 1) % preloadedImages.length
@@ -209,21 +184,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     });
     onClose();
   };
-
-  const StatBadge: React.FC<StatBadgeProps> = ({
-    icon: Icon,
-    value,
-    label,
-    color = "text-white",
-  }) => (
-    <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full">
-      <Icon className={cn("w-4 h-4", color)} />
-      <div className="flex flex-col">
-        <span className="text-sm font-medium text-white">{value}</span>
-        <span className="text-xs text-white/70">{label}</span>
-      </div>
-    </div>
-  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -367,11 +327,13 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                               : "text-white/90 group-hover:scale-110"
                           )}
                         />
-                        <span className={cn(
-                          "absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap opacity-0 scale-95 transition-all duration-200",
-                          "bg-black/80 text-white backdrop-blur-md",
-                          "group-hover:opacity-100 group-hover:scale-100"
-                        )}>
+                        <span
+                          className={cn(
+                            "absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap opacity-0 scale-95 transition-all duration-200",
+                            "bg-black/80 text-white backdrop-blur-md",
+                            "group-hover:opacity-100 group-hover:scale-100"
+                          )}
+                        >
                           {isPlaceSaved(currentPlace.id) ? "Saved" : "Save"}
                         </span>
                       </Button>
