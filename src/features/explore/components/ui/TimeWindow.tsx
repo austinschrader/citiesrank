@@ -1,3 +1,7 @@
+/**
+ * Dropdown component for selecting energy mode and time range.
+ * Pure UI - receives all data and handlers as props.
+ */
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -5,12 +9,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { EnergyMode, TimeRange } from "@/features/explore/types";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Flame, Sparkles, Timer, Zap } from "lucide-react";
 import React from "react";
-
-type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
-type TimeRange = "now" | "today" | "week" | "month";
 
 const energyModes = {
   buzzing: {
@@ -29,14 +31,14 @@ const energyModes = {
     icon: Timer,
     label: "Soon",
   },
-};
+} as const;
 
 const timeRanges = {
   now: "Now",
   today: "Today",
   week: "Week",
   month: "Month",
-};
+} as const;
 
 interface TimeWindowProps {
   className?: string;

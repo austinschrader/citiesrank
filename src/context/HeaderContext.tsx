@@ -1,16 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-
-export type HeaderMode =
-  | "discover"
-  | "lists"
-  | "latest"
-  | "profile"
-  | "favorites"
-  | "places";
-export type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
-export type TimeRange = "now" | "today" | "week" | "month";
-export type ContentType = "places" | "lists";
+import { ContentType, EnergyMode, HeaderMode, TimeRange } from "@/features/explore/types";
 
 interface HeaderContextValue {
   mode: HeaderMode;
