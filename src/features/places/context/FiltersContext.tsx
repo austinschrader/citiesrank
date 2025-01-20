@@ -73,7 +73,6 @@ export interface Filters {
   sort: SortOrder;
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
-  travelStyle: string | null;
   tags: string[];
   season: string | null;
   budget: string | null;
@@ -86,10 +85,8 @@ interface FiltersContextValue {
   resetFilters: () => void;
   resetTypeFilters: () => void;
   resetPopulationFilter: () => void;
-  resetTravelStyleFilter: () => void;
   handleTypeClick: (type: CitiesTypeOptions) => void;
   handlePopulationSelect: (category: PopulationCategory | null) => void;
-  handleTravelStyleSelect: (style: string | null) => Promise<void>;
   handleRatingChange: (rating: number | null) => void;
   getFilteredCities: (cities: CitiesResponse[]) => CitiesResponse[];
   getActiveFilterCount: () => number;
@@ -110,9 +107,8 @@ const defaultFilters: Filters = {
     CitiesTypeOptions.sight,
   ],
   sort: "alphabetical-asc",
-  averageRating: 4.0,
+  averageRating: null,
   populationCategory: null,
-  travelStyle: null,
   tags: [],
   season: null,
   budget: null,
@@ -167,28 +163,12 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  const setFilters = useCallback((newFilters: Partial<Filters>) => {
-    setFiltersState((prev) => ({ ...prev, ...newFilters }));
+  const setFilters = useCallback((updates: Partial<Filters>) => {
+    setFiltersState((prev) => ({ ...prev, ...updates }));
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFiltersState({
-      search: "",
-      activeTypes: [
-        CitiesTypeOptions.country,
-        CitiesTypeOptions.region,
-        CitiesTypeOptions.city,
-        CitiesTypeOptions.neighborhood,
-        CitiesTypeOptions.sight,
-      ],
-      sort: "alphabetical-asc",
-      averageRating: 4.0,
-      populationCategory: null,
-      travelStyle: null,
-      tags: [],
-      season: null,
-      budget: null,
-    });
+    setFiltersState((prev) => ({ ...defaultFilters, sort: prev.sort }));
   }, []);
 
   const resetTypeFilters = useCallback(() => {
@@ -213,20 +193,6 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
         : prev.activeTypes,
     }));
   }, []);
-
-  const handleTravelStyleSelect = useCallback(async (style: string | null) => {
-    // Simulate a small delay to show loading state
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    setFiltersState((prev) => ({
-      ...prev,
-      travelStyle: style,
-    }));
-  }, []);
-
-  const resetTravelStyleFilter = useCallback(() => {
-    handleTravelStyleSelect(null);
-  }, [handleTravelStyleSelect]);
 
   const handleTypeClick = useCallback((type: CitiesTypeOptions) => {
     setFiltersState((prev) => {
@@ -288,7 +254,6 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       filters.search ||
       filters.averageRating ||
       filters.populationCategory ||
-      filters.travelStyle ||
       filters.tags.length > 0 ||
       filters.season ||
       filters.budget ||
@@ -362,15 +327,6 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
             if (!hasMatchingTag) return false;
           }
 
-          // Apply travel style filtering
-          if (filters.travelStyle) {
-            const cityTags =
-              (city.tags as string[])?.map((tag) => tag.toLowerCase()) || [];
-            if (!cityTags.includes(filters.travelStyle.toLowerCase())) {
-              return false;
-            }
-          }
-
           return true;
         })
         .sort((a, b) => {
@@ -396,21 +352,26 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     let count = 0;
     if (filters.search) count++;
     if (filters.averageRating !== null) count++;
-    if (filters.populationCategory) count++;
-    if (filters.travelStyle) count++;
-    // Check if not all types are selected
-    if (filters.activeTypes.length !== Object.values(CitiesTypeOptions).length)
-      count++;
+    if (filters.populationCategory !== null) count++;
     if (filters.tags.length > 0) count++;
+    if (filters.season !== null) count++;
+    if (filters.budget !== null) count++;
+    if (
+      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length
+    )
+      count++;
     return count;
   }, [filters]);
 
-  const getTypeCounts = useCallback((places: CitiesResponse[]) => {
-    return Object.values(CitiesTypeOptions).reduce((acc, type) => {
-      acc[type] = places.filter((place) => place.type === type).length;
-      return acc;
-    }, {} as Record<CitiesTypeOptions, number>);
-  }, []);
+  const getTypeCounts = useCallback(
+    (places: CitiesResponse[]) => {
+      return places.reduce((acc, place) => {
+        acc[place.type] = (acc[place.type] || 0) + 1;
+        return acc;
+      }, {} as Record<CitiesTypeOptions, number>);
+    },
+    []
+  );
 
   const value = useMemo(
     () => ({
@@ -420,10 +381,8 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       resetFilters,
       resetTypeFilters,
       resetPopulationFilter,
-      resetTravelStyleFilter,
       handleTypeClick,
       handlePopulationSelect,
-      handleTravelStyleSelect,
       handleRatingChange,
       getFilteredCities,
       getActiveFilterCount,
@@ -438,10 +397,8 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
       resetFilters,
       resetTypeFilters,
       resetPopulationFilter,
-      resetTravelStyleFilter,
       handleTypeClick,
       handlePopulationSelect,
-      handleTravelStyleSelect,
       handleRatingChange,
       getFilteredCities,
       getActiveFilterCount,
