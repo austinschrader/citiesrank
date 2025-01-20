@@ -1,13 +1,11 @@
 /**
  * Layout component that manages split view between map and panels.
  * Pure layout component - handles only view composition and sizing.
- * 
+ *
  * Data flow: MapContext -> SplitExplorer -> Panel components
  */
-import { useHeader } from "@/context/HeaderContext";
+import { ContentPanel } from "@/features/explore/components/ui/ContentPanel";
 import { FiltersBar } from "@/features/explore/components/ui/FiltersBar";
-import { ListsPanel } from "@/features/explore/components/ui/ListsPanel";
-import { PlacesPanel } from "@/features/explore/components/ui/PlacesPanel";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
 import { cn } from "@/lib/utils";
@@ -15,7 +13,6 @@ import Split from "react-split";
 
 export const SplitExplorer = () => {
   const { splitMode } = useMap();
-  const { contentType } = useHeader();
 
   return (
     <div className="h-full flex flex-col">
@@ -45,28 +42,21 @@ export const SplitExplorer = () => {
               splitMode === "map" && "hidden"
             )}
           >
-            {contentType === "places" ? (
-              <PlacesPanel />
-            ) : (
-              <ListsPanel />
-            )}
+            <ContentPanel />
           </div>
-
           <div
             key={`map-${splitMode}`}
             className={cn(
-              "relative transition-all duration-300 ease-in-out",
-              splitMode === "list"
-                ? "w-0"
-                : splitMode === "map"
+              "transition-all duration-300 ease-in-out",
+              splitMode === "map"
                 ? "flex-1"
+                : splitMode === "list"
+                ? "w-0"
                 : "flex-1",
               splitMode === "list" && "hidden"
             )}
           >
-            <div className="absolute inset-0">
-              <CityMap className="h-full" />
-            </div>
+            <CityMap />
           </div>
         </Split>
       </div>
