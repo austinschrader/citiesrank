@@ -4,12 +4,15 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useLists } from "@/features/lists/context/ListsContext";
 import { useSavedLists } from "@/features/lists/context/SavedListsContext";
+import { PlaceModal } from "@/features/map/components/PlaceModal";
 import { useToast } from "@/hooks/use-toast";
 import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { CitiesResponse, ListsResponse } from "@/lib/types/pocketbase-types";
-import { Loader2, MapPin, X } from "lucide-react";
+import { BookmarkPlus, MapPin, Share2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+
 type ListWithPlaces = ListsResponse & {
   places: CitiesResponse[];
   stats: {
@@ -40,11 +43,7 @@ export const ListDetailsPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [list, setList] = useState<ListWithPlaces | null>(null);
-  const [selectedImage, setSelectedImage] = useState<{
-    url: string;
-    title: string;
-    description: string;
-  } | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<CitiesResponse | null>(null);
 
   // Load list data
   const loadList = useCallback(async () => {
@@ -109,43 +108,11 @@ export const ListDetailsPage = () => {
     }
   }, [list, isSaved, saveList, unsaveList, toast, loadList]);
 
-  const handleImageClick = useCallback((place: CitiesResponse) => {
-    setSelectedImage({
-      url: place.imageUrl,
-      title: place.name,
-      description: place.description,
-    });
+  // Handle place click
+  const handlePlaceClick = useCallback((place: CitiesResponse) => {
+    if (!place) return;
+    setSelectedPlace(place);
   }, []);
-
-  const handlePreviousImage = useCallback(() => {
-    if (!selectedImage || !list) return;
-    const currentIndex = list.places.findIndex(
-      (place) => place.imageUrl === selectedImage.url
-    );
-    const previousIndex =
-      currentIndex > 0 ? currentIndex - 1 : list.places.length - 1;
-    const previousPlace = list.places[previousIndex];
-    setSelectedImage({
-      url: previousPlace.imageUrl,
-      title: previousPlace.name,
-      description: previousPlace.description,
-    });
-  }, [selectedImage, list]);
-
-  const handleNextImage = useCallback(() => {
-    if (!selectedImage || !list) return;
-    const currentIndex = list.places.findIndex(
-      (place) => place.imageUrl === selectedImage.url
-    );
-    const nextIndex =
-      currentIndex < list.places.length - 1 ? currentIndex + 1 : 0;
-    const nextPlace = list.places[nextIndex];
-    setSelectedImage({
-      url: nextPlace.imageUrl,
-      title: nextPlace.name,
-      description: nextPlace.description,
-    });
-  }, [selectedImage, list]);
 
   const handleShare = useCallback(async () => {
     if (!list) return;
@@ -220,7 +187,7 @@ export const ListDetailsPage = () => {
                 "wide"
               )})`,
             }}
-            onClick={() => list.places[0] && handleImageClick(list.places[0])}
+            onClick={() => list.places[0] && handlePlaceClick(list.places[0])}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
           </div>
@@ -261,7 +228,8 @@ export const ListDetailsPage = () => {
               {list.places.map((place, index) => (
                 <Card
                   key={place.id}
-                  className="overflow-hidden group hover:shadow-lg transition-shadow duration-300"
+                  className="overflow-hidden group hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                  onClick={() => handlePlaceClick(place)}
                 >
                   {/* Image */}
                   <div className="relative aspect-[4/3]">
@@ -276,16 +244,6 @@ export const ListDetailsPage = () => {
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    {/* Expand Button */}
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
-                      onClick={() => handleImageClick(place)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
                   </div>
 
                   {/* Content */}
@@ -334,13 +292,13 @@ export const ListDetailsPage = () => {
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
-                      <X className="h-4 w-4 mr-2" />
+                      <BookmarkPlus className="h-4 w-4 mr-2" />
                       {isSaved(list.id) ? "Unsave List" : "Save List"}
                     </>
                   )}
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleShare}>
-                  <X className="h-4 w-4 mr-2" />
+                  <Share2 className="h-4 w-4 mr-2" />
                   Share List
                 </Button>
               </div>
@@ -349,50 +307,17 @@ export const ListDetailsPage = () => {
         </div>
       </div>
 
-      {/* Image Dialog */}
-      <Dialog
-        open={!!selectedImage}
-        onOpenChange={(open) => !open && setSelectedImage(null)}
-      >
-        <DialogContent className="max-w-4xl">
-          {selectedImage && (
-            <div className="relative">
-              {/* Navigation Buttons */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
-                onClick={handlePreviousImage}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-4 z-50 rounded-full bg-background/80 backdrop-blur-sm"
-                onClick={handleNextImage}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-
-              {/* Image */}
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.title}
-                className="w-full aspect-video object-cover rounded-lg"
-              />
-
-              {/* Image Info */}
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">{selectedImage.title}</h3>
-                <p className="text-muted-foreground mt-2">
-                  {selectedImage.description}
-                </p>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Place Modal */}
+      {selectedPlace && (
+        <PlaceModal
+          place={selectedPlace}
+          isOpen={!!selectedPlace}
+          onClose={() => setSelectedPlace(null)}
+          onPlaceSelect={(place) => {
+            setSelectedPlace(place as CitiesResponse);
+          }}
+        />
+      )}
     </div>
   );
 };
