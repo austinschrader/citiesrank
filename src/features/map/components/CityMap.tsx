@@ -24,10 +24,6 @@ import { MapLegend } from "./MapLegend";
 import { MapMarker } from "./MapMarker";
 import { PlaceGeoJson } from "./PlaceGeoJson";
 
-interface CityMapProps {
-  className?: string;
-}
-
 const BoundsTracker = () => {
   const map = useLeafletMap();
   const { setMapBounds } = useMap();
@@ -52,10 +48,10 @@ const BoundsTracker = () => {
   return null;
 };
 
-export const CityMap = ({ className }: CityMapProps) => {
+export const CityMap = () => {
   const { center, zoom, selectedPlace, setZoom } = useMap();
   const { cities } = useCities();
-  const { filters, getFilteredCities, resetFilters } = useFilters();
+  const { filters, getFilteredCities, resetFilters, hasActiveFilters } = useFilters();
   const {
     visiblePlacesInView,
     setVisiblePlaces,
@@ -65,21 +61,6 @@ export const CityMap = ({ className }: CityMapProps) => {
   const filteredCities = useMemo(() => {
     return getFilteredCities(cities);
   }, [cities, getFilteredCities, filters.budget, filters.season]);
-
-  // Memoize hasActiveFilters check
-  const hasActiveFilters = useMemo(
-    () =>
-      filters.search ||
-      filters.averageRating ||
-      filters.populationCategory ||
-      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length,
-    [
-      filters.search,
-      filters.averageRating,
-      filters.populationCategory,
-      filters.activeTypes,
-    ]
-  );
 
   // Update visible places with cleanup
   useEffect(() => {
@@ -101,7 +82,7 @@ export const CityMap = ({ className }: CityMapProps) => {
   );
 
   return (
-    <div className={cn("relative h-full w-full", className)}>
+    <div className="relative h-full w-full">
       <MapContainer
         center={center}
         zoom={zoom}
@@ -134,7 +115,7 @@ export const CityMap = ({ className }: CityMapProps) => {
       </MapContainer>
 
       {/* Status Indicator */}
-      {hasActiveFilters && visiblePlacesInView.length > 0 && (
+      {hasActiveFilters() && visiblePlacesInView.length > 0 && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
           <div className="flex flex-col sm:flex-row items-center gap-2">
             <div
