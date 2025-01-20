@@ -2,7 +2,7 @@ import { SplitExplorer } from "@/features/explore/components/layouts/SplitExplor
 
 export const ExplorePage = () => {
   return (
-    <div className="h-[calc(100vh-8rem)] w-full">
+    <div className="h-[calc(100vh-5rem)] w-full">
       <SplitExplorer />
     </div>
   );
