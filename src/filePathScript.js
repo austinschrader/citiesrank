@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import { minimatch } from "minimatch";
 import { join, relative, resolve } from "path";
 import { fileURLToPath } from "url";
 
@@ -52,6 +53,21 @@ const ignoreList = [
   "src/lib/data",
   "src/files.txt",
   "src/pages/.DS_Store",
+  "tsconfig.app.json",
+  "tsconfig.node.json",
+  "tsconfig.node.tsbuildinfo",
+  "tsconfig.tsbuildinfo",
+  "vite.config.d.ts",
+  "vite.config.js",
+  "vite.config.ts",
+  "**/.DS_Store",
+  "src/lib/.env.example",
+  "src/filePathScript.js",
+  "src/config/appConfig.d.ts",
+  "src/config/appConfig.js",
+  "src/config/appConfig.ts",
+  "src/config/GoogleAnalytics.tsx",
+  "src/lib/data/**", // This will ignore everything under src/lib/data
 ];
 
 async function listFiles(startPath) {
@@ -64,12 +80,10 @@ async function listFiles(startPath) {
       const fullPath = join(currentPath, entry.name);
       const relativePath = relative(startPath, fullPath);
 
-      // Simpler ignore check: either exact match or is a subdirectory of ignored path
-      const shouldIgnore = ignoreList.some(
-        (ignorePath) =>
-          relativePath === ignorePath ||
-          relativePath.startsWith(ignorePath + "/")
-      );
+      // Check if path matches any glob pattern in ignoreList
+      const shouldIgnore = ignoreList.some((pattern) => {
+        return minimatch(relativePath, pattern, { dot: true });
+      });
 
       if (shouldIgnore) {
         continue;
