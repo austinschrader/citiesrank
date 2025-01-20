@@ -212,7 +212,7 @@ export const CreateListPage = () => {
 
         {/* Places Selection */}
         <div className="col-span-7">
-          <SelectablePlacesPanel onPlacesSelected={handlePlacesSelected} />
+          <SelectablePlacesPanel batchSize={12} onPlacesSelected={handlePlacesSelected} />
         </div>
       </div>
     </div>

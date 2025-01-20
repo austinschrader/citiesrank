@@ -3,15 +3,15 @@
  * Pure UI - gets all data from contexts.
  */
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersSheet } from "@/features/explore/components/ui/filters/FiltersSheet";
 import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
+import { SearchInput } from "@/features/places/components/ui/search/SearchInput";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { Landmark, PlusCircle, Scroll, Search } from "lucide-react";
+import { Landmark, PlusCircle, Scroll } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { SplitModeToggle } from "../layouts/SplitModeToggle";
@@ -38,8 +38,13 @@ export const FiltersBar = () => {
     setContentType,
     isFiltersCollapsed,
   } = useHeader();
-  const { prioritizedPlaces, visiblePlacesInView, splitMode, visibleLists, filteredPlaces } =
-    useMap();
+  const {
+    prioritizedPlaces,
+    visiblePlacesInView,
+    splitMode,
+    visibleLists,
+    filteredPlaces,
+  } = useMap();
   const [sort, setSort] = useState("popular");
 
   // Calculate display counts based on view mode
@@ -59,17 +64,11 @@ export const FiltersBar = () => {
         <div className="h-full px-3 flex items-center gap-2 md:gap-3 overflow-x-auto md:overflow-visible">
           {/* Left Section */}
           <div className="flex items-center gap-2 md:gap-3 flex-1">
-            <div className="relative w-[180px] md:w-[220px]">
-              <Input
-                type="text"
-                placeholder="Find your next adventure..."
-                className="w-full pl-8 h-8 bg-white shadow-sm border hover:border-indigo-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200/50 rounded-lg transition-all duration-200 text-sm placeholder:text-indigo-400"
+            <div className="flex-1 relative">
+              <SearchInput
                 value={filters.search || ""}
-                onChange={(e) =>
-                  setFilters({ ...filters, search: e.target.value })
-                }
+                onChange={(value) => setFilters({ ...filters, search: value })}
               />
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-indigo-400" />
             </div>
 
             {/* View Toggle */}
