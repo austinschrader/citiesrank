@@ -13,15 +13,10 @@ import { ListsPanel } from "@/features/explore/components/ui/ListsPanel";
 import { PlacesPanel } from "@/features/explore/components/ui/PlacesPanel";
 import { CityMap } from "@/features/map/components/CityMap";
 import { useMap } from "@/features/map/context/MapContext";
-import { useCities } from "@/features/places/context/CitiesContext";
-import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 import Split from "react-split";
 
 export const SplitExplorer = () => {
-  const { cities } = useCities();
-  const { getFilteredCities } = useFilters();
   const {
     splitMode,
     hasMore,
