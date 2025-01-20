@@ -1,11 +1,8 @@
 /**
- * Layout component that:
- * - Manages pagination state
- * - Handles infinite scroll
- * - Renders appropriate panel based on content type
- *
+ * Layout component that manages split view between map and panels.
+ * Pure layout component - handles only view composition and sizing.
+ * 
  * Data flow: MapContext -> SplitExplorer -> Panel components
- * Pure layout - no filtering/visibility logic
  */
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersBar } from "@/features/explore/components/ui/FiltersBar";
@@ -17,18 +14,12 @@ import { cn } from "@/lib/utils";
 import Split from "react-split";
 
 export const SplitExplorer = () => {
-  const {
-    splitMode,
-    hasMore,
-    loadMore,
-    isLoadingMore,
-    paginatedFilteredPlaces,
-  } = useMap();
+  const { splitMode } = useMap();
   const { contentType } = useHeader();
 
   return (
     <div className="h-full flex flex-col">
-      <FiltersBar paginatedFilteredPlaces={paginatedFilteredPlaces} />
+      <FiltersBar />
       <div className="flex-1 overflow-hidden">
         <Split
           className="h-full flex"
@@ -55,12 +46,7 @@ export const SplitExplorer = () => {
             )}
           >
             {contentType === "places" ? (
-              <PlacesPanel
-                isLoadingMore={isLoadingMore}
-                paginatedFilteredPlaces={paginatedFilteredPlaces}
-                onLoadMore={loadMore}
-                hasMore={hasMore}
-              />
+              <PlacesPanel />
             ) : (
               <ListsPanel />
             )}

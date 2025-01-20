@@ -1,3 +1,7 @@
+/**
+ * Toolbar component for managing filters and view modes.
+ * Pure UI - gets all data from contexts.
+ */
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
@@ -23,11 +27,7 @@ const inactiveButtonStyles = cn(
   "bg-white/80 hover:bg-indigo-500 hover:text-white text-indigo-600 shadow-sm"
 );
 
-interface FiltersBarProps {
-  paginatedFilteredPlaces: any[];
-}
-
-export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
+export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
   const {
     energyMode,
@@ -38,13 +38,13 @@ export const FiltersBar = ({ paginatedFilteredPlaces }: FiltersBarProps) => {
     setContentType,
     isFiltersCollapsed,
   } = useHeader();
-  const { prioritizedPlaces, visiblePlacesInView, splitMode, visibleLists } =
+  const { prioritizedPlaces, visiblePlacesInView, splitMode, visibleLists, filteredPlaces } =
     useMap();
   const [sort, setSort] = useState("popular");
 
   // Calculate display counts based on view mode
   const displayPlaces =
-    splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+    splitMode === "list" ? filteredPlaces : prioritizedPlaces;
   const placesInView =
     splitMode === "list" ? displayPlaces.length : visiblePlacesInView.length;
 

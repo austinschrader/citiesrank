@@ -2,10 +2,11 @@
  * Manages map state and content visibility:
  * - Determines what's visible based on mode (list/map/split)
  * - Handles map-specific filtering (zoom, bounds)
+ * - Manages pagination and infinite scroll
  * - Unifies display logic for places/lists
  *
  * Dependencies: Requires HeaderProvider, FiltersContext
- * Consumers: SplitExplorer, Map components
+ * Consumers: SplitExplorer, Map components, Panel components
  */
 
 import { useLists } from "@/features/lists/context/ListsContext";
