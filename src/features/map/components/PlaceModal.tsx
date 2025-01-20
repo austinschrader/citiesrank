@@ -1,3 +1,8 @@
+/**
+ * Modal for displaying place details with image gallery and navigation.
+ * Navigation logic handled by usePlaceNavigation hook.
+ * Dependencies: MapContext, SavedPlacesContext
+ */
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogPortal } from "@/components/ui/dialog";
 import {
@@ -6,17 +11,16 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useSavedPlaces } from "@/features/lists/context/SavedPlacesContext";
 import { useMap } from "@/features/map/context/MapContext";
 import { MapPlace } from "@/features/map/types";
-import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
 import { getImageUrl } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import {
+  Bookmark,
   Camera,
   ChevronLeft,
   ChevronRight,
-  FolderPlus,
-  LucideIcon,
   MapPin,
   Shuffle,
   Sparkles,
@@ -25,6 +29,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePlaceNavigation } from "../hooks/usePlaceNavigation";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 import { SocialShareMenu } from "./SocialShareMenu";
 
@@ -35,28 +40,6 @@ interface PlaceModalProps {
   onPlaceSelect?: (place: MapPlace) => void;
 }
 
-interface TouchStartState {
-  x: number;
-  y: number;
-  timestamp: number;
-}
-
-interface StatBadgeProps {
-  icon: LucideIcon;
-  value: string | number;
-  label: string;
-  color?: string;
-}
-
-const SWIPE_THRESHOLD = 50;
-const SWIPE_UP_THRESHOLD = 100;
-const DOUBLE_TAP_DELAY = 300;
-
-interface NavigationState {
-  direction: -1 | 0 | 1;
-  isRandomMode: boolean;
-}
-
 export const PlaceModal: React.FC<PlaceModalProps> = ({
   place: initialPlace,
   isOpen,
@@ -64,31 +47,18 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   onPlaceSelect,
 }) => {
   const navigate = useNavigate();
-  const [currentPlace, setCurrentPlace] = useState<MapPlace>(initialPlace);
+  const { visiblePlacesInView } = useMap();
+  const { user } = useAuth();
+  const { currentPlace, navigation, toggleRandomMode, navigateToPlace } =
+    usePlaceNavigation(initialPlace, visiblePlacesInView);
+  const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showHints, setShowHints] = useState(true);
-  const [touchStart, setTouchStart] = useState<TouchStartState | null>(null);
-  const [lastTap, setLastTap] = useState(0);
-  const [navigation, setNavigation] = useState<NavigationState>({
-    direction: 0,
-    isRandomMode: false,
-  });
-  // Client-side place history for random mode navigation
-  // TODO: Move place history to server-side to:
-  // 1. Persist across sessions
-  // 2. Sync across devices
-  // 3. Enable analytics on exploration patterns
-  // 4. Support "continue where you left off" feature
-  const [placeHistory, setPlaceHistory] = useState<MapPlace[]>([initialPlace]);
-  const [historyIndex, setHistoryIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const contentRef = useRef<HTMLDivElement>(null);
-  const { visiblePlacesInView } = useMap();
-  const { isFavorited } = useFavoriteStatus(currentPlace.id);
-  const { user } = useAuth();
 
   // Handle viewport changes
   useEffect(() => {
@@ -147,59 +117,9 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     setShowHints(true);
   }, [currentPlace?.id]);
 
-  // Touch handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    setTouchStart({
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-      timestamp: Date.now(),
-    });
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart || e.touches.length !== 1) return;
-
-    const xDiff = touchStart.x - e.touches[0].clientX;
-    const yDiff = touchStart.y - e.touches[0].clientY;
-    const timeDiff = Date.now() - touchStart.timestamp;
-    const velocity = Math.abs(xDiff / timeDiff);
-
-    // Handle horizontal swipes for image navigation
-    if (Math.abs(xDiff) > Math.abs(yDiff)) {
-      if (Math.abs(xDiff) > SWIPE_THRESHOLD || velocity > 0.5) {
-        handleImageNavigation(xDiff > 0 ? "next" : "prev");
-        setTouchStart(null);
-      }
-    }
-    // Handle vertical swipe up for closing
-    else if (
-      yDiff > SWIPE_UP_THRESHOLD &&
-      Math.abs(xDiff) < SWIPE_THRESHOLD / 2
-    ) {
-      onClose();
-      setTouchStart(null);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setTouchStart(null);
-  };
-
-  const handleDoubleTap = (e: React.TouchEvent) => {
-    const currentTime = Date.now();
-    const tapLength = currentTime - lastTap;
-
-    if (tapLength < DOUBLE_TAP_DELAY && tapLength > 0) {
-      if (user) {
-        setShowSaveDialog(true);
-      }
-    }
-
-    setLastTap(currentTime);
-  };
-
   const handleImageNavigation = (direction: "next" | "prev") => {
+    if (preloadedImages.length <= 1) return;
+
     const newIndex =
       direction === "next"
         ? (currentImageIndex + 1) % preloadedImages.length
@@ -210,56 +130,11 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     setCurrentImageIndex(newIndex);
   };
 
-  const navigateToPlace = (direction: "next" | "prev") => {
+  const handlePlaceNavigation = (direction: "next" | "prev") => {
     setIsTransitioning(true);
-    const isNext = direction === "next";
-    setNavigation((prev) => ({ ...prev, direction: isNext ? 1 : -1 }));
-
-    const currentIndex = visiblePlacesInView.findIndex(
-      (p) => p.id === currentPlace.id
-    );
-
-    let nextPlace: MapPlace;
-    if (navigation.isRandomMode) {
-      if (direction === "prev" && historyIndex > 0) {
-        // Go back in history
-        nextPlace = placeHistory[historyIndex - 1];
-        setHistoryIndex((prev) => prev - 1);
-      } else {
-        // Get random place excluding current one
-        const availablePlaces = visiblePlacesInView.filter(
-          (_, i) => i !== currentIndex
-        );
-        const randomIndex = Math.floor(Math.random() * availablePlaces.length);
-        nextPlace = availablePlaces[randomIndex];
-
-        // Add to history if going forward
-        if (direction === "next") {
-          setPlaceHistory((prev) => [
-            ...prev.slice(0, historyIndex + 1),
-            nextPlace,
-          ]);
-          setHistoryIndex((prev) => prev + 1);
-        }
-      }
-    } else {
-      const nextIndex =
-        direction === "next"
-          ? (currentIndex + 1) % visiblePlacesInView.length
-          : currentIndex === 0
-          ? visiblePlacesInView.length - 1
-          : currentIndex - 1;
-      nextPlace = visiblePlacesInView[nextIndex];
-    }
-
-    if (nextPlace) {
-      setTimeout(() => {
-        setCurrentPlace(nextPlace);
-        setIsTransitioning(false);
-        onPlaceSelect?.(nextPlace);
-      }, 300);
-    } else {
-      setIsTransitioning(false);
+    const nextPlace = navigateToPlace(direction);
+    if (onPlaceSelect) {
+      onPlaceSelect(nextPlace);
     }
   };
 
@@ -272,24 +147,20 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
         switch (e.key) {
           case "ArrowRight":
             e.preventDefault();
-            navigateToPlace("next");
+            handlePlaceNavigation("next");
             break;
           case "ArrowLeft":
             e.preventDefault();
-            navigateToPlace("prev");
+            handlePlaceNavigation("prev");
             break;
         }
       } else {
         switch (e.key) {
           case "ArrowRight":
-            setCurrentImageIndex((prev) =>
-              prev < preloadedImages.length - 1 ? prev + 1 : 0
-            );
+            handleImageNavigation("next");
             break;
           case "ArrowLeft":
-            setCurrentImageIndex((prev) =>
-              prev > 0 ? prev - 1 : preloadedImages.length - 1
-            );
+            handleImageNavigation("prev");
             break;
         }
       }
@@ -300,21 +171,12 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   }, [
     isOpen,
     preloadedImages.length,
-    navigateToPlace,
-    setCurrentImageIndex,
+    handlePlaceNavigation,
+    handleImageNavigation,
     currentPlace.id,
     visiblePlacesInView,
     navigation.isRandomMode,
-    historyIndex,
   ]);
-
-  // Reset history when random mode changes
-  useEffect(() => {
-    if (navigation.isRandomMode) {
-      setPlaceHistory([currentPlace]);
-      setHistoryIndex(0);
-    }
-  }, [navigation.isRandomMode]);
 
   const handleDetailsView = () => {
     navigate(`/places/${currentPlace.type}/${currentPlace.slug}`, {
@@ -322,21 +184,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     });
     onClose();
   };
-
-  const StatBadge: React.FC<StatBadgeProps> = ({
-    icon: Icon,
-    value,
-    label,
-    color = "text-white",
-  }) => (
-    <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-full">
-      <Icon className={cn("w-4 h-4", color)} />
-      <div className="flex flex-col">
-        <span className="text-sm font-medium text-white">{value}</span>
-        <span className="text-xs text-white/70">{label}</span>
-      </div>
-    </div>
-  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -363,9 +210,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       className="absolute left-0 top-0 bottom-0 w-1/4 pointer-events-auto"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setCurrentImageIndex((prev) =>
-                          prev > 0 ? prev - 1 : preloadedImages.length - 1
-                        );
+                        handleImageNavigation("prev");
                       }}
                     >
                       <div className="absolute inset-y-0 left-8 flex items-center pointer-events-none">
@@ -378,9 +223,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                       className="absolute right-0 top-0 bottom-0 w-1/4 pointer-events-auto"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setCurrentImageIndex((prev) =>
-                          prev < preloadedImages.length - 1 ? prev + 1 : 0
-                        );
+                        handleImageNavigation("next");
                       }}
                     >
                       <div className="absolute inset-y-0 right-8 flex items-center pointer-events-none">
@@ -403,7 +246,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         setShowSaveDialog(true);
                       }
                     }}
-                    onTouchStart={handleDoubleTap}
                     className="w-full h-full object-cover transition-all duration-500 cursor-pointer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent pointer-events-none" />
@@ -471,18 +313,29 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         size="icon"
                         onClick={() => setShowSaveDialog(true)}
                         className={cn(
-                          "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md",
-                          isFavorited
-                            ? "bg-white/20 hover:bg-white/30"
-                            : "bg-transparent hover:bg-black/50"
+                          "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md group",
+                          isPlaceSaved(currentPlace.id)
+                            ? "bg-primary/20 hover:bg-primary/30 dark:bg-primary/30 dark:hover:bg-primary/40"
+                            : "bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30"
                         )}
                       >
-                        <FolderPlus
+                        <Bookmark
                           className={cn(
-                            "h-5 w-5 text-white",
-                            isFavorited && "text-white/80"
+                            "h-5 w-5 transition-all duration-300 ease-spring",
+                            isPlaceSaved(currentPlace.id)
+                              ? "text-primary fill-primary scale-110"
+                              : "text-white/90 group-hover:scale-110"
                           )}
                         />
+                        <span
+                          className={cn(
+                            "absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap opacity-0 scale-95 transition-all duration-200",
+                            "bg-black/80 text-white backdrop-blur-md",
+                            "group-hover:opacity-100 group-hover:scale-100"
+                          )}
+                        >
+                          {isPlaceSaved(currentPlace.id) ? "Saved" : "Save"}
+                        </span>
                       </Button>
                     )}
                   </div>
@@ -539,10 +392,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     variant="ghost"
                     size="sm"
                     className="h-9 px-4 rounded-full bg-transparent backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20"
-                    onClick={() => {
-                      setNavigation((prev) => ({ ...prev, direction: -1 }));
-                      navigateToPlace("prev");
-                    }}
+                    onClick={() => handlePlaceNavigation("prev")}
                   >
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Previous Place
@@ -551,12 +401,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() =>
-                      setNavigation((prev) => ({
-                        ...prev,
-                        isRandomMode: !prev.isRandomMode,
-                      }))
-                    }
+                    onClick={toggleRandomMode}
                     className={cn(
                       "h-9 w-9 rounded-full backdrop-blur-md",
                       navigation.isRandomMode
@@ -571,10 +416,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                     variant="ghost"
                     size="sm"
                     className="h-9 px-4 rounded-full bg-transparent backdrop-blur-md text-white hover:bg-black/50 active:bg-white/20"
-                    onClick={() => {
-                      setNavigation((prev) => ({ ...prev, direction: 1 }));
-                      navigateToPlace("next");
-                    }}
+                    onClick={() => handlePlaceNavigation("next")}
                   >
                     Next Place
                     {navigation.isRandomMode ? (
@@ -613,7 +455,10 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
       <SaveCollectionsDialog
         isOpen={showSaveDialog}
-        onClose={() => setShowSaveDialog(false)}
+        onClose={() => {
+          setShowSaveDialog(false);
+          refreshSavedPlaces();
+        }}
         placeId={currentPlace.id}
       />
     </Dialog>

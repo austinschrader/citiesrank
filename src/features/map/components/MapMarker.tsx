@@ -3,12 +3,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useSavedPlaces } from "@/features/lists/context/SavedPlacesContext";
 import { PhotoUploadDialog } from "@/features/photos/components/PhotoUploadDialog";
-import { pb } from "@/lib/pocketbase";
+import { cn } from "@/lib/utils";
 import { markerColors, ratingColors } from "@/lib/utils/colors";
 import L from "leaflet";
-import { FolderPlus, MapPin, Star } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import { Bookmark, FolderPlus, MapPin, Star } from "lucide-react";
+import React, { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Marker, Popup, useMap as useLeafletMap } from "react-leaflet";
 import { useSelection } from "../context/SelectionContext";
@@ -219,6 +220,23 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
                   </Badge>
                 ))}
             </div>
+            <div
+              className={cn(
+                "absolute -top-1 -right-1 h-5 w-5 rounded-full transition-all duration-300 flex items-center justify-center",
+                isSaved
+                  ? "bg-primary/20 dark:bg-primary/30"
+                  : "bg-white/10 dark:bg-black/20"
+              )}
+            >
+              <Bookmark
+                className={cn(
+                  "h-3 w-3 transition-all duration-300 ease-spring",
+                  isSaved
+                    ? "text-primary fill-primary scale-110"
+                    : "text-white/90"
+                )}
+              />
+            </div>
           </div>
 
           {/* Content */}
@@ -255,7 +273,11 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
                   onClick={onOpenCollectionsDialog}
                   className="h-6 w-6 p-0"
                 >
-                  <FolderPlus className="w-3.5 h-3.5" />
+                  <FolderPlus
+                    className={cn("w-3.5 h-3.5", {
+                      "text-primary fill-primary": isSaved,
+                    })}
+                  />
                 </Button>
               </div>
             </div>
@@ -306,32 +328,10 @@ const PlacePopupCard: React.FC<PlacePopupCardProps> = ({
 export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
   const { user } = useAuth();
+  const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
   const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
   const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const map = useLeafletMap();
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const checkIfSaved = async () => {
-      if (!user) return;
-
-      try {
-        // First get all lists that contain this place
-        const listPlaces = await pb.collection("list_places").getList(1, 1, {
-          filter: `place = "${place.id}" && list.user = "${user.id}"`,
-          expand: "list",
-          $autoCancel: false,
-        });
-
-        setIsSaved(listPlaces.totalItems > 0);
-      } catch (error) {
-        console.error("Error checking if place is saved:", error);
-      }
-    };
-
-    checkIfSaved();
-  }, [place.id, user]);
 
   const markerStyle = useMemo(
     () => getMarkerStyle(place.type, place.averageRating),
@@ -395,7 +395,7 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
             place={place}
             onOpenCollectionsDialog={() => setIsCollectionsDialogOpen(true)}
             onOpenPhotoDialog={() => setIsPhotoDialogOpen(true)}
-            isSaved={isSaved}
+            isSaved={isPlaceSaved(place.id)}
           />
         </Popup>
       </Marker>
@@ -406,17 +406,7 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
             isOpen={isCollectionsDialogOpen}
             onClose={() => {
               setIsCollectionsDialogOpen(false);
-              if (user) {
-                pb.collection("list_places")
-                  .getList(1, 1, {
-                    filter: `place = "${place.id}" && list.user = "${user.id}"`,
-                    expand: "list",
-                    $autoCancel: false,
-                  })
-                  .then((result) => {
-                    setIsSaved(result.totalItems > 0);
-                  });
-              }
+              refreshSavedPlaces();
             }}
             placeId={place.id}
           />,

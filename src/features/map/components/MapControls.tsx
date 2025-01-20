@@ -1,10 +1,13 @@
 // file location: src/features/map/components/MapControls.tsx
+/**
+ * Provides zoom and center reset controls for the map.
+ * Handles zoom level changes and map center reset.
+ */
 import { Button } from "@/components/ui/button";
 import { debounce } from "lodash";
-import { ArrowDown, Home, Minus, Plus, RefreshCw } from "lucide-react";
+import { Home, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { useMap as useLeafletMap } from "react-leaflet";
-import { useMap } from "../context/MapContext";
 
 interface MapControlsProps {
   onZoomChange: (zoom: number) => void;
@@ -18,7 +21,6 @@ export const MapControls = ({
   defaultZoom = 5,
 }: MapControlsProps) => {
   const map = useLeafletMap();
-  const { resetDistribution, hasMore, loadMore } = useMap();
 
   // Create a stable debounced zoom handler
   const debouncedZoomChange = useCallback(
@@ -52,10 +54,6 @@ export const MapControls = ({
     map.setView(defaultCenter, defaultZoom);
   };
 
-  const handleRefresh = () => {
-    resetDistribution();
-  };
-
   return (
     <div className="absolute right-4 top-4 z-[400] flex flex-col gap-2">
       <Button
@@ -85,26 +83,6 @@ export const MapControls = ({
       >
         <Home className="h-4 w-4" />
       </Button>
-      <Button
-        variant="secondary"
-        size="icon"
-        className="h-8 w-8 shadow-md"
-        onClick={handleRefresh}
-        title="Refresh distribution"
-      >
-        <RefreshCw className="h-4 w-4" />
-      </Button>
-      {hasMore() && (
-        <Button
-          variant="secondary"
-          size="icon"
-          className="h-8 w-8 shadow-md"
-          onClick={loadMore}
-          title="Load more places"
-        >
-          <ArrowDown className="h-4 w-4" />
-        </Button>
-      )}
     </div>
   );
 };
