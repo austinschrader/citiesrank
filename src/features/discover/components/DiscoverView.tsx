@@ -1,279 +1,273 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import React from "react";
+import { motion } from "framer-motion";
 import {
-  ACTIVE_CHALLENGES,
-  MOCK_DISCOVERIES,
-  MOCK_USER,
-} from "../data/mockData";
+  Compass,
+  Crown,
+  Flag,
+  Globe2,
+  Navigation,
+  Sparkles,
+  Trophy,
+} from "lucide-react";
+import { QuestCard } from "./QuestCard";
+import { DiscoveryCard } from "./DiscoveryCard";
 
-export const DiscoverView: React.FC = () => {
-  console.log("DiscoverView mounted");
-  console.log("Mock data:", { MOCK_DISCOVERIES, ACTIVE_CHALLENGES, MOCK_USER });
+const achievements = [
+  {
+    icon: <Trophy className="w-5 h-5 text-yellow-500" />,
+    title: "Explorer Elite",
+    description: "Visited 50+ locations",
+    color: "bg-yellow-50",
+  },
+  {
+    icon: <Globe2 className="w-5 h-5 text-blue-500" />,
+    title: "World Traveler",
+    description: "5 countries visited",
+    color: "bg-blue-50",
+  },
+  {
+    icon: <Flag className="w-5 h-5 text-green-500" />,
+    title: "Local Guide",
+    description: "100+ reviews posted",
+    color: "bg-green-50",
+  },
+];
 
+const leaderboard = [
+  { name: "Sarah Chen", avatar: "/avatars/sarah.jpg", points: 2500 },
+  { name: "Mike Johnson", avatar: "/avatars/mike.jpg", points: 2350 },
+  { name: "Alex Lee", avatar: "/avatars/alex.jpg", points: 2200 },
+];
+
+export const DiscoverView = () => {
   return (
-    <div className="flex h-screen">
-      {/* Main Feed */}
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto p-6">
-          {/* User Progress Bar */}
-          <div
-            className={cn(
-              "bg-card rounded-lg p-4 mb-6",
-              "transform transition-all duration-300",
-              "hover:scale-[1.01] hover:shadow-lg"
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10" />
+
+        <div className="relative max-w-7xl mx-auto px-4 py-20 text-center">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/90 shadow-xl mb-8"
           >
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-3">
-                <div
-                  className={cn(
-                    "w-12 h-12 rounded-full bg-primary",
-                    "flex items-center justify-center",
-                    "text-primary-foreground font-bold",
-                    "animate-pulse"
-                  )}
-                >
-                  {MOCK_USER.level}
-                </div>
-                <div>
-                  <h3 className="font-semibold">{MOCK_USER.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Level {MOCK_USER.level} Explorer
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">
-                  Next Level: {MOCK_USER.nextLevel.title}
-                </p>
-                <p className="text-sm font-medium">
-                  {MOCK_USER.points} / {MOCK_USER.nextLevel.points} XP
-                </p>
-              </div>
-            </div>
-            <Progress
-              value={(MOCK_USER.points / MOCK_USER.nextLevel.points) * 100}
-              className="h-2"
-            />
-          </div>
+            <Sparkles className="w-5 h-5 text-purple-500" />
+            <span className="text-sm font-medium">
+              Discover Your Next Adventure
+            </span>
+          </motion.div>
 
-          {/* Active Challenge */}
-          <div
-            className={cn(
-              "bg-card rounded-lg p-4 mb-6",
-              "transform transition-all duration-300",
-              "hover:scale-[1.01] hover:shadow-lg"
-            )}
+          <motion.h1
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="text-4xl md:text-6xl font-bold mb-6"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-lg">Active Challenge</h3>
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
-            </div>
-            <div className="bg-accent rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium">{ACTIVE_CHALLENGES[0].title}</h4>
-                <span className="text-sm text-muted-foreground">
-                  {ACTIVE_CHALLENGES[0].timeLeft} left
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                {ACTIVE_CHALLENGES[0].description}
-              </p>
-              <Progress
-                value={
-                  (ACTIVE_CHALLENGES[0].progress.current /
-                    ACTIVE_CHALLENGES[0].progress.total) *
-                  100
-                }
-                className="h-2 mb-2"
-              />
-              <div className="flex items-center justify-between text-sm">
-                <span>
-                  {ACTIVE_CHALLENGES[0].progress.current}/
-                  {ACTIVE_CHALLENGES[0].progress.total} completed
-                </span>
-                <span>{ACTIVE_CHALLENGES[0].participants} participants</span>
-              </div>
-            </div>
-          </div>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+              Your World Awaits
+            </span>
+          </motion.h1>
 
-          {/* Discover Feed */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MOCK_DISCOVERIES.map((discover) => (
-              <div
-                key={discover.id}
-                className={cn(
-                  "bg-card rounded-lg overflow-hidden shadow-lg",
-                  "transform transition-all duration-300",
-                  "hover:scale-[1.02] hover:shadow-xl",
-                  "active:scale-[0.98]"
-                )}
-              >
-                <div className="relative aspect-square">
-                  <img
-                    src={discover.imageUrl}
-                    alt={discover.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div
-                        className={cn(
-                          "w-8 h-8 rounded-full bg-primary",
-                          "flex items-center justify-center",
-                          "text-xs font-medium text-primary-foreground",
-                          "animate-pulse"
-                        )}
-                      >
-                        {discover.user?.level || ""}
-                      </div>
-                      <div>
-                        <h3 className="text-white font-medium">
-                          {discover.title}
-                        </h3>
-                        <p className="text-white/80 text-sm">
-                          by {discover.user?.name || "Unknown"}
-                        </p>
-                      </div>
-                    </div>
-                    {discover.type === "challenge" && discover.progress && (
-                      <div className="mt-2">
-                        <Progress
-                          value={
-                            (discover.progress.current /
-                              discover.progress.total) *
-                            100
-                          }
-                          className="h-1.5"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8"
+          >
+            Join a global community of explorers. Share experiences, discover
+            hidden gems, and collect achievements as you explore the world
+            around you.
+          </motion.p>
 
-                <div className="p-4">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {discover.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <button
-                        className={cn(
-                          "text-muted-foreground hover:text-primary",
-                          "transition-colors duration-200",
-                          "hover:animate-heartbeat"
-                        )}
-                      >
-                        ❤️ {discover.stats?.likes || 0}
-                      </button>
-                      <button
-                        className={cn(
-                          "text-muted-foreground hover:text-primary",
-                          "transition-colors duration-200",
-                          "hover:animate-bounce"
-                        )}
-                      >
-                        💬 {discover.stats?.comments || 0}
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        2h ago
-                      </span>
-                      {discover.points && (
-                        <span
-                          className={cn(
-                            "text-sm font-medium text-primary",
-                            "animate-pulse"
-                          )}
-                        >
-                          +{discover.points}pts
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-wrap justify-center gap-4"
+          >
+            <Card className="p-4 text-center bg-white/50 backdrop-blur-sm">
+              <div className="text-2xl font-bold text-purple-600">1.2M+</div>
+              <div className="text-sm text-gray-500">Places Explored</div>
+            </Card>
+            <Card className="p-4 text-center bg-white/50 backdrop-blur-sm">
+              <div className="text-2xl font-bold text-pink-600">500K+</div>
+              <div className="text-sm text-gray-500">Active Explorers</div>
+            </Card>
+            <Card className="p-4 text-center bg-white/50 backdrop-blur-sm">
+              <div className="text-2xl font-bold text-indigo-600">2.5M+</div>
+              <div className="text-sm text-gray-500">Shared Experiences</div>
+            </Card>
+          </motion.div>
         </div>
       </div>
 
-      {/* Side Panel */}
-      <div className="w-80 border-l bg-card p-4 overflow-auto hidden lg:block">
-        <div className="mb-6">
-          <h3 className="font-semibold mb-3">Your Stats</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(MOCK_USER.stats)
-              .slice(0, 4)
-              .map(([key, value]) => (
-                <div
-                  key={key}
-                  className={cn(
-                    "bg-accent rounded-lg p-3",
-                    "transform transition-all duration-300",
-                    "hover:scale-[1.05] hover:shadow-md"
-                  )}
-                >
-                  <p className="text-2xl font-semibold">{value}</p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {key}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+          {/* Left Column - Featured Content */}
+          <div className="space-y-8">
+            {/* Active Quests */}
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold">Active Quests</h2>
+                  <p className="text-gray-500">
+                    Complete quests to earn rewards
                   </p>
                 </div>
-              ))}
-          </div>
-        </div>
+                <Button className="gap-2">
+                  <Navigation className="w-4 h-4" />
+                  View All
+                </Button>
+              </div>
 
-        <div className="mb-6">
-          <h3 className="font-semibold mb-3">Recent Badges</h3>
-          <div className="space-y-3">
-            {MOCK_USER.recentBadges.map((badge) => (
-              <div
-                key={badge.id}
-                className={cn(
-                  "flex items-center gap-3 bg-accent rounded-lg p-3",
-                  "transform transition-all duration-300",
-                  "hover:scale-[1.02] hover:shadow-md"
-                )}
-              >
-                <div className="text-2xl animate-bounce">{badge.icon}</div>
+              <div className="grid gap-4">
+                <QuestCard
+                  icon={<Globe2 className="w-6 h-6 text-blue-500" />}
+                  title="World Explorer"
+                  description="Visit 3 new countries"
+                  progress={66}
+                  reward="250 XP"
+                  deadline="5 days left"
+                />
+                <QuestCard
+                  icon={<Flag className="w-6 h-6 text-green-500" />}
+                  title="Local Master"
+                  description="Review 5 local businesses"
+                  progress={40}
+                  reward="100 XP"
+                  deadline="2 days left"
+                />
+              </div>
+            </section>
+
+            {/* Recent Discoveries */}
+            <section>
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <p className="font-medium">{badge.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    Earned {badge.earnedDate}
+                  <h2 className="text-2xl font-bold">Recent Discoveries</h2>
+                  <p className="text-gray-500">
+                    Latest finds from the community
                   </p>
+                </div>
+                <Button variant="outline" className="gap-2">
+                  <Compass className="w-4 h-4" />
+                  Explore More
+                </Button>
+              </div>
+
+              <div className="grid gap-6">
+                <DiscoveryCard
+                  image="/path/to/image.jpg"
+                  title="Hidden Garden Cafe"
+                  location="Portland, Oregon"
+                  description="A charming spot tucked away in the Pearl District..."
+                  tags={["food", "cozy", "local-favorite"]}
+                  user={{
+                    name: "Sarah Chen",
+                    avatar: "/path/to/avatar.jpg",
+                    badge: "Local Expert",
+                  }}
+                />
+              </div>
+            </section>
+          </div>
+
+          {/* Right Column - User Progress */}
+          <div className="space-y-8">
+            {/* User Level */}
+            <Card className="p-6 bg-white/50 backdrop-blur-sm">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative">
+                  <Avatar className="h-16 w-16 ring-4 ring-purple-500/20">
+                    <AvatarImage src="/path/to/avatar.jpg" />
+                    <AvatarFallback>SC</AvatarFallback>
+                  </Avatar>
+                  <div className="absolute -bottom-2 -right-2 bg-purple-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center ring-2 ring-white">
+                    15
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold">World Explorer</h3>
+                  <p className="text-sm text-gray-500">Level 15</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        <div>
-          <h3 className="font-semibold mb-3">Trending Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {[
-              "#hiddengems",
-              "#streetart",
-              "#foodie",
-              "#architecture",
-              "#nature",
-            ].map((tag) => (
-              <Button
-                key={tag}
-                variant="outline"
-                size="sm"
-                className={cn(
-                  "transform transition-all duration-300",
-                  "hover:scale-[1.05]"
-                )}
-              >
-                {tag}
-              </Button>
-            ))}
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span>Progress to Level 16</span>
+                  <span>2,450 / 3,000 XP</span>
+                </div>
+                <Progress value={82} className="h-2" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="p-3 rounded-lg bg-purple-50">
+                  <div className="font-semibold">84</div>
+                  <div className="text-sm text-gray-500">Places</div>
+                </div>
+                <div className="p-3 rounded-lg bg-pink-50">
+                  <div className="font-semibold">31</div>
+                  <div className="text-sm text-gray-500">Reviews</div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Achievements */}
+            <Card className="p-6 bg-white/50 backdrop-blur-sm">
+              <h3 className="font-semibold mb-4">Recent Achievements</h3>
+              <div className="space-y-4">
+                {achievements.map((achievement, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className={cn("p-2 rounded-lg", achievement.color)}>
+                      {achievement.icon}
+                    </div>
+                    <div>
+                      <div className="font-medium">{achievement.title}</div>
+                      <div className="text-sm text-gray-500">
+                        {achievement.description}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Leaderboard */}
+            <Card className="p-6 bg-white/50 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold">Local Leaders</h3>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Crown className="w-4 h-4" />
+                  Full Rankings
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {leaderboard.map((user, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="font-bold text-lg text-gray-400 w-6">
+                      #{index + 1}
+                    </div>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback>{user.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="font-medium">{user.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {user.points} pts
+                      </div>
+                    </div>
+                    <Trophy className="w-4 h-4 text-yellow-500" />
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
         </div>
       </div>
