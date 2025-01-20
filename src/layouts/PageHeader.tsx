@@ -20,7 +20,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
     mode,
     energyMode,
     exploringCount,
-    viewMode,
+    contentType,
     isFiltersCollapsed,
     setIsFiltersCollapsed,
   } = useHeader();
@@ -34,7 +34,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
 
     // Then check if we're in discover mode with a specific view mode
     if (mode === "discover") {
-      if (viewMode === "lists") {
+      if (contentType === "lists") {
         return "Discover Curated Collections";
       }
 
@@ -69,7 +69,7 @@ export const PageHeader = ({ className }: PageHeaderProps) => {
   };
 
   const showExploringCount =
-    mode === "discover" && exploringCount !== null && viewMode === "places";
+    mode === "discover" && exploringCount !== null && contentType === "places";
 
   return (
     <div

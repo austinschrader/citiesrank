@@ -1,4 +1,4 @@
-import { SplitExplorer } from "@/features/explore/components/SplitExplorer";
+import { SplitExplorer } from "@/features/explore/components/layouts/SplitExplorer";
 
 export const ExplorePage = () => {
   return (

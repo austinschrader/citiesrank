@@ -1,3 +1,12 @@
+/**
+ * Provider hierarchy (outer to inner):
+ * 1. CitiesProvider (data) -> AuthProvider (auth) -> FiltersProvider (filtering)
+ * 2. ListsProvider (lists data) -> HeaderProvider (UI state)
+ * 3. MapProvider (map/visibility) -> Selection/LocationProvider (map state)
+ * 4. Feed/FavoritesProvider (user data)
+ * 
+ * Key dependencies: HeaderProvider must wrap MapProvider
+ */
 import { Toaster } from "@/components/ui/toaster";
 import { AdminRoutes } from "@/features/admin/routes/AdminRoutes";
 import { AuthProvider } from "@/features/auth/context/AuthContext";

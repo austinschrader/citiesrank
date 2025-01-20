@@ -1,22 +1,21 @@
 /**
- * Map context for managing map state and place visibility.
+ * Manages map state and content visibility:
+ * - Determines what's visible based on mode (list/map/split)
+ * - Handles map-specific filtering (zoom, bounds)
+ * - Manages pagination and infinite scroll
+ * - Unifies display logic for places/lists
  *
- * Handles:
- * - Map state (zoom, center, bounds)
- * - Place visibility filtering
- * - Place prioritization for display
- * - View mode (map/list/split)
- *
- * Uses FiltersContext for user-defined filters and
- * placeFiltering utilities for visibility rules.
+ * Dependencies: Requires HeaderProvider, FiltersContext
+ * Consumers: SplitExplorer, Map components, Panel components
  */
 
 import { useLists } from "@/features/lists/context/ListsContext";
+import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { pb } from "@/lib/pocketbase";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
-import L, { LatLngTuple } from "leaflet";
+import L, { LatLngBounds, LatLngTuple } from "leaflet";
 import React, {
   createContext,
   useCallback,
@@ -35,7 +34,7 @@ import {
   filterPlacesByZoom,
 } from "../utils/placeFiltering";
 
-export type ViewMode = "list" | "split" | "map";
+export type SplitMode = "list" | "split" | "map";
 
 const DEFAULT_MOBILE_PLACES = 15;
 const DEFAULT_DESKTOP_PLACES = 15;
@@ -86,14 +85,17 @@ interface MapContextValue extends MapState {
   selectPlace: (place: MapPlace | null) => void;
   resetView: () => void;
   resetDistribution: () => void;
-  mapBounds: L.LatLngBounds | null;
-  setMapBounds: (bounds: L.LatLngBounds | null) => void;
+  mapBounds: LatLngBounds | null;
+  setMapBounds: (bounds: LatLngBounds | null) => void;
   visiblePlaces: MapPlace[];
   setVisiblePlaces: (places: MapPlace[]) => void;
   visiblePlacesInView: MapPlace[];
   numPrioritizedToShow: number;
   setNumPrioritizedToShow: React.Dispatch<React.SetStateAction<number>>;
   prioritizedPlaces: MapPlace[];
+  maxItems: number;
+  hasMore: () => boolean;
+  loadMore: () => void;
   getVisiblePlacesForCurrentView: (allPlaces: MapPlace[]) => MapPlace[];
   getVisiblePlaceTypes: (zoom: number) => CitiesTypeOptions[];
   filterPlacesByZoom: (places: MapPlace[], zoom: number) => MapPlace[];
@@ -103,18 +105,22 @@ interface MapContextValue extends MapState {
     zoom: number;
   };
   getGeographicLevel: (zoom: number) => CitiesTypeOptions;
-  viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
-  hasMorePlaces: boolean;
-  loadMorePlaces: () => void;
+  splitMode: SplitMode;
+  setSplitMode: (mode: SplitMode) => void;
   visibleLists: any[];
+  getDisplayPlaces: (paginatedFilteredPlaces: MapPlace[]) => MapPlace[];
+  isLoadingMore: boolean;
+  filteredPlaces: MapPlace[];
+  paginatedFilteredPlaces: MapPlace[];
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
-  const { filters } = useFilters();
+  const { filters, getFilteredCities } = useFilters();
   const { getList } = useLists();
+  const { cities } = useCities();
+
   const [state, setState] = useState<MapState>({
     zoom: DEFAULT_ZOOM,
     center: DEFAULT_CENTER,
@@ -122,7 +128,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     selectedPlace: null,
   });
 
-  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
+  const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
   const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
     []
@@ -131,11 +137,11 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
-  const [hasMorePlaces, setHasMorePlaces] = useState(true);
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    window.innerWidth <= 640 ? "map" : "split"
-  );
+  const [splitMode, setSplitMode] = useState<SplitMode>("split");
   const [visibleLists, setVisibleLists] = useState<any[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const BATCH_SIZE = 25; // Fixed size for infinite scroll
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -263,15 +269,28 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       });
   }, [mapBounds, getList]);
 
-  const loadMorePlaces = useCallback(() => {
-    setNumPrioritizedToShow((prev) => {
-      const increment =
-        window.innerWidth <= 640
-          ? DEFAULT_MOBILE_PLACES
-          : DEFAULT_DESKTOP_PLACES;
-      return prev + increment;
-    });
-  }, []);
+  const hasMore = useCallback(() => {
+    const currentCount = numPrioritizedToShow;
+    const maxItemCount =
+      splitMode === "list" ? visiblePlaces.length : visiblePlacesInView.length;
+    return currentCount < maxItemCount;
+  }, [
+    numPrioritizedToShow,
+    splitMode,
+    visiblePlaces.length,
+    visiblePlacesInView.length,
+  ]);
+
+  const loadMore = useCallback(() => {
+    if (!hasMore() || isLoadingMore) return;
+
+    try {
+      setIsLoadingMore(true);
+      setNumPrioritizedToShow((prev) => prev + BATCH_SIZE);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, isLoadingMore, BATCH_SIZE]);
 
   const resetDistribution = useCallback(() => {
     setVisiblePlaces((prev) => [...prev]);
@@ -280,13 +299,37 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 640) {
-        setViewMode("map");
+        setSplitMode("map");
       }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const getDisplayPlaces = useCallback(
+    (paginatedFilteredPlaces: MapPlace[]) => {
+      return splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+    },
+    [splitMode, prioritizedPlaces]
+  );
+
+  // Get filtered places using FiltersContext
+  const filteredPlaces = useMemo(() => {
+    return getFilteredCities(cities);
+  }, [cities, getFilteredCities]);
+
+  // Update visible places when filtered places change
+  useEffect(() => {
+    if (cities.length > 0) {
+      setVisiblePlaces(filteredPlaces);
+    }
+  }, [cities, filteredPlaces]);
+
+  // Get paginated filtered places
+  const paginatedFilteredPlaces = useMemo(() => {
+    return filteredPlaces.slice(0, numPrioritizedToShow);
+  }, [filteredPlaces, numPrioritizedToShow]);
 
   const value = useMemo(
     () => ({
@@ -298,36 +341,47 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       resetDistribution,
       mapBounds,
       setMapBounds,
-      visiblePlaces,
+      visiblePlaces: filteredPlaces,
       setVisiblePlaces,
       visiblePlacesInView,
       numPrioritizedToShow,
       setNumPrioritizedToShow,
       prioritizedPlaces,
-      hasMorePlaces,
-      loadMorePlaces,
+      maxItems:
+        splitMode === "list"
+          ? filteredPlaces.length
+          : visiblePlacesInView.length,
+      hasMore,
       getVisiblePlacesForCurrentView,
       getVisiblePlaceTypes,
       filterPlacesByZoom: filterPlacesByZoomCallback,
       getPlaceGeoJson,
       calculateMapBounds,
       getGeographicLevel,
-      viewMode,
-      setViewMode,
+      splitMode,
+      setSplitMode,
+      loadMore,
       visibleLists,
+      getDisplayPlaces,
+      isLoadingMore,
+      filteredPlaces,
+      paginatedFilteredPlaces,
     }),
     [
       state,
       mapBounds,
-      visiblePlaces,
+      filteredPlaces,
       visiblePlacesInView,
       numPrioritizedToShow,
       prioritizedPlaces,
-      hasMorePlaces,
+      hasMore,
       getVisiblePlacesForCurrentView,
-      loadMorePlaces,
-      viewMode,
+      loadMore,
+      splitMode,
       visibleLists,
+      getDisplayPlaces,
+      isLoadingMore,
+      paginatedFilteredPlaces,
     ]
   );
 

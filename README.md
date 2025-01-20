@@ -81,24 +81,22 @@ pocketbase migrate up
 3. rm -rf pb_data
 4. ./pocketbase serve
 5. move to the root directory, run:
+
 ```bash
 npm run generate-types
 ```
 
-
 The prod one has to be manually triggered but you can change it to trigger on push/merge on main if u want
 
-
 run a prod migration
+
 1. go to github
 2. actions
 3. go to "deploy migrations to citiesrank"
 
 run a prod release
+
 1. it will release when you merge to main
-
-
-
 
 setup ngrok
 
@@ -110,5 +108,4 @@ setup ngrok
 run ngrok
 ngrok http 5173
 
-
-
+npm run knip

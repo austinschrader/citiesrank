@@ -62,7 +62,7 @@ export const CityMap = ({ className }: CityMapProps) => {
     visiblePlacesInView,
     numPrioritizedToShow,
     setNumPrioritizedToShow,
-    viewMode,
+    splitMode,
     setVisiblePlaces,
   } = useMap();
 

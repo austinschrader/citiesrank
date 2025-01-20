@@ -1,16 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-
-export type HeaderMode =
-  | "discover"
-  | "lists"
-  | "latest"
-  | "profile"
-  | "favorites"
-  | "places";
-export type EnergyMode = "buzzing" | "fresh" | "trending" | "upcoming";
-export type TimeRange = "now" | "today" | "week" | "month";
-export type ViewMode = "places" | "lists";
+import { ContentType, EnergyMode, HeaderMode, TimeRange } from "@/features/explore/types";
 
 interface HeaderContextValue {
   mode: HeaderMode;
@@ -25,10 +15,8 @@ interface HeaderContextValue {
   setShowControls: (show: boolean) => void;
   exploringCount: number | null;
   setExploringCount: (count: number | null) => void;
-  viewMode: ViewMode;
-  setViewMode: (mode: ViewMode) => void;
-  itemsPerPage: number;
-  setItemsPerPage: (size: number) => void;
+  contentType: ContentType;
+  setContentType: (type: ContentType) => void;
   isFiltersCollapsed: boolean;
   setIsFiltersCollapsed: (collapsed: boolean) => void;
 }
@@ -42,8 +30,7 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
   const [subtitle, setSubtitle] = useState<string | null>(null);
   const [showControls, setShowControls] = useState(true);
   const [exploringCount, setExploringCount] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("places");
-  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [contentType, setContentType] = useState<ContentType>("places");
   const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const location = useLocation();
 
@@ -75,10 +62,8 @@ export function HeaderProvider({ children }: { children: React.ReactNode }) {
     setShowControls,
     exploringCount,
     setExploringCount,
-    viewMode,
-    setViewMode,
-    itemsPerPage,
-    setItemsPerPage,
+    contentType,
+    setContentType,
     isFiltersCollapsed,
     setIsFiltersCollapsed,
   };
