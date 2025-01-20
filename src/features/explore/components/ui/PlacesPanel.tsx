@@ -26,14 +26,13 @@ export const PlacesPanel = ({
   onLoadMore,
   hasMore,
 }: PlacesPanelProps) => {
-  const { prioritizedPlaces, splitMode, maxItems } = useMap();
+  const { maxItems, getDisplayPlaces } = useMap();
   const { selectedPlace, fromMap } = useSelection();
   const gridRef = useScrollToSelected(selectedPlace, fromMap);
 
   const observerTarget = useInfiniteScroll(onLoadMore, hasMore, isLoadingMore);
 
-  const displayPlaces =
-    splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+  const displayPlaces = getDisplayPlaces(paginatedFilteredPlaces);
 
   return (
     <BasePanel

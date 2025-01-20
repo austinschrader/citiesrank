@@ -106,6 +106,7 @@ interface MapContextValue extends MapState {
   hasMorePlaces: boolean;
   loadMorePlaces: () => void;
   visibleLists: any[];
+  getDisplayPlaces: (paginatedFilteredPlaces: MapPlace[]) => MapPlace[];
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -284,6 +285,13 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const getDisplayPlaces = useCallback(
+    (paginatedFilteredPlaces: MapPlace[]) => {
+      return splitMode === "list" ? paginatedFilteredPlaces : prioritizedPlaces;
+    },
+    [splitMode, prioritizedPlaces]
+  );
+
   const value = useMemo(
     () => ({
       ...state,
@@ -312,6 +320,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       hasMorePlaces,
       loadMorePlaces,
       visibleLists,
+      getDisplayPlaces,
     }),
     [
       state,
@@ -325,10 +334,15 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       loadMorePlaces,
       splitMode,
       visibleLists,
+      getDisplayPlaces,
     ]
   );
 
-  return <MapContext.Provider value={value}>{children}</MapContext.Provider>;
+  return (
+    <MapContext.Provider value={value}>
+      {children}
+    </MapContext.Provider>
+  );
 }
 
 export function useMap() {
