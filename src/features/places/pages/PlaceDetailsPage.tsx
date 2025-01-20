@@ -11,14 +11,13 @@ import {
 } from "@/components/ui/select";
 import { useFeed } from "@/features/feed/context/FeedContext";
 import { PlaceCard } from "@/features/places/components/ui/cards/PlaceCard";
-import { useSearch } from "@/features/places/components/ui/search/hooks/useSearch";
 import { useCities } from "@/features/places/context/CitiesContext";
 import {
   SortOrder,
   useFilters,
 } from "@/features/places/context/FiltersContext";
-import { HeroSection } from "@/features/places/detail/shared/HeroSection";
-import { LocationMap } from "@/features/places/detail/shared/LocationMap";
+import { HeroSection } from "@/features/places/detail/HeroSection";
+import { LocationMap } from "@/features/places/detail/LocationMap";
 import { getTagLabel, PlaceTag } from "@/features/places/types/tags";
 import {
   CitiesResponse,
@@ -43,14 +42,9 @@ interface PlaceDetailsPageProps {
   initialData?: CitiesResponse;
 }
 
-const formatUrlName = (name: string) => {
-  return name.toLowerCase().replace(/\s+/g, "-");
-};
-
 export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   const { placeType, id } = useParams();
   const { cities, cityStatus } = useCities();
-  const { searchQuery } = useSearch();
   const { filters, setFilter, resetFilters, getFilteredCities } = useFilters();
   const {
     followPlace,
