@@ -55,6 +55,14 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+  const resetState = () => {
+    setInitialLoadDone(false);
+    setIsCreatingNew(false);
+    setNewCollectionName("");
+    setCurrentPage(1);
+    setSearchQuery("");
+  };
+
   // Fetch user's lists and check which ones contain the place
   useEffect(() => {
     if (isOpen && user && !initialLoadDone) {
@@ -86,19 +94,7 @@ export const SaveCollectionsDialog: React.FC<SaveCollectionsDialogProps> = ({
   // Reset state when dialog closes
   useEffect(() => {
     if (!isOpen) {
-      setInitialLoadDone(false);
-      setIsCreatingNew(false);
-      setNewCollectionName("");
-      setCurrentPage(1);
-      setSearchQuery("");
-    }
-  }, [isOpen]);
-
-  // Reset pagination and search when dialog opens/closes
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentPage(1);
-      setSearchQuery("");
+      resetState();
     }
   }, [isOpen]);
 

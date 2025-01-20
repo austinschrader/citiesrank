@@ -7,13 +7,19 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useMemo,
   useState,
 } from "react";
 
 interface ListsContextType {
   lists: ExpandedList[];
+  sortedLists: ExpandedList[];
   isLoading: boolean;
   error: ClientResponseError | null;
+  sortBy: string;
+  setSortBy: (value: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   createList: ({
     title,
     description,
@@ -49,6 +55,37 @@ export function ListsProvider({ children }: { children: ReactNode }) {
   const [lists, setLists] = useState<ExpandedList[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ClientResponseError | null>(null);
+  const [sortBy, setSortBy] = useState<string>("popular");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Compute sorted and filtered lists
+  const sortedLists = useMemo(() => {
+    let filteredLists = [...lists];
+
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filteredLists = filteredLists.filter(
+        (list) =>
+          list.title.toLowerCase().includes(query) ||
+          list.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply sorting
+    return filteredLists.sort((a, b) => {
+      switch (sortBy) {
+        case "popular":
+          return (b.places?.length || 0) - (a.places?.length || 0);
+        case "recent":
+          return new Date(b.updated).getTime() - new Date(a.updated).getTime();
+        case "alphabetical":
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
+  }, [lists, sortBy, searchQuery]);
 
   const createList = useCallback(
     async ({
@@ -497,23 +534,26 @@ export function ListsProvider({ children }: { children: ReactNode }) {
     [pb]
   );
 
+  const value = {
+    lists,
+    sortedLists,
+    isLoading,
+    error,
+    sortBy,
+    setSortBy,
+    searchQuery,
+    setSearchQuery,
+    createList,
+    getList,
+    getUserLists,
+    updateList,
+    deleteList,
+    addPlaceToList,
+    removePlaceFromList,
+  };
+
   return (
-    <ListsContext.Provider
-      value={{
-        lists,
-        isLoading,
-        error,
-        createList,
-        getList,
-        getUserLists,
-        updateList,
-        deleteList,
-        addPlaceToList,
-        removePlaceFromList,
-      }}
-    >
-      {children}
-    </ListsContext.Provider>
+    <ListsContext.Provider value={value}>{children}</ListsContext.Provider>
   );
 }
 

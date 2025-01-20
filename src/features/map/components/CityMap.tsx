@@ -10,7 +10,7 @@ import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
-import { Filter, Loader2, Plus } from "lucide-react";
+import { Filter } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
@@ -23,12 +23,19 @@ import { MapControls } from "./MapControls";
 import { MapLegend } from "./MapLegend";
 import { MapMarker } from "./MapMarker";
 import { PlaceGeoJson } from "./PlaceGeoJson";
+import { ErrorBoundary } from "react-error-boundary";
 
-const pageSizeOptions = [15, 25, 50, 100];
-
-interface CityMapProps {
-  className?: string;
-}
+const ErrorFallback = () => (
+  <div className="flex items-center justify-center h-full w-full bg-gray-50 rounded-xl">
+    <div className="text-center p-6">
+      <h2 className="text-xl font-semibold mb-2">Map Loading Error</h2>
+      <p className="text-gray-600 mb-4">There was an error loading the map. Please try refreshing the page.</p>
+      <Button onClick={() => window.location.reload()} variant="outline">
+        Refresh Page
+      </Button>
+    </div>
+  </div>
+);
 
 const BoundsTracker = () => {
   const map = useLeafletMap();
@@ -40,56 +47,37 @@ const BoundsTracker = () => {
       setMapBounds(bounds);
     };
 
-    map.on("moveend", handleMove);
-    // Set initial bounds immediately
-    requestAnimationFrame(() => {
-      handleMove();
-    });
+    let timeoutId: NodeJS.Timeout;
+    const debouncedHandleMove = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(handleMove, 100);
+    };
+
+    map.on("moveend", debouncedHandleMove);
+    requestAnimationFrame(handleMove);
 
     return () => {
-      map.off("moveend", handleMove);
+      clearTimeout(timeoutId);
+      map.off("moveend", debouncedHandleMove);
     };
   }, [map, setMapBounds]);
 
   return null;
 };
 
-export const CityMap = ({ className }: CityMapProps) => {
+export const CityMap = () => {
   const { center, zoom, selectedPlace, setZoom } = useMap();
   const { cities } = useCities();
-  const { filters, getFilteredCities, resetFilters } = useFilters();
+  const { filters, getFilteredCities, resetFilters, hasActiveFilters } = useFilters();
   const {
     visiblePlacesInView,
-    numPrioritizedToShow,
-    setNumPrioritizedToShow,
-    splitMode,
     setVisiblePlaces,
   } = useMap();
 
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [itemsPerPage] = useState(pageSizeOptions[0]);
-
-  // Memoize filtered cities computation
   const filteredCities = useMemo(() => {
     return getFilteredCities(cities);
   }, [cities, getFilteredCities, filters.budget, filters.season]);
 
-  // Memoize hasActiveFilters check
-  const hasActiveFilters = useMemo(
-    () =>
-      filters.search ||
-      filters.averageRating ||
-      filters.populationCategory ||
-      filters.activeTypes.length !== Object.values(CitiesTypeOptions).length,
-    [
-      filters.search,
-      filters.averageRating,
-      filters.populationCategory,
-      filters.activeTypes,
-    ]
-  );
-
-  // Update visible places with cleanup
   useEffect(() => {
     let isMounted = true;
 
@@ -102,86 +90,59 @@ export const CityMap = ({ className }: CityMapProps) => {
     };
   }, [filteredCities, setVisiblePlaces]);
 
-  const hasMore = useCallback(() => {
-    return numPrioritizedToShow < visiblePlacesInView.length;
-  }, [numPrioritizedToShow, visiblePlacesInView.length]);
-
-  const loadMore = useCallback(() => {
-    if (!hasMore() || isLoadingMore) return;
-
-    setIsLoadingMore(true);
-    const timeoutId = setTimeout(() => {
-      setNumPrioritizedToShow((prev) => prev + itemsPerPage);
-      setIsLoadingMore(false);
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [hasMore, isLoadingMore, setNumPrioritizedToShow, itemsPerPage]);
-
-  // Memoize visible places for MarkerClusterGroup
   const memoizedVisiblePlaces = useMemo(
     () => visiblePlacesInView,
     [visiblePlacesInView]
   );
 
   return (
-    <div className={cn("relative h-full w-full", className)}>
-      <MapContainer
-        center={center}
-        zoom={zoom}
-        scrollWheelZoom={true}
-        zoomControl={false}
-        className="h-full w-full rounded-xl relative z-0"
-        maxBounds={[
-          [-90, -180],
-          [90, 180],
-        ]}
-        maxBoundsViscosity={1.0}
-      >
-        <BoundsTracker />
-        <MapControls onZoomChange={setZoom} />
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
-        />
-        <MarkerClusterGroup
-          chunkedLoading
-          maxClusterRadius={50}
-          spiderfyOnMaxZoom={true}
-          removeOutsideVisibleBounds={true}
+    <div className="relative h-full w-full">
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <MapContainer
+          center={center}
+          zoom={zoom}
+          scrollWheelZoom={true}
+          zoomControl={false}
+          className="h-full w-full rounded-xl relative z-0"
+          maxBounds={[
+            [-90, -180],
+            [90, 180],
+          ]}
+          maxBoundsViscosity={1.0}
+          preferCanvas={true}
         >
-          {memoizedVisiblePlaces.map((place) => (
-            <MapMarker key={place.id} place={place} />
-          ))}
-        </MarkerClusterGroup>
-        {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
-      </MapContainer>
+          <BoundsTracker />
+          <MapControls onZoomChange={setZoom} />
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
+            keepBuffer={2}
+            updateWhenZooming={false}
+            updateWhenIdle={true}
+          />
+          <MarkerClusterGroup
+            chunkedLoading={true}
+            maxClusterRadius={60}
+            spiderfyOnMaxZoom={true}
+            removeOutsideVisibleBounds={true}
+            disableClusteringAtZoom={15}
+            chunkDelay={100}
+            zoomToBoundsOnClick={true}
+            animate={false}
+            spiderfyDistanceMultiplier={2}
+            showCoverageOnHover={false}
+            maxClusters={100}
+          >
+            {memoizedVisiblePlaces.map((place) => (
+              <MapMarker key={place.id} place={place} />
+            ))}
+          </MarkerClusterGroup>
+          {selectedPlace && <PlaceGeoJson place={selectedPlace} />}
+        </MapContainer>
 
-      {/* Status Indicator */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
-        <div className="flex flex-col items-center gap-2">
-          {isLoadingMore ? (
-            <div
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-full",
-                "bg-background/95 backdrop-blur-sm shadow-lg border",
-                "text-foreground animate-in fade-in slide-in-from-top-2"
-              )}
-            >
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Loading more places...</span>
-            </div>
-          ) : hasMore() ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadMore}
-              className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              <span>Load more places</span>
-            </Button>
-          ) : hasActiveFilters && visiblePlacesInView.length > 0 ? (
+        {/* Status Indicator */}
+        {hasActiveFilters() && visiblePlacesInView.length > 0 && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10] hidden sm:block">
             <div className="flex flex-col sm:flex-row items-center gap-2">
               <div
                 className={cn(
@@ -191,30 +152,22 @@ export const CityMap = ({ className }: CityMapProps) => {
                 )}
               >
                 <span className="whitespace-nowrap">
-                  All {visiblePlacesInView.length} places loaded
+                  {visiblePlacesInView.length} places found
                 </span>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={resetFilters}
-                className={cn(
-                  "rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent",
-                  "text-sm sm:text-base px-3 sm:px-4"
-                )}
+                className="rounded-full bg-background/95 backdrop-blur-sm shadow-lg hover:bg-accent"
               >
-                <Filter className="w-4 h-4 mr-1.5 sm:mr-2" />
-                <span className="whitespace-nowrap">Clear filters</span>
+                <Filter className="w-4 h-4 mr-2" />
+                <span>Clear filters</span>
               </Button>
             </div>
-          ) : null}
-        </div>
-      </div>
-
-      {/* Map Legend */}
-      <div className="absolute top-4 left-4 z-[10]">
-        <MapLegend />
-      </div>
+          </div>
+        )}
+      </ErrorBoundary>
     </div>
   );
 };

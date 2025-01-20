@@ -37,4 +37,7 @@ export interface ValidationResult {
 
 export interface SeedFile {
   default: Place[];
+  content: Place[];
+  lastModified?: string;
+  size?: number;
 }

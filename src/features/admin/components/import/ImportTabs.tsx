@@ -1,7 +1,8 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ReactNode } from "react";
 
 interface ImportTabsProps {
-  children: React.ReactNode;
+  children: ReactNode;
   defaultValue?: string;
 }
 
@@ -16,6 +17,7 @@ export function ImportTabs({
         <TabsList>
           <TabsTrigger value="places">Places</TabsTrigger>
           <TabsTrigger value="feed_items">Feed Items</TabsTrigger>
+          <TabsTrigger value="lists">Lists</TabsTrigger>
         </TabsList>
       </div>
       {children}

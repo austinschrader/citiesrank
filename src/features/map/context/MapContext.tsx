@@ -39,36 +39,6 @@ export type SplitMode = "list" | "split" | "map";
 const DEFAULT_MOBILE_PLACES = 15;
 const DEFAULT_DESKTOP_PLACES = 15;
 
-// OECD country centers with their coordinates and recommended zoom levels
-const COUNTRY_CENTERS: Array<{
-  name: string;
-  center: LatLngTuple;
-  zoom: number;
-}> = [
-  { name: "United States", center: [39.8283, -98.5795], zoom: 5 },
-  { name: "Japan", center: [36.2048, 138.2529], zoom: 6 },
-  { name: "France", center: [46.2276, 2.2137], zoom: 6 },
-  { name: "Italy", center: [41.8719, 12.5674], zoom: 6 },
-  { name: "United Kingdom", center: [55.3781, -3.436], zoom: 6 },
-  { name: "Germany", center: [51.1657, 10.4515], zoom: 6 },
-  { name: "Spain", center: [40.4637, -3.7492], zoom: 6 },
-  { name: "Australia", center: [-25.2744, 133.7751], zoom: 5 },
-  { name: "South Korea", center: [35.9078, 127.7669], zoom: 7 },
-  { name: "Canada", center: [56.1304, -106.3468], zoom: 4 },
-  { name: "New Zealand", center: [-40.9006, 174.886], zoom: 6 },
-  { name: "Netherlands", center: [52.1326, 5.2913], zoom: 7 },
-  { name: "Switzerland", center: [46.8182, 8.2275], zoom: 8 },
-  { name: "Sweden", center: [60.1282, 18.6435], zoom: 5 },
-  { name: "Norway", center: [60.472, 8.4689], zoom: 5 },
-];
-
-// Get random country center
-const getRandomCenter = () => {
-  const randomIndex = Math.floor(Math.random() * COUNTRY_CENTERS.length);
-  return COUNTRY_CENTERS[randomIndex];
-};
-
-const randomCountry = getRandomCenter();
 const DEFAULT_CENTER: LatLngTuple = [46.2276, 2.2137]; // Paris
 const DEFAULT_ZOOM = 6;
 

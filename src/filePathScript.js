@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import { minimatch } from "minimatch";
 import { join, relative, resolve } from "path";
 import { fileURLToPath } from "url";
 
@@ -19,11 +20,54 @@ const ignoreList = [
   ".vscode",
   ".github",
   "pnpm-lock.yaml",
-  "pnpm-workspace.yaml",
-  "yarn.lock",
-  "yarn-error.log",
-  "yarn-debug.log",
-  "yarn-metadata.json",
+  ".DS_Store",
+  "*.test.ts",
+  "*.test.tsx",
+  "__tests__",
+  "__snapshots__",
+  "*.d.ts",
+  "*.config.js",
+  "*.config.ts",
+  ".env*",
+  ".eslintrc*",
+  ".prettierrc*",
+  "README.md",
+  "LICENSE",
+  "tsconfig.json",
+  "jest.config.*",
+  "*.css",
+  "*.svg",
+  "*.png",
+  "*.jpg",
+  "*.ico",
+  ".env",
+  ".gitignore",
+  "components.json",
+  "eslint.config.js",
+  "index.html",
+  "package-lock.json",
+  "package.json",
+  "rewrites.json",
+  "src/.DS_Store",
+  "src/assets",
+  "src/lib/data",
+  "src/files.txt",
+  "src/pages/.DS_Store",
+  "tsconfig.app.json",
+  "tsconfig.node.json",
+  "tsconfig.node.tsbuildinfo",
+  "tsconfig.tsbuildinfo",
+  "vite.config.d.ts",
+  "vite.config.js",
+  "vite.config.ts",
+  "**/.DS_Store",
+  "src/lib/.env.example",
+  "src/filePathScript.js",
+  "src/config/appConfig.d.ts",
+  "src/config/appConfig.js",
+  "src/config/appConfig.ts",
+  "src/config/GoogleAnalytics.tsx",
+  "src/lib/data/**", // This will ignore everything under src/lib/data
 ];
 
 async function listFiles(startPath) {
@@ -36,12 +80,10 @@ async function listFiles(startPath) {
       const fullPath = join(currentPath, entry.name);
       const relativePath = relative(startPath, fullPath);
 
-      // Simpler ignore check: either exact match or is a subdirectory of ignored path
-      const shouldIgnore = ignoreList.some(
-        (ignorePath) =>
-          relativePath === ignorePath ||
-          relativePath.startsWith(ignorePath + "/")
-      );
+      // Check if path matches any glob pattern in ignoreList
+      const shouldIgnore = ignoreList.some((pattern) => {
+        return minimatch(relativePath, pattern, { dot: true });
+      });
 
       if (shouldIgnore) {
         continue;
