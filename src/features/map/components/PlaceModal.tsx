@@ -53,7 +53,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
     usePlaceNavigation(initialPlace, visiblePlacesInView);
   const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showHints, setShowHints] = useState(true);
@@ -131,7 +130,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   };
 
   const handlePlaceNavigation = (direction: "next" | "prev") => {
-    setIsTransitioning(true);
     const nextPlace = navigateToPlace(direction);
     if (onPlaceSelect) {
       onPlaceSelect(nextPlace);
