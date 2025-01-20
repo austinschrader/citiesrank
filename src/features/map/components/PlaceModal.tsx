@@ -12,6 +12,7 @@ import { useFavoriteStatus } from "@/features/places/hooks/useFavoriteStatus";
 import { getImageUrl } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
 import {
+  Bookmark,
   Camera,
   ChevronLeft,
   ChevronRight,
@@ -27,6 +28,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SaveCollectionsDialog } from "./SaveCollectionsDialog";
 import { SocialShareMenu } from "./SocialShareMenu";
+import { useSavedPlaces } from "@/features/lists/context/SavedPlacesContext";
 
 interface PlaceModalProps {
   place: MapPlace;
@@ -57,6 +59,7 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const [currentPlace, setCurrentPlace] = useState<MapPlace>(initialPlace);
+  const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [preloadedImages, setPreloadedImages] = useState<string[]>([]);
@@ -78,7 +81,6 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const contentRef = useRef<HTMLDivElement>(null);
   const { visiblePlacesInView } = useMap();
-  const { isFavorited } = useFavoriteStatus(currentPlace.id);
   const { user } = useAuth();
 
   // Handle viewport changes
@@ -416,18 +418,27 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
                         size="icon"
                         onClick={() => setShowSaveDialog(true)}
                         className={cn(
-                          "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md",
-                          isFavorited
-                            ? "bg-white/20 hover:bg-white/30"
-                            : "bg-transparent hover:bg-black/50"
+                          "h-10 w-10 rounded-full transition-all duration-300 backdrop-blur-md group",
+                          isPlaceSaved(currentPlace.id)
+                            ? "bg-primary/20 hover:bg-primary/30 dark:bg-primary/30 dark:hover:bg-primary/40"
+                            : "bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30"
                         )}
                       >
-                        <FolderPlus
+                        <Bookmark
                           className={cn(
-                            "h-5 w-5 text-white",
-                            isFavorited && "text-white/80"
+                            "h-5 w-5 transition-all duration-300 ease-spring",
+                            isPlaceSaved(currentPlace.id)
+                              ? "text-primary fill-primary scale-110"
+                              : "text-white/90 group-hover:scale-110"
                           )}
                         />
+                        <span className={cn(
+                          "absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap opacity-0 scale-95 transition-all duration-200",
+                          "bg-black/80 text-white backdrop-blur-md",
+                          "group-hover:opacity-100 group-hover:scale-100"
+                        )}>
+                          {isPlaceSaved(currentPlace.id) ? "Saved" : "Save"}
+                        </span>
                       </Button>
                     )}
                   </div>
@@ -558,7 +569,10 @@ export const PlaceModal: React.FC<PlaceModalProps> = ({
 
       <SaveCollectionsDialog
         isOpen={showSaveDialog}
-        onClose={() => setShowSaveDialog(false)}
+        onClose={() => {
+          setShowSaveDialog(false);
+          refreshSavedPlaces();
+        }}
         placeId={currentPlace.id}
       />
     </Dialog>
