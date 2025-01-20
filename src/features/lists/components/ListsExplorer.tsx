@@ -1,6 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLists } from "@/features/lists/context/ListsContext";
-import { ExpandedList } from "@/features/lists/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { Compass, FolderOpen, Loader2, Plus, Sparkles } from "lucide-react";
 import { useEffect } from "react";
@@ -28,11 +35,19 @@ const LoadingSpinner = () => (
 
 export const ListsExplorer = () => {
   const navigate = useNavigate();
-  const { lists, getUserLists, isLoading } = useLists();
+  const {
+    sortedLists,
+    getUserLists,
+    isLoading,
+    sortBy,
+    setSortBy,
+    searchQuery,
+    setSearchQuery,
+  } = useLists();
 
   useEffect(() => {
     getUserLists().catch((error) => {
-      console.error("Failed to fetch lists:", error);
+      console.error("Error fetching lists:", error);
     });
   }, [getUserLists]);
 
@@ -63,19 +78,25 @@ export const ListsExplorer = () => {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950">
+    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950 relative">
+      <div className="absolute top-24 right-24 w-48 h-48 bg-pink-200 dark:bg-pink-500/30 rounded-full blur-3xl z-10" />
+      <div className="absolute top-24 right-24 w-48 h-48 bg-purple-200 dark:bg-purple-500/30 rounded-full blur-3xl z-10" />
+      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8" />
+      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform -translate-x-8 -translate-y-8" />
+      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8" />
+      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform -translate-x-8 -translate-y-8" />
+
       <motion.div
         initial="hidden"
         animate="show"
         variants={containerVariants}
-        className="max-w-6xl mx-auto p-6 pt-12"
+        className="max-w-6xl mx-auto p-6 pt-12 relative"
       >
         {/* Header Section */}
         <motion.div
           variants={itemVariants}
           className="relative mb-16 text-center"
         >
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full blur-3xl" />
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             Collections
           </h1>
@@ -83,6 +104,26 @@ export const ListsExplorer = () => {
             Discover carefully curated collections of extraordinary places from
             around the world
           </p>
+          <div className="flex flex-col md:flex-row justify-between items-center max-w-2xl mx-auto gap-4 mb-8">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <Input
+                type="text"
+                placeholder="Search collections..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full md:w-[300px] bg-white dark:bg-gray-800"
+              />
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px] bg-white dark:bg-gray-800">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="popular">Most Popular</SelectItem>
+                  <SelectItem value="recent">Recently Updated</SelectItem>
+                  <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           <Button
             onClick={() => navigate("/lists/create")}
             className="group relative px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
@@ -93,6 +134,7 @@ export const ListsExplorer = () => {
               Create Collection
             </span>
           </Button>
+          </div>
         </motion.div>
 
         {/* Lists Grid */}
@@ -101,7 +143,7 @@ export const ListsExplorer = () => {
             variants={containerVariants}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {lists.map((list: ExpandedList) => (
+            {sortedLists.map((list) => (
               <motion.div
                 key={list.id}
                 variants={itemVariants}
@@ -114,7 +156,7 @@ export const ListsExplorer = () => {
           </motion.div>
 
           {/* Empty State */}
-          {lists.length === 0 && (
+          {sortedLists.length === 0 && (
             <motion.div
               variants={itemVariants}
               className="flex flex-col items-center justify-center py-20 px-4"
