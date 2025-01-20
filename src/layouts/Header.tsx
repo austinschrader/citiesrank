@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -12,229 +11,329 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignInButton } from "@/features/auth/components/SignInButton";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Bookmark,
+  Globe2,
   LogOut,
-  MapPin,
-  Scroll,
+  ScrollText,
   Sparkles,
+  Star,
   Upload,
   UserCircle,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+
+const navItems = [
+  {
+    label: "Explore",
+    mobileLabel: "Explore",
+    icon: Globe2,
+    to: "/",
+    description: "Discover your next adventure on our interactive map",
+    gradient: "from-sky-500 via-blue-500 to-cyan-500",
+  },
+  {
+    label: "Collections",
+    mobileLabel: "Lists",
+    icon: ScrollText,
+    to: "/lists",
+    description: "Curate and share your favorite places",
+    gradient: "from-purple-500 via-fuchsia-500 to-pink-500",
+  },
+  {
+    label: "Live Feed",
+    mobileLabel: "Live",
+    icon: Sparkles,
+    to: "/feed",
+    description: "See what's happening around the world right now",
+    gradient: "from-emerald-500 via-green-500 to-teal-500",
+  },
+  {
+    label: "Quests",
+    mobileLabel: "Quests",
+    icon: Star,
+    to: "/quests",
+    description: "Uncover hidden gems and trending spots",
+    gradient: "from-amber-500 via-orange-500 to-yellow-500",
+  },
+];
 
 export const Header = () => {
   const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
+  const [scrolled, setScrolled] = useState(false);
+  const [activeHover, setActiveHover] = useState<string | null>(null);
 
-  const handleSignOut = () => {
-    signOut();
-    navigate("/");
-  };
-
-  const navItems = [
-    {
-      label: "Explore",
-      mobileLabel: "Explore",
-      icon: MapPin,
-      to: "/",
-      description: "Find your next favorite place on our interactive map",
-      iconClass: "text-indigo-500",
-    },
-    {
-      label: "All Collections",
-      mobileLabel: "Lists",
-      icon: Scroll,
-      to: "/lists",
-      description: "Create and organize lists of your favorite places",
-      iconClass: "text-blue-500",
-    },
-    {
-      label: "Happening Now",
-      mobileLabel: "Now",
-      icon: Sparkles,
-      to: "/feed",
-      description: "See the most recent updates and activity",
-      iconClass: "text-green-500",
-    },
-    {
-      label: "Achievements",
-      mobileLabel: "Achieve",
-      icon: Sparkles,
-      to: "/discover",
-      description: "Discover hidden gems and share your finds",
-      iconClass: "text-purple-500",
-    },
-  ];
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-[100] w-full border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-[calc(100%-4rem)] mx-auto">
-        <div className="h-16 flex items-center">
-          <div className="flex-none hidden md:block">
-            <Link to="/" className="flex flex-col group">
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black tracking-tight bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
-                  WURLD
-                </span>
-                <span className="text-3xl font-black tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                  MAP
-                </span>
-                <div className="relative w-3 h-3">
-                  <div
-                    className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-20"
-                    style={{ animationDuration: "2s" }}
-                  ></div>
-                  <div
-                    className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-40"
-                    style={{ animationDuration: "1.5s" }}
-                  ></div>
-                  <div
-                    className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-60"
-                    style={{ animationDuration: "1s" }}
-                  ></div>
-                  <div className="absolute inset-0 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/20"></div>
+    <motion.header
+      className={cn(
+        "sticky top-0 z-[100] w-full transition-all duration-300",
+        "border-b border-white/10",
+        scrolled
+          ? "bg-white/80 backdrop-blur-lg supports-[backdrop-filter]:bg-white/80"
+          : "bg-white/50 backdrop-blur-sm supports-[backdrop-filter]:bg-white/50"
+      )}
+      initial={{ y: 0, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="h-16 flex items-center justify-between">
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex-shrink-0 group relative"
+            onMouseEnter={() => setActiveHover("logo")}
+            onMouseLeave={() => setActiveHover(null)}
+          >
+            <motion.div className="flex items-center gap-1">
+              <div className="flex flex-col">
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600">
+                    WURLD
+                  </span>
+                  <span className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-400">
+                    MAP
+                  </span>
                 </div>
               </div>
-              <div className="w-full text-center">
-                <span className="text-sm font-semibold tracking-widest uppercase bg-gradient-to-r from-slate-600 to-slate-500 bg-clip-text text-transparent">
-                  Your World, UR Map
-                </span>
+              <div className="relative w-3 h-3">
+                <AnimatePresence>
+                  {activeHover === "logo" && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="absolute inset-0"
+                    >
+                      {[0.6, 0.8, 1].map((opacity, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute inset-0 bg-emerald-500 rounded-full"
+                          animate={{
+                            scale: [1, 2],
+                            opacity: [opacity, 0],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                          }}
+                        />
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <div className="relative w-full h-full bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/20" />
               </div>
-            </Link>
-          </div>
+            </motion.div>
+            <motion.div
+              className="absolute -bottom-4 left-0 right-0 text-center"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <span className="text-sm font-semibold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-500">
+                Your World, UR Map
+              </span>
+            </motion.div>
+          </Link>
 
-          <div className="flex items-center gap-6 ml-auto">
-            <nav className="hidden md:flex items-center gap-4">
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-sm font-semibold text-gray-900 hover:bg-gray-50/50 flex items-center gap-2 group relative transition-all duration-200 ease-in-out"
-                  >
-                    <item.icon
-                      className={`h-5 w-5 ${item.iconClass} transition-transform duration-200 group-hover:scale-110`}
-                      strokeWidth={2.5}
-                    />
-                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">
-                      {item.label}
-                    </span>
-                    {item.description && (
-                      <div className="absolute hidden group-hover:block top-full left-1/2 transform -translate-x-1/2 mt-1 w-64 p-3 bg-white dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 rounded-lg shadow-lg border border-border/40 whitespace-normal z-[100]">
-                        {item.description}
-                      </div>
-                    )}
-                  </Button>
-                </Link>
-              ))}
-            </nav>
-
-            {/* Mobile Navigation */}
-            <nav className="flex md:hidden items-center gap-2 flex-1 justify-around">
-              {navItems.map((item) => (
-                <Link key={item.to} to={item.to}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex flex-col items-center gap-1 h-auto py-1.5 px-3"
-                  >
-                    <item.icon
-                      className={`h-5 w-5 ${item.iconClass}`}
-                      strokeWidth={2.5}
-                    />
-                    <span className="text-xs">{item.mobileLabel}</span>
-                  </Button>
-                </Link>
-              ))}
-            </nav>
-
-            {/* User menu section */}
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative h-8 w-8 md:h-11 md:w-11 rounded-full shrink-0"
-                  >
-                    <Avatar className="h-7 w-7 md:h-9 md:w-9">
-                      <AvatarImage src={user.avatar} alt={user.name ?? ""} />
-                      <AvatarFallback>
-                        {user.name?.[0] ?? user.email?.[0].toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-56 md:w-64 z-[9999]"
-                  align="end"
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.to;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onMouseEnter={() => setActiveHover(item.to)}
+                  onMouseLeave={() => setActiveHover(null)}
                 >
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {user.name}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  <motion.div
+                    className="relative px-3 py-2"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Button
+                      variant="ghost"
+                      className={cn(
+                        "relative h-10 rounded-lg font-medium transition-all duration-300",
+                        "bg-white/5 hover:bg-white/10 dark:hover:bg-white/5",
+                        "border border-gray-200/20 hover:border-gray-300/30",
+                        "shadow-sm hover:shadow-md",
+                        "backdrop-blur-sm",
+                        isActive && "bg-white/10 border-gray-300/30"
+                      )}
+                    >
+                      <div className="flex items-center gap-2 px-4">
+                        <item.icon
+                          className={cn(
+                            "w-4 h-4 transition-transform duration-300",
+                            `bg-gradient-to-r ${item.gradient} bg-clip-text opacity-70 group-hover:opacity-100`
+                          )}
+                        />
+                        <span className="text-gray-700 dark:text-gray-200">
+                          {item.label}
+                        </span>
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeIndicator"
+                            className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-violet-500 to-indigo-500"
+                            transition={{
+                              type: "spring",
+                              bounce: 0.2,
+                              duration: 0.6,
+                            }}
+                          />
+                        )}
+                      </div>
+                    </Button>
 
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer">
-                        <UserCircle className="mr-2 h-5 w-5" />
-                        View Profile
-                        <DropdownMenuShortcut>⇧P</DropdownMenuShortcut>
-                      </Link>
-                    </DropdownMenuItem>
+                    {/* Hover card */}
+                    <AnimatePresence>
+                      {activeHover === item.to && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-64 p-3 bg-white rounded-xl shadow-xl border border-gray-100"
+                          style={{ zIndex: 1000 }}
+                        >
+                          <div className="text-sm text-gray-600">
+                            {item.description}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Mobile Navigation */}
+          <nav className="flex md:hidden items-center gap-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.to;
+              return (
+                <Link key={item.to} to={item.to}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={cn(
+                      "flex flex-col items-center gap-1 h-auto py-1.5 px-2",
+                      isActive && "bg-gray-100"
+                    )}
+                  >
+                    <item.icon
+                      className={cn(
+                        "w-5 h-5 transition-all duration-300",
+                        `bg-gradient-to-r ${item.gradient} bg-clip-text`
+                      )}
+                    />
+                    <span className="text-xs font-medium">
+                      {item.mobileLabel}
+                    </span>
+                  </Button>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* User Menu */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative h-10 w-10 rounded-full"
+                >
+                  <Avatar className="h-10 w-10 ring-2 ring-purple-500/20">
+                    <AvatarImage src={user.avatar} alt={user.name ?? ""} />
+                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white">
+                      {user.name?.[0] ?? user.email?.[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-64 p-2 backdrop-blur-lg bg-white/90"
+              >
+                <DropdownMenuLabel>
+                  <div className="flex flex-col">
+                    <p className="text-sm font-semibold">{user.name}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/profile"
+                    className="flex items-center gap-2 py-2 cursor-pointer hover:bg-gray-50"
+                  >
+                    <UserCircle className="w-4 h-4" />
+                    <span>View Profile</span>
+                    <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem asChild>
+                  <Link
+                    to="/favorites"
+                    className="flex items-center gap-2 py-2 cursor-pointer hover:bg-gray-50"
+                  >
+                    <Bookmark className="w-4 h-4" />
+                    <span>Saved Places</span>
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
+                {user.isAdmin && (
+                  <>
                     <DropdownMenuItem asChild>
                       <Link
-                        to="/favorites"
-                        className="flex items-center cursor-pointer"
+                        to="/admin/import"
+                        className="flex items-center gap-2 py-2 cursor-pointer hover:bg-gray-50"
                       >
-                        <Bookmark className="mr-2 h-4 w-4" />
-                        Favorites
+                        <Upload className="w-4 h-4" />
+                        <span>Import Data</span>
                       </Link>
                     </DropdownMenuItem>
-                  </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
 
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuGroup>
-                    {user.isAdmin && (
-                      <>
-                        <DropdownMenuItem asChild>
-                          <Link to="/admin/import" className="cursor-pointer">
-                            <Upload className="mr-2 h-4 w-4" />
-                            Import Data
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                      </>
-                    )}
-                    <DropdownMenuItem
-                      onClick={handleSignOut}
-                      className="text-red-600 focus:text-red-600 cursor-pointer"
-                    >
-                      <LogOut className="mr-2 h-5 w-5" />
-                      Sign out
-                      <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <SignInButton />
-            )}
-          </div>
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className="flex items-center gap-2 py-2 text-red-600 hover:bg-red-50 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign out</span>
+                  <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <SignInButton />
+          )}
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 };
