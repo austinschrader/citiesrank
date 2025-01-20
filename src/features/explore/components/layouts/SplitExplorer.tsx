@@ -16,23 +16,23 @@ import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Split from "react-split";
 
 export const SplitExplorer = () => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
   const {
-    numPrioritizedToShow,
     setNumPrioritizedToShow,
     setVisiblePlaces,
     splitMode,
-    maxItems,
+    hasMore,
+    loadMore,
+    isLoadingMore,
   } = useMap();
   const { contentType } = useHeader();
   const BATCH_SIZE = 25; // Fixed size for infinite scroll
   const [numFilteredToShow, setNumFilteredToShow] = useState(BATCH_SIZE);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
@@ -54,28 +54,6 @@ export const SplitExplorer = () => {
     setNumPrioritizedToShow(BATCH_SIZE);
     setNumFilteredToShow(BATCH_SIZE);
   }, [splitMode]);
-
-  const hasMore = () => {
-    const currentCount =
-      splitMode === "list" ? numFilteredToShow : numPrioritizedToShow;
-    return currentCount < maxItems;
-  };
-
-  const loadMore = useCallback(() => {
-    if (!hasMore() || isLoadingMore) return;
-
-    try {
-      setIsLoadingMore(true);
-
-      if (splitMode === "list") {
-        setNumFilteredToShow((prev) => prev + BATCH_SIZE);
-      } else {
-        setNumPrioritizedToShow((prev) => prev + BATCH_SIZE);
-      }
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }, [hasMore, isLoadingMore, splitMode]);
 
   return (
     <div className="h-full flex flex-col">

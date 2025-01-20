@@ -92,6 +92,8 @@ interface MapContextValue extends MapState {
   setNumPrioritizedToShow: React.Dispatch<React.SetStateAction<number>>;
   prioritizedPlaces: MapPlace[];
   maxItems: number;
+  hasMore: () => boolean;
+  loadMore: () => void;
   getVisiblePlacesForCurrentView: (allPlaces: MapPlace[]) => MapPlace[];
   getVisiblePlaceTypes: (zoom: number) => CitiesTypeOptions[];
   filterPlacesByZoom: (places: MapPlace[], zoom: number) => MapPlace[];
@@ -103,10 +105,9 @@ interface MapContextValue extends MapState {
   getGeographicLevel: (zoom: number) => CitiesTypeOptions;
   splitMode: SplitMode;
   setSplitMode: (mode: SplitMode) => void;
-  hasMorePlaces: boolean;
-  loadMorePlaces: () => void;
   visibleLists: any[];
   getDisplayPlaces: (paginatedFilteredPlaces: MapPlace[]) => MapPlace[];
+  isLoadingMore: boolean;
 }
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -123,16 +124,16 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
-  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
-    []
-  );
+  const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>([]);
   const [prioritizedPlaces, setPrioritizedPlaces] = useState<MapPlace[]>([]);
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
-  const [hasMorePlaces, setHasMorePlaces] = useState(true);
   const [splitMode, setSplitMode] = useState<SplitMode>("split");
   const [visibleLists, setVisibleLists] = useState<any[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const BATCH_SIZE = 25; // Fixed size for infinite scroll
 
   const setZoom = (zoom: number) => {
     setState((prev) => ({
@@ -260,15 +261,24 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       });
   }, [mapBounds, getList]);
 
-  const loadMorePlaces = useCallback(() => {
-    setNumPrioritizedToShow((prev) => {
-      const increment =
-        window.innerWidth <= 640
-          ? DEFAULT_MOBILE_PLACES
-          : DEFAULT_DESKTOP_PLACES;
-      return prev + increment;
-    });
-  }, []);
+  const hasMore = useCallback(() => {
+    const currentCount = numPrioritizedToShow;
+    const maxItemCount = splitMode === "list" 
+      ? visiblePlaces.length 
+      : visiblePlacesInView.length;
+    return currentCount < maxItemCount;
+  }, [numPrioritizedToShow, splitMode, visiblePlaces.length, visiblePlacesInView.length]);
+
+  const loadMore = useCallback(() => {
+    if (!hasMore() || isLoadingMore) return;
+
+    try {
+      setIsLoadingMore(true);
+      setNumPrioritizedToShow((prev) => prev + BATCH_SIZE);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, isLoadingMore, BATCH_SIZE]);
 
   const resetDistribution = useCallback(() => {
     setVisiblePlaces((prev) => [...prev]);
@@ -309,6 +319,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       setNumPrioritizedToShow,
       prioritizedPlaces,
       maxItems: splitMode === "list" ? visiblePlaces.length : visiblePlacesInView.length,
+      hasMore,
       getVisiblePlacesForCurrentView,
       getVisiblePlaceTypes,
       filterPlacesByZoom: filterPlacesByZoomCallback,
@@ -317,10 +328,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       getGeographicLevel,
       splitMode,
       setSplitMode,
-      hasMorePlaces,
-      loadMorePlaces,
+      loadMore,
       visibleLists,
       getDisplayPlaces,
+      isLoadingMore,
     }),
     [
       state,
@@ -329,12 +340,13 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       visiblePlacesInView,
       numPrioritizedToShow,
       prioritizedPlaces,
-      hasMorePlaces,
+      hasMore,
       getVisiblePlacesForCurrentView,
-      loadMorePlaces,
+      loadMore,
       splitMode,
       visibleLists,
       getDisplayPlaces,
+      isLoadingMore,
     ]
   );
 

@@ -18,7 +18,7 @@ export const MapControls = ({
   defaultZoom = 5,
 }: MapControlsProps) => {
   const map = useLeafletMap();
-  const { resetDistribution, hasMorePlaces, loadMorePlaces } = useMap();
+  const { resetDistribution, hasMore, loadMore } = useMap();
 
   // Create a stable debounced zoom handler
   const debouncedZoomChange = useCallback(
@@ -94,12 +94,12 @@ export const MapControls = ({
       >
         <RefreshCw className="h-4 w-4" />
       </Button>
-      {hasMorePlaces && (
+      {hasMore() && (
         <Button
           variant="secondary"
           size="icon"
           className="h-8 w-8 shadow-md"
-          onClick={loadMorePlaces}
+          onClick={loadMore}
           title="Load more places"
         >
           <ArrowDown className="h-4 w-4" />
