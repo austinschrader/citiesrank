@@ -23,21 +23,13 @@ export const SplitExplorer = () => {
   const { cities } = useCities();
   const { getFilteredCities } = useFilters();
   const {
-    setVisiblePlaces,
     splitMode,
     hasMore,
     loadMore,
     isLoadingMore,
-    filteredPlaces,
     paginatedFilteredPlaces,
   } = useMap();
   const { contentType } = useHeader();
-
-  useEffect(() => {
-    if (cities.length > 0) {
-      setVisiblePlaces(filteredPlaces);
-    }
-  }, [cities, filteredPlaces, setVisiblePlaces]);
 
   return (
     <div className="h-full flex flex-col">

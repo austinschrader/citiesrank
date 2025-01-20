@@ -14,7 +14,7 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { pb } from "@/lib/pocketbase";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
-import L, { LatLngTuple } from "leaflet";
+import L, { LatLngBounds, LatLngTuple } from "leaflet";
 import React, {
   createContext,
   useCallback,
@@ -84,8 +84,8 @@ interface MapContextValue extends MapState {
   selectPlace: (place: MapPlace | null) => void;
   resetView: () => void;
   resetDistribution: () => void;
-  mapBounds: L.LatLngBounds | null;
-  setMapBounds: (bounds: L.LatLngBounds | null) => void;
+  mapBounds: LatLngBounds | null;
+  setMapBounds: (bounds: LatLngBounds | null) => void;
   visiblePlaces: MapPlace[];
   setVisiblePlaces: (places: MapPlace[]) => void;
   visiblePlacesInView: MapPlace[];
@@ -127,7 +127,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     selectedPlace: null,
   });
 
-  const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
+  const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
   const [visiblePlaces, setVisiblePlaces] = useState<MapPlace[]>([]);
   const [visiblePlacesInView, setVisiblePlacesInView] = useState<MapPlace[]>(
     []
@@ -318,17 +318,17 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     return getFilteredCities(cities);
   }, [cities, getFilteredCities]);
 
-  // Get paginated filtered places
-  const paginatedFilteredPlaces = useMemo(() => {
-    return filteredPlaces.slice(0, numPrioritizedToShow);
-  }, [filteredPlaces, numPrioritizedToShow]);
-
   // Update visible places when filtered places change
   useEffect(() => {
     if (cities.length > 0) {
       setVisiblePlaces(filteredPlaces);
     }
-  }, [cities, filteredPlaces, setVisiblePlaces]);
+  }, [cities, filteredPlaces]);
+
+  // Get paginated filtered places
+  const paginatedFilteredPlaces = useMemo(() => {
+    return filteredPlaces.slice(0, numPrioritizedToShow);
+  }, [filteredPlaces, numPrioritizedToShow]);
 
   const value = useMemo(
     () => ({
@@ -340,7 +340,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       resetDistribution,
       mapBounds,
       setMapBounds,
-      visiblePlaces,
+      visiblePlaces: filteredPlaces,
       setVisiblePlaces,
       visiblePlacesInView,
       numPrioritizedToShow,
@@ -348,7 +348,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       prioritizedPlaces,
       maxItems:
         splitMode === "list"
-          ? visiblePlaces.length
+          ? filteredPlaces.length
           : visiblePlacesInView.length,
       hasMore,
       getVisiblePlacesForCurrentView,
@@ -369,7 +369,7 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
     [
       state,
       mapBounds,
-      visiblePlaces,
+      filteredPlaces,
       visiblePlacesInView,
       numPrioritizedToShow,
       prioritizedPlaces,
@@ -380,7 +380,6 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
       visibleLists,
       getDisplayPlaces,
       isLoadingMore,
-      filteredPlaces,
       paginatedFilteredPlaces,
     ]
   );
