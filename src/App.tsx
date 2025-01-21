@@ -30,7 +30,7 @@ import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./context/HeaderContext";
 import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
@@ -39,18 +39,6 @@ import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
 
 function App() {
-  // Preload the ExplorePage component
-  useEffect(() => {
-    const preloadExplorePage = () => {
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "script";
-      link.href = "/src/features/explore/pages/ExplorePage.tsx";
-      document.head.appendChild(link);
-    };
-    preloadExplorePage();
-  }, []);
-
   return (
     <CitiesProvider>
       <AuthProvider>
