@@ -93,7 +93,7 @@ export const FiltersSheet = () => {
                 : "bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent"
             )}
           >
-            All Filters
+            Filters
           </span>
           {activeFiltersCount > 0 && (
             <div className="flex items-center gap-1">
