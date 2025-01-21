@@ -79,7 +79,7 @@ export const Header = () => {
     <motion.header
       className={cn(
         "sticky top-0 z-[100] w-full transition-all duration-300",
-        "border-b border-white/10",
+        "relative",
         scrolled
           ? "bg-white/80 backdrop-blur-lg supports-[backdrop-filter]:bg-white/80"
           : "bg-white/50 backdrop-blur-sm supports-[backdrop-filter]:bg-white/50"
@@ -88,7 +88,7 @@ export const Header = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="max-w-1xl mx-auto px-4 sm:px-6">
         <div className="h-16 flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -144,7 +144,7 @@ export const Header = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <span className="text-sm font-semibold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-500">
+              <span className="text-sm font-bold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-500">
                 Your World, UR Map
               </span>
             </motion.div>
@@ -169,28 +169,29 @@ export const Header = () => {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "relative h-10 rounded-lg font-medium transition-all duration-300",
-                        "bg-white/5 hover:bg-white/10 dark:hover:bg-white/5",
-                        "border border-gray-200/20 hover:border-gray-300/30",
-                        "shadow-sm hover:shadow-md",
-                        "backdrop-blur-sm",
-                        isActive && "bg-white/10 border-gray-300/30"
+                        "relative h-10 rounded-lg font-bold transition-all duration-300",
+                        "bg-white/80 hover:bg-white dark:hover:bg-white/90",
+                        "border border-gray-200 hover:border-gray-300",
+                        "shadow-sm hover:shadow-lg",
+                        "backdrop-blur-md",
+                        "transform hover:translate-y-[-1px]",
+                        isActive && "bg-white border-gray-300 shadow-md"
                       )}
                     >
                       <div className="flex items-center gap-2 px-4">
                         <item.icon
                           className={cn(
-                            "w-4 h-4 transition-transform duration-300",
-                            `bg-gradient-to-r ${item.gradient} bg-clip-text opacity-70 group-hover:opacity-100`
+                            "w-4 h-4 transition-all duration-300",
+                            `bg-gradient-to-r ${item.gradient} bg-clip-text opacity-100`
                           )}
                         />
-                        <span className="text-gray-700 dark:text-gray-200">
+                        <span className="text-gray-800 dark:text-gray-900 font-medium">
                           {item.label}
                         </span>
                         {isActive && (
                           <motion.div
                             layoutId="activeIndicator"
-                            className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-violet-500 to-indigo-500"
+                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 to-indigo-500"
                             transition={{
                               type: "spring",
                               bounce: 0.2,
@@ -233,8 +234,12 @@ export const Header = () => {
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "flex flex-col items-center gap-1 h-auto py-1.5 px-2",
-                      isActive && "bg-gray-100"
+                      "flex flex-col items-center gap-1 h-auto py-2 px-3",
+                      "bg-white/80 hover:bg-white",
+                      "border border-gray-200 hover:border-gray-300",
+                      "shadow-sm hover:shadow-md",
+                      "rounded-lg font-medium transition-all duration-300",
+                      isActive && "bg-white border-gray-300 shadow-md"
                     )}
                   >
                     <item.icon
@@ -259,7 +264,7 @@ export const Header = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative h-10 w-10 rounded-full"
+                  className="relative h-10 w-10 rounded-full border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all duration-300 bg-white/80 hover:bg-white"
                 >
                   <Avatar className="h-10 w-10 ring-2 ring-purple-500/20">
                     <AvatarImage src={user.avatar} alt={user.name ?? ""} />
@@ -275,7 +280,7 @@ export const Header = () => {
               >
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
-                    <p className="text-sm font-semibold">{user.name}</p>
+                    <p className="text-sm font-bold">{user.name}</p>
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>
@@ -334,6 +339,9 @@ export const Header = () => {
           )}
         </div>
       </div>
+      {/* Elegant border effect */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-violet-200 to-transparent opacity-100" />
+      <div className="absolute bottom-[-4px] left-0 right-0 h-[4px] bg-gradient-to-b from-gray-200/50 to-transparent" />
     </motion.header>
   );
 };
