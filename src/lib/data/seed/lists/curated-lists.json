@@ -1,25 +1,8 @@
 {
   "default": [
     {
-      "title": "Epic Southwest Road Trip: Desert to Dark Skies",
-      "description": "Journey through the American Southwest's most enchanting desert landscapes and artistic communities.",
-      "slug": "desert-magic-roadtrip",
-      "places": [
-        "sedona-united-states",
-        "marfa-united-states",
-        "joshua-tree-united-states",
-        "moab-united-states",
-        "page-united-states",
-        "scottsdale-united-states",
-        "taos-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:21:30.000Z",
-      "updated": "2025-01-20T19:21:30.000Z"
-    },
-    {
-      "title": "Hidden Gem Food Towns You Need to Visit Now",
-      "description": "Discover unexpected culinary gems in these small towns, where farm-to-table dining and world-class wine scenes flourish.",
+      "title": "25 Best Hidden Food Towns in America (2025 Guide)",
+      "description": "Beyond the big cities: discover America's most unexpected culinary capitals, where Michelin-worthy restaurants and innovative chefs are revolutionizing the food scene.",
       "slug": "foodie-small-towns",
       "places": [
         "mcminnville-united-states",
@@ -35,42 +18,8 @@
       "updated": "2025-01-20T19:21:30.000Z"
     },
     {
-      "title": "America's Most Beautiful Lake Towns",
-      "description": "Cool off at America's most beautiful lake towns, offering pristine waters and endless summer activities.",
-      "slug": "summer-lake-escapes",
-      "places": [
-        "lake-tahoe-united-states",
-        "lake-george-united-states",
-        "lake-winnipesaukee-united-states",
-        "coeur-d-alene-united-states",
-        "lake-geneva-united-states",
-        "mccall-united-states",
-        "sandpoint-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:21:30.000Z",
-      "updated": "2025-01-20T19:21:30.000Z"
-    },
-    {
-      "title": "Most Charming Small Towns in America",
-      "description": "Stroll through America's most charming downtown districts, where historic architecture and local shops create picture-perfect main streets.",
-      "slug": "main-street-towns",
-      "places": [
-        "woodstock-united-states",
-        "carmel-by-the-sea-united-states",
-        "new-hope-united-states",
-        "stowe-united-states",
-        "bar-harbor-united-states",
-        "solvang-united-states",
-        "fredericksburg-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:21:30.000Z",
-      "updated": "2025-01-20T19:21:30.000Z"
-    },
-    {
-      "title": "Secret Beach Towns Locals Don't Want You to Know",
-      "description": "Escape to these hidden coastal gems, where pristine beaches and peaceful atmospheres create the perfect seaside retreat.",
+      "title": "12 Secret Beach Towns Locals Are Trying to Keep Hidden in 2025",
+      "description": "Escape the tourist crowds and discover America's last authentic beach towns, where pristine shores and genuine coastal charm remain untouched by mass tourism.",
       "slug": "secret-beaches",
       "places": [
         "amagansett-united-states",
@@ -86,246 +35,8 @@
       "updated": "2025-01-20T19:20:52.000Z"
     },
     {
-      "title": "World's Best Cities for Art Gallery Hopping",
-      "description": "Immerse yourself in contemporary art scenes, from intimate galleries to world-class museums in these culture-rich destinations.",
-      "slug": "art-gallery-weekends",
-      "places": [
-        "santa-fe-united-states",
-        "asheville-united-states",
-        "marfa-united-states",
-        "hudson-united-states",
-        "portland-united-states",
-        "barcelona-spain",
-        "berlin-germany"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:20:52.000Z",
-      "updated": "2025-01-20T19:20:52.000Z"
-    },
-    {
-      "title": "Ultimate Spa & Hot Springs Destinations",
-      "description": "Rejuvenate body and soul in these serene locations known for their healing waters, luxury spas, and holistic wellness experiences.",
-      "slug": "wellness-destinations",
-      "places": [
-        "sedona-united-states",
-        "palm-springs-united-states",
-        "hot-springs-united-states",
-        "scottsdale-united-states",
-        "santa-barbara-united-states",
-        "sun-valley-united-states",
-        "lava-hot-springs-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:20:52.000Z",
-      "updated": "2025-01-20T19:20:52.000Z"
-    },
-    {
-      "title": "Best Places to See Fall Colors in America",
-      "description": "Experience the magic of autumn in these destinations where fall foliage creates breathtaking natural displays.",
-      "slug": "fall-colors",
-      "places": [
-        "stowe-united-states",
-        "woodstock-united-states",
-        "lake-placid-united-states",
-        "great-barrington-united-states",
-        "asheville-united-states",
-        "manchester-united-states",
-        "cooperstown-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:20:52.000Z",
-      "updated": "2025-01-20T19:20:52.000Z"
-    },
-    {
-      "title": "Most Instagram-Worthy Small Cities in America",
-      "description": "Discover America's most photogenic small cities, where every corner offers a picture-perfect moment and stunning backdrops.",
-      "slug": "instagram-perfect-cities",
-      "places": [
-        "sedona-united-states",
-        "charleston-united-states",
-        "asheville-united-states",
-        "santa-barbara-united-states",
-        "carmel-by-the-sea-united-states",
-        "palm-springs-united-states",
-        "portland-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:20:26.000Z",
-      "updated": "2025-01-20T19:20:26.000Z"
-    },
-    {
-      "title": "Best Ski Towns in North America",
-      "description": "Hit the slopes at North America's premier ski destinations, offering world-class terrain and luxury mountain experiences.",
-      "slug": "winter-sports-paradise",
-      "places": [
-        "vail-united-states",
-        "aspen-united-states",
-        "park-city-united-states",
-        "killington-united-states",
-        "steamboat-springs-united-states",
-        "breckenridge-united-states",
-        "big-sky-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:20:26.000Z",
-      "updated": "2025-01-20T19:20:26.000Z"
-    },
-    {
-      "title": "Top Digital Nomad Cities Worldwide",
-      "description": "Work from anywhere in these remote-work friendly cities with great wifi, coworking spaces, and thriving expat communities.",
-      "slug": "digital-nomad-hotspots",
-      "places": [
-        "medellin-colombia",
-        "chiang-mai-thailand",
-        "barcelona-spain",
-        "lisbon-portugal",
-        "austin-united-states",
-        "portland-united-states",
-        "berlin-germany"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:20:26.000Z",
-      "updated": "2025-01-20T19:20:26.000Z"
-    },
-    {
-      "title": "Best Surf Towns in America: Local's Guide",
-      "description": "Discover the perfect waves and laid-back vibes in America's most authentic surf towns, from hidden breaks to iconic beaches.",
-      "slug": "ultimate-surf-towns",
-      "places": [
-        "santa-cruz-united-states",
-        "san-diego-united-states",
-        "virginia-beach-united-states",
-        "wrightsville-beach-united-states",
-        "newport-united-states",
-        "myrtle-beach-united-states",
-        "seaside-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:19:06.000Z",
-      "updated": "2025-01-20T19:19:06.000Z"
-    },
-    {
-      "title": "Dreamy Small Town Romance",
-      "description": "Fall in love with America's most enchanting small towns, where charm, history, and romance create unforgettable moments.",
-      "slug": "romantic-small-towns",
-      "places": [
-        "carmel-by-the-sea-united-states",
-        "woodstock-united-states",
-        "stowe-united-states",
-        "bar-harbor-united-states",
-        "solvang-united-states",
-        "mendocino-united-states",
-        "kennebunkport-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:19:06.000Z",
-      "updated": "2025-01-20T19:19:06.000Z"
-    },
-    {
-      "title": "Hidden Luxury Escapes",
-      "description": "Discover America's most exclusive retreats, where refined luxury meets understated elegance in stunning settings.",
-      "slug": "hidden-luxury-escapes",
-      "places": [
-        "montauk-united-states",
-        "east-hampton-village-united-states",
-        "deer-valley-united-states",
-        "aspen-united-states",
-        "palm-springs-united-states",
-        "bridgehampton-united-states",
-        "kiawah-island-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:19:06.000Z",
-      "updated": "2025-01-20T19:19:06.000Z"
-    },
-    {
-      "title": "Mountain Towns with Michelin-Worthy Restaurants",
-      "description": "Experience unexpected culinary excellence in these high-altitude destinations, where innovative chefs create world-class dining experiences.",
-      "slug": "mountain-food-scenes",
-      "places": [
-        "park-city-united-states",
-        "aspen-united-states",
-        "jackson-hole-united-states",
-        "telluride-united-states",
-        "bend-united-states",
-        "boulder-united-states",
-        "breckenridge-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:19:06.000Z",
-      "updated": "2025-01-20T19:19:06.000Z"
-    },
-    {
-      "title": "Global Urban Art Scenes",
-      "description": "Explore the world's most vibrant cities where street art, galleries, and creative culture collide.",
-      "slug": "global-urban-art",
-      "places": [
-        "berlin-germany",
-        "barcelona-spain",
-        "medellin-colombia",
-        "portland-united-states",
-        "amsterdam-netherlands",
-        "tokyo-japan",
-        "copenhagen-denmark",
-        "lisbon-portugal"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:18:38.000Z",
-      "updated": "2025-01-20T19:18:38.000Z"
-    },
-    {
-      "title": "Wine Country Expedition",
-      "description": "Journey through America's finest wine regions, where world-class vintages meet stunning landscapes.",
-      "slug": "wine-country-expedition",
-      "places": [
-        "napa-united-states",
-        "walla-walla-united-states",
-        "mcminnville-united-states",
-        "santa-barbara-united-states",
-        "fredericksburg-united-states",
-        "mendocino-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:18:38.000Z",
-      "updated": "2025-01-20T19:18:38.000Z"
-    },
-    {
-      "title": "Historic Hot Springs Circuit ",
-      "description": "Relax and rejuvenate at America's most historic thermal springs, where wellness meets natural wonder.",
-      "slug": "historic-hot-springs",
-      "places": [
-        "hot-springs-united-states",
-        "lava-hot-springs-united-states",
-        "pagosa-springs-united-states",
-        "thermopolis-united-states",
-        "truth-or-consequences-united-states",
-        "glenwood-springs-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:18:09.000Z",
-      "updated": "2025-01-20T19:18:09.000Z"
-    },
-    {
-      "title": "Most Beautiful Beach Towns in America",
-      "description": "Step back in time in these perfectly preserved coastal communities, where historic charm meets seaside splendor.",
-      "slug": "vintage-beach-towns",
-      "places": [
-        "cape-may-united-states",
-        "carmel-by-the-sea-united-states",
-        "provincetown-united-states",
-        "newport-united-states",
-        "coronado-united-states",
-        "ocean-city-united-states",
-        "rehoboth-beach-united-states",
-        "santa-cruz-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:18:09.000Z",
-      "updated": "2025-01-20T19:18:09.000Z"
-    },
-    {
-      "title": "Most Stunning Desert Towns in America",
-      "description": "Experience the magic of the American Southwest in these desert oasis towns, where dramatic landscapes meet artistic spirit.",
+      "title": "Most Beautiful Desert Towns in America: 2025 Travel Guide",
+      "description": "Where red rock canyons meet artistic souls: journey through the American Southwest's most captivating desert communities, from Sedona's spiritual vortexes to Marfa's minimalist art scene.",
       "slug": "desert-oasis-journey",
       "places": [
         "palm-springs-united-states",
@@ -342,337 +53,25 @@
       "updated": "2025-01-20T19:18:09.000Z"
     },
     {
-      "title": "Island Paradise Trail ",
-      "description": "Discover America's most enchanting islands, from New England's historic havens to Florida's tropical escapes.",
-      "slug": "island-paradise-trail",
+      "title": "Best Places to See Fall Colors in New England (2025 Peak Times)",
+      "description": "Your week-by-week guide to autumn's most spectacular show: from Vermont's golden maples to the Berkshires' rainbow valleys. Includes peak foliage timing for 2025.",
+      "slug": "fall-colors",
       "places": [
-        "martha-s-vineyard-united-states",
-        "nantucket-united-states",
-        "sanibel-island-united-states",
-        "catalina-island-united-states",
-        "bald-head-island-united-states",
-        "fire-island-united-states",
-        "anna-maria-island-united-states",
-        "captiva-island-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:17:31.000Z",
-      "updated": "2025-01-20T19:17:31.000Z"
-    },
-    {
-      "title": "Ultimate Pacific Northwest Adventure Guide",
-      "description": "Journey through the PNW's most stunning destinations, from coastal gems to mountain retreats.",
-      "slug": "pacific-northwest-explorer",
-      "places": [
-        "seattle-united-states",
-        "portland-united-states",
-        "vancouver-canada",
-        "hood-river-united-states",
-        "astoria-united-states",
-        "cannon-beach-united-states",
-        "port-townsend-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:17:31.000Z",
-      "updated": "2025-01-20T19:17:31.000Z"
-    },
-    {
-      "title": "Mountain Adventure Destinations ",
-      "description": "Discover America's most thrilling mountain towns, offering world-class skiing, hiking, and year-round outdoor adventures.",
-      "slug": "mountain-adventures",
-      "places": [
-        "jackson-hole-united-states",
-        "aspen-united-states",
-        "telluride-united-states",
-        "big-sky-united-states",
-        "breckenridge-united-states",
-        "park-city-united-states",
-        "sun-valley-united-states",
-        "steamboat-springs-united-states"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T19:16:21.000Z",
-      "updated": "2025-01-20T19:16:21.000Z"
-    },
-    {
-      "title": "Most Creative Small Cities in America",
-      "description": "Explore these artistic havens where creativity thrives, from gallery-lined streets to innovative cultural spaces.",
-      "slug": "arts-culture-havens",
-      "places": [
-        "barcelona-spain",
-        "berlin-germany",
-        "portland-united-states",
+        "stowe-united-states",
+        "woodstock-united-states",
+        "lake-placid-united-states",
+        "great-barrington-united-states",
         "asheville-united-states",
-        "santa-fe-united-states",
-        "marfa-united-states",
-        "vancouver-canada",
-        "amsterdam-netherlands"
+        "manchester-united-states",
+        "cooperstown-united-states"
       ],
       "visibility": "public",
-      "created": "2025-01-20T19:16:21.000Z",
-      "updated": "2025-01-20T19:16:21.000Z"
+      "created": "2025-01-20T19:20:52.000Z",
+      "updated": "2025-01-20T19:20:52.000Z"
     },
     {
-      "title": "Budget-Friendly Euro Trip for Students ",
-      "description": "Perfect cities for college backpackers: great hostels, vibrant nightlife, and rich culture without breaking the bank.",
-      "slug": "student-euro-trip",
-      "places": [
-        "lisbon-portugal",
-        "amsterdam-netherlands",
-        "copenhagen-denmark",
-        "stockholm-sweden"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:02:56.000Z",
-      "updated": "2025-01-20T13:02:56.000Z"
-    },
-    {
-      "title": "Scandinavian Design Capitals ",
-      "description": "Cities known for their stunning architecture, modern design, and innovative urban planning.",
-      "slug": "scandinavian-design",
-      "places": ["copenhagen-denmark", "stockholm-sweden"],
-      "visibility": "public",
-      "created": "2025-01-20T13:03:56.000Z",
-      "updated": "2025-01-20T13:03:56.000Z"
-    },
-    {
-      "title": "Digital Nomad Friendly European Cities ",
-      "description": "Cities with great wifi, coworking spaces, and vibrant expat communities.",
-      "slug": "europe-digital-nomads",
-      "places": [
-        "lisbon-portugal",
-        "amsterdam-netherlands",
-        "copenhagen-denmark"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:04:56.000Z",
-      "updated": "2025-01-20T13:04:56.000Z"
-    },
-    {
-      "title": "Top Cities in Japan ",
-      "description": "Experience the perfect blend of tradition and modernity in Japan's most vibrant cities.",
-      "slug": "japan-top-cities",
-      "places": ["tokyo-japan", "kyoto-japan", "osaka-japan"],
-      "visibility": "public",
-      "created": "2025-01-20T13:05:56.000Z",
-      "updated": "2025-01-20T13:05:56.000Z"
-    },
-    {
-      "title": "Best Cities in Canada ",
-      "description": "Discover Canada's most livable cities, known for their diversity, culture, and natural beauty.",
-      "slug": "canada-top-cities",
-      "places": ["vancouver-canada", "toronto-canada", "montreal-canada"],
-      "visibility": "public",
-      "created": "2025-01-20T13:06:56.000Z",
-      "updated": "2025-01-20T13:06:56.000Z"
-    },
-    {
-      "title": "California Dream Cities ",
-      "description": "Experience the best of California living, from coastal paradises to cultural hubs.",
-      "slug": "california-best-cities",
-      "places": [
-        "san-francisco-california",
-        "los-angeles-california",
-        "san-diego-california",
-        "santa-barbara-california",
-        "napa-california"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:07:56.000Z",
-      "updated": "2025-01-20T13:07:56.000Z"
-    },
-    {
-      "title": "West Coast Tech Hubs ",
-      "description": "Cities driving innovation and technology on the West Coast of the United States.",
-      "slug": "west-coast-tech",
-      "places": [
-        "san-francisco-california",
-        "seattle-washington",
-        "portland-oregon"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:08:56.000Z",
-      "updated": "2025-01-20T13:08:56.000Z"
-    },
-    {
-      "title": "Best Cities for Food Lovers ",
-      "description": "A culinary journey through cities known for their exceptional food scenes.",
-      "slug": "food-lovers-paradise",
-      "places": [
-        "tokyo-japan",
-        "osaka-japan",
-        "san-francisco-california",
-        "new-york-new-york"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:09:56.000Z",
-      "updated": "2025-01-20T13:09:56.000Z"
-    },
-    {
-      "title": "Historic European Capitals ",
-      "description": "Immerse yourself in centuries of history and culture in Europe's most iconic cities.",
-      "slug": "historic-europe",
-      "places": [
-        "amsterdam-netherlands",
-        "copenhagen-denmark",
-        "stockholm-sweden",
-        "lisbon-portugal"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:10:56.000Z",
-      "updated": "2025-01-20T13:10:56.000Z"
-    },
-    {
-      "title": "Pacific Northwest Gems ",
-      "description": "Discover the natural beauty and vibrant culture of the Pacific Northwest.",
-      "slug": "pacific-northwest",
-      "places": ["seattle-washington", "portland-oregon", "vancouver-canada"],
-      "visibility": "public",
-      "created": "2025-01-20T13:11:56.000Z",
-      "updated": "2025-01-20T13:11:56.000Z"
-    },
-    {
-      "title": "Aloha Paradise: Hawaii's Hidden Gems ",
-      "description": "Discover the most magical spots in Hawaii, from pristine beaches to luxurious resorts. Paradise found!",
-      "slug": "hawaii-destinations",
-      "places": [
-        "wailea-hawaii",
-        "kaanapali-hawaii",
-        "poipu-hawaii",
-        "princeville-hawaii"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:12:56.000Z",
-      "updated": "2025-01-20T13:12:56.000Z"
-    },
-    {
-      "title": "Island Life: Off the Beaten Path ",
-      "description": "From volcanic wonders to hidden sanctuaries, explore Hawaii's most unique and authentic experiences.",
-      "slug": "unique-islands",
-      "places": ["volcano-hawaii", "lanai-city-hawaii", "kapaa-hawaii"],
-      "visibility": "public",
-      "created": "2025-01-20T13:13:56.000Z",
-      "updated": "2025-01-20T13:13:56.000Z"
-    },
-    {
-      "title": "Digital Nomad's Dream Spots ",
-      "description": "Work from paradise! Cities with amazing coffee shops, fast Wi-Fi, and vibrant expat communities.",
-      "slug": "digital-nomad-cities",
-      "places": ["lisbon-portugal", "amsterdam-netherlands", "portland-oregon"],
-      "visibility": "public",
-      "created": "2025-01-20T13:13:56.000Z",
-      "updated": "2025-01-20T13:13:56.000Z"
-    },
-    {
-      "title": "Empire State Escapes: NY's Finest ",
-      "description": "From the Hamptons to the Adirondacks, New York's most charming towns await your discovery!",
-      "slug": "new-york-escapes",
-      "places": [
-        "hudson-new-york",
-        "cooperstown-new-york",
-        "montauk-new-york",
-        "woodstock-new-york",
-        "lake-placid-new-york"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:14:56.000Z",
-      "updated": "2025-01-20T13:14:56.000Z"
-    },
-    {
-      "title": "California Dreaming: Coastal Gems ",
-      "description": "Surf, sun, and endless summer vibes along California's legendary coastline!",
-      "slug": "california-coast",
-      "places": [
-        "san-diego-california",
-        "santa-cruz-california",
-        "santa-barbara-california",
-        "monterey-california"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:15:56.000Z",
-      "updated": "2025-01-20T13:15:56.000Z"
-    },
-    {
-      "title": "Sip & Savor: Wine Lover's Paradise ",
-      "description": "Uncork happiness in these world-class wine regions. Cheers to the good life!",
-      "slug": "wine-destinations",
-      "places": ["napa-california", "sonoma-california", "hudson-new-york"],
-      "visibility": "public",
-      "created": "2025-01-20T13:16:56.000Z",
-      "updated": "2025-01-20T13:16:56.000Z"
-    },
-    {
-      "title": "Culture Vulture's Guide to Cool Cities ",
-      "description": "Where art meets life! Cities that will feed your creative soul and inspire your imagination.",
-      "slug": "art-culture-cities",
-      "places": [
-        "portland-oregon",
-        "amsterdam-netherlands",
-        "copenhagen-denmark",
-        "san-francisco-california"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:17:56.000Z",
-      "updated": "2025-01-20T13:17:56.000Z"
-    },
-    {
-      "title": "Peak Perfection: Mountain & Lake Magic ",
-      "description": "Breathtaking views, crystal-clear lakes, and mountain air await in these scenic escapes!",
-      "slug": "mountain-lake-towns",
-      "places": [
-        "lake-tahoe-california",
-        "lake-placid-new-york",
-        "woodstock-new-york"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:18:56.000Z",
-      "updated": "2025-01-20T13:18:56.000Z"
-    },
-    {
-      "title": "Time Travel: America's Most Charming Towns ",
-      "description": "Step into a storybook in these perfectly preserved historic gems. No DeLorean required!",
-      "slug": "historic-small-towns",
-      "places": [
-        "hudson-new-york",
-        "cooperstown-new-york",
-        "monterey-california",
-        "solvang-california"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:19:56.000Z",
-      "updated": "2025-01-20T13:19:56.000Z"
-    },
-    {
-      "title": "Living Large: Ultimate Luxury Escapes ",
-      "description": "Live the high life in these ultra-luxe destinations. Your champagne wishes come true!",
-      "slug": "luxury-destinations",
-      "places": [
-        "wailea-hawaii",
-        "lanai-city-hawaii",
-        "napa-california",
-        "montauk-new-york"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:20:56.000Z",
-      "updated": "2025-01-20T13:20:56.000Z"
-    },
-    {
-      "title": "Foodie's Paradise: Epic Culinary Adventures ",
-      "description": "From street food to fine dining, these cities will make your taste buds dance!",
-      "slug": "food-cities",
-      "places": [
-        "portland-oregon",
-        "san-francisco-california",
-        "copenhagen-denmark",
-        "amsterdam-netherlands"
-      ],
-      "visibility": "public",
-      "created": "2025-01-20T13:21:56.000Z",
-      "updated": "2025-01-20T13:21:56.000Z"
-    },
-    {
-      "title": "Historic Mountain Towns with Modern Luxury",
-      "description": "Discover the perfect blend of Old West charm and contemporary comfort in these elevated mountain destinations.",
+      "title": "15 Most Beautiful Mountain Towns in America for 2025",
+      "description": "Where wild peaks meet luxury living: discover mountain towns that perfectly blend rustic elegance with world-class amenities, from Aspen's legendary slopes to Telluride's hidden valleys.",
       "slug": "mountain-destinations",
       "places": [
         "aspen-united-states",
@@ -688,8 +87,58 @@
       "updated": "2025-01-20T13:21:56.000Z"
     },
     {
-      "title": "Hidden Island Paradises in America",
-      "description": "Escape to these lesser-known island retreats, where pristine beaches and peaceful atmospheres create the perfect getaway.",
+      "title": "Top Digital Nomad Cities Worldwide: 2025 Remote Work Guide",
+      "description": "Work from paradise in 2025's most remote-friendly cities, complete with lightning-fast wifi, endless coffee shops, affordable living, and thriving expat communities.",
+      "slug": "digital-nomad-hotspots",
+      "places": [
+        "medellin-colombia",
+        "chiang-mai-thailand",
+        "barcelona-spain",
+        "lisbon-portugal",
+        "austin-united-states",
+        "portland-united-states",
+        "berlin-germany"
+      ],
+      "visibility": "public",
+      "created": "2025-01-20T19:20:26.000Z",
+      "updated": "2025-01-20T19:20:26.000Z"
+    },
+    {
+      "title": "Most Instagrammable Small Cities in America (2025 Edition)",
+      "description": "From Sedona's red rock sunsets to Charleston's rainbow row: discover small cities that look even better in real life than on your social feed. No filter needed.",
+      "slug": "instagram-perfect-cities",
+      "places": [
+        "sedona-united-states",
+        "charleston-united-states",
+        "asheville-united-states",
+        "santa-barbara-united-states",
+        "carmel-by-the-sea-united-states",
+        "palm-springs-united-states",
+        "portland-united-states"
+      ],
+      "visibility": "public",
+      "created": "2025-01-20T19:20:26.000Z",
+      "updated": "2025-01-20T19:20:26.000Z"
+    },
+    {
+      "title": "Ancient Hot Springs Towns: America's Natural Spa Destinations 2025",
+      "description": "Follow in the footsteps of Native Americans and presidents to America's most healing waters, where centuries-old hot springs offer natural therapy in stunning settings.",
+      "slug": "historic-hot-springs",
+      "places": [
+        "hot-springs-united-states",
+        "lava-hot-springs-united-states",
+        "pagosa-springs-united-states",
+        "thermopolis-united-states",
+        "truth-or-consequences-united-states",
+        "glenwood-springs-united-states"
+      ],
+      "visibility": "public",
+      "created": "2025-01-20T19:18:09.000Z",
+      "updated": "2025-01-20T19:18:09.000Z"
+    },
+    {
+      "title": "Hidden Island Paradises in America: Local's Guide 2025",
+      "description": "Beyond Hawaii and the Keys: discover America's secret island escapes where you can still find pristine beaches, untouched nature, and authentic island life.",
       "slug": "island-paradise",
       "places": [
         "sanibel-island-united-states",
@@ -704,20 +153,22 @@
       "updated": "2025-01-20T13:21:56.000Z"
     },
     {
-      "title": "America's Most Healing Hot Springs Towns",
-      "description": "Discover the therapeutic powers of nature in these historic hot springs destinations, where wellness meets wonder.",
-      "slug": "historic-hot-springs",
-      "places": [
-        "hot-springs-united-states",
-        "lava-hot-springs-united-states",
-        "pagosa-springs-united-states",
-        "thermopolis-united-states",
-        "truth-or-consequences-united-states",
-        "glenwood-springs-united-states"
-      ],
+      "title": "Japan's Must-Visit Cities in 2025: Complete Travel Guide",
+      "description": "Experience Japan's perfect harmony of ancient and future: from Tokyo's neon-lit innovation to Kyoto's timeless temples, discover cities where tradition meets tomorrow.",
+      "slug": "japan-top-cities",
+      "places": ["tokyo-japan", "kyoto-japan", "osaka-japan"],
       "visibility": "public",
-      "created": "2025-01-20T13:21:56.000Z",
-      "updated": "2025-01-20T13:21:56.000Z"
+      "created": "2025-01-20T13:05:56.000Z",
+      "updated": "2025-01-20T13:05:56.000Z"
+    },
+    {
+      "title": "Best Cities for Modern Design Lovers: 2025 Architecture Guide",
+      "description": "From Copenhagen's colorful harbors to Stockholm's subway art galleries: explore cities where even the park benches are masterpieces of modern design.",
+      "slug": "scandinavian-design",
+      "places": ["copenhagen-denmark", "stockholm-sweden"],
+      "visibility": "public",
+      "created": "2025-01-20T13:03:56.000Z",
+      "updated": "2025-01-20T13:03:56.000Z"
     }
   ]
 }
