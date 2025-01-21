@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFeed } from "../context/FeedContext";
+import { useState } from "react";
 
 import {
   FeedItem,
@@ -39,7 +40,19 @@ import {
 } from "../types";
 
 const EmptyFeedState = () => {
-  const { user } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Sign in error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -84,10 +97,18 @@ const EmptyFeedState = () => {
 
       {!user && (
         <Button
-          onClick={() => (window.location.href = "/#/login")}
+          onClick={handleSignIn}
+          disabled={isLoading}
           className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
         >
-          Get Started
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Connecting...
+            </div>
+          ) : (
+            "Get Started"
+          )}
         </Button>
       )}
     </motion.div>

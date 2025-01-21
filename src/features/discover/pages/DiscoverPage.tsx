@@ -14,6 +14,7 @@ import {
   Award,
   Compass,
   Globe2,
+  Loader2,
   MapPin,
   Medal,
   Mountain,
@@ -21,6 +22,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const QuestCard = ({ quest }: { quest: any }) => (
   <motion.div whileHover={{ scale: 1.02 }} className="relative overflow-hidden">
@@ -105,8 +107,85 @@ const AchievementCard = ({ achievement }: { achievement: any }) => (
   </motion.div>
 );
 
+const EmptyDiscoverState = () => {
+  const { user, signInWithGoogle } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Sign in error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto p-8 text-center"
+    >
+      <div className="relative inline-block mb-8">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 blur-xl opacity-20 animate-pulse rounded-full" />
+        <div className="relative">
+          <Globe2 className="w-16 h-16 text-purple-500 animate-float" />
+          <Route className="absolute -top-2 -right-2 w-6 h-6 text-pink-400 animate-twinkle" />
+        </div>
+      </div>
+
+      <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        {user ? "Start Your Journey" : "Discover Amazing Places"}
+      </h2>
+
+      <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
+        {user
+          ? "Complete quests, earn achievements, and compete with other explorers."
+          : "Join WURLDMAP to unlock quests, earn achievements, and track your global adventures."}
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto mb-8">
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <Trophy className="w-8 h-8 text-purple-500 mb-2 mx-auto" />
+          <h3 className="font-semibold mb-1">Complete Quests</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Embark on exciting challenges around the world
+          </p>
+        </div>
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <Award className="w-8 h-8 text-pink-500 mb-2 mx-auto" />
+          <h3 className="font-semibold mb-1">Earn Achievements</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Get rewarded for your travel accomplishments
+          </p>
+        </div>
+      </div>
+
+      {!user && (
+        <Button
+          onClick={handleSignIn}
+          disabled={isLoading}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Connecting...
+            </div>
+          ) : (
+            "Start Exploring"
+          )}
+        </Button>
+      )}
+    </motion.div>
+  );
+};
+
 export const DiscoverPage = () => {
   const { setMode } = useHeader();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("quests");
 
   useEffect(() => {
@@ -162,6 +241,11 @@ export const DiscoverPage = () => {
       icon: <MapPin className="w-6 h-6 text-purple-500" />,
     },
   ];
+
+  // Show empty state for logged out users
+  if (!user) {
+    return <EmptyDiscoverState />;
+  }
 
   return (
     <motion.div
