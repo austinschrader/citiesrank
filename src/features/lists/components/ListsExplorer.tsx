@@ -9,16 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useLists } from "@/features/lists/context/ListsContext";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowRight,
-  Compass,
-  Flame,
-  FolderOpen,
-  Loader2,
-  Plus,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import { Compass, FolderOpen, Loader2, Plus, Sparkles } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ListPreview } from "./ListPreview";
@@ -146,8 +137,7 @@ export const ListsExplorer = () => {
           </div>
         </motion.div>
 
-        {/* Featured Collections Section */}
-        <div className="mb-16">
+        {/* <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-500 to-amber-500 bg-clip-text text-transparent mb-2">
@@ -182,7 +172,6 @@ export const ListsExplorer = () => {
           </motion.div>
         </div>
 
-        {/* Trending Now Section */}
         <div className="mb-16 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-3xl p-8">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -216,7 +205,6 @@ export const ListsExplorer = () => {
           </div>
         </div>
 
-        {/* Rising Stars Section */}
         <div className="mb-16">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -251,11 +239,11 @@ export const ListsExplorer = () => {
               </motion.div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* All Collections Grid */}
         <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
+          {/* <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
                 All Collections
@@ -264,7 +252,7 @@ export const ListsExplorer = () => {
                 Browse through our complete library of curated collections
               </p>
             </div>
-          </div>
+          </div> */}
           <AnimatePresence>
             <motion.div
               variants={containerVariants}
