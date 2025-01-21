@@ -7,21 +7,25 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getPlaceImageBySlug } from "@/lib/bunny";
+import "@/lib/styles/index.css";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Calendar,
   Camera,
+  Compass,
   Heart,
+  Loader2,
   MapPin,
   Sparkles,
   Tag,
   Trophy,
   Users,
-  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useFeed } from "../context/FeedContext";
+
 import {
   FeedItem,
   FriendActivityItem,
@@ -33,6 +37,62 @@ import {
   TimeMachineItem,
   TrendingPlaceItem,
 } from "../types";
+
+const EmptyFeedState = () => {
+  const { user } = useAuth();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-2xl mx-auto p-8 text-center"
+    >
+      <div className="relative inline-block mb-8">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 blur-xl opacity-20 animate-pulse rounded-full" />
+        <div className="relative">
+          <Compass className="w-16 h-16 text-purple-500 animate-float" />
+          <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-pink-400 animate-twinkle" />
+        </div>
+      </div>
+
+      <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        {user ? "Your Feed Is Empty" : "Welcome to WURLDMAP"}
+      </h2>
+
+      <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
+        {user
+          ? "Start following places and tags to personalize your feed with amazing destinations and travel inspiration."
+          : "Sign in to create your personalized feed of amazing destinations and travel inspiration."}
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto mb-8">
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <MapPin className="w-8 h-8 text-purple-500 mb-2 mx-auto" />
+          <h3 className="font-semibold mb-1">Follow Places</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Track updates from your favorite destinations
+          </p>
+        </div>
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <Tag className="w-8 h-8 text-pink-500 mb-2 mx-auto" />
+          <h3 className="font-semibold mb-1">Follow Tags</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Stay updated on topics you care about
+          </p>
+        </div>
+      </div>
+
+      {!user && (
+        <Button
+          onClick={() => (window.location.href = "/#/login")}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+        >
+          Get Started
+        </Button>
+      )}
+    </motion.div>
+  );
+};
 
 export const FeedPage = () => {
   const {
@@ -72,25 +132,17 @@ export const FeedPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950">
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="flex flex-col items-center justify-center h-[60vh] space-y-6">
-            <div className="relative">
-              <Loader2 className="h-12 w-12 animate-spin text-purple-500" />
-              <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-purple-400 animate-pulse" />
-            </div>
-            <div className="text-center space-y-2">
-              <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
-                Personalizing your feed
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Discovering amazing places for you...
-              </p>
-            </div>
-          </div>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="relative">
+          <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
+          <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-purple-400 animate-pulse" />
         </div>
       </div>
     );
+  }
+
+  if (!feedItems.length) {
+    return <EmptyFeedState />;
   }
 
   return (
@@ -292,18 +344,19 @@ export const FeedPage = () => {
               ) : (
                 <p className="text-gray-500">No similar places found</p>
               )}
-              {similarItem.matchingTags && similarItem.matchingTags.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-sm text-gray-600 mb-2">Matching tags:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {similarItem.matchingTags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
+              {similarItem.matchingTags &&
+                similarItem.matchingTags.length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-600 mb-2">Matching tags:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {similarItem.matchingTags.map((tag) => (
+                        <Badge key={tag} variant="secondary">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </Card>
         );
@@ -341,7 +394,9 @@ export const FeedPage = () => {
                     : "Follow"}
                 </Button>
               </div>
-              <p className="text-gray-600 mb-3">{updateItem.content.description}</p>
+              <p className="text-gray-600 mb-3">
+                {updateItem.content.description}
+              </p>
               {updateItem.content.images && (
                 <div className="grid grid-cols-3 gap-2 mb-3">
                   {updateItem.content.images.map((image, idx) => (
@@ -383,7 +438,9 @@ export const FeedPage = () => {
                 </div>
                 <Button
                   variant={
-                    followedTags.includes(spotlightItem.tag) ? "secondary" : "default"
+                    followedTags.includes(spotlightItem.tag)
+                      ? "secondary"
+                      : "default"
                   }
                   size="sm"
                   className="gap-2"
@@ -394,7 +451,9 @@ export const FeedPage = () => {
                   }
                 >
                   <Heart className="h-4 w-4" />
-                  {followedTags.includes(spotlightItem.tag) ? "Following" : "Follow"}
+                  {followedTags.includes(spotlightItem.tag)
+                    ? "Following"
+                    : "Follow"}
                 </Button>
               </div>
               <p className="text-gray-600 mb-3">{spotlightItem.description}</p>
@@ -451,7 +510,9 @@ export const FeedPage = () => {
                   <Users className="w-4 h-4 inline mr-1" />
                   {challengeItem.participants} participating
                 </span>
-                <span className="text-pink-600">{challengeItem.daysLeft} days left</span>
+                <span className="text-pink-600">
+                  {challengeItem.daysLeft} days left
+                </span>
               </div>
               {challengeItem.prize && (
                 <div className="mt-2 text-sm text-purple-600">
@@ -481,8 +542,11 @@ export const FeedPage = () => {
                   ))}
                 </div>
                 <p className="ml-3 text-gray-600">
-                  <span className="font-semibold">{friendItem.users[0].name}</span>{" "}
-                  and {friendItem.users.length - 1} others {friendItem.activityType}
+                  <span className="font-semibold">
+                    {friendItem.users[0].name}
+                  </span>{" "}
+                  and {friendItem.users.length - 1} others{" "}
+                  {friendItem.activityType}
                 </p>
               </div>
               <div className="relative">
@@ -517,7 +581,8 @@ export const FeedPage = () => {
                     {timeItem.title}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    {timeItem.yearsAgo} year{timeItem.yearsAgo > 1 ? "s" : ""} ago
+                    {timeItem.yearsAgo} year{timeItem.yearsAgo > 1 ? "s" : ""}{" "}
+                    ago
                   </p>
                 </div>
               </div>

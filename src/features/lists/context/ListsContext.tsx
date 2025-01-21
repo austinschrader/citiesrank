@@ -231,52 +231,79 @@ export function ListsProvider({ children }: { children: ReactNode }) {
   );
 
   const getUserLists = useCallback(async () => {
-    if (!user) {
-      setLists([]);
-      return [];
-    }
-
     try {
       setIsLoading(true);
       setError(null);
 
-      // Get user's own lists and public lists from other users
-      const lists = (await pb.collection("lists").getFullList({
-        filter: `user = "${user.id}" || visibility = "public"`,
-        expand: "user",
-        sort: "-created",
-        $autoCancel: false,
-      })) as ExpandedList[];
+      // For signed-out users, only show public lists
+      // For signed-in users, show their lists and public lists
+      const filter = user
+        ? `(user = "${user.id}" || visibility = "public")`
+        : 'visibility = "public"';
 
-      // Get list_places for each list
-      const allListPlaces = await Promise.all(
-        lists.map((list) =>
-          pb.collection("list_places").getFullList({
-            filter: `list = "${list.id}"`,
-            expand: "place",
-            sort: "rank",
+      try {
+        // First try a simple query to check if we can access the collection at all
+        const testQuery = await pb.collection("lists").getList(1, 1, {
+          $autoCancel: false,
+        });
+
+        // Now try our filtered query
+        const lists = (await pb.collection("lists").getFullList({
+          filter,
+          expand: "user",
+          sort: "-created",
+          $autoCancel: false,
+        })) as ExpandedList[];
+
+        if (lists.length === 0) {
+          // Check if there are any lists at all
+          const allLists = await pb.collection("lists").getFullList({
             $autoCancel: false,
+          });
+        }
+
+        const allListPlaces = await Promise.all(
+          lists.map(async (list) => {
+            try {
+              const places = await pb.collection("list_places").getFullList({
+                filter: `list = "${list.id}"`,
+                expand: "place",
+                sort: "rank",
+                $autoCancel: false,
+              });
+              return places;
+            } catch (err) {
+              console.error(`Error fetching places for list ${list.id}:`, err);
+              return [];
+            }
           })
-        )
-      );
+        );
 
-      // Combine all list places
-      const placesByList = allListPlaces.reduce((acc, listPlaces, index) => {
-        const listId = lists[index].id;
-        acc[listId] = listPlaces
-          .map((lp) => lp.expand?.place)
-          .filter((p): p is CitiesResponse => !!p);
-        return acc;
-      }, {} as Record<string, CitiesResponse[]>);
+        // Combine all list places
+        const placesByList = allListPlaces.reduce((acc, listPlaces, index) => {
+          const listId = lists[index].id;
+          acc[listId] = listPlaces
+            .map((lp) => lp.expand?.place)
+            .filter((p): p is CitiesResponse => !!p);
+          return acc;
+        }, {} as Record<string, CitiesResponse[]>);
 
-      // Transform the expanded places into the format we need
-      const listsWithPlaces = lists.map((list) => ({
-        ...list,
-        places: placesByList[list.id] || [],
-      }));
+        // Transform the expanded places into the format we need
+        const listsWithPlaces = lists.map((list) => ({
+          ...list,
+          places: placesByList[list.id] || [],
+        }));
 
-      setLists(listsWithPlaces);
-      return listsWithPlaces;
+        setLists(listsWithPlaces);
+        return listsWithPlaces;
+      } catch (err) {
+        const error = err as ClientResponseError;
+        console.error("Error fetching lists:", error);
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
     } catch (err) {
       const error = err as ClientResponseError;
       console.error("Error fetching lists:", error);

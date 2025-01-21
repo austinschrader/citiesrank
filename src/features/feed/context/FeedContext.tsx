@@ -54,23 +54,26 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (user) {
       loadUserPreferences();
+    } else {
+      setFollowedTags([]);
+      setFollowedPlaces([]);
+      setFeedItems([]);
+      setIsLoading(false);
     }
   }, [user]);
 
   useEffect(() => {
-    if (followedPlaces.length > 0 || followedTags.length > 0) {
+    if (user) {
       refreshFeed();
     }
-  }, [followedPlaces, followedTags]);
+  }, [followedPlaces, followedTags, user]);
 
   const loadUserPreferences = async () => {
     if (!user) {
-      console.debug("No user found, skipping preferences load");
       return;
     }
 
     try {
-      console.debug("Loading user preferences for:", user.id);
       const result = await pb.collection("user_preferences").getList(1, 1, {
         filter: `user="${user.id}"`,
         $autoCancel: false,
@@ -78,30 +81,30 @@ export const FeedProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (result.items.length > 0) {
         const record = result.items[0];
-        console.debug("User preferences loaded:", {
-          followedTags: record.followed_tags,
-          followedPlaces: record.followed_places,
-        });
         setFollowedTags(record.followed_tags || []);
         setFollowedPlaces(record.followed_places || []);
       } else {
-        console.debug("No preferences found, creating default");
-        await pb.collection("user_preferences").create(
-          {
-            user: user.id,
-            followed_tags: [],
-            followed_places: [],
-          },
-          {
-            $autoCancel: false,
-          }
-        );
-        setFollowedTags([]);
-        setFollowedPlaces([]);
+        try {
+          await pb.collection("user_preferences").create(
+            {
+              user: user.id,
+              followed_tags: [],
+              followed_places: [],
+            },
+            {
+              $autoCancel: false,
+            }
+          );
+          setFollowedTags([]);
+          setFollowedPlaces([]);
+        } catch (createError) {
+          console.error("Error creating user preferences:", createError);
+          setFollowedTags([]);
+          setFollowedPlaces([]);
+        }
       }
     } catch (error) {
       console.error("Error loading user preferences:", error);
-      // Set defaults on error
       setFollowedTags([]);
       setFollowedPlaces([]);
     }

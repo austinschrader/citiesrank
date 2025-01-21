@@ -19,6 +19,8 @@ export default {
         shimmer: "shimmer 2.5s linear infinite",
         "heart-bounce": "heart-bounce 2s infinite ease-in-out",
         "heart-favorite": "heart-favorite 0.5s ease-out",
+        float: "float 3s ease-in-out infinite",
+        twinkle: "twinkle 2s ease-in-out infinite",
       },
       keyframes: {
         pulse: {
@@ -43,6 +45,14 @@ export default {
           "50%": { transform: "scale(0.95)" },
           "75%": { transform: "scale(1.1) rotate(10deg)" },
           "100%": { transform: "scale(1)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        twinkle: {
+          "0%, 100%": { opacity: 1, transform: "scale(1)" },
+          "50%": { opacity: 0.5, transform: "scale(0.8)" },
         },
       },
       fontFamily: {
