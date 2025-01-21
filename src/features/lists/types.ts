@@ -16,6 +16,8 @@ export type ExpandedList = ListsResponse & {
     }>;
   };
   places?: CitiesResponse[];
+  categories?: string[];
+  averageRating?: number;
 };
 
 // Define a type for lists with places and stats
