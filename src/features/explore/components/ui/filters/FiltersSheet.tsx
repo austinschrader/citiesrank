@@ -16,6 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
@@ -45,12 +46,7 @@ const sizeTypeIcons = {
   megacity: { icon: null, label: "Megacities", emoji: "🌇" },
 } as const;
 
-interface FiltersSheetProps {
-  sort: string;
-  onSortChange: (value: string) => void;
-}
-
-export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
+export const FiltersSheet = () => {
   const {
     filters,
     handleTypeClick,
@@ -143,7 +139,7 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
             {/* Sort Section */}
             <div className="space-y-4">
               <div className="font-medium">Sort By</div>
-              <Select value={sort} onValueChange={onSortChange}>
+              <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Sort by..." />
                 </SelectTrigger>
@@ -156,6 +152,12 @@ export const FiltersSheet = ({ sort, onSortChange }: FiltersSheetProps) => {
             </div>
 
             <Separator />
+
+            {/* Time Window */}
+            <div className="py-4">
+              <h4 className="text-sm font-medium mb-3">Time Window</h4>
+              <TimeWindow />
+            </div>
 
             {/* Place Types */}
             <div className="space-y-4">

@@ -9,52 +9,33 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useHeader } from "@/context/HeaderContext";
 import { EnergyMode, TimeRange } from "@/features/explore/types";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Flame, Sparkles, Timer, Zap } from "lucide-react";
 import React from "react";
 
-const energyModes = {
-  buzzing: {
-    icon: Flame,
-    label: "Hot",
-  },
-  fresh: {
-    icon: Sparkles,
-    label: "New",
-  },
-  trending: {
-    icon: Zap,
-    label: "Rising",
-  },
-  upcoming: {
-    icon: Timer,
-    label: "Soon",
-  },
-} as const;
+const energyModeConfig: Record<EnergyMode, { icon: React.ElementType; label: string }> = {
+  buzzing: { icon: Flame, label: "Hot" },
+  fresh: { icon: Sparkles, label: "New" },
+  trending: { icon: Zap, label: "Rising" },
+  upcoming: { icon: Timer, label: "Soon" },
+};
 
-const timeRanges = {
+const timeRangeConfig: Record<TimeRange, string> = {
   now: "Now",
   today: "Today",
   week: "Week",
   month: "Month",
-} as const;
+};
 
 interface TimeWindowProps {
   className?: string;
-  energyMode: EnergyMode;
-  timeRange: TimeRange;
-  onEnergyChange: (mode: EnergyMode) => void;
-  onTimeChange: (range: TimeRange) => void;
 }
 
-export const TimeWindow = ({
-  className,
-  energyMode,
-  timeRange,
-  onEnergyChange,
-  onTimeChange,
-}: TimeWindowProps) => {
+export const TimeWindow = ({ className }: TimeWindowProps) => {
+  const { energyMode, timeRange, setEnergyMode, setTimeRange } = useHeader();
+
   return (
     <div className={cn("flex items-center gap-2", className)}>
       {/* Energy Mode Selector */}
@@ -66,72 +47,66 @@ export const TimeWindow = ({
             className="h-8 px-3 gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
           >
             <div className="flex items-center gap-2">
-              {React.createElement(energyModes[energyMode].icon, {
+              {React.createElement(energyModeConfig[energyMode].icon, {
                 className: cn(
                   "h-4 w-4 flex-shrink-0",
                   energyMode === "buzzing" && "text-orange-500",
-                  energyMode === "fresh" && "text-purple-500",
-                  energyMode === "trending" && "text-blue-500",
-                  energyMode === "upcoming" && "text-green-500"
+                  energyMode === "fresh" && "text-emerald-500",
+                  energyMode === "trending" && "text-yellow-500",
+                  energyMode === "upcoming" && "text-blue-500"
                 ),
               })}
-              <span className="text-md font-medium text-indigo-600">
-                {energyModes[energyMode].label}
-              </span>
+              {energyModeConfig[energyMode].label}
             </div>
-            <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
+            <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="center" className="w-[150px]">
-          {Object.entries(energyModes).map(([key, mode]) => (
+        <DropdownMenuContent align="end" className="z-[99999]">
+          {(Object.keys(energyModeConfig) as EnergyMode[]).map((mode) => (
             <DropdownMenuItem
-              key={key}
-              onClick={() => onEnergyChange(key as EnergyMode)}
+              key={mode}
+              onClick={() => setEnergyMode(mode)}
               className="gap-2 text-md font-medium text-indigo-600"
             >
-              {React.createElement(mode.icon, {
+              {React.createElement(energyModeConfig[mode].icon, {
                 className: cn(
-                  "h-4 w-4",
-                  key === "buzzing" && "text-orange-500",
-                  key === "fresh" && "text-purple-500",
-                  key === "trending" && "text-blue-500",
-                  key === "upcoming" && "text-green-500"
+                  "h-4 w-4 flex-shrink-0",
+                  mode === "buzzing" && "text-orange-500",
+                  mode === "fresh" && "text-emerald-500",
+                  mode === "trending" && "text-yellow-500",
+                  mode === "upcoming" && "text-blue-500"
                 ),
               })}
-              <span className="font-medium">{mode.label}</span>
+              {energyModeConfig[mode].label}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Time Range */}
-      {(energyMode === "buzzing" || energyMode === "trending") && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 px-3 gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
+      {/* Time Range Selector */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 px-3 gap-2 text-md font-medium text-indigo-600 w-[100px] justify-between"
+          >
+            {timeRangeConfig[timeRange]}
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="z-[99999]">
+          {(Object.keys(timeRangeConfig) as TimeRange[]).map((range) => (
+            <DropdownMenuItem
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className="gap-2 text-md font-medium text-indigo-600"
             >
-              <span className="text-md font-medium text-indigo-600">
-                {timeRanges[timeRange]}
-              </span>
-              <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center" className="w-[150px]">
-            {Object.entries(timeRanges).map(([key, label]) => (
-              <DropdownMenuItem
-                key={key}
-                onClick={() => onTimeChange(key as TimeRange)}
-                className="gap-2 text-md font-medium text-indigo-600"
-              >
-                {label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
+              {timeRangeConfig[range]}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

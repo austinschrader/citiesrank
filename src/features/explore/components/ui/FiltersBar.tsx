@@ -2,29 +2,24 @@
  * Toolbar component for managing filters and view modes.
  * Pure UI - gets all data from contexts.
  */
-import { Button } from "@/components/ui/button";
-import { Toggle } from "@/components/ui/toggle";
 import { useHeader } from "@/context/HeaderContext";
 import { FiltersSheet } from "@/features/explore/components/ui/filters/FiltersSheet";
-import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
 import { SearchInput } from "@/features/places/components/ui/search/SearchInput";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
-import { Landmark, PlusCircle, Scroll } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Landmark, Scroll } from "lucide-react";
 import { SplitModeToggle } from "../layouts/SplitModeToggle";
 
 const baseButtonStyles =
-  "inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium transition-all duration-200 border-0 outline-none ring-0 focus:ring-0";
+  "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200";
 const activeButtonStyles = cn(
   baseButtonStyles,
-  "bg-indigo-500 hover:bg-indigo-600 text-white shadow-sm"
+  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
 );
 const inactiveButtonStyles = cn(
   baseButtonStyles,
-  "bg-white/80 hover:bg-indigo-500 hover:text-white text-indigo-600 shadow-sm"
+  "text-muted-foreground hover:text-foreground hover:bg-white/5"
 );
 
 export const FiltersBar = () => {
@@ -45,7 +40,6 @@ export const FiltersBar = () => {
     visibleLists,
     filteredPlaces,
   } = useMap();
-  const [sort, setSort] = useState("popular");
 
   // Calculate display counts based on view mode
   const displayPlaces =
@@ -64,7 +58,7 @@ export const FiltersBar = () => {
         <div className="h-full px-3 flex items-center gap-2 md:gap-3 overflow-x-auto md:overflow-visible">
           {/* Left Section */}
           <div className="flex items-center gap-2 md:gap-3 flex-1">
-            <div className="flex-1 relative">
+            <div className="w-full max-w-md flex-shrink">
               <SearchInput
                 value={filters.search || ""}
                 onChange={(value) => setFilters({ ...filters, search: value })}
@@ -72,31 +66,31 @@ export const FiltersBar = () => {
             </div>
 
             {/* View Toggle */}
-            <div className="flex items-center gap-1">
-              <Toggle
-                pressed={contentType === "lists"}
-                onPressedChange={() => setContentType("lists")}
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-white/5 backdrop-blur-sm">
+              <button
+                onClick={() => setContentType("lists")}
                 className={cn(
+                  "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200",
                   contentType === "lists"
-                    ? activeButtonStyles
-                    : inactiveButtonStyles
+                    ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                 )}
               >
-                <Scroll className="w-3.5 h-3.5" />
-                Collections
-              </Toggle>
-              <Toggle
-                pressed={contentType === "places"}
-                onPressedChange={() => setContentType("places")}
+                <Scroll className="h-3.5 w-3.5" />
+                <span className="text-sm font-medium">Collections</span>
+              </button>
+              <button
+                onClick={() => setContentType("places")}
                 className={cn(
+                  "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200",
                   contentType === "places"
-                    ? activeButtonStyles
-                    : inactiveButtonStyles
+                    ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/5"
                 )}
               >
-                <Landmark className="w-3.5 h-3.5" />
-                Places
-              </Toggle>
+                <Landmark className="h-3.5 w-3.5" />
+                <span className="text-sm font-medium">Places</span>
+              </button>
             </div>
 
             <div className="flex items-center gap-2 text-sm">
@@ -120,35 +114,11 @@ export const FiltersBar = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className={cn(
-                baseButtonStyles,
-                "border border-input hover:bg-accent hover:text-accent-foreground"
-              )}
-              asChild
-            >
-              <Link
-                to={contentType === "places" ? "/my-places" : "/lists/create"}
-                className="flex items-center gap-1.5"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                New {contentType === "places" ? "Place" : "List"}
-              </Link>
-            </Button>
-
             <div className="flex items-center gap-3">
-              <FiltersSheet sort={sort} onSortChange={setSort} />
+              <FiltersSheet />
             </div>
 
             <div className="flex items-center gap-3">
-              <TimeWindow
-                energyMode={energyMode}
-                timeRange={timeRange}
-                onEnergyChange={setEnergyMode}
-                onTimeChange={setTimeRange}
-              />
               <SplitModeToggle />
             </div>
           </div>
