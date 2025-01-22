@@ -107,7 +107,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
-  const [splitMode, setSplitMode] = useState<SplitMode>("split");
+  const [splitMode, setSplitMode] = useState<SplitMode>(
+    window.innerWidth <= 768 ? "map" : "split"
+  );
   const [visibleLists, setVisibleLists] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -268,9 +270,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 640) {
-        setSplitMode("map");
-      }
+      setNumPrioritizedToShow(
+        window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
+      );
+      setSplitMode(window.innerWidth <= 768 ? "map" : "split");
     };
 
     window.addEventListener("resize", handleResize);

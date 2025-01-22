@@ -58,7 +58,7 @@ export const FiltersBar = () => {
         <div className="h-full px-3 flex items-center gap-2 md:gap-3 overflow-x-auto md:overflow-visible">
           {/* Left Section */}
           <div className="flex items-center gap-2 md:gap-3 flex-1">
-            <div className="w-full max-w-md flex-shrink">
+            <div className="w-full max-w-md flex-shrink min-w-[200px]">
               <SearchInput
                 value={filters.search || ""}
                 onChange={(value) => setFilters({ ...filters, search: value })}
