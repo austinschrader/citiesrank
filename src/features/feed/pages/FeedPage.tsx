@@ -58,7 +58,7 @@ const EmptyFeedState = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto p-8 text-center"
+      className="max-w-2xl mx-auto p-8 text-center h-[calc(100vh-16rem)] flex flex-col justify-center"
     >
       <div className="relative inline-block mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 blur-xl opacity-20 animate-pulse rounded-full" />
@@ -153,7 +153,7 @@ export const FeedPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="flex justify-center items-center h-[calc(100vh-16rem)]">
         <div className="relative">
           <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
           <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-purple-400 animate-pulse" />
@@ -163,16 +163,20 @@ export const FeedPage = () => {
   }
 
   if (!feedItems.length) {
-    return <EmptyFeedState />;
+    return (
+      <div className="h-full">
+        <EmptyFeedState />
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950">
       <motion.div
         initial="hidden"
         animate="show"
         variants={containerVariants}
-        className="max-w-4xl mx-auto p-6 pt-12"
+        className="w-full max-w-4xl mx-auto px-4 py-6 pt-12 pb-24"
       >
         {/* Header Section */}
         <motion.div
@@ -192,7 +196,7 @@ export const FeedPage = () => {
         <AnimatePresence>
           <motion.div variants={containerVariants} className="space-y-6">
             {feedItems.map((item) => (
-              <motion.div key={item.id} variants={itemVariants}>
+              <motion.div key={item.id} variants={itemVariants} className="w-full">
                 {renderFeedItem(item)}
               </motion.div>
             ))}
@@ -209,7 +213,7 @@ export const FeedPage = () => {
       case "trending_place": {
         const trendingItem = item as TrendingPlaceItem;
         return (
-          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80">
+          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80 w-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8 group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-500" />
             <div className="p-6 relative">
               <div className="flex items-center gap-3 mb-4">
@@ -272,7 +276,7 @@ export const FeedPage = () => {
       case "place_collection": {
         const collectionItem = item as PlaceCollectionItem;
         return (
-          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80">
+          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80 w-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8 group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-500" />
             <div className="p-6 relative">
               <div className="flex items-center gap-3 mb-4">

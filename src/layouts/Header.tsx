@@ -29,7 +29,6 @@ import { Link, useLocation } from "react-router-dom";
 const navItems = [
   {
     label: "Explore",
-    mobileLabel: "Explore",
     icon: Globe2,
     to: "/",
     description: "Discover your next adventure on our interactive map",
@@ -37,7 +36,6 @@ const navItems = [
   },
   {
     label: "Collections",
-    mobileLabel: "Lists",
     icon: ScrollText,
     to: "/lists",
     description: "Curate and share your favorite places",
@@ -45,7 +43,6 @@ const navItems = [
   },
   {
     label: "Live Feed",
-    mobileLabel: "Live",
     icon: Sparkles,
     to: "/feed",
     description: "See what's happening around the world right now",
@@ -53,7 +50,6 @@ const navItems = [
   },
   {
     label: "Quests",
-    mobileLabel: "Quests",
     icon: Star,
     to: "/quests",
     description: "Uncover hidden gems and trending spots",
@@ -315,39 +311,6 @@ export const Header = () => {
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-violet-200 to-transparent opacity-100" />
         <div className="absolute bottom-[-4px] left-0 right-0 h-[4px] bg-gradient-to-b from-gray-200/50 to-transparent" />
       </motion.header>
-
-      {/* Mobile Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-gray-200">
-        <div className="flex items-center justify-around px-2 py-2">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.to;
-            return (
-              <Link key={item.to} to={item.to} className="flex-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "flex flex-col items-center gap-1 h-auto py-2 w-full",
-                    "hover:bg-white/50",
-                    "rounded-lg font-medium transition-all duration-300",
-                    isActive && "bg-white/50"
-                  )}
-                >
-                  <item.icon
-                    className={cn(
-                      "w-5 h-5 transition-all duration-300",
-                      `bg-gradient-to-r ${item.gradient} bg-clip-text`
-                    )}
-                  />
-                  <span className="text-xs font-medium">
-                    {item.mobileLabel}
-                  </span>
-                </Button>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
     </>
   );
 };
