@@ -97,14 +97,14 @@ export const FiltersBar = () => {
               <span className="text-muted-foreground text-xs">
                 {contentType === "places"
                   ? displayPlaces.length
-                  : visibleLists.length}{" "}
-                loaded
+                  : visibleLists.length}
+                <span className="hidden sm:inline"> loaded</span>
               </span>
               <span className="text-muted-foreground text-xs">•</span>
               <span className="font-medium text-xs">
                 {contentType === "places" ? placesInView : visibleLists.length}
               </span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-xs hidden sm:inline">
                 {contentType === "places" ? "places in view" : "lists in view"}
               </span>
             </div>
