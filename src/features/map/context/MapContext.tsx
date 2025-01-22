@@ -15,7 +15,7 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { pb } from "@/lib/pocketbase";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
-import L, { LatLngBounds, LatLngTuple } from "leaflet";
+import { LatLngBounds, LatLngTuple } from "leaflet";
 import React, {
   createContext,
   useCallback,
@@ -177,8 +177,13 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const getVisiblePlacesForCurrentView = useCallback(
     (allPlaces: MapPlace[]): MapPlace[] => {
-      if (state.zoom > 12) {
-        return filterPlacesByBoundsCallback(allPlaces);
+      // Skip filtering if no bounds or unreasonably small bounds
+      if (
+        !mapBounds ||
+        mapBounds.getEast() - mapBounds.getWest() < 1 || // Less than 1 degree wide
+        mapBounds.getNorth() - mapBounds.getSouth() < 1 // Less than 1 degree tall
+      ) {
+        return allPlaces;
       }
 
       const boundsFiltered = filterPlacesByBoundsCallback(allPlaces);
@@ -271,7 +276,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const handleResize = () => {
       setNumPrioritizedToShow(
-        window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
+        window.innerWidth <= 640
+          ? DEFAULT_MOBILE_PLACES
+          : DEFAULT_DESKTOP_PLACES
       );
       setSplitMode(window.innerWidth <= 768 ? "map" : "split");
     };
