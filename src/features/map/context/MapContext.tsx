@@ -88,8 +88,8 @@ const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
   const { filters, getFilteredCities } = useFilters();
+  const { cities, sortedCities } = useCities();
   const { getList } = useLists();
-  const { cities } = useCities();
 
   const [state, setState] = useState<MapState>({
     zoom: DEFAULT_ZOOM,
@@ -289,8 +289,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
-    return getFilteredCities(cities);
-  }, [cities, getFilteredCities]);
+    // Use sortedCities if available, otherwise use regular cities
+    const sourceCities = sortedCities || cities;
+    return getFilteredCities(sourceCities);
+  }, [cities, sortedCities, getFilteredCities]);
 
   // Update visible places when filtered places change
   useEffect(() => {

@@ -11,28 +11,9 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { Landmark, Scroll } from "lucide-react";
 
-const baseButtonStyles =
-  "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200";
-const activeButtonStyles = cn(
-  baseButtonStyles,
-  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-);
-const inactiveButtonStyles = cn(
-  baseButtonStyles,
-  "text-muted-foreground hover:text-foreground hover:bg-white/5"
-);
-
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
-  const {
-    energyMode,
-    timeRange,
-    setEnergyMode,
-    setTimeRange,
-    contentType,
-    setContentType,
-    isFiltersCollapsed,
-  } = useHeader();
+  const { contentType, setContentType, isFiltersCollapsed } = useHeader();
   const {
     prioritizedPlaces,
     visiblePlacesInView,

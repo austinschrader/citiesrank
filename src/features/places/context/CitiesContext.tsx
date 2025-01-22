@@ -46,6 +46,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -54,7 +55,6 @@ const pb = new PocketBase(apiUrl);
 
 interface CitiesState {
   cities: CitiesResponse[];
-  sortedCities: CitiesResponse[];
   totalCities: number;
   cityStatus: {
     loading: boolean;
@@ -63,11 +63,11 @@ interface CitiesState {
   typeSpecificLists: {
     [key in CitiesTypeOptions]: CitiesResponse[];
   };
+  sortOrder: "popular" | "rating" | "recent" | "distance";
 }
 
 const defaultState: CitiesState = {
   cities: [],
-  sortedCities: [],
   totalCities: 0,
   cityStatus: {
     loading: false,
@@ -80,15 +80,21 @@ const defaultState: CitiesState = {
     [CitiesTypeOptions.neighborhood]: [],
     [CitiesTypeOptions.sight]: [],
   },
+  sortOrder: "rating",
 };
+
+interface CitiesContextValue extends CitiesState {
+  sortedCities: CitiesResponse[];
+}
 
 interface QueryParams {
   searchTerm?: string;
   [key: string]: any;
 }
 
-export const CitiesContext = createContext<CitiesState>(defaultState);
-const CitiesActionsContext = createContext<{
+export const CitiesContext = createContext<CitiesContextValue | null>(null);
+
+interface CitiesActionsContextValue {
   refreshCities: () => Promise<void>;
   fetchCitiesPaginated: (
     page: number,
@@ -98,7 +104,10 @@ const CitiesActionsContext = createContext<{
   getCityByName: (cityName: string) => Promise<CitiesResponse>;
   getCityById: (id: string) => Promise<CitiesResponse | null>;
   getAllCities: () => Promise<CitiesResponse[]>;
-}>({
+  setSortOrder: (sortOrder: CitiesState["sortOrder"]) => void;
+}
+
+const CitiesActionsContext = createContext<CitiesActionsContextValue>({
   refreshCities: async () => {},
   fetchCitiesPaginated: async () => ({}),
   getCityByName: async () => {
@@ -108,6 +117,7 @@ const CitiesActionsContext = createContext<{
     throw new Error("Not implemented");
   },
   getAllCities: async () => [],
+  setSortOrder: () => {},
 });
 
 export function useCities() {
@@ -161,6 +171,37 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
     return lists;
   };
 
+  const getSortedCities = useCallback((cities: CitiesResponse[]) => {
+    return [...cities].sort((a, b) => {
+      switch (state.sortOrder) {
+        case "rating":
+          return (b.averageRating || 0) - (a.averageRating || 0);
+        case "recent":
+          return (
+            new Date(b.created).getTime() - new Date(a.created).getTime()
+          );
+        case "distance":
+          // TODO: Implement distance sorting when location is available
+          return 0;
+        case "popular":
+        default:
+          // Sort by total reviews as a popularity metric
+          return (b.totalReviews || 0) - (a.totalReviews || 0);
+      }
+    });
+  }, [state.sortOrder]);
+
+  const setSortOrder = useCallback(
+    (sortOrder: CitiesState["sortOrder"]) => {
+      setState((prev) => ({ ...prev, sortOrder }));
+    },
+    []
+  );
+
+  const sortedCities = useMemo(() => {
+    return getSortedCities(state.cities);
+  }, [state.cities, getSortedCities]);
+
   const fetchCitiesPaginated = async (
     page: number,
     perPage: number,
@@ -187,9 +228,6 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
       setState((prev) => ({
         ...prev,
         cities: citiesData,
-        sortedCities: [...citiesData].sort((a, b) =>
-          a.name.localeCompare(b.name)
-        ),
         totalCities: citiesData.length,
         typeSpecificLists: organizeCitiesByType(citiesData),
         cityStatus: { loading: false, error: null },
@@ -258,35 +296,27 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   };
 
   const refreshCities = async () => {
+    setState((prev) => ({
+      ...prev,
+      cityStatus: { loading: true, error: null },
+    }));
+
     try {
-      setState((prev) => ({
-        ...prev,
-        cityStatus: { loading: true, error: null },
-      }));
-
-      const citiesData = await pb
-        .collection("cities")
-        .getFullList<CitiesResponse>({
-          $autoCancel: false,
-        });
-
-
-
+      const citiesData = await getAllCities();
       setState((prev) => ({
         ...prev,
         cities: citiesData,
-        sortedCities: [...citiesData].sort((a, b) =>
-          a.name.localeCompare(b.name)
-        ),
         totalCities: citiesData.length,
         typeSpecificLists: organizeCitiesByType(citiesData),
         cityStatus: { loading: false, error: null },
       }));
     } catch (error) {
-      console.error("❌ Error in refreshCities:", error);
       setState((prev) => ({
         ...prev,
-        cityStatus: { loading: false, error: String(error) },
+        cityStatus: {
+          loading: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
       }));
     }
   };
@@ -296,7 +326,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
   }, []);
 
   return (
-    <CitiesContext.Provider value={state}>
+    <CitiesContext.Provider value={{ ...state, sortedCities }}>
       <CitiesActionsContext.Provider
         value={{
           refreshCities,
@@ -304,6 +334,7 @@ export function CitiesProvider({ children }: CitiesProviderProps) {
           getCityByName,
           getCityById,
           getAllCities,
+          setSortOrder,
         }}
       >
         {children}
