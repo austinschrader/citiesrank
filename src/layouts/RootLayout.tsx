@@ -12,7 +12,7 @@ export const RootLayout = () => {
     <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
       <Header />
       {!user && <SignUpBanner show={false} />}
-      <main className="flex-1 relative max-w-[calc(100%-2rem)] sm:max-w-[calc(100%-4rem)] mx-auto w-full">
+      <main className="flex-1 relative max-w-[calc(100%)] sm:max-w-[calc(100%)] mx-auto w-full">
         <Outlet />
       </main>
     </div>
