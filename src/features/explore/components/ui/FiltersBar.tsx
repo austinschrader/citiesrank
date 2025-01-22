@@ -3,13 +3,13 @@
  * Pure UI - gets all data from contexts.
  */
 import { useHeader } from "@/context/HeaderContext";
+import { SplitModeToggle } from "@/features/explore/components/layouts/SplitModeToggle";
 import { FiltersSheet } from "@/features/explore/components/ui/filters/FiltersSheet";
 import { useMap } from "@/features/map/context/MapContext";
 import { SearchInput } from "@/features/places/components/ui/search/SearchInput";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { Landmark, Scroll } from "lucide-react";
-import { SplitModeToggle } from "../layouts/SplitModeToggle";
 
 const baseButtonStyles =
   "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200";
@@ -57,6 +57,9 @@ export const FiltersBar = () => {
       >
         <div className="h-full px-3 flex items-center gap-2 md:gap-3 overflow-x-auto md:overflow-visible">
           {/* Left Section */}
+          <div className="flex items-center gap-3">
+            <SplitModeToggle />
+          </div>
           <div className="flex items-center gap-2 md:gap-3 flex-1">
             <div className="w-full max-w-md flex-shrink min-w-[150px]">
               <SearchInput
@@ -116,10 +119,6 @@ export const FiltersBar = () => {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3">
               <FiltersSheet />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <SplitModeToggle />
             </div>
           </div>
         </div>
