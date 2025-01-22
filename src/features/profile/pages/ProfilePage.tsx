@@ -11,7 +11,14 @@ export const ProfilePage = () => {
   const navigate = useNavigate();
 
   if (!user) {
-    return <div>Please log in to view your profile.</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Sign in to view your profile</h1>
+          <Button onClick={() => navigate("/login")}>Sign In</Button>
+        </div>
+      </div>
+    );
   }
 
   const handleSignOut = () => {
@@ -20,14 +27,11 @@ export const ProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+      <ProfileHeader />
+      
       <div className="container max-w-6xl mx-auto px-4 py-8">
-        {/* Page Header */}
-        <ProfileHeader />
-
-        <div className="grid gap-8">
-          <ProfileOverview />
-        </div>
+        <ProfileOverview />
         
         {/* Mobile Sign Out Button */}
         <div className="md:hidden mt-8">

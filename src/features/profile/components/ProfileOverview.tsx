@@ -1,23 +1,27 @@
 // file location: src/features/profile/components/ProfileOverview.tsx
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { MapPin, Globe, ListChecks, PenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useCities } from "@/features/places/context/CitiesContext";
 import { useToast } from "@/hooks/use-toast";
-import { CitiesResponse } from "@/lib/types/pocketbase-types";
-import { MapPin, PenLine } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 export const ProfileOverview = () => {
   const { user, pb } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedCity, setSelectedCity] = useState("");
-  const { sortedCities, cityStatus } = useCities();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     bio: user?.bio || "",
@@ -28,73 +32,7 @@ export const ProfileOverview = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0] || !user) return;
-
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("avatar", file);
-
-    try {
-      setIsLoading(true);
-      await pb.collection("users").update(user.id, formData);
-
-      // Force auth refresh and get the new avatar URL
-      const updatedUser = await pb.collection("users").authRefresh();
-
-      // Log to check what we're getting
-      console.log("Updated user:", updatedUser);
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Get the full avatar URL
-  const getAvatarUrl = () => {
-    if (!user?.avatar) return "";
-
-    // PocketBase automatically adds a timestamp to avoid caching
-    return pb.files.getUrl(user, user.avatar);
-  };
-
-  const handleAddPlace = async () => {
-    if (!selectedCity || !user) return;
-
-    try {
-      setIsLoading(true);
-      const currentPlaces = user.places_visited || [];
-      if (!currentPlaces.includes(selectedCity)) {
-        await pb.collection("users").update(user.id, {
-          places_visited: [...currentPlaces, selectedCity],
-        });
-        await pb.collection("users").authRefresh();
-      }
-      setSelectedCity("");
-    } catch (error) {
-      console.error("Error adding place:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleRemovePlace = async (cityId: string) => {
-    if (!user) return;
-
-    try {
-      setIsLoading(true);
-      const currentPlaces = user.places_visited || [];
-      await pb.collection("users").update(user.id, {
-        places_visited: currentPlaces.filter((id: string) => id !== cityId),
-      });
-      await pb.collection("users").authRefresh();
-    } catch (error) {
-      console.error("Error removing place:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  if (!user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,201 +82,140 @@ export const ProfileOverview = () => {
     }
   };
 
-  // Display name logic
-  const displayName = user?.name || user?.username;
-  const showUsernameHint = !user?.name && user?.username;
-
-  const hasChanges = useMemo(() => {
+  if (isEditing) {
     return (
-      formData.name !== user?.name ||
-      formData.bio !== user?.bio ||
-      formData.location !== user?.location ||
-      formData.username !== user?.username ||
-      formData.isPrivate !== user?.isPrivate
-    );
-  }, [formData, user]);
-
-  if (!user) {
-    return <div>Please log in to view your profile.</div>;
-  }
-
-  const [favoriteCities, setFavoriteCities] = useState<CitiesResponse[]>([]);
-  const [isFavoritesLoading, setIsFavoritesLoading] = useState(true);
-
-  // Fetch favorite cities
-  useEffect(() => {
-    let isSubscribed = true;
-
-    async function fetchFavorites() {
-      if (!user) return;
-
-      setIsFavoritesLoading(true);
-      try {
-        const favorites = await pb.collection("favorites").getFullList({
-          filter: `user = "${user.id}"`,
-          expand: "city",
-          $autoCancel: false,
-        });
-
-        if (isSubscribed) {
-          const favoritedCities = favorites
-            .map((favorite) => favorite.expand?.city)
-            .filter(Boolean);
-
-          setFavoriteCities(favoritedCities);
-        }
-      } catch (error) {
-        // Only show error if component is still mounted and error is not a cancellation
-        if (
-          isSubscribed &&
-          error instanceof Error &&
-          error.name !== "AbortError"
-        ) {
-          console.error("Error fetching favorites:", error);
-          toast({
-            title: "Error loading favorites",
-            description: "Please try again later",
-            variant: "destructive",
-          });
-        }
-      } finally {
-        if (isSubscribed) {
-          setIsFavoritesLoading(false);
-        }
-      }
-    }
-
-    fetchFavorites();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [user]);
-
-  return (
-    <Card>
-      <CardHeader className="border-b">
-        <div className="flex items-center justify-between">
-          <CardTitle>Profile Overview</CardTitle>
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => {
-              if (isEditing && hasChanges) {
-                if (
-                  !window.confirm(
-                    "You have unsaved changes. Are you sure you want to cancel?"
-                  )
-                ) {
-                  return;
-                }
-              }
-              setIsEditing(!isEditing);
-              if (!isEditing) {
-                setFormData({
-                  name: user?.name || "",
-                  bio: user?.bio || "",
-                  location: user?.location || "",
-                  username: user?.username || "",
-                  isPrivate: user?.isPrivate || false,
-                });
-              }
-            }}
-          >
-            <PenLine className="h-4 w-4" />
-            {isEditing ? "Cancel" : "Edit Profile"}
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-                <AvatarImage src={getAvatarUrl()} />
-                <AvatarFallback className="text-4xl">
-                  {displayName?.[0]?.toUpperCase() ?? "?"}
-                </AvatarFallback>
-              </Avatar>
-              {isEditing && (
-                <Label
-                  htmlFor="avatar-upload"
-                  className="absolute bottom-2 right-2 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer hover:bg-primary/90"
-                >
-                  <PenLine className="h-4 w-4" />
-                  <Input
-                    id="avatar-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    disabled={isLoading}
-                  />
-                </Label>
-              )}
-            </div>
-
-            {!isEditing ? (
-              <div className="text-center">
-                <h2 className="text-xl font-semibold">{displayName}</h2>
-                {showUsernameHint && (
-                  <p className="text-sm text-muted-foreground">
-                    @{user?.username}
-                  </p>
-                )}
-                {user?.location && (
-                  <div className="flex items-center justify-center gap-1 mt-1 text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <span>{user.location}</span>
-                  </div>
-                )}
-                {user?.bio && (
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {user.bio}
-                  </p>
-                )}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+      >
+        <Card className="border-none shadow-lg">
+          <CardHeader className="border-b bg-muted/50 rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Edit Profile</CardTitle>
+                <CardDescription>Update your profile information</CardDescription>
               </div>
-            ) : null}
-          </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setIsEditing(false);
+                  setFormData({
+                    name: user?.name || "",
+                    bio: user?.bio || "",
+                    location: user?.location || "",
+                    username: user?.username || "",
+                    isPrivate: user?.isPrivate || false,
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium">
+                      Display Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      disabled={isLoading}
+                      placeholder="Your display name"
+                      className="bg-background"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      This is how your name will appear publicly
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-sm font-medium">
+                      Username
+                    </Label>
+                    <Input
+                      id="username"
+                      value={formData.username}
+                      onChange={(e) =>
+                        setFormData({ ...formData, username: e.target.value })
+                      }
+                      disabled={isLoading}
+                      placeholder="@username"
+                      className="bg-background"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Your unique username for CitiesRank
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="location" className="text-sm font-medium">
+                      Location
+                    </Label>
+                    <Input
+                      id="location"
+                      value={formData.location}
+                      onChange={(e) =>
+                        setFormData({ ...formData, location: e.target.value })
+                      }
+                      disabled={isLoading}
+                      placeholder="Where are you based?"
+                      className="bg-background"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Share your current city or region
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="bio" className="text-sm font-medium">
+                      Bio
+                    </Label>
+                    <Textarea
+                      id="bio"
+                      value={formData.bio}
+                      onChange={(e) =>
+                        setFormData({ ...formData, bio: e.target.value })
+                      }
+                      disabled={isLoading}
+                      className="resize-none bg-background"
+                      rows={3}
+                      placeholder="Tell us about yourself..."
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Brief description for your profile
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-          {isEditing && (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    value={formData.username}
-                    onChange={(e) =>
-                      setFormData({ ...formData, username: e.target.value })
-                    }
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) =>
-                      setFormData({ ...formData, location: e.target.value })
-                    }
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="flex items-center space-x-2 h-[68px]">
-                  <div className="flex items-center space-x-2">
+              <div className="border-t pt-6 mt-6">
+                <div className="flex flex-row-reverse items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? (
+                        <>
+                          <span className="mr-2">Saving</span>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          >
+                            ⚪
+                          </motion.div>
+                        </>
+                      ) : (
+                        "Save Changes"
+                      )}
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <Switch
                       id="private"
                       checked={formData.isPrivate}
@@ -349,58 +226,119 @@ export const ProfileOverview = () => {
                     />
                     <div className="space-y-1">
                       <Label htmlFor="private">Private Profile</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Hide profile from other users
+                      <p className="text-xs text-muted-foreground">
+                        Only you can see your profile
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea
-                  id="bio"
-                  value={formData.bio}
-                  onChange={(e) =>
-                    setFormData({ ...formData, bio: e.target.value })
-                  }
-                  disabled={isLoading}
-                  className="resize-none"
-                  rows={3}
-                  placeholder="Tell us about yourself..."
-                />
+            </form>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
+
+  return (
+    <Tabs defaultValue="lists" className="w-full">
+      <TabsList className="grid w-full grid-cols-3 mb-8">
+        <TabsTrigger value="lists" className="flex items-center gap-2">
+          <ListChecks className="h-4 w-4" />
+          Lists
+        </TabsTrigger>
+        <TabsTrigger value="places" className="flex items-center gap-2">
+          <MapPin className="h-4 w-4" />
+          Places Visited
+        </TabsTrigger>
+        <TabsTrigger value="activity" className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          Activity
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="lists">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Your Lists</CardTitle>
+                <CardDescription>
+                  Collections of places you've created and curated
+                </CardDescription>
               </div>
-              {hasChanges && (
-                <div className="bg-muted/50 px-4 py-3 rounded-lg flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    You have unsaved changes
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => {
-                        setFormData({
-                          name: user?.name || "",
-                          bio: user?.bio || "",
-                          location: user?.location || "",
-                          username: user?.username || "",
-                          isPrivate: user?.isPrivate || false,
-                        });
-                      }}
-                    >
-                      Reset
-                    </Button>
-                    <Button type="submit" disabled={isLoading}>
-                      {isLoading ? "Saving..." : "Save Changes"}
-                    </Button>
+              <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                <PenLine className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {user.lists_count === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <ListChecks className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>You haven't created any lists yet.</p>
+                <p className="text-sm mt-2">
+                  Start creating lists to organize your favorite places!
+                </p>
+              </div>
+            ) : (
+              <div>Lists will be rendered here</div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="places">
+        <Card>
+          <CardHeader>
+            <CardTitle>Places Visited</CardTitle>
+            <CardDescription>
+              Cities and places you've marked as visited
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!user.places_visited?.length ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>You haven't marked any places as visited yet.</p>
+                <p className="text-sm mt-2">
+                  Mark places as visited to keep track of your travels!
+                </p>
+              </div>
+            ) : (
+              <ScrollArea className="h-[400px] pr-4">
+                <div className="space-y-4">
+                  {/* Places will be rendered here */}
+                  <div className="text-muted-foreground">
+                    {user.places_visited.length} places visited
                   </div>
                 </div>
-              )}
-            </form>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+              </ScrollArea>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="activity">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>
+              Your latest interactions and updates
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8 text-muted-foreground">
+              <Globe className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Activity feed coming soon!</p>
+              <p className="text-sm mt-2">
+                We're working on bringing you a personalized activity feed.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+    </Tabs>
   );
 };
