@@ -18,7 +18,9 @@ export const SearchInput = ({
     <div className="relative">
       <Input
         type="text"
-        placeholder={placeholder}
+        placeholder={
+          window.innerWidth <= 640 ? "Search places..." : placeholder
+        }
         className="w-full pl-8 h-8 bg-white shadow-sm border hover:border-indigo-200 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-200/50 rounded-lg transition-all duration-200 text-sm placeholder:text-indigo-400"
         value={value}
         onChange={(e) => onChange(e.target.value)}

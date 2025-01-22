@@ -3,36 +3,17 @@
  * Pure UI - gets all data from contexts.
  */
 import { useHeader } from "@/context/HeaderContext";
+import { SplitModeToggle } from "@/features/explore/components/layouts/SplitModeToggle";
 import { FiltersSheet } from "@/features/explore/components/ui/filters/FiltersSheet";
 import { useMap } from "@/features/map/context/MapContext";
 import { SearchInput } from "@/features/places/components/ui/search/SearchInput";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import { Landmark, Scroll } from "lucide-react";
-import { SplitModeToggle } from "../layouts/SplitModeToggle";
-
-const baseButtonStyles =
-  "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200";
-const activeButtonStyles = cn(
-  baseButtonStyles,
-  "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm"
-);
-const inactiveButtonStyles = cn(
-  baseButtonStyles,
-  "text-muted-foreground hover:text-foreground hover:bg-white/5"
-);
 
 export const FiltersBar = () => {
   const { filters, setFilters } = useFilters();
-  const {
-    energyMode,
-    timeRange,
-    setEnergyMode,
-    setTimeRange,
-    contentType,
-    setContentType,
-    isFiltersCollapsed,
-  } = useHeader();
+  const { contentType, setContentType, isFiltersCollapsed } = useHeader();
   const {
     prioritizedPlaces,
     visiblePlacesInView,
@@ -57,8 +38,11 @@ export const FiltersBar = () => {
       >
         <div className="h-full px-3 flex items-center gap-2 md:gap-3 overflow-x-auto md:overflow-visible">
           {/* Left Section */}
+          <div className="flex items-center gap-3">
+            <SplitModeToggle />
+          </div>
           <div className="flex items-center gap-2 md:gap-3 flex-1">
-            <div className="w-full max-w-md flex-shrink">
+            <div className="w-full max-w-md flex-shrink min-w-[150px]">
               <SearchInput
                 value={filters.search || ""}
                 onChange={(value) => setFilters({ ...filters, search: value })}
@@ -97,14 +81,14 @@ export const FiltersBar = () => {
               <span className="text-muted-foreground text-xs">
                 {contentType === "places"
                   ? displayPlaces.length
-                  : visibleLists.length}{" "}
-                loaded
+                  : visibleLists.length}
+                <span className="hidden sm:inline"> loaded</span>
               </span>
               <span className="text-muted-foreground text-xs">•</span>
               <span className="font-medium text-xs">
                 {contentType === "places" ? placesInView : visibleLists.length}
               </span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-xs hidden sm:inline">
                 {contentType === "places" ? "places in view" : "lists in view"}
               </span>
             </div>
@@ -116,10 +100,6 @@ export const FiltersBar = () => {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3">
               <FiltersSheet />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <SplitModeToggle />
             </div>
           </div>
         </div>

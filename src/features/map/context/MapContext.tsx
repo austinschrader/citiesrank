@@ -15,7 +15,7 @@ import { useFilters } from "@/features/places/context/FiltersContext";
 import { pb } from "@/lib/pocketbase";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { FeatureCollection } from "geojson";
-import L, { LatLngBounds, LatLngTuple } from "leaflet";
+import { LatLngBounds, LatLngTuple } from "leaflet";
 import React, {
   createContext,
   useCallback,
@@ -88,8 +88,8 @@ const MapContext = createContext<MapContextValue | null>(null);
 
 export function MapProvider({ children }: { children: React.ReactNode }) {
   const { filters, getFilteredCities } = useFilters();
+  const { cities, sortedCities } = useCities();
   const { getList } = useLists();
-  const { cities } = useCities();
 
   const [state, setState] = useState<MapState>({
     zoom: DEFAULT_ZOOM,
@@ -107,7 +107,9 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
   const [numPrioritizedToShow, setNumPrioritizedToShow] = useState(
     window.innerWidth <= 640 ? DEFAULT_MOBILE_PLACES : DEFAULT_DESKTOP_PLACES
   );
-  const [splitMode, setSplitMode] = useState<SplitMode>("split");
+  const [splitMode, setSplitMode] = useState<SplitMode>(
+    window.innerWidth <= 768 ? "map" : "split"
+  );
   const [visibleLists, setVisibleLists] = useState<any[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
@@ -175,8 +177,13 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   const getVisiblePlacesForCurrentView = useCallback(
     (allPlaces: MapPlace[]): MapPlace[] => {
-      if (state.zoom > 12) {
-        return filterPlacesByBoundsCallback(allPlaces);
+      // Skip filtering if no bounds or unreasonably small bounds
+      if (
+        !mapBounds ||
+        mapBounds.getEast() - mapBounds.getWest() < 1 || // Less than 1 degree wide
+        mapBounds.getNorth() - mapBounds.getSouth() < 1 // Less than 1 degree tall
+      ) {
+        return allPlaces;
       }
 
       const boundsFiltered = filterPlacesByBoundsCallback(allPlaces);
@@ -268,9 +275,12 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 640) {
-        setSplitMode("map");
-      }
+      setNumPrioritizedToShow(
+        window.innerWidth <= 640
+          ? DEFAULT_MOBILE_PLACES
+          : DEFAULT_DESKTOP_PLACES
+      );
+      setSplitMode(window.innerWidth <= 768 ? "map" : "split");
     };
 
     window.addEventListener("resize", handleResize);
@@ -286,8 +296,10 @@ export function MapProvider({ children }: { children: React.ReactNode }) {
 
   // Get filtered places using FiltersContext
   const filteredPlaces = useMemo(() => {
-    return getFilteredCities(cities);
-  }, [cities, getFilteredCities]);
+    // Use sortedCities if available, otherwise use regular cities
+    const sourceCities = sortedCities || cities;
+    return getFilteredCities(sourceCities);
+  }, [cities, sortedCities, getFilteredCities]);
 
   // Update visible places when filtered places change
   useEffect(() => {

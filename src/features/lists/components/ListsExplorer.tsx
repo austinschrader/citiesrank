@@ -78,14 +78,7 @@ export const ListsExplorer = () => {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950 relative">
-      <div className="absolute top-24 right-24 w-48 h-48 bg-pink-200 dark:bg-pink-500/30 rounded-full blur-3xl z-10" />
-      <div className="absolute top-24 right-24 w-48 h-48 bg-purple-200 dark:bg-purple-500/30 rounded-full blur-3xl z-10" />
-      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8" />
-      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform -translate-x-8 -translate-y-8" />
-      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8" />
-      <div className="absolute top-24 right-24 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform -translate-x-8 -translate-y-8" />
-
+    <div className="flex-1 overflow-y-auto bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950 relative">
       <motion.div
         initial="hidden"
         animate="show"

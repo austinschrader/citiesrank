@@ -16,20 +16,26 @@ export const SplitModeToggle = () => {
 
   return (
     <>
-      {/* Mobile View: Simple Toggle */}
+      {/* Mobile View: Toggle with Text */}
       <div className="sm:hidden">
         <button
           onClick={handleMobileToggle}
           className={cn(
-            "flex items-center justify-center h-8 w-8 rounded-lg transition-all duration-200",
+            "flex items-center gap-1.5 h-8 px-3 rounded-lg transition-all duration-200",
             "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600",
             "text-white shadow-sm"
           )}
         >
           {splitMode === "list" ? (
-            <Map className="h-3.5 w-3.5" />
+            <>
+              <Map className="h-3.5 w-3.5" />
+              <span className="text-sm font-medium">Map</span>
+            </>
           ) : (
-            <Camera className="h-3.5 w-3.5" />
+            <>
+              <Camera className="h-3.5 w-3.5" />
+              <span className="text-sm font-medium">Gallery</span>
+            </>
           )}
         </button>
       </div>

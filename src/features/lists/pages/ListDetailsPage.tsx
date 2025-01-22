@@ -223,298 +223,304 @@ export const ListDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Back Button */}
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-purple-950">
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="fixed top-6 left-6 z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-7xl mx-auto px-4 py-4 pb-16"
       >
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md hover:bg-white dark:hover:bg-gray-800 hover:scale-105 transition-all duration-300 shadow-lg"
-          onClick={() => navigate(-1)}
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-6 left-6 z-50"
         >
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-      </motion.div>
-
-      {/* Hero Section */}
-      <div className="relative min-h-[60vh] w-full overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeImageIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0"
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md hover:bg-white dark:hover:bg-gray-800 hover:scale-105 transition-all duration-300 shadow-lg"
+            onClick={() => navigate(-1)}
           >
-            {list.places[activeImageIndex] && (
-              <div
-                className="absolute inset-0 bg-cover bg-center transform transition-transform duration-700 hover:scale-105"
-                style={{
-                  backgroundImage: `url(${getPlaceImageByCityAndCountry(
-                    list.places[activeImageIndex].name,
-                    list.places[activeImageIndex].country,
-                    1,
-                    "wide"
-                  )})`,
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+        </motion.div>
 
-        {/* Image Navigation */}
-        {list.places.length > 1 && (
-          <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 md:px-12">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleImageNavigation("prev")}
-              className="h-12 w-12 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md border-white/20 text-white"
+        {/* Hero Section */}
+        <div className="relative min-h-[70vh] w-full overflow-hidden rounded-3xl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeImageIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent pt-12"
             >
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => handleImageNavigation("next")}
-              className="h-12 w-12 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md border-white/20 text-white"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
+              {list.places[activeImageIndex] && (
+                <div
+                  className="absolute inset-0 bg-cover bg-center transform transition-transform duration-700 hover:scale-105"
+                  style={{
+                    backgroundImage: `url(${getPlaceImageByCityAndCountry(
+                      list.places[activeImageIndex].name,
+                      list.places[activeImageIndex].country,
+                      1,
+                      "wide"
+                    )})`,
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
-        {/* Header Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-4xl mx-auto"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Featured Collection
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              {list.title}
-            </h1>
-            <p className="text-lg text-white/90 mb-8 max-w-2xl">
-              {list.description}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
-                <ImageIcon className="h-4 w-4" />
-                <span>
-                  {activeImageIndex + 1} / {list.places.length}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
-                <MapPin className="h-4 w-4" />
-                <span>{list.places.length} places</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
-                <Users className="h-4 w-4" />
-                <span>{list.saves} saves</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
-                <Calendar className="h-4 w-4" />
-                <span>
-                  Updated {new Date(list.updated).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
-          {/* Places Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-8"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Places in this Collection
-              </h2>
+          {/* Image Navigation */}
+          {list.places.length > 1 && (
+            <div className="absolute inset-y-0 left-0 right-0 hidden md:flex items-center justify-between px-4 md:px-12 z-10 pointer-events-none">
               <Button
-                variant="outline"
-                className="gap-2"
-                onClick={() => setSelectedPlace(list.places[0])}
+                variant="ghost"
+                size="icon"
+                onClick={() => handleImageNavigation("prev")}
+                className="h-12 w-12 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 pointer-events-auto"
               >
-                <Camera className="h-4 w-4" />
-                View Gallery
+                <ChevronLeft className="h-6 w-6" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleImageNavigation("next")}
+                className="h-12 w-12 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 pointer-events-auto"
+              >
+                <ChevronRight className="h-6 w-6" />
               </Button>
             </div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {list.places.map((place, index) => (
-                <motion.div
-                  key={place.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index }}
+          {/* Header Content */}
+          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="max-w-4xl mx-auto"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Featured Collection
+                </div>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                {list.title}
+              </h1>
+              <p className="text-lg text-white/90 mb-8 max-w-2xl">
+                {list.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
+                  <ImageIcon className="h-4 w-4" />
+                  <span>
+                    {activeImageIndex + 1} / {list.places.length}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
+                  <MapPin className="h-4 w-4" />
+                  <span>{list.places.length} places</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
+                  <Users className="h-4 w-4" />
+                  <span>{list.saves} saves</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white">
+                  <Calendar className="h-4 w-4" />
+                  <span>
+                    Updated {new Date(list.updated).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+            {/* Places Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="space-y-8"
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Places in this Collection
+                </h2>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => setSelectedPlace(list.places[0])}
                 >
-                  <Card onClick={() => setSelectedPlace(place)}>
-                    {/* Image Container */}
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      <img
-                        src={getPlaceImageByCityAndCountry(
-                          place.name,
-                          place.country,
-                          1,
-                          "standard"
-                        )}
-                        alt={place.name}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                  <Camera className="h-4 w-4" />
+                  View Gallery
+                </Button>
+              </div>
 
-                      {/* Place Type Badge */}
-                      <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-sm font-medium">
-                        {place.type}
-                      </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {list.places.map((place, index) => (
+                  <motion.div
+                    key={place.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                  >
+                    <Card onClick={() => setSelectedPlace(place)}>
+                      {/* Image Container */}
+                      <div className="relative aspect-[4/3] overflow-hidden">
+                        <img
+                          src={getPlaceImageByCityAndCountry(
+                            place.name,
+                            place.country,
+                            1,
+                            "standard"
+                          )}
+                          alt={place.name}
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
-                      {/* Stats Overlay */}
-                      <div className="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
-                            <Heart className="h-4 w-4" />
-                            <span>
-                              {place.averageRating?.toFixed(1) || "New"}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
-                            <Users className="h-4 w-4" />
-                            <span>{place.totalReviews || 0} reviews</span>
+                        {/* Place Type Badge */}
+                        <div className="absolute top-4 left-4 px-3 py-1.5 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-sm font-medium">
+                          {place.type}
+                        </div>
+
+                        {/* Stats Overlay */}
+                        <div className="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
+                              <Heart className="h-4 w-4" />
+                              <span>
+                                {place.averageRating?.toFixed(1) || "New"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
+                              <Users className="h-4 w-4" />
+                              <span>{place.totalReviews || 0} reviews</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Content */}
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                        {place.name}
-                      </h3>
-                      <div className="flex items-center gap-2 mb-3">
-                        <Globe2 className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {place.country}
-                        </span>
+                      {/* Content */}
+                      <div className="p-6">
+                        <h3 className="text-lg font-semibold mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                          {place.name}
+                        </h3>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Globe2 className="h-4 w-4 text-gray-400" />
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {place.country}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 line-clamp-2 text-sm">
+                          {place.description}
+                        </p>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300 line-clamp-2 text-sm">
-                        {place.description}
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
-          {/* Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
-            className="space-y-6"
-          >
-            <Card className="border-0 shadow-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm overflow-hidden">
-              <div className="p-6 space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    Collection Stats
-                  </h3>
-                  <div className="grid gap-4">
-                    <StatCard
-                      icon={MapPin}
-                      label="Places"
-                      value={list.place_count || 0}
-                      color="bg-blue-100 dark:bg-blue-900/30"
-                    />
-                    <StatCard
-                      icon={Heart}
-                      label="Total Saves"
-                      value={list.stats.saves}
-                      color="bg-pink-100 dark:bg-pink-900/30"
-                    />
-                    <StatCard
-                      icon={Users}
-                      label="Currently Exploring"
-                      value="12"
-                      color="bg-green-100 dark:bg-green-900/30"
-                    />
+            {/* Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              className="space-y-6"
+            >
+              <Card className="border-0 shadow-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm overflow-hidden">
+                <div className="p-6 space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      Collection Stats
+                    </h3>
+                    <div className="grid gap-4">
+                      <StatCard
+                        icon={MapPin}
+                        label="Places"
+                        value={list.place_count || 0}
+                        color="bg-blue-100 dark:bg-blue-900/30"
+                      />
+                      <StatCard
+                        icon={Heart}
+                        label="Total Saves"
+                        value={list.stats.saves}
+                        color="bg-pink-100 dark:bg-pink-900/30"
+                      />
+                      <StatCard
+                        icon={Users}
+                        label="Currently Exploring"
+                        value="12"
+                        color="bg-green-100 dark:bg-green-900/30"
+                      />
+                    </div>
+                  </div>
+
+                  <Separator className="bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
+
+                  {/* Actions */}
+                  <div className="space-y-3">
+                    <Button
+                      variant={isSaved(list.id) ? "outline" : "default"}
+                      className={cn(
+                        "w-full h-12 gap-3 text-base font-medium",
+                        "bg-gradient-to-r shadow-lg transition-all duration-300",
+                        isSaved(list.id)
+                          ? "from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900 hover:from-gray-200 hover:to-gray-100"
+                          : "from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                      )}
+                      onClick={handleSave}
+                      disabled={isSaving}
+                    >
+                      {isSaving ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <>
+                          <BookmarkPlus className="h-5 w-5" />
+                          {isSaved(list.id)
+                            ? "Saved to Collection"
+                            : "Save Collection"}
+                        </>
+                      )}
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 gap-3 text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+                      onClick={handleShare}
+                    >
+                      <Share2 className="h-5 w-5" />
+                      Share Collection
+                    </Button>
                   </div>
                 </div>
-
-                <Separator className="bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
-
-                {/* Actions */}
-                <div className="space-y-3">
-                  <Button
-                    variant={isSaved(list.id) ? "outline" : "default"}
-                    className={cn(
-                      "w-full h-12 gap-3 text-base font-medium",
-                      "bg-gradient-to-r shadow-lg transition-all duration-300",
-                      isSaved(list.id)
-                        ? "from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900 hover:from-gray-200 hover:to-gray-100"
-                        : "from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
-                    )}
-                    onClick={handleSave}
-                    disabled={isSaving}
-                  >
-                    {isSaving ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      <>
-                        <BookmarkPlus className="h-5 w-5" />
-                        {isSaved(list.id)
-                          ? "Saved to Collection"
-                          : "Save Collection"}
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 gap-3 text-base font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={handleShare}
-                  >
-                    <Share2 className="h-5 w-5" />
-                    Share Collection
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
+              </Card>
+            </motion.div>
+          </div>
         </div>
-      </div>
 
-      {/* Place Modal */}
-      {selectedPlace && (
-        <PlaceModal
-          place={selectedPlace}
-          isOpen={!!selectedPlace}
-          onClose={() => setSelectedPlace(null)}
-          onPlaceSelect={(place) => setSelectedPlace(place)}
-        />
-      )}
+        {/* Place Modal */}
+        {selectedPlace && (
+          <PlaceModal
+            place={selectedPlace}
+            isOpen={!!selectedPlace}
+            onClose={() => setSelectedPlace(null)}
+            onPlaceSelect={(place) => setSelectedPlace(place)}
+          />
+        )}
+      </motion.div>
     </div>
   );
 };

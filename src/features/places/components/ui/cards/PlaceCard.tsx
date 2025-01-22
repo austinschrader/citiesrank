@@ -48,19 +48,17 @@ export const PlaceCard = ({ city, variant }: PlaceCardProps) => {
         id={`city-${createSlug(city.name)}`}
         data-id={createSlug(city.name)}
         className="group relative overflow-hidden border-none rounded-xl shadow-sm hover:shadow-xl 
-                 transition-all duration-500 ease-out cursor-pointer transform hover:-translate-y-1 h-fit"
-        onMouseEnter={() => setShowControls(true)}
-        onMouseLeave={() => setShowControls(false)}
+                 transition-all duration-500 ease-out transform hover:-translate-y-1 h-fit pointer-events-none"
         onClick={handleCardClick}
       >
         <CardContent className="p-0">
           {/* Image */}
-          <div className="relative aspect-[4/3]">
+          <div className="relative aspect-[4/3] pointer-events-auto">
             <ImageGallery
               imageUrl={city.imageUrl}
               cityName={city.name}
               country={city.country}
-              showControls={false}
+              showControls={true}
               variant="default"
             />
             <SaveButton

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useHeader } from "@/context/HeaderContext";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -22,7 +23,6 @@ import {
   Trophy,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const QuestCard = ({ quest }: { quest: any }) => (
   <motion.div whileHover={{ scale: 1.02 }} className="relative overflow-hidden">
@@ -126,7 +126,7 @@ const EmptyDiscoverState = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto p-8 text-center"
+      className="h-[calc(100vh-16rem)] flex flex-col justify-center items-center p-8"
     >
       <div className="relative inline-block mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 blur-xl opacity-20 animate-pulse rounded-full" />
@@ -251,11 +251,11 @@ export const DiscoverPage = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pb-20"
+      className="flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800"
     >
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto py-8 pb-24">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 px-4">
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
@@ -273,65 +273,70 @@ export const DiscoverPage = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex justify-center gap-4 mb-8">
-          {["quests", "leaderboard", "achievements"].map((tab) => (
-            <Button
-              key={tab}
-              variant={activeTab === tab ? "default" : "ghost"}
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                "capitalize",
-                activeTab === tab &&
-                  "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-              )}
-            >
-              {tab === "quests" && <Route className="w-4 h-4 mr-2" />}
-              {tab === "leaderboard" && <Trophy className="w-4 h-4 mr-2" />}
-              {tab === "achievements" && <Award className="w-4 h-4 mr-2" />}
-              {tab}
-            </Button>
-          ))}
+        <div className="flex justify-center mb-8 px-4">
+          <div className="flex flex-wrap justify-center gap-2">
+            {["quests", "leaderboard", "achievements"].map((tab) => (
+              <Button
+                key={tab}
+                variant={activeTab === tab ? "default" : "ghost"}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "capitalize px-4",
+                  activeTab === tab &&
+                    "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                )}
+              >
+                {tab === "quests" && <Route className="w-4 h-4 mr-2" />}
+                {tab === "leaderboard" && <Trophy className="w-4 h-4 mr-2" />}
+                {tab === "achievements" && <Award className="w-4 h-4 mr-2" />}
+                {tab}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {/* Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-          >
-            {activeTab === "quests" && (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {quests.map((quest, index) => (
-                  <QuestCard key={index} quest={quest} />
-                ))}
-              </div>
-            )}
-
-            {activeTab === "leaderboard" && (
-              <div className="max-w-2xl mx-auto space-y-4">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold mb-2">Top Explorers</h2>
-                  <p className="text-gray-500">
-                    This week's most active adventurers
-                  </p>
+        <div className="px-4">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="w-full"
+            >
+              {activeTab === "quests" && (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full">
+                  {quests.map((quest, index) => (
+                    <QuestCard key={index} quest={quest} />
+                  ))}
                 </div>
-                {leaderboard.map((user, index) => (
-                  <LeaderboardCard key={index} user={user} rank={index} />
-                ))}
-              </div>
-            )}
+              )}
 
-            {activeTab === "achievements" && (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {achievements.map((achievement, index) => (
-                  <AchievementCard key={index} achievement={achievement} />
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+              {activeTab === "leaderboard" && (
+                <div className="max-w-2xl mx-auto space-y-4 w-full">
+                  <div className="text-center mb-8">
+                    <h2 className="text-2xl font-bold mb-2">Top Explorers</h2>
+                    <p className="text-gray-500">
+                      This week's most active adventurers
+                    </p>
+                  </div>
+                  {leaderboard.map((user, index) => (
+                    <LeaderboardCard key={index} user={user} rank={index} />
+                  ))}
+                </div>
+              )}
+
+              {activeTab === "achievements" && (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 w-full">
+                  {achievements.map((achievement, index) => (
+                    <AchievementCard key={index} achievement={achievement} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </motion.div>
   );
