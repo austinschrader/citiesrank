@@ -276,20 +276,20 @@ export const ListDetailsPage = () => {
 
           {/* Image Navigation */}
           {list.places.length > 1 && (
-            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 md:px-12">
+            <div className="absolute inset-y-0 left-0 right-0 hidden md:flex items-center justify-between px-4 md:px-12 z-10 pointer-events-none">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 onClick={() => handleImageNavigation("prev")}
-                className="h-12 w-12 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md border-white/20 text-white"
+                className="h-12 w-12 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 pointer-events-auto"
               >
                 <ChevronLeft className="h-6 w-6" />
               </Button>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 onClick={() => handleImageNavigation("next")}
-                className="h-12 w-12 rounded-full bg-black/20 hover:bg-black/40 backdrop-blur-md border-white/20 text-white"
+                className="h-12 w-12 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 pointer-events-auto"
               >
                 <ChevronRight className="h-6 w-6" />
               </Button>
