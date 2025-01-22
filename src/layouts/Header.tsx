@@ -144,8 +144,26 @@ export const Header = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <span className="text-sm font-bold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-500">
-                Your World, UR Map
+              <span className="text-sm font-bold tracking-wider uppercase inline-flex items-center justify-center gap-[0.2em]">
+                {/* UR with vibrant highlight */}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-indigo-500 font-black relative">
+                  UR
+                  {/* Subtle glow effect */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/20 to-indigo-500/20 blur-sm -z-10" />
+                </span>
+
+                {/* MAP with matching gradient */}
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-500 via-slate-600 to-slate-700">
+                  World,
+                </span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-500 to-indigo-500 font-black relative">
+                  UR
+                  {/* Subtle glow effect */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/20 to-indigo-500/20 blur-sm -z-10" />
+                </span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-500 via-slate-600 to-slate-700">
+                  Map
+                </span>
               </span>
             </motion.div>
           </Link>

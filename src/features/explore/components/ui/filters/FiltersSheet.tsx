@@ -16,7 +16,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useHeader } from "@/context/HeaderContext";
 import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
+import { useMap } from "@/features/map/context/MapContext";
 import { useCities } from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
@@ -47,6 +49,9 @@ const sizeTypeIcons = {
 } as const;
 
 export const FiltersSheet = () => {
+  const { contentType } = useHeader();
+  const { visibleLists } = useMap();
+  const { prioritizedPlaces, visiblePlacesInView, splitMode } = useMap();
   const {
     filters,
     handleTypeClick,
@@ -66,6 +71,13 @@ export const FiltersSheet = () => {
     (filters.populationCategory ? 1 : 0) +
     (filters.averageRating ? 1 : 0) +
     (filters.tags.length > 0 ? 1 : 0);
+
+  const itemCount =
+    contentType === "places"
+      ? splitMode === "list"
+        ? prioritizedPlaces.length
+        : visiblePlacesInView.length
+      : visibleLists.length;
 
   return (
     <Sheet>
@@ -130,7 +142,7 @@ export const FiltersSheet = () => {
             </SheetTitle>
           </div>
           <SheetDescription className="text-base text-muted-foreground/80">
-            Filter spaces by type, size, and rating
+            Filter places & lists by type, size, and rating
           </SheetDescription>
         </SheetHeader>
 
@@ -312,9 +324,6 @@ export const FiltersSheet = () => {
         <div className="border-t border-white/10 p-6 bg-gradient-to-r from-indigo-500/5 to-purple-500/5">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-4">
-              <span className="text-muted-foreground">
-                {cities.length} spaces
-              </span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -333,14 +342,16 @@ export const FiltersSheet = () => {
                 Reset all
               </Button>
             </div>
-            <SheetClose asChild>
-              <Button
-                className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0 
+            <div className="flex-row justify-between gap-3">
+              <SheetClose asChild>
+                <Button
+                  className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0 
                   hover:from-indigo-600 hover:to-purple-600 shadow-sm"
-              >
-                View Results
-              </Button>
-            </SheetClose>
+                >
+                  View {itemCount} Results
+                </Button>
+              </SheetClose>
+            </div>
           </div>
         </div>
       </SheetContent>
