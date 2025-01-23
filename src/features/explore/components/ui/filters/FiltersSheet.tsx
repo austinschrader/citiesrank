@@ -19,11 +19,15 @@ import {
 import { useHeader } from "@/context/HeaderContext";
 import { TimeWindow } from "@/features/explore/components/ui/TimeWindow";
 import { useMap } from "@/features/map/context/MapContext";
-import { useCities } from "@/features/places/context/CitiesContext";
+import {
+  useCities,
+  useCitiesActions,
+} from "@/features/places/context/CitiesContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesTypeOptions } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
 import { SlidersHorizontal, Star } from "lucide-react";
+import { useMemo } from "react";
 
 const placeTypeIcons = {
   [CitiesTypeOptions.country]: {
@@ -61,16 +65,12 @@ export const FiltersSheet = () => {
     resetPopulationFilter,
     setFilters,
     getUniqueTags,
+    getActiveFilterCount,
   } = useFilters();
   const { cities } = useCities();
 
-  const activeFiltersCount =
-    (filters.activeTypes?.length < Object.keys(placeTypeIcons).length
-      ? filters.activeTypes?.length
-      : 0) +
-    (filters.populationCategory ? 1 : 0) +
-    (filters.averageRating ? 1 : 0) +
-    (filters.tags.length > 0 ? 1 : 0);
+  const { sortOrder } = useCities();
+  const { setSortOrder } = useCitiesActions();
 
   const itemCount =
     contentType === "places"
@@ -78,6 +78,11 @@ export const FiltersSheet = () => {
         ? prioritizedPlaces.length
         : visiblePlacesInView.length
       : visibleLists.length;
+
+  const activeFiltersCount = useMemo(
+    () => getActiveFilterCount(),
+    [getActiveFilterCount]
+  );
 
   return (
     <Sheet>
@@ -151,11 +156,17 @@ export const FiltersSheet = () => {
             {/* Sort Section */}
             <div className="space-y-4">
               <div className="font-medium">Sort By</div>
-              <Select>
+              <Select
+                value={sortOrder}
+                onValueChange={(value) =>
+                  setSortOrder(value as typeof sortOrder)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Sort by..." />
                 </SelectTrigger>
                 <SelectContent className="z-[99999]">
+                  <SelectItem value="rating">Highest Rated</SelectItem>
                   <SelectItem value="popular">Most Popular</SelectItem>
                   <SelectItem value="recent">Most Recent</SelectItem>
                   <SelectItem value="distance">Distance</SelectItem>
