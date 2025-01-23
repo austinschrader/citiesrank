@@ -340,7 +340,8 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
           // Apply tag filters
           if (filterTagsSet.size > 0) {
-            const cityTags = (city.tags as string[]) || [];
+            // Handle city.tags being undefined, null, or not an array
+            const cityTags = Array.isArray(city.tags) ? city.tags : [];
 
             // Debug logging to help identify tag format issues
             if (process.env.NODE_ENV === "dev") {
