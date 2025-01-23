@@ -40,6 +40,8 @@
  * ```
  */
 
+import { useHeader } from "@/context/HeaderContext";
+import { pb } from "@/lib/pocketbase";
 import {
   CitiesResponse,
   CitiesTypeOptions,
@@ -52,6 +54,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useCities } from "./CitiesContext";
 
 export type SortOrder =
   | "popular"
@@ -269,32 +272,15 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     return new Set(filters.tags.map(normalizeTag));
   }, [filters.tags, normalizeTag]);
 
+  const { sortOrder } = useCities();
+
   const getFilteredCities = useCallback(
     (cities: CitiesResponse[]) => {
-      if (!hasActiveFilters()) {
-        return cities;
-      }
-
-      // Prepare search term once, outside the filter loop
-      const searchTerm = filters.search?.toLowerCase().trim() || "";
-
       return cities
         .filter((city) => {
-          // Early return if no filters are active for this item
-          if (
-            !searchTerm &&
-            !filters.averageRating &&
-            !filters.populationCategory &&
-            filterTagsSet.size === 0 &&
-            filters.activeTypes.length ===
-              Object.values(CitiesTypeOptions).length
-          ) {
-            return true;
-          }
-
-          // Apply search filter first for early rejection
-          if (searchTerm) {
-            // Combine all searchable fields into a single string
+          // Apply search filter
+          if (filters.search) {
+            const searchTerm = filters.search.toLowerCase();
             const searchableText = [
               city.name,
               city.normalizedName,
@@ -361,22 +347,21 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
           return true;
         })
         .sort((a, b) => {
-          switch (filters.sort) {
-            case "cost-low":
-              return (a.costIndex || 0) - (b.costIndex || 0);
-            case "cost-high":
-              return (b.costIndex || 0) - (a.costIndex || 0);
+          switch (sortOrder) {
+            case "distance":
+              // Distance sorting would be handled by the map component
+              return 0;
             case "popular":
+            case "rating":
               return (b.averageRating || 0) - (a.averageRating || 0);
-            case "alphabetical-desc":
-              return b.name.localeCompare(a.name);
-            case "alphabetical-asc":
+            case "recent":
+              return new Date(b.created).getTime() - new Date(a.created).getTime();
             default:
               return a.name.localeCompare(b.name);
           }
         });
     },
-    [filters, hasActiveFilters, filterTagsSet, normalizeTag]
+    [filters, hasActiveFilters, filterTagsSet, normalizeTag, sortOrder]
   );
 
   const getActiveFilterCount = useCallback(() => {
