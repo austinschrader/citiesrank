@@ -26,7 +26,8 @@
     "walkScore": 6.0,
     "transitScore": 4.5,
     "latitude": 36.85,
-    "longitude": -76.29
+    "longitude": -76.29,
+    "type": "city"
   },
   {
     "name": "Winchester",
@@ -55,7 +56,8 @@
     "walkScore": 5.5,
     "transitScore": 2.5,
     "latitude": 39.18,
-    "longitude": -78.17
+    "longitude": -78.17,
+    "type": "city"
   },
   {
     "name": "Staunton",
@@ -84,7 +86,8 @@
     "walkScore": 5.5,
     "transitScore": 2.5,
     "latitude": 38.15,
-    "longitude": -79.07
+    "longitude": -79.07,
+    "type": "city"
   },
   {
     "name": "Lynchburg",
@@ -113,7 +116,8 @@
     "walkScore": 4.5,
     "transitScore": 3.0,
     "latitude": 37.41,
-    "longitude": -79.14
+    "longitude": -79.14,
+    "type": "city"
   },
   {
     "name": "Lexington",
@@ -142,7 +146,8 @@
     "walkScore": 6.0,
     "transitScore": 2.5,
     "latitude": 37.78,
-    "longitude": -79.44
+    "longitude": -79.44,
+    "type": "city"
   },
   {
     "name": "Fredericksburg",
@@ -171,7 +176,8 @@
     "walkScore": 5.5,
     "transitScore": 3.0,
     "latitude": 38.3,
-    "longitude": -77.46
+    "longitude": -77.46,
+    "type": "city"
   },
   {
     "name": "Luray",
@@ -200,7 +206,8 @@
     "walkScore": 4.0,
     "transitScore": 1.5,
     "latitude": 38.67,
-    "longitude": -78.45
+    "longitude": -78.45,
+    "type": "city"
   },
   {
     "name": "Abingdon",
@@ -229,7 +236,8 @@
     "walkScore": 4.5,
     "transitScore": 2.0,
     "latitude": 36.71,
-    "longitude": -81.97
+    "longitude": -81.97,
+    "type": "city"
   },
   {
     "name": "Virginia Beach",

@@ -2,7 +2,7 @@
   {
     "name": "Coit Tower",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 75,
     "interesting": 90,
     "transit": 65,
@@ -35,7 +35,7 @@
   {
     "name": "City Lights Bookstore",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 50,
     "interesting": 85,
     "transit": 85,
@@ -68,7 +68,7 @@
   {
     "name": "Washington Square",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 1,
     "interesting": 80,
     "transit": 85,
@@ -85,7 +85,7 @@
     ],
     "averageRating": 4.6,
     "totalReviews": 18000,
-    "tags": ["sight"],
+    "tags": "sight",
     "crowdLevel": 75,
     "recommendedStay": 1,
     "bestSeason": 75,
@@ -101,7 +101,7 @@
   {
     "name": "Columbus Avenue",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 65,
     "interesting": 85,
     "transit": 90,
@@ -118,7 +118,7 @@
     ],
     "averageRating": 4.5,
     "totalReviews": 22000,
-    "tags": ["sight"],
+    "tags": "sight",
     "crowdLevel": 85,
     "recommendedStay": 3,
     "bestSeason": 75,
@@ -134,7 +134,7 @@
   {
     "name": "Beat Museum",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 60,
     "interesting": 75,
     "transit": 85,
@@ -151,7 +151,7 @@
     ],
     "averageRating": 4.3,
     "totalReviews": 8000,
-    "tags": ["sight"],
+    "tags": "sight",
     "crowdLevel": 50,
     "recommendedStay": 1,
     "bestSeason": 80,
@@ -167,7 +167,7 @@
   {
     "name": "Grant Avenue",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 60,
     "interesting": 80,
     "transit": 85,
@@ -184,7 +184,7 @@
     ],
     "averageRating": 4.4,
     "totalReviews": 12000,
-    "tags": ["sight"],
+    "tags": "sight",
     "crowdLevel": 75,
     "recommendedStay": 2,
     "bestSeason": 75,
@@ -200,7 +200,7 @@
   {
     "name": "Saints Peter and Paul Church",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 0,
     "interesting": 80,
     "transit": 85,
@@ -233,7 +233,7 @@
   {
     "name": "Vesuvio Cafe",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 65,
     "interesting": 85,
     "transit": 85,
@@ -266,7 +266,7 @@
   {
     "name": "Jack Kerouac Alley",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 0,
     "interesting": 75,
     "transit": 85,
@@ -299,7 +299,7 @@
   {
     "name": "Filbert Steps",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 0,
     "interesting": 90,
     "transit": 60,
@@ -332,7 +332,7 @@
   {
     "name": "Caffè Trieste",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 60,
     "interesting": 85,
     "transit": 85,
@@ -365,7 +365,7 @@
   {
     "name": "Molinari Delicatessen",
     "city": "San Francisco",
-    "type": ["sight"],
+    "type": "sight",
     "cost": 55,
     "interesting": 80,
     "transit": 85,

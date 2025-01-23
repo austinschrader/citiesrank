@@ -2,7 +2,7 @@
   {
     "name": "Washington",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 70,
     "interesting": 90,
     "transit": 65,
@@ -34,7 +34,7 @@
   {
     "name": "Puget Sound Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 75,
     "interesting": 95,
     "transit": 75,
@@ -66,7 +66,7 @@
   {
     "name": "Olympic Peninsula",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 65,
     "interesting": 95,
     "transit": 45,
@@ -98,7 +98,7 @@
   {
     "name": "North Cascades Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 60,
     "interesting": 90,
     "transit": 40,
@@ -130,7 +130,7 @@
   {
     "name": "Yakima Valley Wine Country",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 55,
     "interesting": 85,
     "transit": 45,
@@ -162,7 +162,7 @@
   {
     "name": "Palouse Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 45,
     "interesting": 85,
     "transit": 35,
@@ -194,7 +194,7 @@
   {
     "name": "Mount Rainier Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 65,
     "interesting": 95,
     "transit": 45,
@@ -226,7 +226,7 @@
   {
     "name": "Mount St. Helens Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 55,
     "interesting": 90,
     "transit": 35,
@@ -258,7 +258,7 @@
   {
     "name": "Tri-Cities Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 50,
     "interesting": 75,
     "transit": 50,

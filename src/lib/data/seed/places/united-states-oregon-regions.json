@@ -34,7 +34,7 @@
   {
     "name": "Willamette Valley",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 50,
     "interesting": 85,
     "transit": 65,
@@ -66,7 +66,7 @@
   {
     "name": "Columbia River Gorge",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 55,
     "interesting": 95,
     "transit": 60,
@@ -98,7 +98,7 @@
   {
     "name": "Mount Hood Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 70,
     "interesting": 90,
     "transit": 65,
@@ -130,7 +130,7 @@
   {
     "name": "Crater Lake Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 65,
     "interesting": 95,
     "transit": 40,
@@ -162,7 +162,7 @@
   {
     "name": "Rogue Valley",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 55,
     "interesting": 85,
     "transit": 60,
@@ -194,7 +194,7 @@
   {
     "name": "Wallowa Mountains Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 45,
     "interesting": 90,
     "transit": 35,
@@ -226,7 +226,7 @@
   {
     "name": "John Day Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 40,
     "interesting": 85,
     "transit": 30,
@@ -258,7 +258,7 @@
   {
     "name": "Hells Canyon Region",
     "country": "United States",
-    "type": ["region"],
+    "type": "region",
     "cost": 50,
     "interesting": 90,
     "transit": 25,

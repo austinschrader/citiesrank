@@ -56,7 +56,8 @@
     "walkScore": 6.5,
     "transitScore": 5.0,
     "latitude": 47.66,
-    "longitude": -117.42
+    "longitude": -117.42,
+    "type": "city"
   },
   {
     "name": "Port Angeles",
@@ -85,7 +86,8 @@
     "walkScore": 5.5,
     "transitScore": 3.0,
     "latitude": 48.12,
-    "longitude": -123.43
+    "longitude": -123.43,
+    "type": "city"
   },
   {
     "name": "Port Townsend",
@@ -114,7 +116,8 @@
     "walkScore": 6.5,
     "transitScore": 2.5,
     "latitude": 48.12,
-    "longitude": -122.77
+    "longitude": -122.77,
+    "type": "city"
   },
   {
     "name": "Aberdeen",
@@ -143,7 +146,8 @@
     "walkScore": 4.0,
     "transitScore": 2.0,
     "latitude": 46.97,
-    "longitude": -123.81
+    "longitude": -123.81,
+    "type": "city"
   },
   {
     "name": "Leavenworth",
@@ -172,7 +176,8 @@
     "walkScore": 7.0,
     "transitScore": 2.5,
     "latitude": 47.59,
-    "longitude": -120.66
+    "longitude": -120.66,
+    "type": "city"
   },
   {
     "name": "Vancouver WA",
@@ -201,7 +206,8 @@
     "walkScore": 5.0,
     "transitScore": 3.5,
     "latitude": 45.63,
-    "longitude": -122.67
+    "longitude": -122.67,
+    "type": "city"
   },
   {
     "name": "Walla Walla",
@@ -230,7 +236,8 @@
     "walkScore": 5.5,
     "transitScore": 2.5,
     "latitude": 46.06,
-    "longitude": -118.34
+    "longitude": -118.34,
+    "type": "city"
   },
   {
     "name": "Tacoma",

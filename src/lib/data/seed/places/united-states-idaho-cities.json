@@ -26,7 +26,8 @@
     "walkScore": 6.0,
     "transitScore": 2.5,
     "latitude": 43.69,
-    "longitude": -114.35
+    "longitude": -114.35,
+    "type": "city"
   },
   {
     "name": "Ketchum",
@@ -55,7 +56,8 @@
     "walkScore": 7.0,
     "transitScore": 3.0,
     "latitude": 43.68,
-    "longitude": -114.36
+    "longitude": -114.36,
+    "type": "city"
   },
   {
     "name": "McCall",
@@ -84,7 +86,8 @@
     "walkScore": 5.5,
     "transitScore": 2.0,
     "latitude": 44.91,
-    "longitude": -116.1
+    "longitude": -116.1,
+    "type": "city"
   },
   {
     "name": "Coeur d'Alene",
@@ -113,7 +116,8 @@
     "walkScore": 6.5,
     "transitScore": 3.0,
     "latitude": 47.68,
-    "longitude": -116.78
+    "longitude": -116.78,
+    "type": "city"
   },
   {
     "name": "Sandpoint",
@@ -142,7 +146,8 @@
     "walkScore": 5.5,
     "transitScore": 2.0,
     "latitude": 48.28,
-    "longitude": -116.55
+    "longitude": -116.55,
+    "type": "city"
   },
   {
     "name": "Idaho City",
@@ -171,7 +176,8 @@
     "walkScore": 4.0,
     "transitScore": 1.5,
     "latitude": 43.83,
-    "longitude": -115.84
+    "longitude": -115.84,
+    "type": "city"
   },
   {
     "name": "Wallace",
@@ -200,7 +206,8 @@
     "walkScore": 5.0,
     "transitScore": 1.5,
     "latitude": 47.47,
-    "longitude": -115.92
+    "longitude": -115.92,
+    "type": "city"
   },
   {
     "name": "Stanley",
@@ -229,7 +236,8 @@
     "walkScore": 4.0,
     "transitScore": 1.5,
     "latitude": 44.22,
-    "longitude": -114.93
+    "longitude": -114.93,
+    "type": "city"
   },
   {
     "name": "Cascade",
@@ -258,7 +266,8 @@
     "walkScore": 4.0,
     "transitScore": 1.5,
     "latitude": 44.52,
-    "longitude": -116.04
+    "longitude": -116.04,
+    "type": "city"
   },
   {
     "name": "Lava Hot Springs",
@@ -287,7 +296,8 @@
     "walkScore": 5.0,
     "transitScore": 1.5,
     "latitude": 42.62,
-    "longitude": -112.01
+    "longitude": -112.01,
+    "type": "city"
   },
   {
     "name": "Moscow",
@@ -316,7 +326,8 @@
     "walkScore": 6.0,
     "transitScore": 3.0,
     "latitude": 46.73,
-    "longitude": -117.0
+    "longitude": -117.0,
+    "type": "city"
   },
   {
     "name": "Lewiston",
@@ -345,7 +356,8 @@
     "walkScore": 5.0,
     "transitScore": 2.5,
     "latitude": 46.42,
-    "longitude": -117.02
+    "longitude": -117.02,
+    "type": "city"
   },
   {
     "name": "Boise",
@@ -374,7 +386,8 @@
     "walkScore": 7.0,
     "transitScore": 4.5,
     "latitude": 43.62,
-    "longitude": -116.21
+    "longitude": -116.21,
+    "type": "city"
   },
   {
     "name": "Twin Falls",
@@ -403,7 +416,8 @@
     "walkScore": 5.0,
     "transitScore": 2.5,
     "latitude": 42.56,
-    "longitude": -114.46
+    "longitude": -114.46,
+    "type": "city"
   },
   {
     "name": "Island Park",
@@ -432,6 +446,7 @@
     "walkScore": 2.0,
     "transitScore": 1.5,
     "latitude": 44.42,
-    "longitude": -111.37
+    "longitude": -111.37,
+    "type": "city"
   }
 ]
