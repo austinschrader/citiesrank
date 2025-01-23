@@ -37,6 +37,8 @@ interface ListData {
   updated: string;
   place_count: number;
   saves: number;
+  averageRating: number;
+  totalReviews: number;
   visibility: "public" | "private";
 }
 
@@ -47,6 +49,8 @@ interface RawListData {
   places?: string[];
   created: string;
   updated: string;
+  averageRating?: number;
+  totalReviews?: number;
   visibility?: "public" | "private";
 }
 
@@ -137,6 +141,8 @@ export function ImportLists() {
             updated: result.data.updated,
             place_count: mappedPlaces.length,
             saves: 0,
+            averageRating: result.data.averageRating || 0,
+            totalReviews: result.data.totalReviews || 0,
             visibility: result.data.visibility || "public",
           },
           places: mappedPlaces,
