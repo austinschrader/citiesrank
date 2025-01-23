@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Pacific Coast Highway Road Trip",
+    "description": "An iconic coastal drive from San Francisco to Los Angeles, featuring dramatic cliffs, pristine beaches, and stunning ocean views.",
+    "slug": "pacific-coast-highway",
+    "places": [
+      "san-francisco-united-states",
+      "half-moon-bay-united-states",
+      "santa-cruz-united-states",
+      "big-sur-united-states",
+      "hearst-castle-united-states",
+      "santa-barbara-united-states",
+      "malibu-united-states",
+      "los-angeles-united-states"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:15:22.000Z",
+    "updated": "2025-01-23T08:15:22.000Z",
+    "averageRating": 4.9,
+    "totalReviews": 5831
+  }
+]
