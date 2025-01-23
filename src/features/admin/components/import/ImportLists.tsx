@@ -1,4 +1,5 @@
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { updateListLocation } from "@/features/lists/utils/listLocation";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
 import { useImport } from "../../hooks/useImport";
@@ -36,7 +37,7 @@ interface ListData {
   updated: string;
   place_count: number;
   saves: number;
-  visibility: 'public' | 'private';
+  visibility: "public" | "private";
 }
 
 interface RawListData {
@@ -46,7 +47,7 @@ interface RawListData {
   places?: string[];
   created: string;
   updated: string;
-  visibility?: 'public' | 'private';
+  visibility?: "public" | "private";
 }
 
 type ValidationResult =
@@ -136,7 +137,7 @@ export function ImportLists() {
             updated: result.data.updated,
             place_count: mappedPlaces.length,
             saves: 0,
-            visibility: result.data.visibility || 'public',
+            visibility: result.data.visibility || "public",
           },
           places: mappedPlaces,
         };
@@ -198,6 +199,8 @@ export function ImportLists() {
           console.log(`Created place ${i + 1}`);
         }
         console.log("Created all places");
+
+        await updateListLocation(list.id);
       }
 
       toast({
