@@ -66,6 +66,7 @@ export const FiltersSheet = () => {
     setFilters,
     getUniqueTags,
     getActiveFilterCount,
+    resetFilters,
   } = useFilters();
   const { cities } = useCities();
 
@@ -361,14 +362,7 @@ export const FiltersSheet = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  handleTypeClick(CitiesTypeOptions.country);
-                  handleTypeClick(CitiesTypeOptions.region);
-                  handleTypeClick(CitiesTypeOptions.city);
-                  handleTypeClick(CitiesTypeOptions.neighborhood);
-                  handleTypeClick(CitiesTypeOptions.sight);
-                  handlePopulationSelect(null);
-                  handleRatingChange(null);
-                  setFilters({ ...filters, tags: [] });
+                  resetFilters();
                 }}
                 className="text-muted-foreground hover:text-foreground"
               >
