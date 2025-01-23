@@ -1,4 +1,5 @@
 // file location: src/features/profile/components/ProfileOverview.tsx
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,18 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { MapPin, Globe, ListChecks, PenLine } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { Globe, ListChecks, MapPin, PenLine } from "lucide-react";
+import { useState } from "react";
 
 export const ProfileOverview = () => {
   const { user, pb } = useAuth();
@@ -94,7 +94,9 @@ export const ProfileOverview = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Edit Profile</CardTitle>
-                <CardDescription>Update your profile information</CardDescription>
+                <CardDescription>
+                  Update your profile information
+                </CardDescription>
               </div>
               <Button
                 variant="ghost"
@@ -151,7 +153,7 @@ export const ProfileOverview = () => {
                       className="bg-background"
                     />
                     <p className="text-xs text-muted-foreground">
-                      Your unique username for CitiesRank
+                      Your unique username for WurldMap
                     </p>
                   </div>
                 </div>
@@ -205,7 +207,11 @@ export const ProfileOverview = () => {
                           <span className="mr-2">Saving</span>
                           <motion.div
                             animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            transition={{
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "linear",
+                            }}
                           >
                             ⚪
                           </motion.div>
@@ -267,7 +273,11 @@ export const ProfileOverview = () => {
                   Collections of places you've created and curated
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
                 <PenLine className="h-4 w-4 mr-2" />
                 Edit Profile
               </Button>
