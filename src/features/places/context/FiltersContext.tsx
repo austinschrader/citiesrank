@@ -56,13 +56,6 @@ import {
 } from "react";
 import { useCities } from "./CitiesContext";
 
-export type SortOrder =
-  | "popular"
-  | "cost-low"
-  | "cost-high"
-  | "alphabetical-asc"
-  | "alphabetical-desc";
-
 export type PopulationCategory =
   | "village" // < 10,000
   | "town" // 10,000 - 50,000
@@ -73,7 +66,6 @@ export interface Filters {
   // Implemented filters
   search: string;
   activeTypes: CitiesTypeOptions[];
-  sort: SortOrder;
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
   tags: string[];
@@ -109,7 +101,6 @@ const defaultFilters: Filters = {
     CitiesTypeOptions.neighborhood,
     CitiesTypeOptions.sight,
   ],
-  sort: "alphabetical-asc",
   averageRating: null,
   populationCategory: null,
   tags: [],
@@ -171,7 +162,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFiltersState((prev) => ({ ...defaultFilters, sort: prev.sort }));
+    setFiltersState((prev) => ({ ...defaultFilters }));
   }, []);
 
   const resetTypeFilters = useCallback(() => {
@@ -346,22 +337,9 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
           return true;
         })
-        .sort((a, b) => {
-          switch (sortOrder) {
-            case "distance":
-              // Distance sorting would be handled by the map component
-              return 0;
-            case "popular":
-            case "rating":
-              return (b.averageRating || 0) - (a.averageRating || 0);
-            case "recent":
-              return new Date(b.created).getTime() - new Date(a.created).getTime();
-            default:
-              return a.name.localeCompare(b.name);
-          }
-        });
+        // Removed sort-related code
     },
-    [filters, hasActiveFilters, filterTagsSet, normalizeTag, sortOrder]
+    [filters, hasActiveFilters, filterTagsSet, normalizeTag]
   );
 
   const getActiveFilterCount = useCallback(() => {
