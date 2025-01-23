@@ -28,7 +28,8 @@
     "walkScore": 5.5,
     "transitScore": 4.5,
     "latitude": 27.99,
-    "longitude": -81.76
+    "longitude": -81.76,
+    "type": "region"
   },
   {
     "name": "Hawaii",
@@ -59,7 +60,8 @@
     "walkScore": 6,
     "transitScore": 5,
     "latitude": 19.9,
-    "longitude": -155.6
+    "longitude": -155.6,
+    "type": "region"
   },
   {
     "name": "New York",
@@ -90,7 +92,8 @@
     "walkScore": 9,
     "transitScore": 9,
     "latitude": 40.71,
-    "longitude": -74.01
+    "longitude": -74.01,
+    "type": "region"
   },
   {
     "name": "Nevada",
@@ -121,7 +124,8 @@
     "walkScore": 6,
     "transitScore": 5.5,
     "latitude": 36.17,
-    "longitude": -115.14
+    "longitude": -115.14,
+    "type": "region"
   },
   {
     "name": "Colorado",
@@ -152,7 +156,8 @@
     "walkScore": 6.5,
     "transitScore": 6,
     "latitude": 39.74,
-    "longitude": -104.99
+    "longitude": -104.99,
+    "type": "region"
   },
   {
     "name": "Alaska",
@@ -183,7 +188,8 @@
     "walkScore": 4,
     "transitScore": 4,
     "latitude": 61.21,
-    "longitude": -149.89
+    "longitude": -149.89,
+    "type": "region"
   },
   {
     "name": "Arizona",
@@ -214,7 +220,8 @@
     "walkScore": 5.5,
     "transitScore": 5,
     "latitude": 33.45,
-    "longitude": -112.07
+    "longitude": -112.07,
+    "type": "region"
   },
   {
     "name": "Utah",
@@ -245,7 +252,8 @@
     "walkScore": 5,
     "transitScore": 4.5,
     "latitude": 40.76,
-    "longitude": -111.89
+    "longitude": -111.89,
+    "type": "region"
   },
   {
     "name": "Wyoming",
@@ -276,7 +284,8 @@
     "walkScore": 3.5,
     "transitScore": 3.5,
     "latitude": 42.87,
-    "longitude": -107.23
+    "longitude": -107.23,
+    "type": "region"
   },
   {
     "name": "Montana",
@@ -307,7 +316,8 @@
     "walkScore": 4,
     "transitScore": 3.5,
     "latitude": 46.88,
-    "longitude": -110.36
+    "longitude": -110.36,
+    "type": "region"
   },
   {
     "name": "Maine",
@@ -338,7 +348,8 @@
     "walkScore": 5,
     "transitScore": 4.5,
     "latitude": 45.25,
-    "longitude": -69.45
+    "longitude": -69.45,
+    "type": "region"
   },
   {
     "name": "Massachusetts",
@@ -369,7 +380,8 @@
     "walkScore": 7.5,
     "transitScore": 7.5,
     "latitude": 42.41,
-    "longitude": -71.38
+    "longitude": -71.38,
+    "type": "region"
   },
   {
     "name": "Louisiana",
@@ -400,7 +412,8 @@
     "walkScore": 5,
     "transitScore": 5,
     "latitude": 30.98,
-    "longitude": -91.96
+    "longitude": -91.96,
+    "type": "region"
   },
   {
     "name": "Tennessee",
@@ -431,7 +444,8 @@
     "walkScore": 4.5,
     "transitScore": 4.5,
     "latitude": 35.86,
-    "longitude": -86.66
+    "longitude": -86.66,
+    "type": "region"
   },
   {
     "name": "Texas",
@@ -462,7 +476,8 @@
     "walkScore": 4.5,
     "transitScore": 4.5,
     "latitude": 31.97,
-    "longitude": -99.9
+    "longitude": -99.9,
+    "type": "region"
   },
   {
     "name": "New Mexico",
@@ -493,7 +508,8 @@
     "walkScore": 4,
     "transitScore": 4,
     "latitude": 34.97,
-    "longitude": -105.03
+    "longitude": -105.03,
+    "type": "region"
   },
   {
     "name": "Virginia",
@@ -524,7 +540,8 @@
     "walkScore": 5.5,
     "transitScore": 5.5,
     "latitude": 37.43,
-    "longitude": -78.66
+    "longitude": -78.66,
+    "type": "region"
   },
   {
     "name": "Florida",
@@ -555,7 +572,8 @@
     "walkScore": 5.5,
     "transitScore": 4.5,
     "latitude": 27.99,
-    "longitude": -81.76
+    "longitude": -81.76,
+    "type": "region"
   },
   {
     "name": "Hawaii",
@@ -586,7 +604,8 @@
     "walkScore": 6,
     "transitScore": 5,
     "latitude": 19.9,
-    "longitude": -155.6
+    "longitude": -155.6,
+    "type": "region"
   },
   {
     "name": "Alabama",
@@ -615,7 +634,8 @@
     "walkScore": 3,
     "transitScore": 2.5,
     "latitude": 32.32,
-    "longitude": -86.9
+    "longitude": -86.9,
+    "type": "region"
   },
   {
     "name": "Arkansas",
@@ -644,7 +664,8 @@
     "walkScore": 2.5,
     "transitScore": 2,
     "latitude": 34.75,
-    "longitude": -92.29
+    "longitude": -92.29,
+    "type": "region"
   },
   {
     "name": "California",
@@ -675,7 +696,8 @@
     "walkScore": 6,
     "transitScore": 6.5,
     "latitude": 36.78,
-    "longitude": -119.42
+    "longitude": -119.42,
+    "type": "region"
   },
   {
     "name": "Connecticut",
@@ -704,7 +726,8 @@
     "walkScore": 5,
     "transitScore": 5.5,
     "latitude": 41.6,
-    "longitude": -72.7
+    "longitude": -72.7,
+    "type": "region"
   },
   {
     "name": "Delaware",
@@ -733,7 +756,8 @@
     "walkScore": 4,
     "transitScore": 3.5,
     "latitude": 39.32,
-    "longitude": -75.51
+    "longitude": -75.51,
+    "type": "region"
   },
   {
     "name": "Georgia",
@@ -763,7 +787,8 @@
     "walkScore": 4.5,
     "transitScore": 4,
     "latitude": 32.16,
-    "longitude": -82.9
+    "longitude": -82.9,
+    "type": "region"
   },
   {
     "name": "Illinois",
@@ -794,7 +819,8 @@
     "walkScore": 7,
     "transitScore": 7.5,
     "latitude": 40.0,
-    "longitude": -89.25
+    "longitude": -89.25,
+    "type": "region"
   },
   {
     "name": "Indiana",
@@ -823,7 +849,8 @@
     "walkScore": 3.5,
     "transitScore": 2.5,
     "latitude": 39.85,
-    "longitude": -86.26
+    "longitude": -86.26,
+    "type": "region"
   },
   {
     "name": "Iowa",
@@ -852,7 +879,8 @@
     "walkScore": 2.5,
     "transitScore": 2,
     "latitude": 42.03,
-    "longitude": -93.58
+    "longitude": -93.58,
+    "type": "region"
   },
   {
     "name": "Kansas",
@@ -881,7 +909,8 @@
     "walkScore": 2,
     "transitScore": 2,
     "latitude": 38.5,
-    "longitude": -98.5
+    "longitude": -98.5,
+    "type": "region"
   },
   {
     "name": "Kentucky",
@@ -910,7 +939,8 @@
     "walkScore": 3,
     "transitScore": 2.5,
     "latitude": 37.84,
-    "longitude": -84.27
+    "longitude": -84.27,
+    "type": "region"
   },
   {
     "name": "Maryland",
@@ -940,7 +970,8 @@
     "walkScore": 6,
     "transitScore": 6.5,
     "latitude": 39.05,
-    "longitude": -76.64
+    "longitude": -76.64,
+    "type": "region"
   },
   {
     "name": "Michigan",
@@ -970,7 +1001,8 @@
     "walkScore": 4,
     "transitScore": 4,
     "latitude": 44.31,
-    "longitude": -85.6
+    "longitude": -85.6,
+    "type": "region"
   },
   {
     "name": "Minnesota",
@@ -1000,7 +1032,8 @@
     "walkScore": 5,
     "transitScore": 5.5,
     "latitude": 46.39,
-    "longitude": -94.63
+    "longitude": -94.63,
+    "type": "region"
   },
   {
     "name": "Mississippi",
@@ -1029,7 +1062,8 @@
     "walkScore": 2,
     "transitScore": 2,
     "latitude": 32.74,
-    "longitude": -89.67
+    "longitude": -89.67,
+    "type": "region"
   },
   {
     "name": "Missouri",
@@ -1059,7 +1093,8 @@
     "walkScore": 3.5,
     "transitScore": 4,
     "latitude": 38.57,
-    "longitude": -92.6
+    "longitude": -92.6,
+    "type": "region"
   },
   {
     "name": "Nebraska",
@@ -1088,7 +1123,8 @@
     "walkScore": 2,
     "transitScore": 2,
     "latitude": 41.5,
-    "longitude": -99.68
+    "longitude": -99.68,
+    "type": "region"
   },
   {
     "name": "New Hampshire",
@@ -1118,7 +1154,8 @@
     "walkScore": 3,
     "transitScore": 2.5,
     "latitude": 43.19,
-    "longitude": -71.57
+    "longitude": -71.57,
+    "type": "region"
   },
   {
     "name": "New Jersey",
@@ -1148,7 +1185,8 @@
     "walkScore": 6,
     "transitScore": 7,
     "latitude": 40.06,
-    "longitude": -74.4
+    "longitude": -74.4,
+    "type": "region"
   },
   {
     "name": "North Carolina",
@@ -1178,7 +1216,8 @@
     "walkScore": 3.5,
     "transitScore": 3.5,
     "latitude": 35.76,
-    "longitude": -79.02
+    "longitude": -79.02,
+    "type": "region"
   },
   {
     "name": "North Dakota",
@@ -1207,7 +1246,8 @@
     "walkScore": 2,
     "transitScore": 1.5,
     "latitude": 47.55,
-    "longitude": -100.45
+    "longitude": -100.45,
+    "type": "region"
   },
   {
     "name": "Ohio",
@@ -1237,7 +1277,8 @@
     "walkScore": 4,
     "transitScore": 4,
     "latitude": 40.42,
-    "longitude": -82.91
+    "longitude": -82.91,
+    "type": "region"
   },
   {
     "name": "Oklahoma",
@@ -1266,7 +1307,8 @@
     "walkScore": 2.5,
     "transitScore": 2,
     "latitude": 35.59,
-    "longitude": -97.49
+    "longitude": -97.49,
+    "type": "region"
   },
   {
     "name": "Pennsylvania",
@@ -1297,7 +1339,8 @@
     "walkScore": 6,
     "transitScore": 6,
     "latitude": 40.59,
-    "longitude": -77.21
+    "longitude": -77.21,
+    "type": "region"
   },
   {
     "name": "Rhode Island",
@@ -1327,7 +1370,8 @@
     "walkScore": 5,
     "transitScore": 4.5,
     "latitude": 41.58,
-    "longitude": -71.48
+    "longitude": -71.48,
+    "type": "region"
   },
   {
     "name": "South Carolina",
@@ -1357,7 +1401,8 @@
     "walkScore": 3.5,
     "transitScore": 3,
     "latitude": 33.84,
-    "longitude": -81.16
+    "longitude": -81.16,
+    "type": "region"
   },
   {
     "name": "South Dakota",
@@ -1387,7 +1432,8 @@
     "walkScore": 2,
     "transitScore": 1.5,
     "latitude": 44.3,
-    "longitude": -100.34
+    "longitude": -100.34,
+    "type": "region"
   },
   {
     "name": "Vermont",
@@ -1417,7 +1463,8 @@
     "walkScore": 3,
     "transitScore": 2.5,
     "latitude": 44.56,
-    "longitude": -72.58
+    "longitude": -72.58,
+    "type": "region"
   },
   {
     "name": "Washington",
@@ -1448,7 +1495,8 @@
     "walkScore": 6.5,
     "transitScore": 6.5,
     "latitude": 47.75,
-    "longitude": -120.74
+    "longitude": -120.74,
+    "type": "region"
   },
   {
     "name": "West Virginia",
@@ -1478,7 +1526,8 @@
     "walkScore": 2,
     "transitScore": 2,
     "latitude": 38.92,
-    "longitude": -80.18
+    "longitude": -80.18,
+    "type": "region"
   },
   {
     "name": "Wisconsin",
