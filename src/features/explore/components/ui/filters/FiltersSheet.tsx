@@ -66,6 +66,7 @@ export const FiltersSheet = () => {
     setFilters,
     getUniqueTags,
     getActiveFilterCount,
+    resetFilters,
   } = useFilters();
   const { cities } = useCities();
 
@@ -149,175 +150,34 @@ export const FiltersSheet = () => {
           <SheetDescription className="text-base text-muted-foreground/80">
             Filter places & lists by type, size, and rating
           </SheetDescription>
-          <div className="flex gap-2 mt-4">
-            <Button
-              variant={contentType === "places" ? "default" : "outline"}
-              onClick={() => setContentType("places")}
-              className={cn(
-                "flex-1",
-                contentType === "places" && "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0"
-              )}
-            >
-              Places
-            </Button>
-            <Button
-              variant={contentType === "lists" ? "default" : "outline"}
-              onClick={() => setContentType("lists")}
-              className={cn(
-                "flex-1",
-                contentType === "lists" && "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0"
-              )}
-            >
-              Collections
-            </Button>
-          </div>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto">
           <div className="space-y-6 p-6">
-            {/* Sort Section */}
-            <div className="space-y-4">
-              <div className="font-medium">Sort By</div>
-              <Select
-                value={sortOrder}
-                onValueChange={(value) =>
-                  setSortOrder(value as typeof sortOrder)
-                }
+            <div className="flex gap-2 mt-4">
+              <Button
+                variant={contentType === "places" ? "default" : "outline"}
+                onClick={() => setContentType("places")}
+                className={cn(
+                  "flex-1",
+                  contentType === "places" &&
+                    "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0"
+                )}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by..." />
-                </SelectTrigger>
-                <SelectContent className="z-[99999]">
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="recent">Most Recent</SelectItem>
-                  <SelectItem value="distance">Distance</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Separator />
-
-            {/* Time Window */}
-            <div className="py-4">
-              <h4 className="text-sm font-medium mb-3">Time Window</h4>
-              <TimeWindow />
-            </div>
-
-            {/* Place Types */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium">Place Types</h3>
-                {filters.activeTypes.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={resetTypeFilters}
-                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
-                  >
-                    Reset
-                  </Button>
+                Places
+              </Button>
+              <Button
+                variant={contentType === "lists" ? "default" : "outline"}
+                onClick={() => setContentType("lists")}
+                className={cn(
+                  "flex-1",
+                  contentType === "lists" &&
+                    "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0"
                 )}
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.entries(placeTypeIcons).map(
-                  ([type, { label, emoji }]) => (
-                    <button
-                      key={type}
-                      onClick={() => handleTypeClick(type as CitiesTypeOptions)}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                        filters.activeTypes.includes(type as CitiesTypeOptions)
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
-                          : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
-                      )}
-                    >
-                      <span className="text-lg">{emoji}</span>
-                      <span>{label}</span>
-                    </button>
-                  )
-                )}
-              </div>
+              >
+                Collections
+              </Button>
             </div>
-
-            {/* City Sizes */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium">City Size</h3>
-                {filters.populationCategory && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={resetPopulationFilter}
-                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
-                  >
-                    Reset
-                  </Button>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.entries(sizeTypeIcons).map(
-                  ([size, { label, emoji }]) => (
-                    <button
-                      key={size}
-                      onClick={() => handlePopulationSelect(size as any)}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                        filters.populationCategory === size
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
-                          : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
-                      )}
-                    >
-                      <span className="text-lg">{emoji}</span>
-                      <span>{label}</span>
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Tags */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium">Tags</h3>
-                {filters.tags.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setFilters({ ...filters, tags: [] })}
-                    className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
-                  >
-                    Reset
-                  </Button>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {getUniqueTags(cities).map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => {
-                      const newTags = filters.tags.includes(tag)
-                        ? filters.tags.filter((t) => t !== tag)
-                        : [...filters.tags, tag];
-                      setFilters({ ...filters, tags: newTags });
-                    }}
-                    className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                      filters.tags.includes(tag)
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
-                        : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
-                    )}
-                  >
-                    <span className="capitalize">{tag}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <Separator />
-
             {/* Rating */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -350,6 +210,151 @@ export const FiltersSheet = () => {
                   </button>
                 ))}
               </div>
+              {/* Sort Section */}
+              <div className="space-y-4">
+                <div className="font-medium">Sort By</div>
+                <Select
+                  value={sortOrder}
+                  onValueChange={(value) =>
+                    setSortOrder(value as typeof sortOrder)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent className="z-[99999]">
+                    <SelectItem value="rating">Highest Rated</SelectItem>
+                    <SelectItem value="popular">Most Popular</SelectItem>
+                    <SelectItem value="recent">Most Recent</SelectItem>
+                    <SelectItem value="distance">Distance</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Separator />
+
+              {/* Time Window */}
+              <div className="py-4">
+                <h4 className="text-sm font-medium mb-3">Time Window</h4>
+                <TimeWindow />
+              </div>
+
+              {/* Place Types */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">Place Types</h3>
+                  {filters.activeTypes.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={resetTypeFilters}
+                      className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(placeTypeIcons).map(
+                    ([type, { label, emoji }]) => (
+                      <button
+                        key={type}
+                        onClick={() =>
+                          handleTypeClick(type as CitiesTypeOptions)
+                        }
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                          filters.activeTypes.includes(
+                            type as CitiesTypeOptions
+                          )
+                            ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                            : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
+                        )}
+                      >
+                        <span className="text-lg">{emoji}</span>
+                        <span>{label}</span>
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* City Sizes */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">City Size</h3>
+                  {filters.populationCategory && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={resetPopulationFilter}
+                      className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(sizeTypeIcons).map(
+                    ([size, { label, emoji }]) => (
+                      <button
+                        key={size}
+                        onClick={() => handlePopulationSelect(size as any)}
+                        className={cn(
+                          "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                          filters.populationCategory === size
+                            ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                            : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
+                        )}
+                      >
+                        <span className="text-lg">{emoji}</span>
+                        <span>{label}</span>
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Tags */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">Tags</h3>
+                  {filters.tags.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setFilters({ ...filters, tags: [] })}
+                      className="h-auto py-1 px-2 text-xs text-muted-foreground hover:text-indigo-400"
+                    >
+                      Reset
+                    </Button>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {getUniqueTags(cities).map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => {
+                        const newTags = filters.tags.includes(tag)
+                          ? filters.tags.filter((t) => t !== tag)
+                          : [...filters.tags, tag];
+                        setFilters({ ...filters, tags: newTags });
+                      }}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                        filters.tags.includes(tag)
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm hover:from-indigo-600 hover:to-purple-600"
+                          : "bg-white/5 text-foreground hover:text-foreground hover:bg-white/10"
+                      )}
+                    >
+                      <span className="capitalize">{tag}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -361,14 +366,7 @@ export const FiltersSheet = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  handleTypeClick(CitiesTypeOptions.country);
-                  handleTypeClick(CitiesTypeOptions.region);
-                  handleTypeClick(CitiesTypeOptions.city);
-                  handleTypeClick(CitiesTypeOptions.neighborhood);
-                  handleTypeClick(CitiesTypeOptions.sight);
-                  handlePopulationSelect(null);
-                  handleRatingChange(null);
-                  setFilters({ ...filters, tags: [] });
+                  resetFilters();
                 }}
                 className="text-muted-foreground hover:text-foreground"
               >

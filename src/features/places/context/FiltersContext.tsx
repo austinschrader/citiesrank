@@ -40,6 +40,8 @@
  * ```
  */
 
+import { useHeader } from "@/context/HeaderContext";
+import { pb } from "@/lib/pocketbase";
 import {
   CitiesResponse,
   CitiesTypeOptions,
@@ -52,13 +54,7 @@ import {
   useMemo,
   useState,
 } from "react";
-
-export type SortOrder =
-  | "popular"
-  | "cost-low"
-  | "cost-high"
-  | "alphabetical-asc"
-  | "alphabetical-desc";
+import { useCities } from "./CitiesContext";
 
 export type PopulationCategory =
   | "village" // < 10,000
@@ -70,7 +66,6 @@ export interface Filters {
   // Implemented filters
   search: string;
   activeTypes: CitiesTypeOptions[];
-  sort: SortOrder;
   averageRating: number | null;
   populationCategory: PopulationCategory | null;
   tags: string[];
@@ -106,7 +101,6 @@ const defaultFilters: Filters = {
     CitiesTypeOptions.neighborhood,
     CitiesTypeOptions.sight,
   ],
-  sort: "alphabetical-asc",
   averageRating: null,
   populationCategory: null,
   tags: [],
@@ -168,7 +162,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFiltersState((prev) => ({ ...defaultFilters, sort: prev.sort }));
+    setFiltersState((prev) => ({ ...defaultFilters }));
   }, []);
 
   const resetTypeFilters = useCallback(() => {
@@ -269,32 +263,15 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
     return new Set(filters.tags.map(normalizeTag));
   }, [filters.tags, normalizeTag]);
 
+  const { sortOrder } = useCities();
+
   const getFilteredCities = useCallback(
     (cities: CitiesResponse[]) => {
-      if (!hasActiveFilters()) {
-        return cities;
-      }
-
-      // Prepare search term once, outside the filter loop
-      const searchTerm = filters.search?.toLowerCase().trim() || "";
-
       return cities
         .filter((city) => {
-          // Early return if no filters are active for this item
-          if (
-            !searchTerm &&
-            !filters.averageRating &&
-            !filters.populationCategory &&
-            filterTagsSet.size === 0 &&
-            filters.activeTypes.length ===
-              Object.values(CitiesTypeOptions).length
-          ) {
-            return true;
-          }
-
-          // Apply search filter first for early rejection
-          if (searchTerm) {
-            // Combine all searchable fields into a single string
+          // Apply search filter
+          if (filters.search) {
+            const searchTerm = filters.search.toLowerCase();
             const searchableText = [
               city.name,
               city.normalizedName,
@@ -360,21 +337,7 @@ export function FiltersProvider({ children }: { children: React.ReactNode }) {
 
           return true;
         })
-        .sort((a, b) => {
-          switch (filters.sort) {
-            case "cost-low":
-              return (a.costIndex || 0) - (b.costIndex || 0);
-            case "cost-high":
-              return (b.costIndex || 0) - (a.costIndex || 0);
-            case "popular":
-              return (b.averageRating || 0) - (a.averageRating || 0);
-            case "alphabetical-desc":
-              return b.name.localeCompare(a.name);
-            case "alphabetical-asc":
-            default:
-              return a.name.localeCompare(b.name);
-          }
-        });
+        // Removed sort-related code
     },
     [filters, hasActiveFilters, filterTagsSet, normalizeTag]
   );
