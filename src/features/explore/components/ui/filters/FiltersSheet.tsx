@@ -53,7 +53,7 @@ const sizeTypeIcons = {
 } as const;
 
 export const FiltersSheet = () => {
-  const { contentType } = useHeader();
+  const { contentType, setContentType } = useHeader();
   const { visibleLists } = useMap();
   const { prioritizedPlaces, visiblePlacesInView, splitMode } = useMap();
   const {
@@ -149,6 +149,28 @@ export const FiltersSheet = () => {
           <SheetDescription className="text-base text-muted-foreground/80">
             Filter places & lists by type, size, and rating
           </SheetDescription>
+          <div className="flex gap-2 mt-4">
+            <Button
+              variant={contentType === "places" ? "default" : "outline"}
+              onClick={() => setContentType("places")}
+              className={cn(
+                "flex-1",
+                contentType === "places" && "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0"
+              )}
+            >
+              Places
+            </Button>
+            <Button
+              variant={contentType === "lists" ? "default" : "outline"}
+              onClick={() => setContentType("lists")}
+              className={cn(
+                "flex-1",
+                contentType === "lists" && "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0"
+              )}
+            >
+              Collections
+            </Button>
+          </div>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto">
