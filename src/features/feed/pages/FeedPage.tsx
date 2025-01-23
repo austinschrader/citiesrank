@@ -58,7 +58,7 @@ const EmptyFeedState = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto p-8 text-center h-[calc(100vh-16rem)] flex flex-col justify-center"
+      className="max-w-2xl mx-auto p-8 text-center"
     >
       <div className="relative inline-block mb-8">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 blur-xl opacity-20 animate-pulse rounded-full" />
@@ -163,11 +163,7 @@ export const FeedPage = () => {
   }
 
   if (!feedItems.length) {
-    return (
-      <div className="h-full">
-        <EmptyFeedState />
-      </div>
-    );
+    return <EmptyFeedState />;
   }
 
   return (
