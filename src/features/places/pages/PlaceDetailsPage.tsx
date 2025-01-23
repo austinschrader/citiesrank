@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/select";
 import { useFeed } from "@/features/feed/context/FeedContext";
 import { PlaceCard } from "@/features/places/components/ui/cards/PlaceCard";
-import { useCities } from "@/features/places/context/CitiesContext";
 import {
-  SortOrder,
-  useFilters,
-} from "@/features/places/context/FiltersContext";
+  useCities,
+  useCitiesActions,
+} from "@/features/places/context/CitiesContext";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { HeroSection } from "@/features/places/detail/HeroSection";
 import { LocationMap } from "@/features/places/detail/LocationMap";
 import { getTagLabel, PlaceTag } from "@/features/places/types/tags";
@@ -125,6 +125,8 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
   useEffect(() => {
     resetFilters();
   }, [resetFilters]);
+  const { sortOrder } = useCities();
+  const { setSortOrder } = useCitiesActions();
 
   const placeData = useMemo(() => {
     if (initialData) return initialData;
@@ -384,22 +386,19 @@ export function PlaceDetailsPage({ initialData }: PlaceDetailsPageProps) {
                       </Select>
 
                       <Select
-                        value={filters.sort}
+                        value={sortOrder}
                         onValueChange={(value) =>
-                          setFilter("sort", value as SortOrder)
+                          setSortOrder(value as typeof sortOrder)
                         }
                       >
                         <SelectTrigger className="w-[140px]">
                           <SelectValue placeholder="Sort by" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="alphabetical-asc">
-                            A to Z
-                          </SelectItem>
-                          <SelectItem value="alphabetical-desc">
-                            Z to A
-                          </SelectItem>
+                          <SelectItem value="rating">Highest Rated</SelectItem>
                           <SelectItem value="popular">Most Popular</SelectItem>
+                          <SelectItem value="recent">Most Recent</SelectItem>
+                          <SelectItem value="distance">Distance</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
