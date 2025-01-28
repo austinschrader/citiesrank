@@ -37,6 +37,7 @@ import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
 import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
+import { SimpleExplorer } from "./features/map/components/SimpleExplorer";
 
 function App() {
   return (
@@ -61,7 +62,11 @@ function App() {
                                     </Suspense>
                                   }
                                 >
-                                  <Route path="/" element={<ExplorePage />} />
+                                  <Route path="/" element={<SimpleExplorer />} />
+                                  <Route
+                                    path="/explore"
+                                    element={<ExplorePage />}
+                                  />
                                   <Route
                                     path="/quests"
                                     element={<DiscoverPage />}

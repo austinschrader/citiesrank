@@ -69,7 +69,7 @@ const EmptyFeedState = () => {
       </div>
 
       <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-        {user ? "Your Feed Is Empty" : "Welcome to WURLDMAP"}
+        {user ? "Your Feed Is Empty" : "Welcome to CitiesRank"}
       </h2>
 
       <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">

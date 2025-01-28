@@ -143,7 +143,7 @@ const EmptyDiscoverState = () => {
       <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
         {user
           ? "Complete quests, earn achievements, and compete with other explorers."
-          : "Join WURLDMAP to unlock quests, earn achievements, and track your global adventures."}
+          : "Join CitiesRank to unlock quests, earn achievements, and track your global adventures."}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto mb-8">

@@ -98,10 +98,10 @@ export const Header = () => {
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
                     <span className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600">
-                      WURLD
+                      CITIES
                     </span>
                     <span className="text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-400">
-                      MAP
+                      RANK
                     </span>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export const Header = () => {
                 transition={{ delay: 0.2 }}
               >
                 <span className="text-sm font-bold tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-500">
-                  Your World, UR Map
+                  Explore the world
                 </span>
               </motion.div>
             </Link>
