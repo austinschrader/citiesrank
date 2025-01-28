@@ -5,9 +5,10 @@
  */
 import { Button } from "@/components/ui/button";
 import { debounce } from "lodash";
-import { Home, Minus, Plus } from "lucide-react";
+import { Home, MapPinIcon, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { useMap as useLeafletMap } from "react-leaflet";
+import { useLocation } from "../context/LocationContext";
 
 const DEFAULT_CENTER: [number, number] = [48.5, 10]; // Centered on Germany/Austria
 const DEFAULT_ZOOM = 5;
@@ -18,6 +19,7 @@ interface MapControlsProps {
 
 export const MapControls = ({ onZoomChange }: MapControlsProps) => {
   const map = useLeafletMap();
+  const { setCoordinates } = useLocation();
 
   // Create a stable debounced zoom handler
   const debouncedZoomChange = useCallback(
@@ -39,47 +41,67 @@ export const MapControls = ({ onZoomChange }: MapControlsProps) => {
     };
   }, [map, debouncedZoomChange]);
 
-  const handleZoomIn = () => {
-    map.setZoom(map.getZoom() + 1);
+  const handleZoomIn = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const newZoom = (map?.getZoom() || 0) + 1;
+    map?.setZoom(newZoom);
   };
 
-  const handleZoomOut = () => {
-    map.setZoom(map.getZoom() - 1);
+  const handleZoomOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const newZoom = (map?.getZoom() || 0) - 1;
+    map?.setZoom(newZoom);
   };
 
-  const handleReset = () => {
-    map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+  const handleReset = (e: React.MouseEvent) => {
+    e.preventDefault();
+    map?.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
   };
 
   return (
     <div className="absolute right-4 top-4 z-[400] flex flex-col gap-2">
-      <Button
-        variant="secondary"
-        size="icon"
-        className="h-8 w-8 shadow-md"
-        onClick={handleZoomIn}
-        title="Zoom in"
-      >
-        <Plus className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="secondary"
-        size="icon"
-        className="h-8 w-8 shadow-md"
-        onClick={handleZoomOut}
-        title="Zoom out"
-      >
-        <Minus className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="secondary"
-        size="icon"
-        className="h-8 w-8 shadow-md"
-        onClick={handleReset}
-        title="Reset view"
-      >
-        <Home className="h-4 w-4" />
-      </Button>
+      <div className="flex flex-col gap-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.preventDefault();
+            map?.locate().on("locationfound", (e) => {
+              map.setView(e.latlng, 10);
+              setCoordinates({ lat: e.latlng.lat, lng: e.latlng.lng });
+            });
+          }}
+        >
+          <MapPinIcon className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          className="h-8 w-8 shadow-md"
+          onClick={handleZoomIn}
+          title="Zoom in"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          className="h-8 w-8 shadow-md"
+          onClick={handleZoomOut}
+          title="Zoom out"
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          className="h-8 w-8 shadow-md"
+          onClick={handleReset}
+          title="Reset view"
+        >
+          <Home className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
