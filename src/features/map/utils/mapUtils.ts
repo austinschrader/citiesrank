@@ -33,46 +33,47 @@ export function calculateMapBounds(place: MapPlace): {
 
 export const getMarkerStyle = (
   type?: string,
-  rating?: number,
-  isSelected?: boolean
+  value?: number,
+  isSelected?: boolean,
+  metric: 'averageRating' | 'costIndex' | 'safetyScore' = 'averageRating'
 ) => {
-  const getRatingColor = (rating?: number) => {
-    if (!rating) return ratingColors.new; // Show emerald for new places
-    if (rating >= 4.8) return ratingColors.best;
-    if (rating >= 4.5) return ratingColors.great;
-    if (rating >= 4.2) return ratingColors.good;
-    if (rating >= 3.8) return ratingColors.okay;
-    if (rating >= 3.4) return ratingColors.fair;
-    return ratingColors.poor;
-  };
-
   const typeColor =
     type && type in markerColors
       ? markerColors[type as keyof typeof markerColors]
       : markerColors.default;
 
-  // Size hierarchy based on place type
-  const getMarkerSize = (type?: string) => {
-    switch (type) {
-      case "country":
-        return 52;
-      case "region":
-        return 46;
-      case "city":
-        return 40;
-      case "neighborhood":
-        return 34;
-      case "sight":
-        return 28;
-      default:
-        return 40;
+  const getMetricColor = () => {
+    if (!value) return ratingColors.none;
+    
+    switch (metric) {
+      case 'averageRating':
+        if (value >= 4.8) return ratingColors.best;
+        if (value >= 4.5) return ratingColors.great;
+        if (value >= 4.2) return ratingColors.good;
+        if (value >= 3.8) return ratingColors.okay;
+        if (value >= 3.4) return ratingColors.fair;
+        return ratingColors.poor;
+      case 'costIndex':
+        if (value <= 50) return ratingColors.best;
+        if (value <= 70) return ratingColors.great;
+        if (value <= 90) return ratingColors.good;
+        if (value <= 110) return ratingColors.okay;
+        if (value <= 130) return ratingColors.fair;
+        return ratingColors.poor;
+      case 'safetyScore':
+        if (value >= 90) return ratingColors.best;
+        if (value >= 80) return ratingColors.great;
+        if (value >= 70) return ratingColors.good;
+        if (value >= 60) return ratingColors.okay;
+        if (value >= 50) return ratingColors.fair;
+        return ratingColors.poor;
     }
   };
 
   return {
-    color: isSelected ? "#e11d48" : typeColor, // Use rose-600 for selected markers
-    ratingColor: getRatingColor(rating),
-    size: getMarkerSize(type),
+    color: isSelected ? "#e11d48" : typeColor,
+    ratingColor: getMetricColor(),
+    size: isSelected ? 44 : 36,
   };
 };
 
@@ -80,9 +81,11 @@ export const createMarkerHtml = (
   style: ReturnType<typeof getMarkerStyle>,
   place: MapPlace,
   isSelected?: boolean,
-  isHovered?: boolean
+  isHovered?: boolean,
+  metric: 'averageRating' | 'costIndex' | 'safetyScore' = 'averageRating'
 ) => {
-  const rating = place.averageRating ? place.averageRating.toFixed(1) : null;
+  const value = place[metric];
+  const displayValue = value ? value.toFixed(1) : null;
   const scale = isSelected ? (isHovered ? 1.25 : 1.2) : isHovered ? 1.05 : 1;
 
   return `<div class="place-marker-container" style="
@@ -141,13 +144,13 @@ export const createMarkerHtml = (
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       ">
         ${
-          rating
+          displayValue
             ? `<div style="
-                font-size: ${rating.length > 2 ? "13px" : "14px"};
+                font-size: ${displayValue.length > 2 ? "13px" : "14px"};
                 font-weight: 600;
                 color: #ffffff;
                 text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-              ">${rating}</div>`
+              ">${displayValue}</div>`
             : `<div style="
                 font-size: 14px;
                 font-weight: 600;

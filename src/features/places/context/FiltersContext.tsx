@@ -71,6 +71,7 @@ export interface Filters {
   tags: string[];
   season: string | null;
   budget: string | null;
+  visualizationMetric: 'averageRating' | 'costIndex' | 'safetyScore';
 }
 
 interface FiltersContextValue {
@@ -106,6 +107,7 @@ const defaultFilters: Filters = {
   tags: [],
   season: null,
   budget: null,
+  visualizationMetric: 'averageRating',
 };
 
 const FiltersContext = createContext<FiltersContextValue | null>(null);
