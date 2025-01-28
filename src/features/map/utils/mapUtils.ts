@@ -4,6 +4,29 @@ import { markerColors, ratingColors } from "@/lib/utils/colors";
 import { LatLngTuple } from "leaflet";
 import { MapPlace } from "../types";
 
+const tagToEmoji: Record<string, string> = {
+  charming: '✨',
+  historic: '🏛️',
+  beach: '🏖️',
+  nature: '🌲',
+  mountains: '⛰️',
+  cultural: '🎭',
+  foodie: '🍽️',
+  nightlife: '🌙',
+  shopping: '🛍️',
+  relaxing: '🌅',
+  adventure: '🏃',
+  romantic: '💕',
+  family: '👨‍👩‍👧‍👦',
+  artistic: '🎨',
+  trendy: '🎯',
+  spiritual: '🕉️',
+  traditional: '🏺',
+  modern: '🌆',
+  vibrant: '🎉',
+  peaceful: '🕊️',
+};
+
 export function getZoomForPlaceType(type?: CitiesTypeOptions): number {
   switch (type) {
     case "sight":
@@ -33,9 +56,9 @@ export function calculateMapBounds(place: MapPlace): {
 
 export const getMarkerStyle = (
   type?: string,
-  value?: number,
+  value?: number | string,
   isSelected?: boolean,
-  metric: 'averageRating' | 'costIndex' | 'safetyScore' = 'averageRating'
+  metric: 'averageRating' | 'costIndex' | 'safetyScore' | 'primaryTag' = 'averageRating'
 ) => {
   const typeColor =
     type && type in markerColors
@@ -43,30 +66,30 @@ export const getMarkerStyle = (
       : markerColors.default;
 
   const getMetricColor = () => {
-    if (!value) return ratingColors.none;
+    if (metric === 'primaryTag') return typeColor;
+    if (!value || typeof value !== 'number') return ratingColors.none;
     
     switch (metric) {
       case 'averageRating':
         if (value >= 4.8) return ratingColors.best;
         if (value >= 4.5) return ratingColors.great;
-        if (value >= 4.2) return ratingColors.good;
-        if (value >= 3.8) return ratingColors.okay;
-        if (value >= 3.4) return ratingColors.fair;
+        if (value >= 4.0) return ratingColors.good;
+        if (value >= 3.5) return ratingColors.okay;
         return ratingColors.poor;
       case 'costIndex':
-        if (value <= 50) return ratingColors.best;
-        if (value <= 70) return ratingColors.great;
-        if (value <= 90) return ratingColors.good;
-        if (value <= 110) return ratingColors.okay;
-        if (value <= 130) return ratingColors.fair;
+        if (value <= 2) return ratingColors.best;
+        if (value <= 4) return ratingColors.great;
+        if (value <= 6) return ratingColors.good;
+        if (value <= 8) return ratingColors.okay;
         return ratingColors.poor;
       case 'safetyScore':
         if (value >= 90) return ratingColors.best;
         if (value >= 80) return ratingColors.great;
         if (value >= 70) return ratingColors.good;
         if (value >= 60) return ratingColors.okay;
-        if (value >= 50) return ratingColors.fair;
         return ratingColors.poor;
+      default:
+        return ratingColors.none;
     }
   };
 
@@ -82,10 +105,18 @@ export const createMarkerHtml = (
   place: MapPlace,
   isSelected?: boolean,
   isHovered?: boolean,
-  metric: 'averageRating' | 'costIndex' | 'safetyScore' = 'averageRating'
+  metric: 'averageRating' | 'costIndex' | 'safetyScore' | 'primaryTag' = 'averageRating'
 ) => {
-  const value = place[metric];
-  const displayValue = value ? value.toFixed(1) : null;
+  let displayValue: string | null = null;
+  
+  if (metric === 'primaryTag' && place.tags && (place.tags as string[]).length > 0) {
+    const primaryTag = (place.tags as string[])[0];
+    displayValue = tagToEmoji[primaryTag] || '📍';
+  } else {
+    const value = (place as any)[metric];
+    displayValue = value ? value.toFixed(1) : null;
+  }
+
   const scale = isSelected ? (isHovered ? 1.25 : 1.2) : isHovered ? 1.05 : 1;
 
   return `<div class="place-marker-container" style="

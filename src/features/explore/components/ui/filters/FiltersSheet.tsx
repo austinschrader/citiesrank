@@ -246,7 +246,7 @@ export const FiltersSheet = () => {
                 <Select
                   value={filters.visualizationMetric}
                   onValueChange={(
-                    value: "averageRating" | "costIndex" | "safetyScore"
+                    value: "averageRating" | "costIndex" | "safetyScore" | "primaryTag"
                   ) => setFilter("visualizationMetric", value)}
                 >
                   <SelectTrigger>
@@ -256,6 +256,7 @@ export const FiltersSheet = () => {
                     <SelectItem value="averageRating">Rating</SelectItem>
                     <SelectItem value="costIndex">Cost of Living</SelectItem>
                     <SelectItem value="safetyScore">Safety Score</SelectItem>
+                    <SelectItem value="primaryTag">Primary Tag</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

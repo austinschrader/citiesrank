@@ -12,13 +12,13 @@ import {
   createMarkerHtml,
   getMarkerStyle,
 } from "@/features/map/utils/mapUtils";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import L from "leaflet";
 import { Bookmark, FolderPlus, MapPin, Star } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Marker, Popup, useMap as useLeafletMap } from "react-leaflet";
-import { useFilters } from "@/features/places/context/FiltersContext";
 
 interface PlacePopupCardProps {
   place: MapPlace;
@@ -208,11 +208,17 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
   const icon = useMemo(() => {
     const style = getMarkerStyle(
       place.type,
-      place[filters.visualizationMetric],
+      (place as any)[filters.visualizationMetric as keyof typeof place],
       isSelected,
       filters.visualizationMetric
     );
-    const html = createMarkerHtml(style, place, isSelected, false, filters.visualizationMetric);
+    const html = createMarkerHtml(
+      style,
+      place,
+      isSelected,
+      false,
+      filters.visualizationMetric
+    );
     return L.divIcon({
       className: "custom-marker",
       html,

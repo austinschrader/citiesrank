@@ -71,7 +71,7 @@ export interface Filters {
   tags: string[];
   season: string | null;
   budget: string | null;
-  visualizationMetric: 'averageRating' | 'costIndex' | 'safetyScore';
+  visualizationMetric: 'averageRating' | 'costIndex' | 'safetyScore' | 'primaryTag';
 }
 
 interface FiltersContextValue {
