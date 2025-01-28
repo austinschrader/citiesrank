@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ExpandedList } from "@/features/lists/types";
 import { getPlaceImageByCityAndCountry } from "@/lib/bunny";
 import { cn } from "@/lib/utils";
+import { ratingColors } from "@/lib/utils/colors";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   MapPin,
   Share2,
   Sparkles,
+  Star,
   Users,
 } from "lucide-react";
 import { useState } from "react";
@@ -20,6 +22,21 @@ interface ListPreviewProps {
   list: ExpandedList;
   compact?: boolean;
 }
+
+const getRatingColor = (rating?: number) => {
+  if (!rating) return ratingColors.none;
+  if (rating >= 4.95) return ratingColors.best;
+  if (rating >= 4.9) return ratingColors.great;
+  if (rating >= 4.85) return ratingColors.good;
+  if (rating >= 4.8) return ratingColors.okay;
+  if (rating >= 4.7) return ratingColors.fair;
+  return ratingColors.poor;
+};
+
+const getRatingLabel = (rating?: number) => {
+  if (!rating) return "Not rated";
+  return rating.toFixed(1);
+};
 
 export const ListPreview = ({ list, compact = false }: ListPreviewProps) => {
   const navigate = useNavigate();
@@ -36,6 +53,9 @@ export const ListPreview = ({ list, compact = false }: ListPreviewProps) => {
     },
   };
 
+  const ratingColor = getRatingColor(list.averageRating);
+  const ratingLabel = getRatingLabel(list.averageRating);
+
   if (compact) {
     return (
       <motion.div
@@ -47,10 +67,24 @@ export const ListPreview = ({ list, compact = false }: ListPreviewProps) => {
           <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
             <Library className="h-5 w-5 text-purple-500" />
           </div>
-          <div>
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">
-              {list.title || "Untitled List"}
-            </h3>
+          <div className="flex-1">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                {list.title || "Untitled List"}
+              </h3>
+              {list.averageRating > 0 && (
+                <div
+                  className="flex items-center gap-1 px-2 py-1 rounded-full text-xs"
+                  style={{
+                    backgroundColor: `${ratingColor}20`,
+                    color: ratingColor,
+                  }}
+                >
+                  <Star className="h-3 w-3" />
+                  <span className="font-medium">{ratingLabel}</span>
+                </div>
+              )}
+            </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {list.description || "No description"}
             </p>
@@ -84,6 +118,21 @@ export const ListPreview = ({ list, compact = false }: ListPreviewProps) => {
               <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 {list.title}
               </h2>
+              {list.averageRating > 0 && (
+                <div
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-full text-sm"
+                  style={{
+                    backgroundColor: `${ratingColor}20`,
+                    color: ratingColor,
+                  }}
+                >
+                  <Star className="h-4 w-4" />
+                  <span className="font-medium">{ratingLabel}</span>
+                  <span className="text-xs opacity-75">
+                    ({list.totalReviews?.toLocaleString()} reviews)
+                  </span>
+                </div>
+              )}
             </div>
             <p className="text-gray-600 dark:text-gray-300 line-clamp-2">
               {list.description}

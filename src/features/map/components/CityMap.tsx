@@ -7,6 +7,7 @@ import { useMap } from "@/features/map/context/MapContext";
 import { useFilters } from "@/features/places/context/FiltersContext";
 import { CitiesResponse } from "@/lib/types/pocketbase-types";
 import { cn } from "@/lib/utils";
+import { ratingColors } from "@/lib/utils/colors";
 import L, { LatLngTuple } from "leaflet";
 import { Filter, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -85,16 +86,24 @@ const BoundsTracker = () => {
 
 interface RoadtripRouteProps {
   places: CitiesResponse[];
-  color?: string;
   weight?: number;
   rating?: number;
   isHighlighted?: boolean;
   onClick?: () => void;
 }
 
+const getRatingColor = (rating?: number) => {
+  if (!rating) return ratingColors.none;
+  if (rating >= 4.95) return ratingColors.best;
+  if (rating >= 4.9) return ratingColors.great;
+  if (rating >= 4.85) return ratingColors.good;
+  if (rating >= 4.8) return ratingColors.okay;
+  if (rating >= 4.7) return ratingColors.fair;
+  return ratingColors.poor;
+};
+
 const RoadtripRoute: React.FC<RoadtripRouteProps> = ({
   places,
-  color = "#8B5CF6",
   weight = 3,
   rating,
   isHighlighted = false,
@@ -105,6 +114,8 @@ const RoadtripRoute: React.FC<RoadtripRouteProps> = ({
     console.log("Not enough places to draw route");
     return null;
   }
+
+  const routeColor = getRatingColor(rating);
 
   return places.map((place, index) => {
     if (index === places.length - 1) return null;
@@ -127,7 +138,7 @@ const RoadtripRoute: React.FC<RoadtripRouteProps> = ({
         key={`${place.id}-${places[index + 1].id}`}
         positions={curvePoints}
         pathOptions={{
-          color: isHighlighted ? "#10B981" : color,
+          color: isHighlighted ? ratingColors.best : routeColor,
           weight: isHighlighted ? weight + 2 : weight,
           opacity: isHighlighted ? 1 : 0.6,
           lineCap: "round",
@@ -253,11 +264,6 @@ export const CityMap = () => {
                 isHighlighted={list.id === selectedList}
                 onClick={() =>
                   setSelectedList(list.id === selectedList ? null : list.id)
-                }
-                color={
-                  list.averageRating
-                    ? `hsl(${Math.min(list.averageRating * 20, 120)}, 70%, 50%)`
-                    : undefined
                 }
               />
             );
