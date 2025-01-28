@@ -53,6 +53,7 @@ Migrations are used to manage database schema changes across environments.
    - Create migration scripts manually
    - Place them in `citiesrank/pocketbase/pb_migrations`
    - Test against your local database to validate
+   
 
 #### Deploying to Pre-Production
 
