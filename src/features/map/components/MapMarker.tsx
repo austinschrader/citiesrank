@@ -12,6 +12,7 @@ import {
   createMarkerHtml,
   getMarkerStyle,
 } from "@/features/map/utils/mapUtils";
+import { useFilters } from "@/features/places/context/FiltersContext";
 import { cn } from "@/lib/utils";
 import L from "leaflet";
 import { Bookmark, FolderPlus, MapPin, Star } from "lucide-react";
@@ -199,29 +200,32 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
   const { selectedPlace, setSelectedPlace } = useSelection();
   const { user } = useAuth();
   const { isPlaceSaved, refreshSavedPlaces } = useSavedPlaces();
+  const { filters } = useFilters();
   const [isCollectionsDialogOpen, setIsCollectionsDialogOpen] = useState(false);
-  const map = useLeafletMap();
 
-  const markerStyle = useMemo(
-    () => getMarkerStyle(place.type, place.averageRating),
-    [place.type, place.averageRating]
-  );
+  const isSelected = selectedPlace?.id === place.id;
 
-  const markerHtml = useMemo(
-    () => createMarkerHtml(markerStyle, place),
-    [markerStyle, place]
-  );
-
-  const icon = useMemo(
-    () =>
-      L.divIcon({
-        className: "custom-marker",
-        html: markerHtml,
-        iconSize: [markerStyle.size, markerStyle.size],
-        iconAnchor: [markerStyle.size / 2, markerStyle.size / 2],
-      }),
-    [markerHtml, markerStyle.size]
-  );
+  const icon = useMemo(() => {
+    const style = getMarkerStyle(
+      place.type,
+      (place as any)[filters.visualizationMetric as keyof typeof place],
+      isSelected,
+      filters.visualizationMetric
+    );
+    const html = createMarkerHtml(
+      style,
+      place,
+      isSelected,
+      false,
+      filters.visualizationMetric
+    );
+    return L.divIcon({
+      className: "custom-marker",
+      html,
+      iconSize: [style.size, style.size],
+      iconAnchor: [style.size / 2, style.size / 2],
+    });
+  }, [place, isSelected, filters.visualizationMetric]);
 
   const click = (e: L.LeafletMouseEvent) => {
     e.originalEvent.stopPropagation();
@@ -249,6 +253,8 @@ export const MapMarker: React.FC<MapMarkerProps> = React.memo(({ place }) => {
       noMoveStart: true, // prevents initial jerk
     });
   };
+
+  const map = useLeafletMap();
 
   return (
     <>

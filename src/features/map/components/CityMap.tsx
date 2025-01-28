@@ -76,7 +76,7 @@ export const CityMap = () => {
 
   const filteredCities = useMemo(() => {
     return getFilteredCities(cities);
-  }, [cities, getFilteredCities, filters.budget, filters.season]);
+  }, [cities, getFilteredCities, filters.budget, filters.season, filters.visualizationMetric]);
 
   useEffect(() => {
     let isMounted = true;

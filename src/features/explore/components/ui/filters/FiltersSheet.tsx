@@ -67,6 +67,7 @@ export const FiltersSheet = () => {
     getUniqueTags,
     getActiveFilterCount,
     resetFilters,
+    setFilter,
   } = useFilters();
   const { cities } = useCities();
 
@@ -239,6 +240,27 @@ export const FiltersSheet = () => {
                 <TimeWindow />
               </div>
 
+              {/* Visualization Metric */}
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm">Map Display</h4>
+                <Select
+                  value={filters.visualizationMetric}
+                  onValueChange={(
+                    value: "averageRating" | "costIndex" | "safetyScore" | "primaryTag"
+                  ) => setFilter("visualizationMetric", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select metric" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[99999]">
+                    <SelectItem value="averageRating">Rating</SelectItem>
+                    <SelectItem value="costIndex">Cost of Living</SelectItem>
+                    <SelectItem value="safetyScore">Safety Score</SelectItem>
+                    <SelectItem value="primaryTag">Primary Tag</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Place Types */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -354,7 +376,6 @@ export const FiltersSheet = () => {
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
