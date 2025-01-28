@@ -34,6 +34,7 @@ import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import { HeaderProvider } from "./context/HeaderContext";
 import { DiscoverPage } from "./features/discover/pages/DiscoverPage";
+import { SimpleExplorer } from "./features/map/components/SimpleExplorer";
 import { LocationProvider } from "./features/map/context/LocationContext";
 import { SelectionProvider } from "./features/map/context/SelectionContext";
 import { CreatedSpacesPage } from "./features/places/pages/CreatedSpacesPage";
@@ -61,7 +62,14 @@ function App() {
                                     </Suspense>
                                   }
                                 >
-                                  <Route path="/" element={<ExplorePage />} />
+                                  <Route
+                                    path="/"
+                                    element={<SimpleExplorer />}
+                                  />
+                                  <Route
+                                    path="/explore"
+                                    element={<ExplorePage />}
+                                  />
                                   <Route
                                     path="/quests"
                                     element={<DiscoverPage />}

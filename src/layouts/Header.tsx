@@ -30,7 +30,7 @@ const navItems = [
   {
     label: "Explore",
     icon: Globe2,
-    to: "/",
+    to: "/explore",
     description: "Discover your next adventure on our interactive map",
     gradient: "from-sky-500 via-blue-500 to-cyan-500",
   },
