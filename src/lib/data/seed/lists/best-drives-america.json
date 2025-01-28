@@ -1,0 +1,374 @@
+[
+  {
+    "title": "Pacific Coast Highway Road Trip",
+    "description": "An iconic coastal drive from San Francisco to Los Angeles, featuring dramatic cliffs, pristine beaches, and stunning ocean views.",
+    "slug": "pacific-coast-highway",
+    "places": [
+      "san-francisco-ca",
+      "half-moon-bay-ca",
+      "santa-cruz-ca",
+      "big-sur-ca",
+      "hearst-castle-ca",
+      "santa-barbara-ca",
+      "malibu-ca",
+      "los-angeles-ca"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:15:22.000Z",
+    "updated": "2025-01-23T08:15:22.000Z",
+    "averageRating": 4.9,
+    "totalReviews": 5831
+  },
+  {
+    "title": "Going-to-the-Sun Road",
+    "description": "A spectacular drive through Glacier National Park, featuring alpine lakes, glacial valleys, and wildlife viewing opportunities.",
+    "slug": "going-to-the-sun-road",
+    "places": [
+      "west-glacier-mt",
+      "lake-mcdonald-mt",
+      "logan-pass-mt",
+      "hidden-lake-mt",
+      "saint-mary-lake-mt",
+      "east-glacier-mt"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:17:45.000Z",
+    "updated": "2025-01-23T08:17:45.000Z",
+    "averageRating": 4.8,
+    "totalReviews": 4253
+  },
+  {
+    "title": "Blue Ridge Parkway",
+    "description": "America's longest linear park connecting Shenandoah to Great Smoky Mountains, showcasing Appalachian culture and breathtaking mountain vistas.",
+    "slug": "blue-ridge-parkway",
+    "places": [
+      "shenandoah-va",
+      "roanoke-va",
+      "grandfather-mountain-nc",
+      "asheville-nc",
+      "cherokee-nc"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:17:46.000Z",
+    "updated": "2025-01-23T08:17:46.000Z",
+    "averageRating": 4.7,
+    "totalReviews": 6104
+  },
+  {
+    "title": "Road to Hana",
+    "description": "Maui's legendary coastal drive featuring waterfalls, black sand beaches, and tropical rainforests.",
+    "slug": "road-to-hana",
+    "places": [
+      "paia-hi",
+      "twin-falls-hi",
+      "waianapanapa-hi",
+      "hamoa-beach-hi",
+      "hana-hi"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:11.000Z",
+    "updated": "2025-01-23T08:20:11.000Z",
+    "averageRating": 4.7,
+    "totalReviews": 3892
+  },
+  {
+    "title": "Monument Valley Drive",
+    "description": "Iconic desert drive through Navajo Nation featuring dramatic sandstone buttes and mesas.",
+    "slug": "monument-valley",
+    "places": [
+      "kayenta-az",
+      "valley-drive-az",
+      "john-ford-point-az",
+      "mexican-hat-ut"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:12.000Z",
+    "updated": "2025-01-23T08:20:12.000Z",
+    "averageRating": 4.8,
+    "totalReviews": 2956
+  },
+  {
+    "title": "Million Dollar Highway",
+    "description": "Dramatic mountain pass through Colorado's San Juan Mountains with hairpin turns and mining history.",
+    "slug": "million-dollar-highway",
+    "places": [
+      "ouray-co",
+      "red-mountain-pass-co",
+      "silverton-co",
+      "durango-co"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:13.000Z",
+    "updated": "2025-01-23T08:20:13.000Z",
+    "averageRating": 4.6,
+    "totalReviews": 2145
+  },
+  {
+    "title": "Beartooth Highway",
+    "description": "Alpine highway through Montana and Wyoming offering dramatic mountain views and wildlife.",
+    "slug": "beartooth-highway",
+    "places": [
+      "red-lodge-mt",
+      "beartooth-pass-mt",
+      "cooke-city-mt",
+      "yellowstone-wy"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:14.000Z",
+    "updated": "2025-01-23T08:20:14.000Z",
+    "averageRating": 4.9,
+    "totalReviews": 1987
+  },
+  {
+    "title": "Overseas Highway",
+    "description": "Island-hopping drive through Florida Keys with stunning ocean views and tropical atmosphere.",
+    "slug": "overseas-highway",
+    "places": [
+      "key-largo-fl",
+      "islamorada-fl",
+      "marathon-fl",
+      "big-pine-key-fl",
+      "key-west-fl"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:15.000Z",
+    "updated": "2025-01-23T08:20:15.000Z",
+    "averageRating": 4.7,
+    "totalReviews": 4521
+  },
+  {
+    "title": "Cascade Lakes Scenic Byway",
+    "description": "Oregon mountain drive past volcanic peaks, alpine lakes, and old-growth forests.",
+    "slug": "cascade-lakes",
+    "places": [
+      "bend-or",
+      "mount-bachelor-or",
+      "sparks-lake-or",
+      "elk-lake-or",
+      "lava-lake-or"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:16.000Z",
+    "updated": "2025-01-23T08:20:16.000Z",
+    "averageRating": 4.6,
+    "totalReviews": 1876
+  },
+  {
+    "title": "Acadia Park Loop",
+    "description": "Coastal Maine drive through Acadia National Park featuring rocky shores and Atlantic views.",
+    "slug": "acadia-park-loop",
+    "places": [
+      "bar-harbor-me",
+      "sand-beach-me",
+      "thunder-hole-me",
+      "cadillac-mountain-me"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:17.000Z",
+    "updated": "2025-01-23T08:20:17.000Z",
+    "averageRating": 4.8,
+    "totalReviews": 3254
+  },
+  {
+    "title": "North Shore Drive",
+    "description": "Minnesota's Lake Superior coastal drive featuring waterfalls, lighthouses, and harbor towns.",
+    "slug": "north-shore-drive",
+    "places": [
+      "duluth-mn",
+      "gooseberry-falls-mn",
+      "split-rock-lighthouse-mn",
+      "grand-marais-mn"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:18.000Z",
+    "updated": "2025-01-23T08:20:18.000Z",
+    "averageRating": 4.5,
+    "totalReviews": 2341
+  },
+  {
+    "title": "Olympic Peninsula Loop",
+    "description": "Washington state drive through rainforests, coastal beaches, and mountain views.",
+    "slug": "olympic-peninsula",
+    "places": [
+      "port-angeles-wa",
+      "hoh-rainforest-wa",
+      "ruby-beach-wa",
+      "lake-quinault-wa"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:19.000Z",
+    "updated": "2025-01-23T08:20:19.000Z",
+    "averageRating": 4.7,
+    "totalReviews": 2765
+  },
+  {
+    "title": "Skyline Drive",
+    "description": "Virginia's scenic mountain drive through Shenandoah National Park with valley vistas.",
+    "slug": "skyline-drive",
+    "places": [
+      "front-royal-va",
+      "skyland-va",
+      "big-meadows-va",
+      "waynesboro-va"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:20:20.000Z",
+    "updated": "2025-01-23T08:20:20.000Z",
+    "averageRating": 4.6,
+    "totalReviews": 3123
+  },
+  {
+    "title": "Historic Route 66",
+    "description": "America's 'Mother Road' from Chicago to Los Angeles, featuring classic diners, neon signs, and nostalgic Americana.",
+    "slug": "route-66",
+    "places": [
+      "chicago-il",
+      "st-louis-mo",
+      "tulsa-ok",
+      "amarillo-tx",
+      "albuquerque-nm",
+      "flagstaff-az",
+      "los-angeles-ca"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:00.000Z",
+    "updated": "2025-01-23T08:25:00.000Z",
+    "averageRating": 4.8,
+    "totalReviews": 7234
+  },
+  {
+    "title": "Scenic Byway 12",
+    "description": "Utah's All-American Road through red rock canyons and national parks.",
+    "slug": "scenic-byway-12",
+    "places": [
+      "panguitch-ut",
+      "bryce-canyon-ut",
+      "escalante-ut",
+      "boulder-ut",
+      "capitol-reef-ut"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:01.000Z",
+    "updated": "2025-01-23T08:25:01.000Z",
+    "averageRating": 4.9,
+    "totalReviews": 3456
+  },
+  {
+    "title": "Great River Road",
+    "description": "Following the Mississippi River from Minnesota to Louisiana.",
+    "slug": "great-river-road",
+    "places": [
+      "lake-itasca-mn",
+      "dubuque-ia",
+      "hannibal-mo",
+      "memphis-tn",
+      "natchez-ms",
+      "new-orleans-la"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:02.000Z",
+    "updated": "2025-01-23T08:25:02.000Z",
+    "averageRating": 4.6,
+    "totalReviews": 4123
+  },
+  {
+    "title": "Natchez Trace Parkway",
+    "description": "Historic 444-mile route through Tennessee, Alabama, and Mississippi.",
+    "slug": "natchez-trace",
+    "places": ["nashville-tn", "tupelo-ms", "jackson-ms", "natchez-ms"],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:03.000Z",
+    "updated": "2025-01-23T08:25:03.000Z",
+    "averageRating": 4.7,
+    "totalReviews": 3897
+  },
+  {
+    "title": "Yellowstone Grand Loop",
+    "description": "Circular drive through Yellowstone's geothermal wonders and wildlife.",
+    "slug": "yellowstone-loop",
+    "places": [
+      "mammoth-hot-springs-wy",
+      "tower-falls-wy",
+      "canyon-village-wy",
+      "old-faithful-wy",
+      "west-thumb-wy"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:04.000Z",
+    "updated": "2025-01-23T08:25:04.000Z",
+    "averageRating": 4.9,
+    "totalReviews": 5678
+  },
+  {
+    "title": "Kancamagus Highway",
+    "description": "New Hampshire's scenic byway through White Mountain National Forest.",
+    "slug": "kancamagus-highway",
+    "places": [
+      "lincoln-nh",
+      "sabbaday-falls-nh",
+      "swift-river-nh",
+      "albany-nh",
+      "conway-nh"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:05.000Z",
+    "updated": "2025-01-23T08:25:05.000Z",
+    "averageRating": 4.8,
+    "totalReviews": 2987
+  },
+  {
+    "title": "Columbia River Highway",
+    "description": "Oregon's historic route featuring waterfalls and Columbia River Gorge views.",
+    "slug": "columbia-river-highway",
+    "places": [
+      "troutdale-or",
+      "multnomah-falls-or",
+      "hood-river-or",
+      "mosier-or",
+      "the-dalles-or"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:06.000Z",
+    "updated": "2025-01-23T08:25:06.000Z",
+    "averageRating": 4.7,
+    "totalReviews": 3245
+  },
+  {
+    "title": "Cherokee Foothills Scenic Highway",
+    "description": "South Carolina route through Appalachian foothills and peach orchards.",
+    "slug": "cherokee-foothills",
+    "places": [
+      "gaffney-sc",
+      "caesar-head-sc",
+      "table-rock-sc",
+      "clemson-sc",
+      "walhalla-sc"
+    ],
+    "user": "system",
+    "visibility": "public",
+    "created": "2025-01-23T08:25:07.000Z",
+    "updated": "2025-01-23T08:25:07.000Z",
+    "averageRating": 4.5,
+    "totalReviews": 1876
+  }
+]

@@ -9,6 +9,8 @@ const listSchema = z.object({
   places: z.array(z.string()).optional(),
   created: z.string(),
   updated: z.string(),
+  averageRating: z.number().min(0).max(5).optional(),
+  totalReviews: z.number().min(0).optional(),
   visibility: z.enum(['public', 'private']).optional().default('public'),
 });
 

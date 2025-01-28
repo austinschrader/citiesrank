@@ -50,6 +50,10 @@ interface ListsContextType {
   deleteList: (id: string) => Promise<void>;
   addPlaceToList: (listId: string, place: CitiesResponse) => Promise<void>;
   removePlaceFromList: (listId: string, place: CitiesResponse) => Promise<void>;
+  updateListRatings: (
+    listId: string,
+    places: CitiesResponse[]
+  ) => Promise<void>;
 }
 
 const ListsContext = createContext<ListsContextType | null>(null);
@@ -420,23 +424,53 @@ export function ListsProvider({ children }: { children: ReactNode }) {
     [pb]
   );
 
+  const updateListRatings = useCallback(
+    async (listId: string, places: CitiesResponse[]) => {
+      const totalRating = places.reduce(
+        (sum, place) => sum + (place.averageRating || 0),
+        0
+      );
+      const averageRating = places.length > 0 ? totalRating / places.length : 0;
+      const totalReviews = places.reduce(
+        (sum, place) => sum + (place.totalReviews || 0),
+        0
+      );
+
+      await pb.collection("lists").update(listId, {
+        averageRating,
+        totalReviews,
+      });
+    },
+    [pb]
+  );
+
   const addPlaceToList = useCallback(
     async (listId: string, place: CitiesResponse) => {
       try {
         setIsLoading(true);
         setError(null);
 
-        // Get current places to determine rank
-        const currentPlaces = await pb
-          .collection("list_places")
-          .getFullList({ filter: `list = "${listId}"` });
+        const list = await pb.collection("lists").getOne<ExpandedList>(listId);
+        const existingPlaces = await pb.collection("list_places").getFullList({
+          filter: `list = "${listId}"`,
+          expand: "place",
+        });
 
-        // Add the new place
         await pb.collection("list_places").create({
           list: listId,
           place: place.id,
-          rank: currentPlaces.length + 1,
+          rank: existingPlaces.length + 1,
         });
+
+        // Update ratings after adding the place
+        const updatedPlaces = [
+          ...existingPlaces.map((lp) => lp.expand?.place),
+          place,
+        ].filter((p): p is CitiesResponse => !!p);
+        await updateListRatings(listId, updatedPlaces);
+
+        // Refresh lists
+        getUserLists();
       } catch (err) {
         const error = err as ClientResponseError;
         setError(error);
@@ -445,7 +479,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     },
-    [pb]
+    [pb, getUserLists, updateListRatings]
   );
 
   const removePlaceFromList = useCallback(
@@ -454,60 +488,26 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
 
-        // Find the list_places record
-        const record = await pb
+        const listPlace = await pb
           .collection("list_places")
-          .getFirstListItem(`list = "${listId}" && place = "${place.id}"`, {
-            $autoCancel: false,
-          });
+          .getFirstListItem(`list = "${listId}" && place = "${place.id}"`);
 
-        // Delete the record
-        await pb.collection("list_places").delete(record.id, {
-          $autoCancel: false,
-        });
+        await pb.collection("list_places").delete(listPlace.id);
 
-        // Update place_count on the list
-        const list = (await pb.collection("lists").getOne(listId, {
-          $autoCancel: false,
-        })) as ExpandedList;
-
-        await pb.collection("lists").update(
-          listId,
-          {
-            place_count: (list.place_count || 1) - 1,
-          },
-          {
-            $autoCancel: false,
-          }
-        );
-
-        // Update lists in state
-        setLists((prev) =>
-          prev.map((l) =>
-            l.id === listId
-              ? { ...l, place_count: (l.place_count || 1) - 1 }
-              : l
-          )
-        );
-
-        // Reorder remaining places
+        // Get remaining places and update ratings
         const remainingPlaces = await pb.collection("list_places").getFullList({
           filter: `list = "${listId}"`,
-          sort: "rank",
-          $autoCancel: false,
+          expand: "place",
         });
 
-        await Promise.all(
-          remainingPlaces.map((place, index) =>
-            pb.collection("list_places").update(
-              place.id,
-              { rank: index + 1 },
-              {
-                $autoCancel: false,
-              }
-            )
-          )
-        );
+        const places = remainingPlaces
+          .map((lp) => lp.expand?.place)
+          .filter((p): p is CitiesResponse => !!p);
+
+        await updateListRatings(listId, places);
+
+        // Refresh lists
+        getUserLists();
       } catch (err) {
         const error = err as ClientResponseError;
         setError(error);
@@ -516,7 +516,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     },
-    [pb]
+    [pb, getUserLists, updateListRatings]
   );
 
   const updateListLocation = useCallback(
@@ -587,6 +587,7 @@ export function ListsProvider({ children }: { children: ReactNode }) {
     deleteList,
     addPlaceToList,
     removePlaceFromList,
+    updateListRatings,
   };
 
   return (

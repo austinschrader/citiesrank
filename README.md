@@ -105,6 +105,7 @@ setup ngrok
 3. brew install ngrok
 4. ngrok config add-authtoken YOUR_AUTH_TOKEN
 
+
 run ngrok
 ngrok http 5173
 

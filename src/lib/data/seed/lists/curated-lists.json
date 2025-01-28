@@ -15,7 +15,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:21:30.000Z",
-      "updated": "2025-01-20T19:21:30.000Z"
+      "updated": "2025-01-20T19:21:30.000Z",
+      "averageRating": 4.7,
+      "totalReviews": 3421
     },
     {
       "title": "12 Secret Beach Towns Locals Are Trying to Keep Hidden in 2025",
@@ -32,7 +34,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:20:52.000Z",
-      "updated": "2025-01-20T19:20:52.000Z"
+      "updated": "2025-01-20T19:20:52.000Z",
+      "averageRating": 4.8,
+      "totalReviews": 2156
     },
     {
       "title": "Most Beautiful Desert Towns in America: 2025 Travel Guide",
@@ -50,7 +54,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:18:09.000Z",
-      "updated": "2025-01-20T19:18:09.000Z"
+      "updated": "2025-01-20T19:18:09.000Z",
+      "averageRating": 4.6,
+      "totalReviews": 5234
     },
     {
       "title": "Best Places to See Fall Colors in New England (2025 Peak Times)",
@@ -67,7 +73,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:20:52.000Z",
-      "updated": "2025-01-20T19:20:52.000Z"
+      "updated": "2025-01-20T19:20:52.000Z",
+      "averageRating": 4.5,
+      "totalReviews": 1876
     },
     {
       "title": "15 Most Beautiful Mountain Towns in America for 2025",
@@ -84,7 +92,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T13:21:56.000Z",
-      "updated": "2025-01-20T13:21:56.000Z"
+      "updated": "2025-01-20T13:21:56.000Z",
+      "averageRating": 4.7,
+      "totalReviews": 4211
     },
     {
       "title": "Top Digital Nomad Cities Worldwide: 2025 Remote Work Guide",
@@ -101,7 +111,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:20:26.000Z",
-      "updated": "2025-01-20T19:20:26.000Z"
+      "updated": "2025-01-20T19:20:26.000Z",
+      "averageRating": 4.5,
+      "totalReviews": 2345
     },
     {
       "title": "Most Instagrammable Small Cities in America (2025 Edition)",
@@ -118,7 +130,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:20:26.000Z",
-      "updated": "2025-01-20T19:20:26.000Z"
+      "updated": "2025-01-20T19:20:26.000Z",
+      "averageRating": 4.9,
+      "totalReviews": 8765
     },
     {
       "title": "Ancient Hot Springs Towns: America's Natural Spa Destinations 2025",
@@ -134,7 +148,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T19:18:09.000Z",
-      "updated": "2025-01-20T19:18:09.000Z"
+      "updated": "2025-01-20T19:18:09.000Z",
+      "averageRating": 4.6,
+      "totalReviews": 1876
     },
     {
       "title": "Hidden Island Paradises in America: Local's Guide 2025",
@@ -150,7 +166,9 @@
       ],
       "visibility": "public",
       "created": "2025-01-20T13:21:56.000Z",
-      "updated": "2025-01-20T13:21:56.000Z"
+      "updated": "2025-01-20T13:21:56.000Z",
+      "averageRating": 4.7,
+      "totalReviews": 2345
     },
     {
       "title": "Japan's Must-Visit Cities in 2025: Complete Travel Guide",
@@ -159,7 +177,9 @@
       "places": ["tokyo-japan", "kyoto-japan", "osaka-japan"],
       "visibility": "public",
       "created": "2025-01-20T13:05:56.000Z",
-      "updated": "2025-01-20T13:05:56.000Z"
+      "updated": "2025-01-20T13:05:56.000Z",
+      "averageRating": 4.8,
+      "totalReviews": 4211
     },
     {
       "title": "Best Cities for Modern Design Lovers: 2025 Architecture Guide",
@@ -168,7 +188,65 @@
       "places": ["copenhagen-denmark", "stockholm-sweden"],
       "visibility": "public",
       "created": "2025-01-20T13:03:56.000Z",
-      "updated": "2025-01-20T13:03:56.000Z"
+      "updated": "2025-01-20T13:03:56.000Z",
+      "averageRating": 4.7,
+      "totalReviews": 1876
+    },
+    {
+      "title": "Visit Every US National Park (2025 Guide)",
+      "description": "The ultimate American adventure: experience all 63 National Parks, from Acadia's rocky shores to Zion's towering cliffs. Track your progress through America's greatest natural treasures.",
+      "slug": "national-parks-complete",
+      "places": [
+        "yellowstone-united-states",
+        "yosemite-united-states",
+        "zion-united-states",
+        "grand-canyon-united-states",
+        "acadia-united-states",
+        "glacier-united-states",
+        "olympic-united-states"
+      ],
+      "visibility": "public",
+      "created": "2025-01-20T19:21:30.000Z",
+      "updated": "2025-01-20T19:21:30.000Z",
+      "averageRating": 4.8,
+      "totalReviews": 8765,
+      "tags": ["bucket-list", "national-parks", "nature"]
+    },
+    {
+      "title": "World's Most Sacred Sites (2025)",
+      "description": "Journey to humanity's most revered spiritual places, from ancient temples to modern pilgrimage sites. A transformative expedition across faiths and cultures.",
+      "slug": "sacred-sites",
+      "places": [
+        "jerusalem-israel",
+        "varanasi-india",
+        "kyoto-japan",
+        "cusco-peru",
+        "mount-kailash-tibet"
+      ],
+      "visibility": "public",
+      "created": "2025-01-20T19:21:30.000Z",
+      "updated": "2025-01-20T19:21:30.000Z",
+      "averageRating": 4.8,
+      "totalReviews": 4211,
+      "tags": ["bucket-list", "spiritual", "cultural"]
+    },
+    {
+      "title": "UNESCO World Heritage Tour (2025)",
+      "description": "Experience Earth's most extraordinary places, from ancient wonders to natural marvels. A journey through humanity's greatest achievements and nature's most spectacular creations.",
+      "slug": "unesco-wonders",
+      "places": [
+        "petra-jordan",
+        "machu-picchu-peru",
+        "great-barrier-reef-australia",
+        "angkor-wat-cambodia",
+        "grand-canyon-united-states"
+      ],
+      "visibility": "public",
+      "created": "2025-01-20T19:21:30.000Z",
+      "updated": "2025-01-20T19:21:30.000Z",
+      "averageRating": 4.9,
+      "totalReviews": 12543,
+      "tags": ["bucket-list", "unesco", "wonders"]
     }
   ]
 }

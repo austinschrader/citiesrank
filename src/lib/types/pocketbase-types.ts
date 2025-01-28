@@ -128,10 +128,12 @@ export enum ListsVisibilityOptions {
 	"private" = "private",
 }
 export type ListsRecord = {
+	averageRating?: number
 	description?: string
 	place_count?: number
 	saves?: number
 	title: string
+	totalReviews?: number
 	user: RecordIdString
 	visibility?: ListsVisibilityOptions
 }
@@ -152,6 +154,7 @@ export type UsersRecord = {
 	bio?: string
 	isAdmin?: boolean
 	isPrivate?: boolean
+	isSystem?: boolean
 	lists_count?: number
 	location?: string
 	name?: string
