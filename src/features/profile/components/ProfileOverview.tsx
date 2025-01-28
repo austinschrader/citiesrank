@@ -153,7 +153,7 @@ export const ProfileOverview = () => {
                       className="bg-background"
                     />
                     <p className="text-xs text-muted-foreground">
-                      Your unique username for WurldMap
+                      Your unique username for CitiesRank
                     </p>
                   </div>
                 </div>
