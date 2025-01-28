@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
 import { Globe2, ScrollText, Sparkles, Star } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   {
     label: "Explore",
     icon: Globe2,
-    to: "/",
+    to: "/explore",
   },
   {
     label: "Lists",
