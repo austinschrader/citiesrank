@@ -28,6 +28,7 @@ import { FiltersProvider } from "@/features/places/context/FiltersContext";
 import { FavoritesPage } from "@/features/places/pages/FavoritesPage";
 import { PlaceDetailsPage } from "@/features/places/pages/PlaceDetailsPage";
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
+import { TravelersPage } from "@/features/travelers/pages/TravelersPage";
 import { RootLayout } from "@/layouts/RootLayout";
 import "@/lib/styles/App.css";
 import { Suspense } from "react";
@@ -98,6 +99,10 @@ function App() {
                                   <Route
                                     path="/places/:placeType/:id"
                                     element={<PlaceDetailsPage />}
+                                  />
+                                  <Route
+                                    path="/travelers"
+                                    element={<TravelersPage />}
                                   />
                                   <Route
                                     path="/admin/*"

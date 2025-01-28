@@ -22,6 +22,7 @@ import {
   Star,
   Upload,
   UserCircle,
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -54,6 +55,13 @@ const navItems = [
     to: "/quests",
     description: "Uncover hidden gems and trending spots",
     gradient: "from-amber-500 via-orange-500 to-yellow-500",
+  },
+  {
+    label: "Travelers",
+    icon: Users,
+    to: "/travelers",
+    description: "Connect with fellow travelers and join local meetups",
+    gradient: "from-purple-500 via-pink-500 to-rose-500",
   },
 ];
 
