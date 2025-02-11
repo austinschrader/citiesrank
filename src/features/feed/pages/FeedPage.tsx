@@ -9,10 +9,11 @@ import { Card } from "@/components/ui/card";
 import { getPlaceImageBySlug } from "@/lib/bunny";
 import "@/lib/styles/index.css";
 import { AnimatePresence, motion } from "framer-motion";
-import { Calendar, Camera, Heart, MapPin, Trophy, Users } from "lucide-react";
+import { Calendar, Heart, MapPin } from "lucide-react";
 import EmptyFeedState from "../components/EmptyFeedState";
 import FeedHeader from "../components/FeedHeader";
 import LoadingState from "../components/LoadingState";
+import PhotoChallengeItem from "../components/PhotoChallengeItem";
 import PlaceCollectionItem from "../components/PlaceCollectionItem";
 import PlaceUpdateItem from "../components/PlaceUpdateItem";
 import SimilarPlacesItem from "../components/SimilarPlacesItem";
@@ -23,7 +24,7 @@ import { useFeed } from "../context/FeedContext";
 import {
   FeedItem,
   FriendActivityItem,
-  PhotoChallengeItem,
+  PhotoChallengeItem as PhotoChallengeItemType,
   PlaceCollectionItem as PlaceCollectionItemType,
   PlaceUpdateItem as PlaceUpdateItemType,
   SimilarPlacesItem as SimilarPlacesItemType,
@@ -153,52 +154,7 @@ export const FeedPage = () => {
         );
       }
       case "photo_challenge": {
-        const challengeItem = item as PhotoChallengeItem;
-        return (
-          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8 group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-500" />
-            <div className="p-6 relative">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                  <Camera className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  {challengeItem.title}
-                </h3>
-              </div>
-              <p className="text-gray-600 mb-3">{challengeItem.description}</p>
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                {challengeItem.topPhotos.map((photo, idx) => (
-                  <img
-                    key={idx}
-                    src={getPlaceImageBySlug(
-                      photo.replace(/-1$/, ""),
-                      1,
-                      "thumbnail"
-                    )}
-                    alt={`Challenge photo ${idx + 1}`}
-                    className="w-full h-32 object-cover rounded-lg hover:opacity-90 transition-opacity"
-                  />
-                ))}
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-purple-600">
-                  <Users className="w-4 h-4 inline mr-1" />
-                  {challengeItem.participants} participating
-                </span>
-                <span className="text-pink-600">
-                  {challengeItem.daysLeft} days left
-                </span>
-              </div>
-              {challengeItem.prize && (
-                <div className="mt-2 text-sm text-purple-600">
-                  <Trophy className="w-4 h-4 inline mr-1" />
-                  Prize: {challengeItem.prize}
-                </div>
-              )}
-            </div>
-          </Card>
-        );
+        return <PhotoChallengeItem item={item as PhotoChallengeItemType} />;
       }
       case "friend_activity": {
         const friendItem = item as FriendActivityItem;
