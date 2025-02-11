@@ -24,6 +24,7 @@ import EmptyFeedState from "../components/EmptyFeedState";
 import FeedHeader from "../components/FeedHeader";
 import LoadingState from "../components/LoadingState";
 import PlaceCollectionItem from "../components/PlaceCollectionItem";
+import PlaceUpdateItem from '../components/PlaceUpdateItem';
 import SimilarPlacesItem from "../components/SimilarPlacesItem";
 import TrendingPlaceItem from "../components/TrendingPlaceItem";
 import { useFeed } from "../context/FeedContext";
@@ -33,7 +34,7 @@ import {
   FriendActivityItem,
   PhotoChallengeItem,
   PlaceCollectionItem as PlaceCollectionItemType,
-  PlaceUpdateItem,
+  PlaceUpdateItem as PlaceUpdateItemType,
   SimilarPlacesItem as SimilarPlacesItemType,
   TagSpotlightItem,
   TimeMachineItem,
@@ -141,59 +142,13 @@ export const FeedPage = () => {
         return <SimilarPlacesItem item={item as SimilarPlacesItemType} />;
       }
       case "place_update": {
-        const updateItem = item as PlaceUpdateItem;
         return (
-          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8 group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-500" />
-            <div className="p-6 relative">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center">
-                  <MapPin className="w-6 h-6 text-blue-500 mr-2" />
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    {updateItem.content.title}
-                  </h3>
-                </div>
-                <Button
-                  variant={
-                    followedPlaces.includes(updateItem.place.id)
-                      ? "secondary"
-                      : "default"
-                  }
-                  size="sm"
-                  className="gap-2"
-                  onClick={() =>
-                    followedPlaces.includes(updateItem.place.id)
-                      ? unfollowPlace(updateItem.place.id)
-                      : followPlace(updateItem.place.id)
-                  }
-                >
-                  <Heart className="h-4 w-4" />
-                  {followedPlaces.includes(updateItem.place.id)
-                    ? "Following"
-                    : "Follow"}
-                </Button>
-              </div>
-              <p className="text-gray-600 mb-3">
-                {updateItem.content.description}
-              </p>
-              {updateItem.content.images && (
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  {updateItem.content.images.map((image, idx) => (
-                    <img
-                      key={idx}
-                      src={getPlaceImageBySlug(
-                        image.replace(/-1$/, ""),
-                        1,
-                        "thumbnail"
-                      )}
-                      alt={`Update from ${updateItem.place.name}`}
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </Card>
+          <PlaceUpdateItem
+            item={item as PlaceUpdateItemType}
+            followedPlaces={followedPlaces}
+            followPlace={followPlace}
+            unfollowPlace={unfollowPlace}
+          />
         );
       }
       case "tag_spotlight": {
