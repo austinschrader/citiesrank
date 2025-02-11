@@ -19,6 +19,7 @@ import PlaceCollectionItem from "../components/PlaceCollectionItem";
 import PlaceUpdateItem from "../components/PlaceUpdateItem";
 import SimilarPlacesItem from "../components/SimilarPlacesItem";
 import TagSpotlightItem from "../components/TagSpotlightItem";
+import TimeMachineItem from "../components/TimeMachineItem";
 import TrendingPlaceItem from "../components/TrendingPlaceItem";
 import { useFeed } from "../context/FeedContext";
 
@@ -30,7 +31,7 @@ import {
   PlaceUpdateItem as PlaceUpdateItemType,
   SimilarPlacesItem as SimilarPlacesItemType,
   TagSpotlightItem as TagSpotlightItemType,
-  TimeMachineItem,
+  TimeMachineItem as TimeMachineItemType,
   TrendingPlaceItem as TrendingPlaceItemType,
 } from "../types";
 
@@ -161,46 +162,7 @@ export const FeedPage = () => {
         return <FriendActivityItem item={item as FriendActivityItemType} />;
       }
       case "time_machine": {
-        const timeItem = item as TimeMachineItem;
-        return (
-          <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50/80 dark:from-gray-800 dark:to-gray-900/80">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/10 to-pink-500/10 blur-3xl rounded-full transform translate-x-8 -translate-y-8 group-hover:translate-x-4 group-hover:-translate-y-4 transition-transform duration-500" />
-            <div className="p-6 relative">
-              <div className="flex items-center mb-3">
-                <Calendar className="w-6 h-6 text-indigo-500 mr-2" />
-                <div>
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    {timeItem.title}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {timeItem.yearsAgo} year{timeItem.yearsAgo > 1 ? "s" : ""}{" "}
-                    ago
-                  </p>
-                </div>
-              </div>
-              <img
-                src={getPlaceImageBySlug(
-                  timeItem.memory.image.replace(/-1$/, ""),
-                  1,
-                  "wide"
-                )}
-                alt={timeItem.memory.title}
-                className="w-full h-64 object-cover rounded-lg mb-3"
-              />
-              <div className="flex justify-between items-center">
-                <p className="font-semibold">{timeItem.memory.title}</p>
-                <div className="text-sm text-gray-500">
-                  <Heart className="w-4 h-4 inline mr-1" />
-                  {timeItem.memory.likes} loves
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                <MapPin className="w-4 h-4 inline mr-1" />
-                {timeItem.memory.placeName}
-              </p>
-            </div>
-          </Card>
-        );
+        return <TimeMachineItem item={item as TimeMachineItemType} />;
       }
       default:
         return null;
