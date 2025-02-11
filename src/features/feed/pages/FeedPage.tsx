@@ -26,6 +26,8 @@ import {
 import { Link } from "react-router-dom";
 import { useFeed } from "../context/FeedContext";
 import { useState } from "react";
+import LoadingState from '../components/LoadingState';
+import FeedHeader from '../components/FeedHeader';
 
 import {
   FeedItem,
@@ -152,14 +154,7 @@ export const FeedPage = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-[calc(100vh-16rem)]">
-        <div className="relative">
-          <Loader2 className="w-12 h-12 animate-spin text-purple-500" />
-          <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-purple-400 animate-pulse" />
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (!feedItems.length) {
@@ -175,18 +170,7 @@ export const FeedPage = () => {
         className="w-full max-w-4xl mx-auto px-4 py-6 pt-12 pb-24"
       >
         {/* Header Section */}
-        <motion.div
-          variants={itemVariants}
-          className="relative mb-16 text-center"
-        >
-          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full blur-3xl" />
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Your Feed
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            Discover places and collections tailored just for you
-          </p>
-        </motion.div>
+        <FeedHeader itemVariants={itemVariants} />
 
         {/* Feed Items */}
         <AnimatePresence>
