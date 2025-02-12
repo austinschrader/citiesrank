@@ -80,6 +80,18 @@ const similarPlacesSchema = baseFeedItemSchema.extend({
   }),
 });
 
+// Schema for photo challenges
+const photoChallengeSchema = baseFeedItemSchema.extend({
+  type: z.literal("photo_challenge"),
+  // Add properties specific to photo challenges here
+});
+
+// Schema for friend activities
+const friendActivitySchema = baseFeedItemSchema.extend({
+  type: z.literal("friend_activity"),
+  // Add properties specific to friend activities here
+});
+
 export function useValidateFeedItems() {
   const { toast } = useToast();
   const { pb } = useAuth();
@@ -143,6 +155,12 @@ export function useValidateFeedItems() {
         break;
       case "similar_places":
         schema = similarPlacesSchema;
+        break;
+      case "photo_challenge":
+        schema = photoChallengeSchema;
+        break;
+      case "friend_activity":
+        schema = friendActivitySchema;
         break;
       default:
         return {

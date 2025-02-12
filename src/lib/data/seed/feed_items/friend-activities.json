@@ -1,0 +1,24 @@
+[
+  {
+    "type": "friend_activity",
+    "id": "1",
+    "friendName": "John Doe",
+    "activityDescription": "Visited the Grand Canyon with friends.",
+    "source_type": "system",
+    "source_name": "John Doe",
+    "timestamp": "2025-02-11T00:00:00Z",
+    "content": {
+      "title": "Grand Canyon Visit",
+      "description": "A memorable trip to the Grand Canyon with friends.",
+      "users": [
+        { "id": "u1", "name": "John Doe", "avatar": "john.jpg" },
+        { "id": "u2", "name": "Jane Smith", "avatar": "jane.jpg" }
+      ],
+      "sight": {
+        "image": "grand-canyon.jpg",
+        "name": "Grand Canyon",
+        "location": "Arizona"
+      }
+    }
+  }
+]

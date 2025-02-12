@@ -1,0 +1,15 @@
+[
+  {
+    "type": "time_machine",
+    "id": "1",
+    "title": "Trip to Paris",
+    "description": "A memorable trip to Paris.",
+    "image": "paris-trip.jpg",
+    "yearsAgo": 3,
+    "memory": {
+      "title": "Eiffel Tower Visit",
+      "likes": 200,
+      "placeName": "Eiffel Tower"
+    }
+  }
+]
