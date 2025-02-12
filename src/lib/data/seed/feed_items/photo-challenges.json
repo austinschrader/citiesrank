@@ -1,0 +1,23 @@
+[
+  {
+    "type": "photo_challenge",
+    "id": "1",
+    "title": "Sunset Photography Challenge",
+    "description": "Capture the most beautiful sunset.",
+    "source_type": "system",
+    "source_name": "Photography Club",
+    "timestamp": "2025-02-11T00:00:00Z",
+    "content": {
+      "title": "Sunset Photography Challenge",
+      "description": "A challenge to capture the beauty of sunsets around the world.",
+      "topPhotos": [
+        "sunset1.jpg",
+        "sunset2.jpg",
+        "sunset3.jpg"
+      ],
+      "participants": 150,
+      "daysLeft": 5,
+      "prize": "Photography Gear"
+    }
+  }
+]
